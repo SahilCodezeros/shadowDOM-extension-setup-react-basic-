@@ -425,6 +425,7 @@ module.exports = function (webpackEnv) {
               options: {
                 limit: imageInlineSizeLimit,
                 name: 'static/media/[name].[hash:8].[ext]',
+                esModule: false
               },
             },
             // Process application JS with Babel.
@@ -577,17 +578,42 @@ module.exports = function (webpackEnv) {
             // In production, they would get copied to the `build` folder.
             // This loader doesn't use a "test" so it will catch all modules
             // that fall through the other loaders.
+            // {
+            //   loader: require.resolve('file-loader'),
+            //   // Exclude `js` files to keep "css" loader working as it injects
+            //   // its runtime that would otherwise be processed through "file" loader.
+            //   // Also exclude `html` and `json` extensions so they get processed
+            //   // by webpacks internal loaders.
+            //   exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+            //   options: {
+            //     name: 'static/media/[name].[hash:8].[ext]',
+            //   },
+            // },
             {
               loader: require.resolve('file-loader'),
               // Exclude `js` files to keep "css" loader working as it injects
-              // its runtime that would otherwise be processed through "file" loader.
+              // it's runtime that would otherwise processed through "file" loader.
               // Also exclude `html` and `json` extensions so they get processed
               // by webpacks internal loaders.
-              exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
+              exclude: [
+                /\.(js|mjs|jsx|ts|tsx)$/, 
+                /\.html$/, 
+                /\.json$/,
+                /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+                /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/
+              ],
               options: {
                 name: 'static/media/[name].[hash:8].[ext]',
+                esModule: false
               },
             },
+            { 
+              test: /\.(png|jpg)$/, 
+              loader: 'url-loader?limit=8192',
+              options: {
+                esModule: false
+              }
+            }
             // ** STOP ** Are you adding a new loader?
             // Make sure to add the new loader(s) before the "file" loader.
           ],

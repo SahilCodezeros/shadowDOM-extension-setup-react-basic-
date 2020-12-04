@@ -15,6 +15,7 @@ export class Test extends React.Component {
                 <h2 className="h2 ff-mp-b c-gradient">
                     TESTING Shadow dom 
                 </h2>
+                <button onClick={ () => console.log('hiii') }>Hiii</button>
             </div>
         );
     };

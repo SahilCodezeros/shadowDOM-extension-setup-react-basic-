@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Trailit(using shadow DOM)",
+  "name": "Trailit(using shadow DOM)",
   "icons": {
     "128": "./logo192.png"
   },

@@ -1,76 +1,117 @@
-import { createUseStyles } from 'react-jss'
-import { makeStyles } from '@material-ui/styles';
+import React from 'react';
+import $ from 'jquery';
 
-import logo from './logo.svg';
-import './App.css';
+import {
+  ForgotPassword,
+	Login,
+	UserConfirmation,
+	UserProfile,
+	UserVerification,
+	OtpVerification,
+	Signup,
+	ConfirmPassword,
+} from './components';
 
-const useStyles = makeStyles({
-  body: {
-    margin: '0',
-    'fontFamily': '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, sans-serif',
-    // -webkit-font-smoothing: antialiased;
-    // -moz-osx-font-smoothing: grayscale;
-  },  
-  code: {
-    'fontFamily': 'source-code-pro, Menlo, Monaco, Consolas, Courier New, monospace'
-  },
-  App: {
-    textAlign: 'center'
-  },
-  AppLogo: {
-    height: '40vmin',
-    pointerEvents: 'none',
-    // animation: '$AppLogoSpin infinite 20s linear'
-  },
-  AppHeader: {
-    backgroundColor: '#282c34',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    // fontSize: calc('10px' + '2vmin'),
-    color: 'white',
-  },  
-  AppLink: {
-    color: '#61dafb'
-  },
-  '@keyframes AppLogoSpin': {
-    '0%': {
-      transform: 'rotate(0deg)'
-    },
-    '100%': {
-      transform: 'rotate(360deg)'
-    }
-  },
-  '@media (prefers-reduced-motion: no-preference)': {
-    AppLogo: {
-      animation: '$AppLogoSpin infinite 20s linear'
-    }
-  },
-});
+const chrome = window.chrome;
+let bkg = chrome.extension.getBackgroundPage();
 
-function App() {
-  const classes = useStyles();
+class App extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			active: {
+				login: false,
+				signup: true,
+				forgotPassword: false,
+				userConfirmation: false,
+				userVerification: false,
+				userProfile: false,
+				otpVerification: false,
+				confirmPassword: false
+			},
+			token: ''
+		};
+	}
+	
+	componentDidMount() {
+		$('#my-extension-root-flip').remove()
+		chrome.storage.local.get(["auth_Tokan", "userData"], function(items) {
+			if(items.userData) {
+				this.onClickToRedirect('userProfile');
+			} else {
+				this.onClickToRedirect('login')
+			}
+		}.bind(this));
+	}
+	
+	/**
+	 * go to perticular component
+	*/
+	onClickToRedirect = (cmp) => {
+		const { active } = this.state;
+		
+		Object.keys(active).map(res => active[res] = false);
+		active[cmp] = true;
+		// bkg.console.log(active);
+		this.setState({active});
+	}
+	
+	onClickToLogout = () => {
+		this.onClickToRedirect('login');
+		chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+			chrome.tabs.sendMessage(tabs[0].id, {status: 'logout'});
+		});
+		chrome.runtime.sendMessage({badgeText: ``});
+		chrome.storage.local.set({trail_web_user_tour: [], notification: true})
+		chrome.storage.local.clear();
+	}
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	render() {
+		const {
+			login,
+			forgotPassword,
+			userConfirmation,
+			userVerification,
+			userProfile,
+			otpVerification,
+			signup,
+			confirmPassword
+		} = this.state.active;
+
+		chrome.storage.local.get(["isAuth"], function (items) {
+			if (items.isAuth) {
+				if($('.trail_overlay').attr('class')!==undefined) {
+					$('.trail_overlay').remove();
+				}
+				// if($('.my-extension-defaultroot').attr('class')=='block') {
+					$('.my-extension-defaultroot').css({display: 'none'});
+				// }
+		
+				// if($('.my-extension-root').attr('class')=='block') {
+					$('.my-extension-root').css({display: 'none'});
+				// }
+			}
+		});
+		
+		return (
+			<div className={'trailMain'}>
+				{login && <Login clickToRedirect={this.onClickToRedirect}/>}
+				{forgotPassword && <ForgotPassword clickToRedirect={this.onClickToRedirect}/>}
+				{userConfirmation && <UserConfirmation clickToRedirect={this.onClickToRedirect}/>}
+				{userVerification && <UserVerification clickToRedirect={this.onClickToRedirect}/>}
+				{userProfile && <UserProfile clickToRedirect={this.onClickToRedirect} onClickToLogout={this.onClickToLogout}/>}
+				{otpVerification && <OtpVerification clickToRedirect={this.onClickToRedirect}/>}
+				{signup && <Signup clickToRedirect={this.onClickToRedirect}/>}
+				{confirmPassword && <ConfirmPassword clickToRedirect={this.onClickToRedirect}/>}
+			</div>
+		);
+	}
 }
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+	for (var key in changes) {
+	  var storageChange = changes[key];	  
+	}
+});
 
 export default App;
