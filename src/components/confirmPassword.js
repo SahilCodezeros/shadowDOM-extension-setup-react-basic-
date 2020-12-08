@@ -1,22 +1,16 @@
 import React from 'react';
-import { Form, Icon, Input, Button, Avatar } from 'antd';
+import { Form, Input, Button, Avatar } from 'antd';
+import Icon from '@ant-design/icons';
 
 class ConfirmPassword extends React.Component {
 	/**
 	 * onClick to submit
 	 */
-	onClickToSubmit = e => {
-		e.preventDefault();
-		this.props.form.validateFields((err, values) => {
-			if (!err) {
-				console.log('Received values of form: ', values);
-			}
-		});
+	onClickToSubmit = values => {
+		console.log('Received values of form: ', values);
 	};
 
-	render() {
-		// const { getFieldDecorator } = this.props.form;
-		
+	render() {		
 		return (
 			<div className="tr_wrapper">
 				<div className="tr_title">Set Password</div>
@@ -50,4 +44,3 @@ class ConfirmPassword extends React.Component {
 }
 
 export default ConfirmPassword;
-// export default Form.create({ name: 'normal_login' })(ConfirmPassword);

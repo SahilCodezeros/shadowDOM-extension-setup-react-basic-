@@ -5,18 +5,11 @@ class ForgotPassword extends React.Component {
 	/**
 	 * onClick to submit
 	 */
-	onClickToSubmit = e => {
-		e.preventDefault();
-		this.props.form.validateFields((err, values) => {
-			if (!err) {
-				console.log('Received values of form: ', values);
-			}
-		});
+	onClickToSubmit = values => {
+		console.log('Received values of form: ', values);
 	};
 
-	render() {
-		// const { getFieldDecorator } = this.props.form;
-		
+	render() {		
 		return (
 			<div className="tr_wrapper">
 				<div className="tr_title">Forgot Password?</div>
@@ -43,4 +36,3 @@ class ForgotPassword extends React.Component {
 }
 
 export default ForgotPassword;
-// export default Form.create({ name: 'normal_login' })(ForgotPassword);

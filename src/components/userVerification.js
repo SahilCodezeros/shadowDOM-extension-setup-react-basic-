@@ -1,22 +1,16 @@
 import React from 'react';
-import { Form, Icon, Input, Button, Avatar } from 'antd';
+import { Form, Input, Button, Avatar } from 'antd';
+import Icon from '@ant-design/icons';
 
 class UserVerification extends React.Component {
 	/**
 	 * onClick to submit
 	 */
-	onClickToSubmit = e => {
-		e.preventDefault();
-		this.props.form.validateFields((err, values) => {
-			if (!err) {
-				console.log('Received values of form: ', values);
-			}
-		});
+	onClickToSubmit = values => {
+		console.log('Received values of form: ', values);
 	};
 
 	render() {
-		// const { getFieldDecorator } = this.props.form;
-
 		return (
 			<div className="tr_wrapper">
 				<div className="tr_title">Veryfication</div>
@@ -52,4 +46,3 @@ class UserVerification extends React.Component {
 }
 
 export default UserVerification;
-// export default Form.create({ name: 'normal_login' })(UserVerification);

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Form, Icon, Input, Button, Avatar } from 'antd';
+import { Form, Input, Button, Avatar } from 'antd';
+import Icon from '@ant-design/icons';
 
 class UserConfirmation extends React.Component {
     render() {

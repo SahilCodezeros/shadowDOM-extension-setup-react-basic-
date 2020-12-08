@@ -26,6 +26,8 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const { styles } = require( '@ckeditor/ckeditor5-dev-utils' );
+
 
 const postcssNormalize = require('postcss-normalize');
 
@@ -96,48 +98,48 @@ module.exports = function (webpackEnv) {
   // common function to get style loaders
   const getStyleLoaders = (cssOptions, preProcessor) => {
     const loaders = [
-      // isEnvDevelopment && require.resolve('style-loader'),
-      // isEnvProduction && {
-      //   loader: MiniCssExtractPlugin.loader,
-      //   // css is located in `static/css`, use '../../' to locate index.html folder
-      //   // in production `paths.publicUrlOrPath` can be a relative path
-      //   options: paths.publicUrlOrPath.startsWith('.')
-      //     ? { publicPath: '../../' }
-      //     : {},
-      // },
-      {
-        loader: 'style-loader',
-        options: {
-          insert: function (element) {
-            const extensionHostID = 'extension-root';
-            let extensionHost = document.getElementById(extensionHostID);
-            console.log('extensionHost', extensionHost);
-  
-            if (!extensionHost) {
-              extensionHost = document.createElement('div');
-              extensionHost.setAttribute('id', extensionHostID);
-              window.document.body.append(extensionHost);
-              extensionHost.attachShadow({mode: 'open'});
-              // Add style tag to shadow host
-              extensionHost.shadowRoot.appendChild(element);
-            }
-
-            // extension-test(content.js)
-            const extensionTestID = 'extension-div';
-            let extensionTest = document.getElementById(extensionTestID);
-  
-            if (!extensionTest) {
-              extensionTest = document.createElement('div');
-              extensionTest.setAttribute('id', extensionTestID);
-              window.document.body.append(extensionTest);
-              extensionTest.attachShadow({ mode: 'open' });
-              // Add style tag to shadow host
-              extensionTest.shadowRoot.appendChild(element);
-
-            }
-          },
-        },
+      isEnvDevelopment && require.resolve('style-loader'),
+      isEnvProduction && {
+        loader: MiniCssExtractPlugin.loader,
+        // css is located in `static/css`, use '../../' to locate index.html folder
+        // in production `paths.publicUrlOrPath` can be a relative path
+        options: paths.publicUrlOrPath.startsWith('.')
+          ? { publicPath: '../../' }
+          : {},
       },
+      // {
+      //   loader: 'style-loader',
+      //   options: {
+      //     insert: function (element) {            
+      //       const extensionHostID = 'extension-root';
+      //       let extensionHost = document.getElementById(extensionHostID);
+      //       console.log('extensionHost', extensionHost);
+  
+      //       if (!extensionHost) {
+      //         extensionHost = document.createElement('div');
+      //         extensionHost.setAttribute('id', extensionHostID);
+      //         window.document.body.append(extensionHost);
+      //         extensionHost.attachShadow({mode: 'open'});
+      //         // Add style tag to shadow host
+      //         extensionHost.shadowRoot.appendChild(element);
+      //       }
+
+      //       // extension-test(content.js)
+      //       const extensionTestID = 'extension-div';
+      //       let extensionTest = document.getElementById(extensionTestID);
+  
+      //       if (!extensionTest) {
+      //         extensionTest = document.createElement('div');
+      //         extensionTest.setAttribute('id', extensionTestID);
+      //         window.document.body.append(extensionTest);
+      //         extensionTest.attachShadow({ mode: 'open' });
+      //         // Add style tag to shadow host
+      //         extensionTest.shadowRoot.appendChild(element);
+
+      //       }
+      //     },
+      //   },
+      // },
       {
         loader: require.resolve('css-loader'),
         options: cssOptions,
@@ -401,6 +403,30 @@ module.exports = function (webpackEnv) {
         // Disable require.ensure as it's not a standard language feature.
         { parser: { requireEnsure: false } },
         {
+          test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+          use: [ 'raw-loader' ]
+        },
+        {
+          test: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
+          use: [
+            {
+              loader: 'style-loader',
+              options: {
+                injectType: 'singletonStyleTag'
+              }
+            },
+            {
+              loader: 'postcss-loader',
+              options: styles.getPostCssConfig( {
+                themeImporter: {
+                  themePath: require.resolve( '@ckeditor/ckeditor5-theme-lark' )
+                },
+                minify: true
+              } )
+            }
+          ]
+        },
+        {
           // "oneOf" will traverse all following loaders until one will
           // match the requirements. When no loader matches it will fall
           // back to the "file" loader at the end of the loader list.
@@ -508,7 +534,8 @@ module.exports = function (webpackEnv) {
             // By default we support CSS Modules with the extension .module.css
             {
               test: cssRegex,
-              exclude: cssModuleRegex,
+              // exclude: cssModuleRegex,
+              exclude: /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css$/,
               use: getStyleLoaders({
                 importLoaders: 1,
                 sourceMap: isEnvProduction

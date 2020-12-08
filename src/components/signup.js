@@ -1,6 +1,6 @@
 import React from 'react';
-import { Form, Icon, Upload, Input, Button, Avatar  } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Form, Upload, Input, Button, Avatar  } from 'antd';
+import Icon, { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 import { createTrailId } from '../common/axios';
@@ -93,10 +93,7 @@ class Signup extends React.Component {
 		callback();
 	};
 
-  render() {
-    
-    // const { getFieldDecorator } = this.props.form;
-    
+  render() {    
     return (
       <div className={'trailMain'}>
         <div className="tr_wrapper">
@@ -183,4 +180,3 @@ class Signup extends React.Component {
 }
 
 export default Signup;
-// export default Form.create()(Signup);

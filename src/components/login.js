@@ -100,9 +100,7 @@ class Login extends React.Component {
 		console.log('Failed:', errorInfo);
 	};
 	
-	render() {
-		// const { getFieldDecorator } = this.props.form;
-		
+	render() {		
 		return (
 			// <ReactShadowRoot>
 			// 	<style>{ loginStyle }</style>			
@@ -185,4 +183,3 @@ class Login extends React.Component {
 }
 
 export default Login;
-// export default Form.create()(Login);

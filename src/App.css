@@ -1,38 +1,26 @@
-.App {
-  text-align: center;
+#my-extension-root .wrap .blob:hover .svg_btn2 {
+  fill: #ffffff;
+  stroke: #ffffff;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#my-extension-root .wrap .blob:hover .svg_btn {
+  fill: #ffffff !important;
+  stroke: #fb542b;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+#my-extension-root .wrap .blob:hover #Ellipse_101 {
+  fill: #fb542b;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+#my-extension-root .wrap .blob:hover span {
+  background: #fb542b;
+  color: #ffffff;
 }
 
-.App-link {
-  color: #61dafb;
+#my-extension-root .menu img.trail_plus {
+  width: 24px;
+  height: 24px;
+  top: 8px;
+  right: 7px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}

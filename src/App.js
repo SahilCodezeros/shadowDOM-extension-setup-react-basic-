@@ -1,6 +1,9 @@
 import React from 'react';
 import $ from 'jquery';
 
+import './index.css';
+import 'antd/dist/antd.css';
+
 import {
   ForgotPassword,
 	Login,

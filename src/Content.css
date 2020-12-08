@@ -58,14 +58,14 @@ button {
 
 .tr_wrapper .ant-avatar {
   margin-bottom: 15px;
-  border: 2px solid var(--color);
+  border: 2px solid #fb542b;
 }
 
 .tr_wrapper .tr_title {
   font-size: 24px;
   line-height: 30px;
   font-weight: 700;
-  color: var(--color);
+  color: #fb542b;
   margin-bottom: 10px;
 }
 
@@ -73,7 +73,7 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: normal;
-  color: var(--color-text);
+  color: #333333;
   margin-bottom: 20px;
 }
 
@@ -85,11 +85,11 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: 400;
-  color: var(--color);
+  color: #fb542b;
 }
 
 .tr_wrapper .tr_link.gray {
-  color: var(--color-text);
+  color: #333333;
 }
 
 .tr_wrapper .back {
@@ -173,7 +173,7 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: 700;
-  color: var(--color);
+  color: #fb542b;
   text-transform: uppercase;
   margin-bottom: 15px;
 }
@@ -193,9 +193,9 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: 500;
-  color: var(--color-white);
+  color: #ffffff;
   border: none;
-  background: var(--color);
+  background: #fb542b;
   padding: 0 22px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -207,9 +207,9 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: 500;
-  background: var(--color-white);
-  border: 1px solid var(--color);
-  color: var(--color);
+  background: #ffffff;
+  border: 1px solid #fb542b;
+  color: #fb542b;
   padding: 0 20px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -218,8 +218,8 @@ button {
 }
 
 .tr_wrapper .tr_button1:hover {
-  background: var(--color);
-  color: var(--color-white);
+  background: #fb542b;
+  color: #ffffff;
 }
 
 .tr_wrapper .tr_button1.capitalize {
@@ -228,7 +228,7 @@ button {
 
 .tr_wrapper .bottom_links {
   height: 63px;
-  background: var(--color);
+  background: #fb542b;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -249,7 +249,7 @@ button {
   font-size: 16px;
   line-height: 22px;
   font-weight: 500;
-  color: var(--color-white);
+  color: #ffffff;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -322,9 +322,9 @@ button:focus {
 #my-extension-defaultroot .ant-btn.ant-btn-primary,
 .trail_tooltip .ant-btn.ant-btn-primary,
 #my-extension-defaultroot .optionBtn button.ant-btn {
-  background: var(--color) !important;
-  color: var(--color-white);
-  border: 1px solid var(--color) !important;
+  background: #fb542b !important;
+  color: #ffffff;
+  border: 1px solid #fb542b !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
@@ -351,15 +351,15 @@ button:focus {
 .trail_tooltip .ant-btn.ant-btn-primary:hover,
 .trail_tooltip_done .ant-btn.ant-btn-primary:hover,
 #my-extension-defaultroot .optionBtn button.ant-btn:hover {
-  background: var(--color-white) !important;
-  border: 1px solid var(--color) !important;
-  color: var(--color) !important;
+  background: #ffffff !important;
+  border: 1px solid #fb542b !important;
+  color: #fb542b !important;
 }
 
 .trail_tooltip_done .ant-btn.ant-btn-primary {
-  background: var(--color) !important;
-  color: var(--color-white);
-  border: 1px solid var(--color) !important;
+  background: #fb542b !important;
+  color: #ffffff;
+  border: 1px solid #fb542b !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
@@ -383,7 +383,7 @@ button:focus {
 
 .trail_tooltip .popover {
   z-index: 9999999999;
-  background: var(--color-white);
+  background: #ffffff;
   width: 300px !important;
   max-width: 300px !important;
   height: 297px !important;
@@ -473,21 +473,21 @@ button:focus {
 #my-extension-defaultroot .video-wrap_tooltip .title {
   font-size: 40px;
   text-align: center;
-  color: var(--color-white);
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
 #my-extension-defaultroot .video-wrap_tooltip .contentTitle {
   font-size: 30px;
   text-align: center;
-  color: var(--color-white);
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
 #my-extension-defaultroot .video-wrap_tooltip .description {
   font-size: 25px;
   text-align: center;
-  color: var(--color-white);
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
@@ -512,12 +512,12 @@ button:focus {
 
 .bottom-links a {
   font-size: 30px !important;
-  color: var(--color-white) !important;
+  color: #ffffff !important;
   margin: 0 5px !important;
 }
 
 .bottom-links a:hover {
-  color: var(--color-white) !important;
+  color: #ffffff !important;
 }
 
 .trail_tooltip .popover-body {
@@ -538,7 +538,7 @@ button:focus {
   content: "";
   bottom: 1px;
   border-width: 0.5rem 0.5rem 0;
-  border-top-color: var(--color-white);
+  border-top-color: #ffffff;
 }
 
 .trail_tooltip .popover .arrow::after,
@@ -569,7 +569,7 @@ button:focus {
 
 .trail_tooltip_done .popover {
   z-index: 9999999999;
-  background: var(--color-white) !important;
+  background: #ffffff !important;
   border-radius: 5px;
   padding: 0 !important;
   display: initial !important;
@@ -586,7 +586,7 @@ button:focus {
   font-weight: 700 !important;
   font-family: "Lato", sans-serif !important;
   margin: 0px !important;
-  color: var(--color-text) !important;
+  color: #333333 !important;
   width: 100%;
   text-align: center;
   box-sizing: border-box;
@@ -607,11 +607,11 @@ button:focus {
   font-family: "Lato", sans-serif !important;
   font-size: 14px !important;
   line-height: 20px !important;
-  color: var(--color-text) !important;
+  color: #333333 !important;
 }
 
 .trail_tooltip_done .popover-body a:hover {
-  color: var(--color-text) !important;
+  color: #333333 !important;
 }
 
 .trail_tooltip_done .arrow_down {
@@ -622,7 +622,7 @@ button:focus {
   left: 50%;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  border-top: 8px solid var(--color-white);
+  border-top: 8px solid #ffffff;
 }
 
 .trail_tooltip_done .popover-body div {
@@ -641,7 +641,7 @@ button:focus {
   height: 28px !important;
   min-width: 82px !important;
   margin-left: 10px !important;
-  background: var(--color-white) !important;
+  background: #ffffff !important;
   border-radius: 3px !important;
   -webkit-border-radius: 3px !important;
   line-height: 28px;
@@ -649,8 +649,8 @@ button:focus {
 }
 
 .trail_tooltip_done .popover-body button:hover {
-  background: var(--color-white) !important;
-  color: var(--color) !important;
+  background: #ffffff !important;
+  color: #fb542b !important;
 }
 
 .trail_tooltip_done .btn-wrap {
@@ -735,7 +735,7 @@ html #site-wrap {
 }
 
 .tr_wrapper .tr_button:hover {
-  background: var(--color-hover);
+  background: #ff7958;
 }
 
 * {
@@ -745,26 +745,26 @@ html #site-wrap {
 }
 
 #my-extension-root .wrap .blob:hover .svg_btn2 {
-  fill: var(--color-white);
-  stroke: var(--color-white);
+  fill: #ffffff;
+  stroke: #ffffff;
 }
 
 #my-extension-root .wrap .blob:hover .svg_btn {
-  fill: var(--color-white) !important;
-  stroke: var(--color);
+  fill: #ffffff !important;
+  stroke: #fb542b;
 }
 
 #my-extension-root .wrap .blob:hover #Ellipse_101 {
-  fill: var(--color);
+  fill: #fb542b;
 }
 
 #my-extension-root .wrap .blob:hover span {
-  background: var(--color);
-  color: var(--color-white);
+  background: #fb542b;
+  color: #ffffff;
 }
 
 .trail_tooltip .ant-form-item-control .ant-input {
-  background: var(--color-white);
+  background: #ffffff;
   box-shadow: none;
 }
 
@@ -790,7 +790,7 @@ html #site-wrap {
 .ck-input {
   border: 1px solid #dddddd !important;
   box-shadow: none !important;
-  background: var(--color-white) !important;
+  background: #ffffff !important;
   color: #000 !important;
   font-size: 14px !important;
   font-style: normal !important;
@@ -829,7 +829,7 @@ html #site-wrap {
 .trailMain input[type="password"]:focus,
 .trailMain textarea:focus,
 #my-extension-defaultroot *:focus {
-  border: 1px solid var(--color) !important;
+  border: 1px solid #fb542b !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
@@ -837,7 +837,7 @@ html #site-wrap {
 }
 
 .tr_wrapper .bottom_links a:hover {
-  background: var(--color-hover);
+  background: #ff7958;
 }
 
 .trail_tooltip .popover-body button,
@@ -1271,7 +1271,7 @@ textarea.ant-input {
   padding: 0;
   width: 100%;
   height: 100%;
-  background: var(--color-white);
+  background: #ffffff;
   box-shadow: none;
 }
 
@@ -1498,7 +1498,7 @@ textarea.ant-input {
   align-items: center;
   justify-content: center;
   padding: 15px;
-  background: var(--color-text);
+  background: #333333;
 }
 
 .tr_audioplayer-playing.tr_audioplayer-playpause a:before,
@@ -1682,13 +1682,13 @@ textarea.ant-input {
 }
 
 .trlt_setting_btn {
-  color: var(--color);
+  color: #fb542b;
   font-size: 14px;
   font-family: "Lato", sans-serif !important;
 }
 
 .trlt_setting_btn:hover {
-  color: var(--color-text);
+  color: #333333;
 }
 
 .trlt_setting {
@@ -1698,7 +1698,7 @@ textarea.ant-input {
 }
 
 .trlt_setting span {
-  color: var(--color-text);
+  color: #333333;
   font-size: 14px;
   font-family: "Lato", sans-serif !important;
   padding: 0 10px 0 0;
@@ -1850,7 +1850,7 @@ textarea.ant-input {
 
 .tr_select_type .tr_select {
   margin-bottom: 5px;
-  color: var(--color-text);
+  color: #333333;
   font-size: 14px;
   font-family: "Lato", sans-serif !important;
 }
@@ -1905,7 +1905,7 @@ textarea.ant-input {
 .preview-title {
   text-align: center;
   margin: 10px 0;
-  color: var(--color-text);
+  color: #333333;
   font-size: 14px;
   font-family: "Lato", sans-serif !important;
 }
@@ -1925,7 +1925,7 @@ textarea.ant-input {
 
 .trail_tooltip_done .popover-body div[class*="tr_audioplayer-"],
 .trail_tooltip_done .popover-body div.volume {
-  color: var(--color-white) !important;
+  color: #ffffff !important;
   font-family: "Lato", sans-serif !important;
 }
 
@@ -2058,7 +2058,7 @@ textarea.ant-input {
   left: 15px;
   max-width: 300px;
   z-index: 99;
-  color: var(--color-white) !important;
+  color: #ffffff !important;
   width: auto;
   text-align: left;
 }
@@ -2112,7 +2112,11 @@ textarea.ant-input {
 .trail_tooltip_done button.next i,
 .trail_tooltip_done button.prev i {
   color: #ffff;
-  background: var(--color-gradiaant) !important;
+  background: linear-gradient(
+    324deg,
+    rgba(230, 16, 0, 1) 0%,
+    rgba(255, 136, 78, 1) 100%
+  ) !important;
   align-items: center;
   display: flex;
   justify-content: center;
@@ -2123,7 +2127,11 @@ textarea.ant-input {
 .trail_preview_modal button.next i,
 .trail_preview_modal button.prev i {
   color: #ffff;
-  background: var(--color-gradiaant) !important;
+  background: linear-gradient(
+    324deg,
+    rgba(230, 16, 0, 1) 0%,
+    rgba(255, 136, 78, 1) 100%
+  ) !important;
   align-items: center;
   display: flex;
   justify-content: center;
@@ -2158,7 +2166,7 @@ textarea.ant-input {
 }
 
 .ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-focused {
-  border-color: var(--color);
+  border-color: #fb542b;
   outline: none;
 }
 
@@ -2392,7 +2400,7 @@ span.ck.ck-toolbar__separator {
 #my-extension-defaultroot .sidepopup.open .trial_spinner .ellipse {
   width: 100%;
   height: 100%;
-  background-color: var(--color);
+  background-color: #fb542b;
   border-radius: 50%;
   -webkit-animation: ellipse-animation 2.4s cubic-bezier(0, -0.26, 0.32, 1.22)
     0s infinite !important;
@@ -3209,7 +3217,7 @@ button.ant-btn.trial_button_close.ant-btn-link i {
   font-weight: 700 !important;
   font-family: "Lato", sans-serif !important;
   margin: 0px !important;
-  color: var(--color-text) !important;
+  color: #333333 !important;
   width: 100%;
   text-align: center;
   box-sizing: border-box;
@@ -3227,11 +3235,11 @@ button.ant-btn.trial_button_close.ant-btn-link i {
   font-family: "Lato", sans-serif !important;
   font-size: 14px !important;
   line-height: 20px !important;
-  color: var(--color-text) !important;
+  color: #333333 !important;
 }
 
 .trail_preview_modal .trail_modal_content a:hover {
-  color: var(--color-text) !important;
+  color: #333333 !important;
 }
 
 .trail_preview_modal .modal-content {
@@ -3305,7 +3313,7 @@ button.ck-button:not(.s-btn):hover {
   color: 999;
 }
 .tr_input:focus {
-  border-color: var(--color) !important;
+  border-color: #fb542b !important;
   box-shadow: none !important;
   outline: none !important;
 }
@@ -3327,7 +3335,7 @@ button.ck-button:not(.s-btn):hover {
   line-height: 20px;
 }
 .tr_new_trail_create_modal .tr_tab.tr_active {
-  color: var(--color) !important;
+  color: #fb542b !important;
   text-decoration: underline;
 }
 .tr_new_trail_create_form .tr_input {

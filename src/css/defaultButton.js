@@ -1,0 +1,823 @@
+export const defaultButtonCss1 = `
+    #my-extension-defaultroot .sidepopup {
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
+        -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
+        -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
+        background: #fff;
+        width: 340px;
+        height: calc(100% - 80px);
+        padding: 0 25px;
+        position: relative;
+        border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        box-sizing: border-box;
+    }
+    
+    #my-extension-defaultroot .space {
+        height: 15px;
+        width: 100%;
+        display: block;
+    }
+    
+    /* #my-extension-defaultroot .sidepopup.open:after {
+        content: '';
+        width: 100%;
+        height: 100%;
+        background: #ffffffbd;
+        position: absolute;
+        left: -20px;
+        top: -20px;
+        z-index: -1;
+        border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+    } */
+    
+    div#my-extension-defaultroot {
+        font-family: 'Lato', sans-serif;
+        display: block;
+        z-index: 999999999;
+    }
+    
+    #my-extension-defaultroot .sidepopup {
+        display: none;
+    }
+    
+    #my-extension-defaultroot .sidepopup.open {
+        display: block;
+    }
+    
+    #my-extension-defaultroot .sidepanal {
+        height: calc(100vh - 170px);
+        position: relative;
+    }
+    
+    #my-extension-defaultroot .sidepopup.open+button.menu.pop {
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+    }
+    
+    #my-extension-defaultroot button.menu.pop {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 65px;
+        height: 65px;
+    }
+    
+    #my-extension-defaultroot .title {
+        font-size: 22px;
+        font-weight: bold;
+        line-height: 24px;
+        color: #000;
+        text-transform: unset;
+        -webkit-text-transform: unset;
+        font-family: 'Lato', sans-serif;
+        text-align: left;
+    }
+    
+    #my-extension-defaultroot .my-4 {
+        margin: 30px 0 10px;
+    }
+    
+    #my-extension-defaultroot .optionBtn {
+        float: right;
+    }
+    
+    #my-extension-defaultroot .titleBack {
+        float: left;
+        color: #fb542b;
+        font-size: 17px;
+        font-weight: bold;
+        display: table;
+    }
+    
+    #my-extension-defaultroot .hdr {
+        display: inline-block;
+        width: 100%;
+    }
+    
+    #my-extension-defaultroot .optionBtn button {
+        border: none;
+        background: transparent;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        padding: 0;
+        margin-left: 10px !important;
+    }
+    
+    #my-extension-defaultroot .optionBtn button img {
+        width: 5px;
+    }
+    
+    #my-extension-defaultroot .optionBtn button:hover {
+        background: #d4d4d4;
+    }
+    
+    #my-extension-defaultroot .titleBack button {
+        background: transparent;
+        border: none;
+        margin-right: 10px;
+    }
+    
+    button {
+        cursor: pointer !important;
+    }
+    
+    #my-extension-defaultroot .input {
+        font-size: 10px;
+        font-weight: 400;
+        border: 1px solid #D5D5D5;
+        border-radius: 5px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        width: calc(100% - 22px);
+        padding: 10px;
+        resize: none;
+    }
+    
+    #my-extension-defaultroot input[type="submit"], #my-extension-defaultroot .btn {
+        color: #fb542b;
+        font-size: 14px;
+        font-weight: bold;
+        border: 1px solid #fb542b;
+        border-radius: 3px;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        background: #fff;
+        min-width: 82px;
+        line-height: 35px;
+        /* float: right; */
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+    }
+    
+    #my-extension-defaultroot .btn:hover {
+        background: #fb542b;
+        color: #fff;
+    }
+    
+    #my-extension-defaultroot .mb-2 {
+        margin-bottom: 5px;
+    }
+
+    .trail_video_frm{ padding-bottom: 5px;}
+    #my-extension-defaultroot .pl-4 {
+        padding-left: 30px!important;
+    }
+    
+    #my-extension-defaultroot .flow .li {
+        position: relative;
+    }
+    
+    #my-extension-defaultroot .counter {
+        position: absolute;
+        border-radius: 50%;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        text-align: center;
+        z-index: 1;
+        background: #d4d4d4;
+        width: 13px;
+        height: 13px;
+        box-sizing: border-box;
+        font-size: 0;
+        top: 32px;
+        left: -26px;
+    }
+
+    #my-extension-defaultroot .active .counter  {
+        border: 2px solid #fb542b;
+        left: -36px;
+        width: 32px;
+        height: 32px;
+        padding: 2px;
+        line-height: 24px!important;
+        background:#ffffff;
+        color:#ffffff;
+        top: 23px;
+    }
+
+    #my-extension-defaultroot .active .counter span {
+        background: #fb542b;
+        color: #ffffff;
+        border-radius: 50%;
+        display: block;
+        font-size: 12px!important;
+    }
+    
+    #my-extension-defaultroot .en_title {
+        font-size: 14px!important;
+        font-weight: 700!important;
+        line-height: 20px!important;
+        margin-bottom: 5px!important;
+        color: #000000!important;
+    }
+    
+    #my-extension-defaultroot .en_desc, #my-extension-defaultroot .en_desc p, #my-extension-defaultroot .en_desc a{
+        font-size: 14px!important;
+        font-weight: 400!important;
+        line-height: 20px!important;
+        color: #aaaaaa!important;
+        font-family: 'Lato', sans-serif !important;
+        text-decoration: none!important;
+    }
+
+    #my-extension-defaultroot .en_desc p span{
+        color: #aaaaaa!important;
+    }
+
+    #my-extension-defaultroot .active .en_title, #my-extension-defaultroot .active .en_desc{
+        color: #212121!important;
+    }
+
+    #my-extension-defaultroot .li.done:after {
+        content: '';
+        width:0;
+        height: 100%;
+        position: absolute ;
+        top: 47px;
+        left: -20px;
+        border:0.5pt dashed var(--color-gray);
+    }
+
+    #my-extension-defaultroot .li.done:last-child:after {
+        content: none;
+    }
+    
+    #my-extension-defaultroot .mr-2 {
+        margin-right: 20px;
+    }
+    
+    #my-extension-defaultroot button:not(.s-btn) {
+        box-shadow: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        padding: 0;
+    }
+    
+    .trail_select_bx {
+        box-shadow: 0 0 10px 5px #fb542b !important;
+        -webkit-box-shadow:0 0 10px 5px #fb542b !important;
+    }
+    
+    #my-extension-defaultroot .sidepopup .video {
+        height: calc(100% - 40px);
+    }
+    
+    #my-extension-defaultroot .sidepopup .first_step {
+        height: 100%;
+    }
+
+    #my-extension-defaultroot .titleBack button:not(.s-btn),
+    #my-extension-defaultroot .optionBtn button:not(.s-btn) {
+        background: #fff !important;
+    }
+
+    #my-extension-defaultroot .titleBack button:not(.s-btn) {
+        min-height: 25px;
+        height: 25px;
+    }
+
+    .trail_continue_btn,
+    .tr_modal .ant-btn.ant-btn-primary,
+    #my-extension-defaultroot .ant-btn.ant-btn-primary,
+    .trail_tooltip .ant-btn.ant-btn-primary,
+    #my-extension-defaultroot .optionBtn button.ant-btn {
+        background: #fb542b !important;
+        color: #ffffff;
+        border: 1px solid #fb542b !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        width: auto !important;
+        border-radius: 3px !important;
+        min-width: 82px !important;
+        font-size: 12px;
+        font-weight: 400 !important;
+        font-family: "Lato", sans-serif !important;
+        height: 28px;
+        line-height: 28px;
+        text-transform: uppercase;
+        -webkit-text-transform: uppercase;
+        margin-bottom: 0;
+        letter-spacing: 0 !important;
+        padding: 0 6px;
+        text-align: center;
+        min-height: 28px;
+    }
+
+    .trail_continue_btn:hover,
+    .tr_modal .ant-btn.ant-btn-primary:hover,
+    #my-extension-defaultroot .ant-btn.ant-btn-primary:hover,
+    .trail_tooltip .ant-btn.ant-btn-primary:hover,
+    .trail_tooltip_done .ant-btn.ant-btn-primary:hover,
+    #my-extension-defaultroot .optionBtn button.ant-btn:hover {
+        background: #ffffff !important;
+        border: 1px solid #fb542b !important;
+        color: #fb542b !important;
+    }
+
+    #my-extension-defaultroot .video-wrap_tooltip .title {
+        font-size: 40px;
+        text-align: center;
+        color: #ffffff;
+        margin-bottom: 30px;
+    }
+    
+    #my-extension-defaultroot .video-wrap_tooltip .contentTitle {
+        font-size: 30px;
+        text-align: center;
+        color: #ffffff;
+        margin-bottom: 30px;
+    }
+    
+    #my-extension-defaultroot .video-wrap_tooltip .description {
+        font-size: 25px;
+        text-align: center;
+        color: #ffffff;
+        margin-bottom: 30px;
+    }
+
+    #my-extension-defaultroot .flow {
+        max-height: calc(100vh - 675px);
+    }
+    
+    #my-extension-defaultroot .flow .li {
+        margin-left: 40px !important;
+        padding-bottom: 10px;
+    }
+`;
+
+export const defaultButtonCss2 = `
+    #my-extension-defaultroot input[type="text"],
+    .trail_create_modal input[type="text"],
+    #my-extension-defaultroot input[type="password"],
+    #my-extension-defaultroot textarea,
+    .trail_tooltip input[type="text"],
+    .trail_tooltip input[type="password"],
+    .trail_tooltip textarea,
+    .trailMain input[type="text"],
+    .trailMain input[type="password"],
+    .trailMain textarea,
+    .ck-input {
+        border: 1px solid #dddddd !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #000 !important;
+        font-size: 14px !important;
+        font-style: normal !important;
+        font-family: "Lato", sans-serif !important;
+    }
+
+    .trail_tooltip input.ant-input[type="password"]::-webkit-input-placeholder,
+    .trail_tooltip input.ant-input[type="text"]::-webkit-input-placeholder,
+    .trail_create_modal input.ant-input[type="text"]::-webkit-input-placeholder,
+    .trail_tooltip textarea.ant-input::-webkit-input-placeholder,
+    #my-extension-defaultroot
+    input.ant-input[type="password"]::-webkit-input-placeholder,
+    #my-extension-defaultroot
+    input.ant-input[type="text"]::-webkit-input-placeholder,
+    #my-extension-defaultroot textarea.ant-input::-webkit-input-placeholder,
+    .ck-input::-webkit-input-placeholder {
+        font-size: 14px !important;
+        font-family: "Lato", sans-serif !important;
+        color: #9b9b9b !important;
+    }
+
+    #my-extension-defaultroot input[type="text"]:focus,
+    #my-extension-defaultroot input[type="password"]:focus,
+    #my-extension-defaultroot textarea:focus,
+    .trail_tooltip input[type="text"].ant-input:focus,
+    .trail_tooltip input[type="password"].ant-input:focus,
+    .trail_tooltip textarea.ant-input:focus,
+    .trailMain input[type="text"]:focus,
+    .trail_create_modal input[type="text"]:focus,
+    .trailMain input[type="password"]:focus,
+    .trailMain textarea:focus,
+    #my-extension-defaultroot *:focus {
+        border: 1px solid #fb542b !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        outline: none !important;
+    }
+
+    #my-extension-defaultroot .sidepopup.open {
+        animation: opacity 0.7s forwards;
+        -webkit-animation: opacity 0.7s forwards;
+        overflow: auto !important;
+    }
+
+    #my-extension-defaultroot .sidepopup.open * {
+        animation: opacity2 0.3s forwards;
+        -webkit-animation: opacity2 0.3s forwards;
+        animation-delay: 0.5s;
+        -webkit-animation-delay: 0.5s;
+        opacity: 0;
+        word-break: break-all;
+    }
+
+    #my-extension-defaultroot .sidepopup.open:after {
+        animation: move 0.3s forwards;
+        -webkit-animation: move 0.3s forwards;
+        animation-delay: 1s;
+        -webkit-animation-delay: 1s;
+        left: 0;
+        top: 0;
+    }
+
+    #my-extension-defaultroot .ant-upload,
+    .trail_tooltip .ant-upload,
+    .trail_create_modal .ant-upload {
+        border: 1px dashed #d5d5d5;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    #my-extension-defaultroot .ant-upload {
+        margin-bottom: 5px;
+    }
+
+    #my-extension-defaultroot p.ant-upload-drag-icon,
+    .trail_tooltip p.ant-upload-drag-icon,
+    .trail_create_modal p.ant-upload-drag-icon {
+        margin: 10px 0 0 !important;
+    }
+
+    #my-extension-defaultroot span.anticon.anticon-cloud-upload,
+    .trail_tooltip span.anticon.anticon-cloud-upload,
+    .trail_create_modal span.anticon.anticon-cloud-upload,
+    .trail_create_modal span.anticon.anticon-cloud-upload svg {
+        color: #e0e0e0 !important;
+        fill: #e0e0e0 !important;
+        font-size: 40px;
+        line-height: 48px;
+    }
+
+    #my-extension-defaultroot p.ant-upload-text,
+    .trail_tooltip p.ant-upload-text,
+    .trail_create_modal p.ant-upload-text {
+        font-size: 14px;
+        font-family: "Lato", sans-serif !important;
+        color: #9b9b9b;
+        margin-top: 0;
+    }
+
+    #my-extension-defaultroot p.ant-upload-tex {
+        margin-bottom: 1rem;
+    }
+
+    #my-extension-defaultroot .upload_bx,
+    .trail_create_modal .upload_bx,
+    .trail_tooltip .upload_bx {
+        position: relative;
+    }
+
+    #my-extension-defaultroot .upload_bx input,
+    .trail_create_modal .upload_bx input,
+    .trail_tooltip .upload_bx input {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+        opacity: 0 !important;
+        animation: none !important;
+        -webkit-animation: none !important;
+    }
+    
+    #my-extension-defaultroot .ant-upload *,
+    .trail_tooltip .ant-upload * {
+        text-align: center !important;
+    }
+
+    .trial_spinner .ellipse,
+    #my-extension-defaultroot .sidepopup.open .trial_spinner .ellipse {
+        width: 100%;
+        height: 100%;
+        background-color: #fb542b;
+        border-radius: 50%;
+        -webkit-animation: ellipse-animation 2.4s cubic-bezier(0, -0.26, 0.32, 1.22)
+            0s infinite !important;
+        animation: ellipse-animation 2.4s cubic-bezier(0, -0.26, 0.32, 1.22) 0s
+            infinite !important;
+        -webkit-transform: rotate(0deg) !important;
+        transform: rotate(0deg) !important;
+        -webkit-animation-delay: 0s;
+        animation-delay: 0s;
+        opacity: 1;
+    }
+
+    .trail_tooltip .popover-body .tr_icon_grp button img,
+    .trail_create_modal .tr_icon_grp button img,
+    #my-extension-defaultroot .drag_icon img {
+        background: transparent;
+    }
+
+    #my-extension-defaultroot .audio_wrap_tooltip {
+        width: 390px;
+    }
+
+    #my-extension-defaultroot .sidepopup.open .drag_icon img {
+        width: 15px !important;
+        height: 15px !important;
+        opacity: 0.3 !important;
+        animation: none !important;
+        color: #aaaaaa !important;
+    }
+
+    #my-extension-defaultroot .sidepopup.open .drag_icon {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        z-index: 2;
+        display: inherit;
+    }
+
+    .sidepopcontent {
+        height: calc(100% - 31px); 
+        overflow: auto;
+        padding-right: 29px;
+    }
+
+    .sidepopcontent .trailButtonsWrapper {
+        display: flex;
+        justify-content: space-around;
+        padding-bottom: 20px;
+    }
+
+    .trail_video_frm {
+        display: block;
+    }
+
+    p.ant-upload-drag-icon {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ant-input,
+    input.ant-input[type="text"],
+    input.ant-input[type="password"],
+    textarea.ant-input {
+        box-sizing: border-box;
+        font-feature-settings: "tnum";
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        height: 32px;
+        min-height: 32px;
+        color: #000000 !important;
+        font-size: 14px;
+        line-height: 1.5;
+        background-color: rgb(255, 255, 255);
+        background-image: none;
+        margin: 0px;
+        font-variant: tabular-nums;
+        list-style: none;
+        padding: 4px 11px;
+        border-radius: 4px;
+        transition: all 0.3s ease 0s;
+        text-align: left;
+    }
+
+    .ant-row.ant-form-item,
+    .upload_bx {
+        display: table;
+        width: 100%;
+    }
+
+    .upload_bx .ant-upload {
+        height: 83px;
+    }
+
+    .tr_side_form {
+        display: table;
+        padding: 10px 0;
+        width: 100%;
+    }
+
+    .trailitStepBox {
+        box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+        border-radius: 7px;
+        background: #fff;
+        margin: 0 0 10px 5px !important;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .trailitStepBox.active {
+        border: 1px solid #000;
+    }
+
+    .trailitStepBox.trailitSubStepBox .trailitStepTitle {
+        max-height: 19px !important;
+        margin: 15px 15px 15px 30px !important;
+        white-space: nowrap;
+    }
+    .trailitStepBox.trailitSubStepBox {
+        align-items: center;
+        width: 80%;
+        margin-left: 20% !important;
+    }
+    
+    .trailitStepBox.trailitSubStepBox button.trailit_dotsButton {
+        margin-right: 10px;
+    }
+
+    #my-extension-defaultroot .drag_icon {
+        opacity: 0.4!important;
+        animation: none!important;
+        cursor: move;
+    }
+
+    .trailitStepTitle {
+        font-family: "Roboto", sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        margin: 25px 15px;
+        line-height: 19px;
+        color: #000000;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-height: 38px !important;
+        word-break: break-all !important;
+    }
+
+    .trailitIconRight {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 5px 10px 10px 0;
+    }
+
+    .trailitIconRight > div {
+        display: inherit;
+    }
+
+    @keyframes opacity2 {
+        0% {
+          opacity: 0;
+        }
+      
+        100% {
+          opacity: 1;
+        }
+    }
+      
+    @-webkit-keyframes opacity2 {
+        0% {
+          opacity: 0;
+        }
+      
+        100% {
+          opacity: 1;
+        }
+    }
+      
+    @-moz-keyframes opacity2 {
+        0% {
+          opacity: 0;
+        }
+      
+        100% {
+          opacity: 1;
+        }
+    }
+`;
+
+export const defaultButtonCss3 = `
+    @keyframes opacity {
+        0% {
+            opacity: 0;
+            top: calc(100% - 93px);
+            left: 50%;
+            width: 0;
+            height: 0;
+        }
+    
+        /* 10% {
+                opacity: 0.8;
+                width: 0;
+                height: 0;
+                top: calc(100% - 93px);
+                left: 50%;
+        } */
+    
+        100% {
+            opacity: 1;
+            width: 340px;
+            height: calc(100% - 80px);
+            top: 0;
+            left: 0;
+        }
+    }
+    
+    @-webkit-keyframes opacity {
+        0% {
+            opacity: 0;
+            top: calc(100% - 93px);
+            left: 50%;
+            width: 0;
+            height: 0;
+        }
+    
+        /* 10% {
+                opacity: 0.8;
+                width: 0;
+                height: 0;
+                top: calc(100% - 93px);
+                left: 50%;
+        } */
+    
+        100% {
+            opacity: 1;
+            width: 340px;
+            height: calc(100% - 80px);
+            top: 0;
+            left: 0;
+        }
+    }
+    
+    @-moz-keyframes opacity {
+        0% {
+            opacity: 0;
+            top: calc(100% - 93px);
+            left: 50%;
+            width: 0;
+            height: 0;
+        }
+    
+        10% {
+            opacity: 0.8;
+            width: 0;
+            height: 0;
+            top: calc(100% - 93px);
+            left: 50%;
+        }
+    
+        100% {
+            opacity: 1;
+            width: 340px;
+            height: calc(100% - 80px);
+            top: 0;
+            left: 0;
+        }
+    }
+
+    .trailit_dotsButton {
+        border: none;
+        background: none;
+        padding: 0;
+        cursor: pointer;
+        line-height: 10px!important;
+    }
+
+    .trailit_dotsMenuList {
+        position: absolute;
+        width: 110px;
+        top: 20px;
+        right: 0;
+        padding: 15px 10px;
+        background: #f2f2f2;
+        border-radius: 7px;
+        box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.2);
+        z-index: 2;
+    }
+        
+    .trailit_dotsMenuList button {
+        border: none;
+        background: none;
+        padding: 0;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 17px;
+        margin-bottom: 13px;
+        width: 100%;
+        text-align: left;
+        z-index: 2;
+    }
+
+    .trailitSubStepBox .trailit_dotsMenuList {
+        top: 40px !important;
+    }
+    
+    button {
+        margin-bottom: 0 !important;
+    }
+`;
