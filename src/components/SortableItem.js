@@ -146,7 +146,7 @@ class SortableItem extends React.Component {
       <div>
         <div
           key={i}
-          // onMouseLeave={ this.onMouseLeave }
+          onMouseLeave={ this.onMouseLeave }
           className={`trailitStepBox ${
             tourStep === i + 1
               ? "active"

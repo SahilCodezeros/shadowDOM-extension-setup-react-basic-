@@ -9,12 +9,345 @@ export const myExtensionRootFlipCss = `
         height: calc(100vh - 170px);
         perspective: 1800px;
     }
+
     .trail_fullscreen #my-extension-root-flip {
         perspective: unset;
     }
+
     #my-extension-root-flip.trail_flip_box {
         width: auto;
         height: auto;
+    }
+
+    .trial_modal_show {
+        z-index: unset !important;  
+    }
+
+    .modal {
+        background-color: transparent !important;
+        overflow-y: hidden;
+    }
+
+    .trial_modal_show .modal {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        z-index: 9999999999 !important;
+        display: none;
+        overflow: hidden;
+        outline: 0 !important;
+        max-width: 500px !important;
+        min-width: 500px !important;
+        transform: translate(-50%, -50%) !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        max-height: 100% !important;
+    }
+
+    .fade.show {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .trial_create_modal_main .modal {
+        height: 326px !important;
+    }
+
+    .trial_modal_show .modal {
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    @media (min-width: 576px) {
+        .trial_modal_show .modal-dialog {
+          max-width: 500px;
+          margin: 0 auto !important;
+        }
+      
+        .trial_modal_show .modal-sm {
+          max-width: 300px;
+        }
+    }
+
+    .trial_modal_show .modal.show .modal-dialog {
+        transition: -webkit-transform 0.3s ease-out;
+        transition: transform 0.3s ease-out;
+        transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
+        -webkit-transform: translate(0, 0) !important;
+        transform: translate(0, 0) !important;
+        position: relative;
+        width: auto;
+        left: 0 !important;
+        padding: 0 !important;
+        margin: 10px;
+    }
+
+    .trial_modal_show .modal.show .modal-dialog, 	
+    .trial_modal_show .modal.show.fade .modal-dialog{	
+        top: 0!important;	
+    }
+
+    .trial_modal_show .modal-content {
+        position: relative !important;
+        display: -ms-flexbox !important;
+        display: flex !important;
+        -ms-flex-direction: column !important;
+        flex-direction: column !important;
+        background-color: #fff !important;
+        background-clip: padding-box !important;
+        border: 1px solid rgba(0, 0, 0, 0.2) !important;
+        border-radius: 0.3rem !important;
+        outline: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    .trial_modal_show .modal .modal-content {
+        height: auto !important;
+        left: 0% !important;
+        position: static !important;
+        top: 0% !important;
+        -webkit-transform: translateY(0%) translateX(0%) !important;
+        transform: translateY(0%) translateX(0%) !important;
+    }
+
+    .trial_create_modal_main .modal .modal-content {
+        border-radius: 10px !important;
+        /* overflow: hidden; */
+    }
+
+    .trial_modal_show .modal-dialog .modal-content .modal-header {	
+        border-radius: 10px !important;	
+    }
+
+    .trail_create_modal .modal-header {
+        padding: 10px 20px !important;
+        background: #fff !important;
+        border: none;
+        box-sizing: border-box;
+        text-transform: unset !important;
+        text-align: left !important;
+    }
+
+    .trial_modal_show .modal-header {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        height: 44px !important;
+        margin: 0 !important;
+    }
+
+    .tr_modal_trail_modal_header h5 {
+        margin: 0 !important;
+        font-weight: 500 !important;
+        font-size: 16px !important;
+        font-weight: 400 !important;
+        margin-bottom: 0 !important;
+        line-height: 1.5 !important;
+        color: #5f5d5d !important;
+        text-transform: unset !important;
+        text-align: left !important;
+        letter-spacing: 0 !important;
+        font-family: "Lato", sans-serif !important;
+    }
+
+    .trial_modal_show .modal-dialog .modal-content .modal-body {	
+        border: none !important;	
+    }
+
+    .trail_create_modal .modal-body {
+        padding: 0 20px 15px !important;
+    }
+
+    .trial_modal_show .modal-body {
+        position: relative;
+        -ms-flex: 1 1 auto;
+        flex: 1 1 auto;
+        padding: 15px;
+        margin: 0 !important;
+    }
+
+    .trailit_DeleteText {
+        all: unset !important;
+        font-weight: 500 !important;
+        font-size: 18px !important;
+        line-height: 29px !important;
+        color: #000000 !important;
+        font-family: "Lato", sans-serif !important;
+        padding-bottom: 40px !important;
+        display: block !important;
+    }
+
+    .trail_create_modal p {
+        margin: 0 !important;
+    }
+
+    .trail_create_modal .trailButtonsWrapper {
+        text-align: right;
+        display: flex;
+        justify-content: flex-end;
+        flex-direction: row;
+        position: unset;
+    }
+
+    .tr_modal .trailButtonsWrapper {
+        text-align: right;
+        padding: 0;
+    }
+
+    .tr_modal .ant-btn.ant-btn-primary {
+        background: #fb542b !important;
+        color: #ffffff;
+        border: 1px solid #fb542b !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        width: auto !important;
+        border-radius: 3px !important;
+        min-width: 82px !important;
+        font-size: 12px;
+        font-weight: 400 !important;
+        font-family: "Lato", sans-serif !important;
+        height: 28px;
+        line-height: 28px;
+        text-transform: uppercase;
+        -webkit-text-transform: uppercase;
+        margin-bottom: 0;
+        letter-spacing: 0 !important;
+        padding: 0 6px;
+        text-align: center;
+        min-height: 28px;
+    }
+
+    .tr_modal .ant-btn.ant-btn-primary:hover {
+        background: #ffffff !important;
+        border: 1px solid #fb542b !important;
+        color: #fb542b !important;
+    }
+
+    .trail_create_modal button {
+        margin-left: 10px !important;
+    }
+
+    button:focus {
+        outline: none !important;
+    }
+
+    .trailit_logoLeftBottom {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        width: 100px;
+        z-index: 999999999 !important;
+    }
+
+    .trial_modal_show .modal-dialog-centered {
+        min-height: 100%;
+    }
+
+    .modal-dialog-centered {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-align: center;
+        align-items: center;
+        min-height: calc(100% - 1rem);
+    }
+
+    .trial_modal_show .modal-dialog .modal-header .close,	
+    .trial_modal_show .modal-dialog .modal-header .close:hover,	
+    .trial_modal_show .modal-dialog .modal-header .close:focus,	
+    .trial_modal_show .modal-dialog .modal-header .close:active {	
+        transform: rotate(0)!important;	
+    }	
+
+    .trial_modal_show .close {
+        float: right;
+        font-size: 24px !important;
+        font-weight: 400 !important;
+        line-height: 24px !important;
+        color: #000 !important;
+        text-shadow: 0 1px 0 #fff;
+        opacity: 0.5 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        border: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        -webkit-appearance: none;
+        min-height: 24px !important;
+        width: 24px !important;
+        position: unset !important;
+    }
+
+    .tr_icon_grp {
+        display: flex;
+        justify-content: left;
+        padding-bottom: 10px;
+        position: unset;
+        flex-direction: unset;
+    }
+      
+    .tr_icon_grp button img {
+        margin: 0;
+    }
+
+    .trail_create_modal .tr_icon_grp button.tr_active {
+        filter: grayscale(0);
+    }
+
+    .trail_create_modal .tr_icon_grp button:hover,
+    .trail_create_modal .tr_icon_grp button:focus {
+        background-color: #f2f2f2;
+        border-color: #f2f2f2;
+    }
+
+    .trail_tooltip .popover-body .tr_icon_grp button:disabled {
+        cursor: default !important;
+    }
+
+    .trail_create_modal .tr_icon_grp button {
+        margin-right: 24px;
+    }
+
+    .trail_create_modal .tr_icon_grp button:last-child {
+        margin-right: 0;
+    }
+
+    .trail_create_modal .tr_icon_grp button {
+        border: none;
+        background: #f2f2f2;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-left: 0 !important;
+        display: flex;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        filter: grayscale(1);
+        padding: 0;
+        // margin: 0 0 0 0;
+    }
+
+    .trial_modal_show .modal form {
+        margin-bottom: 0;
+    }
+
+    .ant-row.ant-form-item,
+    .upload_bx {
+        display: table;
+        width: 100%;
+    }
+
+    .trail_tooltip .ant-form-item,
+    .trail_create_modal .ant-form-item {
+        margin-bottom: 5px;
     }
 `;
 

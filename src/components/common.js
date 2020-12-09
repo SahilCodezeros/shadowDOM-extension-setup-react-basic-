@@ -301,8 +301,7 @@ export const commonInitialRenderFunction = (
                         config={editorConfiguration}
                         data={ description }
                         onInit={(event, editor) => {
-                            document
-                                .querySelector(".ck-content")
+                            document.getElementById('extension-div').shadowRoot.querySelector(".ck-content")
                                 .addEventListener("keydown", (e) => {
                                     e.stopPropagation();
                                 });

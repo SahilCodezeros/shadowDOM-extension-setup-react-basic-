@@ -170,9 +170,9 @@ class CreateModalComponent extends React.Component {
         
         const { trailStatus } = this.state;
         
-        if(document.querySelector('#my-extension-root-flip').style.display === "none") {
+        if (document.getElementById('extension-div').shadowRoot.getElementById('my-extension-root-flip').style.display === "none") {
             modalOpen = false;
-        } else if(document.querySelector('#my-extension-root-flip').style.display === "block") {
+        } else if(document.getElementById('extension-div').shadowRoot.getElementById('my-extension-root-flip').style.display === "block") {
             modalOpen = true;
         }
 
@@ -188,18 +188,24 @@ class CreateModalComponent extends React.Component {
         
         return(
             <React.Fragment>
-                <Modal isOpen={modalOpen} toggle={this.onButtonCloseHandler} className="tr_modal trail_create_modal" centered={true}>
-                <ModalHeader className="tr_modal_trail_modal_header" toggle={this.toggle}>Create Modal</ModalHeader>
-                <ModalBody>
-                    { commonTypeSelectonButton(
-                        trailStatus, 
-                        this.onSelectOption, 
-                        tooltipForm, 
-                        fileName,
-                        fileLoading,
-                        tourType
-                    ) }
-                </ModalBody>
+                <Modal 
+                    centered={ true }
+                    isOpen={ modalOpen } 
+                    toggle={ this.onButtonCloseHandler } 
+                    className="tr_modal trail_create_modal" 
+                    container={ [ document.getElementById('extension-div').shadowRoot ] }
+                >
+                    <ModalHeader className="tr_modal_trail_modal_header" toggle={this.toggle}>Create Modal</ModalHeader>
+                    <ModalBody>
+                        { commonTypeSelectonButton(
+                            trailStatus, 
+                            this.onSelectOption, 
+                            tooltipForm, 
+                            fileName,
+                            fileLoading,
+                            tourType
+                        ) }
+                    </ModalBody>
                 </Modal>
             </React.Fragment>
         )

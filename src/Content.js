@@ -5,7 +5,7 @@ import { CloudUploadOutlined } from '@ant-design/icons';
 import unique from 'unique-selector';
 import { arrayMove } from 'react-sortable-hoc';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import _, { functionsIn } from 'lodash';
+import _ from 'lodash';
 import $ from 'jquery';
 
 import { socket } from './common/socket';
@@ -44,17 +44,20 @@ import PreviewModalComponent from './components/previewModalComponent';
 // import './Content.css';
 // import AppStyle from './App.css';
 
-import { 
-    myExtensionRootFlipCss, 
-} from './css/myExtensionRootFlip';
-
 import { mainCss } from './css/main';
 import { mainFlipCss } from './css/mainflip';
 import { 
+	myExtensionRootFlipCss, 
+} from './css/myExtensionRootFlip';
+import { 
 	defaultButtonCss1, 
 	defaultButtonCss2, 
-	defaultButtonCss3 
+	defaultButtonCss3,
+	deleteModalCss
 } from './css/defaultButton';
+import {
+	ckEditor1
+} from './css/ckEditor';
 
 /*global chrome*/
 
@@ -2178,22 +2181,22 @@ class DefaultButton extends React.PureComponent {
 	};
 
 	addTrailitLogo = () => {
-		const body = document.querySelector('body');
+		const extensionDiv = document.getElementById('extension-div').shadowRoot;
 		const image = document.querySelector('.trailit_logoLeftBottom');
 		// <img src={require('/images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/>
-		if (body && !image) {
+		if (extensionDiv && !image) {
 			const element = document.createElement('img');
 			element.src = "https://trailit.co/wp-content/uploads/2020/04/logo.png";
 			element.className = 'trailit_logoLeftBottom';
 			element.alt = 'logo_image_in_preview';
 
 			// Append element in body 
-			body.appendChild(element);
+			extensionDiv.appendChild(element);
 		}
 	};
 
 	removeTrailitLogo = () => {
-		const image = document.querySelector('.trailit_logoLeftBottom');
+		const image = document.getElementById('extension-div').shadowRoot.querySelector('.trailit_logoLeftBottom');
 
 		if (image) {
 			// Remove image from perent node
@@ -2292,10 +2295,12 @@ class DefaultButton extends React.PureComponent {
 		}
 		
 		if (!openSidebar && flipped && defaultComp) {
-			const flipId = document.getElementById('my-extension-root-flip');
+			const flipId = document.getElementById('extension-div').shadowRoot.getElementById('my-extension-root-flip');
+			console.log(flipId);
 			flipId.setAttribute('class', 'trail_flip_box');
+			
 		} else if (openSidebar || !flipped) {
-			const trailFlipBox = document.querySelector('.trail_flip_box');
+			const trailFlipBox = document.getElementById('extension-div').shadowRoot.querySelector('.trail_flip_box');
 			if (trailFlipBox) {
 				trailFlipBox.removeAttribute('class');
 			}
@@ -2329,7 +2334,17 @@ class DefaultButton extends React.PureComponent {
 		// console.log('tourType', tourType);
 		// console.log('tourUrl', tourUrl);
 		$(document).ready(() => {
-			const modalDiv = document.querySelector('.tr_modal');
+			const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
+			
+			// if (modalDiv) {
+			// 	console.log('modalDiv', modalDiv);
+			// 	const modalParents = modalDiv.parentNode.parentNode.parentNode;
+
+			// 	const styleNode = document.createElement('style');
+			// 	styleNode.insertAdjacentHTML('afterbegin', deleteModalCss);
+
+			// 	modalParents.appendChild(styleNode);
+			// }
             
 			if (modalDiv) {
                 if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
@@ -2337,7 +2352,7 @@ class DefaultButton extends React.PureComponent {
                 }
             }
 		});	
-		
+
 		return (
             <>
                 <style>{ defaultButtonCss1 }</style>
@@ -2345,10 +2360,11 @@ class DefaultButton extends React.PureComponent {
 				<style>{ defaultButtonCss3 }</style>
                 <div id="my-extension-defaultroot">
                     {/* Delete modal */}
-                    <Modal 
-                        className="tr_modal trail_create_modal"
+                    <Modal
                         toggle={ this.onDeleteModalClose } 
                         isOpen={ this.state.deleteModal.show } 
+						className="tr_modal trail_create_modal"
+						container={ [ document.getElementById('extension-div').shadowRoot ] }
                     >
                         <ModalHeader className="tr_modal_trail_modal_header" closeButton>Delete Alert
                             {/* <Modal.Title className="w-100 pho_18_600 text-danger text-center">
@@ -2694,10 +2710,10 @@ class DefaultButton extends React.PureComponent {
                         </div> */}
                             <div className="space"></div>
                         </div>
-                        <button className="menu pop" onClick={this.openPopup}>
+                        <button className="menu pop" onClick={ this.openPopup }>
                             <img
                                 alt=""
-                                src={require('./images/imgpsh_fullsize_anim.png')}
+                                src={ require('./images/imgpsh_fullsize_anim.png') }
                             />
                         </button>
                     </div>
@@ -2738,13 +2754,18 @@ if (extensionRoot) {
             app.setAttribute('id', 'my-extension-root-flip');
 
             const style = document.createElement('style');
-            style.textContent = myExtensionRootFlipCss;
+			style.textContent = myExtensionRootFlipCss;
+
+
+			const ckStyle1 = document.createElement('style');
+			ckStyle1.textContent = ckEditor1;
 
             // Append div to shadow DOM
             shadowRoot.appendChild(app);
             // ReactDOM.render(<Test/>, app);
             extensionRoot.shadowRoot.appendChild(app);
-            extensionRoot.shadowRoot.appendChild(style);
+			extensionRoot.shadowRoot.appendChild(style);
+			extensionRoot.shadowRoot.appendChild(ckStyle1);
         }
     }
 }
