@@ -289,6 +289,7 @@ class AudioTour extends React.PureComponent {
         };
         
         const { tourStep } = this.props;
+        console.log('hii');
         
         return (
             // className={`trail_tooltip_done ${tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"}`}

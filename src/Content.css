@@ -3547,3 +3547,8 @@ ul.tr_notification_bx.tr_list {
 .container h2 {
   color: blue;
 }
+
+/* Work around for css in shadow dom
+#extension-div::shadow .container h2 {
+  color: blue;
+} */

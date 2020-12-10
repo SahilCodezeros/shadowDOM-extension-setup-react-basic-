@@ -47,7 +47,9 @@ import PreviewModalComponent from './components/previewModalComponent';
 import { mainCss } from './css/main';
 import { mainFlipCss } from './css/mainflip';
 import { 
-	myExtensionRootFlipCss, 
+	myExtensionRootFlipCss0,
+	myExtensionRootFlipCss1, 
+	myExtensionRootFlipCss2,
 } from './css/myExtensionRootFlip';
 import { 
 	defaultButtonCss1, 
@@ -56,7 +58,12 @@ import {
 	deleteModalCss
 } from './css/defaultButton';
 import {
-	ckEditor1
+	ckEditor1,
+	ckEditor2,
+	ckEditor3,
+	ckEditor4,
+	ckEditor5,
+	ckEditor6
 } from './css/ckEditor';
 
 /*global chrome*/
@@ -1290,7 +1297,7 @@ class DefaultButton extends React.PureComponent {
 						let elementIndex = Array.from(e.target.parentElement.children).indexOf(e.target);
 						
 						$('body').append("<div class='trail_overlay'></div>");
-						let bodyElement = $(unique(getScrollParent(document.querySelector(uniqueTarget)))).scrollHeight;
+						// let bodyElement = $(unique(getScrollParent(document.querySelector(uniqueTarget)))).scrollHeight;
 						$(".trail_overlay").append(`
 							<svg height="100%" width="100%">
 								<polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
@@ -2751,21 +2758,44 @@ if (extensionRoot) {
         if (!app) {
             // Create a div element
             app = document.createElement('div');
-            app.setAttribute('id', 'my-extension-root-flip');
+			app.setAttribute('id', 'my-extension-root-flip');
+			
+			const style0 = document.createElement('style');
+			style0.textContent = myExtensionRootFlipCss0;
 
-            const style = document.createElement('style');
-			style.textContent = myExtensionRootFlipCss;
+            const style1 = document.createElement('style');
+			style1.textContent = myExtensionRootFlipCss1;
 
+			const style2 = document.createElement('style');
+			style2.textContent = myExtensionRootFlipCss2;
 
-			const ckStyle1 = document.createElement('style');
-			ckStyle1.textContent = ckEditor1;
+			// const ckStyle1 = document.createElement('style');
+			// ckStyle1.textContent = ckEditor1;
+
+			// const ckStyle2 = document.createElement('style');
+			// ckStyle2.textContent = ckEditor2;
+			// const ckStyle3 = document.createElement('style');
+			// ckStyle3.textContent = ckEditor3;
+			// const ckStyle4 = document.createElement('style');
+			// ckStyle4.textContent = ckEditor4;
+			// const ckStyle5 = document.createElement('style');
+			// ckStyle5.textContent = ckEditor5;
+			// const ckStyle6 = document.createElement('style');
+			// ckStyle6.textContent = ckEditor6;
 
             // Append div to shadow DOM
             shadowRoot.appendChild(app);
             // ReactDOM.render(<Test/>, app);
-            extensionRoot.shadowRoot.appendChild(app);
-			extensionRoot.shadowRoot.appendChild(style);
-			extensionRoot.shadowRoot.appendChild(ckStyle1);
+			extensionRoot.shadowRoot.appendChild(app);
+			// extensionRoot.shadowRoot.appendChild(style0);
+			extensionRoot.shadowRoot.appendChild(style1);
+			extensionRoot.shadowRoot.appendChild(style2);
+			// extensionRoot.shadowRoot.appendChild(ckStyle1);
+			// extensionRoot.shadowRoot.appendChild(ckStyle2);
+			// extensionRoot.shadowRoot.appendChild(ckStyle3);
+			// extensionRoot.shadowRoot.appendChild(ckStyle4);
+			// extensionRoot.shadowRoot.appendChild(ckStyle5);
+			// extensionRoot.shadowRoot.appendChild(ckStyle6);
         }
     }
 }

@@ -272,7 +272,7 @@ class WebUserTour extends React.Component {
                 }
             }, 1000);
                     
-            let bodyElement = $(unique(getScrollParent(document.querySelector(unqTarget))));
+            // let bodyElement = $(unique(getScrollParent(document.querySelector(unqTarget))));
             $(".trail_overlay").append(`<svg height="100%" width="100%">
                 <polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
                 Sorry, your browser does not support inline SVG.

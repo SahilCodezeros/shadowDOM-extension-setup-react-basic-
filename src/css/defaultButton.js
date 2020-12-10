@@ -284,44 +284,7 @@ export const defaultButtonCss1 = `
         min-height: 25px;
         height: 25px;
     }
-
-    .trail_continue_btn,
-    #my-extension-defaultroot .ant-btn.ant-btn-primary,
-    .trail_tooltip .ant-btn.ant-btn-primary,
-    #my-extension-defaultroot .optionBtn button.ant-btn {
-        background: #fb542b !important;
-        color: #ffffff;
-        border: 1px solid #fb542b !important;
-        box-shadow: none !important;
-        -webkit-box-shadow: none !important;
-        -moz-box-shadow: none !important;
-        width: auto !important;
-        border-radius: 3px !important;
-        min-width: 82px !important;
-        font-size: 12px;
-        font-weight: 400 !important;
-        font-family: "Lato", sans-serif !important;
-        height: 28px;
-        line-height: 28px;
-        text-transform: uppercase;
-        -webkit-text-transform: uppercase;
-        margin-bottom: 0;
-        letter-spacing: 0 !important;
-        padding: 0 6px;
-        text-align: center;
-        min-height: 28px;
-    }
-
-    .trail_continue_btn:hover,
-    #my-extension-defaultroot .ant-btn.ant-btn-primary:hover,
-    .trail_tooltip .ant-btn.ant-btn-primary:hover,
-    .trail_tooltip_done .ant-btn.ant-btn-primary:hover,
-    #my-extension-defaultroot .optionBtn button.ant-btn:hover {
-        background: #ffffff !important;
-        border: 1px solid #fb542b !important;
-        color: #fb542b !important;
-    }
-
+    
     #my-extension-defaultroot .video-wrap_tooltip .title {
         font-size: 40px;
         text-align: center;
@@ -363,8 +326,7 @@ export const defaultButtonCss2 = `
     .trail_tooltip textarea,
     .trailMain input[type="text"],
     .trailMain input[type="password"],
-    .trailMain textarea,
-    .ck-input {
+    .trailMain textarea {
         border: 1px solid #dddddd !important;
         box-shadow: none !important;
         background: #ffffff !important;
@@ -382,28 +344,10 @@ export const defaultButtonCss2 = `
     input.ant-input[type="password"]::-webkit-input-placeholder,
     #my-extension-defaultroot
     input.ant-input[type="text"]::-webkit-input-placeholder,
-    #my-extension-defaultroot textarea.ant-input::-webkit-input-placeholder,
-    .ck-input::-webkit-input-placeholder {
+    #my-extension-defaultroot textarea.ant-input::-webkit-input-placeholder {
         font-size: 14px !important;
         font-family: "Lato", sans-serif !important;
         color: #9b9b9b !important;
-    }
-
-    #my-extension-defaultroot input[type="text"]:focus,
-    #my-extension-defaultroot input[type="password"]:focus,
-    #my-extension-defaultroot textarea:focus,
-    .trail_tooltip input[type="text"].ant-input:focus,
-    .trail_tooltip input[type="password"].ant-input:focus,
-    .trail_tooltip textarea.ant-input:focus,
-    .trailMain input[type="text"]:focus,
-    .trailMain input[type="password"]:focus,
-    .trailMain textarea:focus,
-    #my-extension-defaultroot *:focus {
-        border: 1px solid #fb542b !important;
-        box-shadow: none !important;
-        -webkit-box-shadow: none !important;
-        -moz-box-shadow: none !important;
-        outline: none !important;
     }
 
     #my-extension-defaultroot .sidepopup.open {
@@ -496,23 +440,6 @@ export const defaultButtonCss2 = `
         text-align: center !important;
     }
 
-    .trial_spinner .ellipse,
-    #my-extension-defaultroot .sidepopup.open .trial_spinner .ellipse {
-        width: 100%;
-        height: 100%;
-        background-color: #fb542b;
-        border-radius: 50%;
-        -webkit-animation: ellipse-animation 2.4s cubic-bezier(0, -0.26, 0.32, 1.22)
-            0s infinite !important;
-        animation: ellipse-animation 2.4s cubic-bezier(0, -0.26, 0.32, 1.22) 0s
-            infinite !important;
-        -webkit-transform: rotate(0deg) !important;
-        transform: rotate(0deg) !important;
-        -webkit-animation-delay: 0s;
-        animation-delay: 0s;
-        opacity: 1;
-    }
-
     .trail_tooltip .popover-body .tr_icon_grp button img,
     .trail_create_modal .tr_icon_grp button img,
     #my-extension-defaultroot .drag_icon img {
@@ -591,17 +518,7 @@ export const defaultButtonCss2 = `
         transition: all 0.3s ease 0s;
         text-align: left;
     }
-
-    .ant-row.ant-form-item,
-    .upload_bx {
-        display: table;
-        width: 100%;
-    }
-
-    .upload_bx .ant-upload {
-        height: 83px;
-    }
-
+    
     .tr_side_form {
         display: table;
         padding: 10px 0;
@@ -1005,36 +922,6 @@ export const deleteModalCss = `
     .tr_modal .trailButtonsWrapper {
         text-align: right;
         padding: 0;
-    }
-
-    .tr_modal .ant-btn.ant-btn-primary {
-        background: #fb542b !important;
-        color: #ffffff;
-        border: 1px solid #fb542b !important;
-        box-shadow: none !important;
-        -webkit-box-shadow: none !important;
-        -moz-box-shadow: none !important;
-        width: auto !important;
-        border-radius: 3px !important;
-        min-width: 82px !important;
-        font-size: 12px;
-        font-weight: 400 !important;
-        font-family: "Lato", sans-serif !important;
-        height: 28px;
-        line-height: 28px;
-        text-transform: uppercase;
-        -webkit-text-transform: uppercase;
-        margin-bottom: 0;
-        letter-spacing: 0 !important;
-        padding: 0 6px;
-        text-align: center;
-        min-height: 28px;
-    }
-
-    .tr_modal .ant-btn.ant-btn-primary:hover {
-        background: #ffffff !important;
-        border: 1px solid #fb542b !important;
-        color: #fb542b !important;
     }
 
     .trail_create_modal button {

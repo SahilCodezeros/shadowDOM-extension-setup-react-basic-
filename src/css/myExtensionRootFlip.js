@@ -1,4 +1,7 @@
-export const myExtensionRootFlipCss = `
+export const myExtensionRootFlipCss0 = `
+    import 'antd/dist/antd.css';
+`;
+export const myExtensionRootFlipCss1 = `
     #my-extension-root-flip {
         width: 340px;
         position: fixed;
@@ -101,6 +104,7 @@ export const myExtensionRootFlipCss = `
         border: 1px solid rgba(0, 0, 0, 0.2) !important;
         border-radius: 0.3rem !important;
         outline: 0 !important;
+        width: 99% !important;
         box-shadow: none !important;
         padding: 0 !important;
     }
@@ -199,36 +203,6 @@ export const myExtensionRootFlipCss = `
     .tr_modal .trailButtonsWrapper {
         text-align: right;
         padding: 0;
-    }
-
-    .tr_modal .ant-btn.ant-btn-primary {
-        background: #fb542b !important;
-        color: #ffffff;
-        border: 1px solid #fb542b !important;
-        box-shadow: none !important;
-        -webkit-box-shadow: none !important;
-        -moz-box-shadow: none !important;
-        width: auto !important;
-        border-radius: 3px !important;
-        min-width: 82px !important;
-        font-size: 12px;
-        font-weight: 400 !important;
-        font-family: "Lato", sans-serif !important;
-        height: 28px;
-        line-height: 28px;
-        text-transform: uppercase;
-        -webkit-text-transform: uppercase;
-        margin-bottom: 0;
-        letter-spacing: 0 !important;
-        padding: 0 6px;
-        text-align: center;
-        min-height: 28px;
-    }
-
-    .tr_modal .ant-btn.ant-btn-primary:hover {
-        background: #ffffff !important;
-        border: 1px solid #fb542b !important;
-        color: #fb542b !important;
     }
 
     .trail_create_modal button {
@@ -348,6 +322,259 @@ export const myExtensionRootFlipCss = `
     .trail_tooltip .ant-form-item,
     .trail_create_modal .ant-form-item {
         margin-bottom: 5px;
+    }
+
+
+    #my-extension-defaultroot input[type="text"]:focus,
+    #my-extension-defaultroot input[type="password"]:focus,
+    #my-extension-defaultroot textarea:focus,
+    .trail_tooltip input[type="text"].ant-input:focus,
+    .trail_tooltip input[type="password"].ant-input:focus,
+    .trail_tooltip textarea.ant-input:focus,
+    .trailMain input[type="text"]:focus,
+    .trail_create_modal input[type="text"]:focus,
+    .trailMain input[type="password"]:focus,
+    .trailMain textarea:focus,
+    #my-extension-defaultroot *:focus {
+        border: 1px solid #fb542b !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        outline: none !important;
+    }
+`;
+
+export const myExtensionRootFlipCss2 = `    
+    .trail_tooltip .pl-4,
+    .trail_create_modal .pl-4 {
+        padding: 0 !important;
+    }
+    
+    .popover-body .mb-2,
+    .trail_create_modal .mb-2 {
+        margin-bottom: 5px !important;
+    }
+
+    .trail_tooltip .upload_bx,
+    .trail_create_modal .upload_bx {
+        height: 83px;
+        margin: 0 0 5px;
+    }
+    
+    .trail_tooltip .ant-upload,
+    .trail_create_modal .ant-upload {
+        height: 83px;
+        // box-sizing: border-box;
+    }
+
+    .upload_bx .ant-upload {
+        height: 83px;
+    }
+
+    .upload_bx p.ant-upload-text {
+        margin: 0;
+        line-height: 17px;
+    }
+
+    .trail_tooltip .upload_bx p,
+    .trail_create_modal .upload_bx p {
+        margin: 3px 0 0;
+        padding: 0;
+    }
+    
+    .tr_select_type .upload_bx input {
+        display: block;
+    }
+
+    .trail_continue_btn:hover,
+    .tr_modal .ant-btn.ant-btn-primary:hover,
+    #my-extension-defaultroot .ant-btn.ant-btn-primary:hover,
+    .trail_tooltip .ant-btn.ant-btn-primary:hover,
+    .trail_tooltip_done .ant-btn.ant-btn-primary:hover,
+    #my-extension-defaultroot .optionBtn button.ant-btn:hover {
+        background: #ffffff !important;
+        border: 1px solid #fb542b !important;
+        color: #fb542b !important;
+    }
+
+    .trail_continue_btn,
+    .tr_modal .ant-btn.ant-btn-primary,
+    #my-extension-defaultroot .ant-btn.ant-btn-primary,
+    .trail_tooltip .ant-btn.ant-btn-primary,
+    #my-extension-defaultroot .optionBtn button.ant-btn {
+        background: #fb542b !important;
+        color: #ffffff;
+        border: 1px solid #fb542b !important;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        width: auto !important;
+        border-radius: 3px !important;
+        min-width: 82px !important;
+        font-size: 12px;
+        font-weight: 400 !important;
+        font-family: "Lato", sans-serif !important;
+        height: 28px;
+        line-height: 28px;
+        text-transform: uppercase;
+        -webkit-text-transform: uppercase;
+        margin-bottom: 0;
+        letter-spacing: 0 !important;
+        padding: 0 6px;
+        text-align: center;
+        min-height: 28px;
+    }
+
+    .trial_spinner {
+        position: relative;
+        width: 50px !important;
+        height: 50px !important;
+        display: table !important;
+        margin: 10px auto !important;
+        position: relative;
+    }
+    
+    .trial_spinner img {
+        width: 50px !important;
+        height: 50px !important;
+        background: transparent !important;
+        padding: 0 !important;
+    }
+    
+    .trial_spinner:before,
+    .trial_spinner:after {
+        content: "";
+        display: block;
+    }
+
+    @keyframes ellipse-animation {
+        0% {
+          border-top-left-radius: 50%;
+          border-top-right-radius: 50%;
+          border-bottom-right-radius: 50%;
+          border-bottom-left-radius: 50%;
+        }
+      
+        12.5% {
+          border-top-left-radius: 0;
+          border-top-right-radius: 50%;
+          border-bottom-right-radius: 50%;
+          border-bottom-left-radius: 50%;
+          -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+        }
+      
+        25% {
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 50%;
+          border-bottom-left-radius: 50%;
+          -webkit-transform: rotate(90deg);
+          transform: rotate(90deg);
+        }
+      
+        37.5% {
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 50%;
+          -webkit-transform: rotate(135deg);
+          transform: rotate(135deg);
+        }
+      
+        50% {
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+          -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+        }
+      
+        62.5% {
+          border-top-left-radius: 50%;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+          -webkit-transform: rotate(225deg);
+          transform: rotate(225deg);
+        }
+      
+        75% {
+          border-top-left-radius: 50%;
+          border-top-right-radius: 50%;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+          -webkit-transform: rotate(270deg);
+          transform: rotate(270deg);
+        }
+      
+        87.5% {
+          border-top-left-radius: 50%;
+          border-top-right-radius: 50%;
+          border-bottom-right-radius: 50%;
+          border-bottom-left-radius: 0;
+          -webkit-transform: rotate(315deg);
+          transform: rotate(315deg);
+        }
+      
+        100% {
+          border-top-left-radius: 50%;
+          border-top-right-radius: 50%;
+          border-bottom-right-radius: 50%;
+          border-bottom-left-radius: 50%;
+          -webkit-transform: rotate(360deg);
+          transform: rotate(360deg);
+        }
+    }
+
+    .trial_spinner .ellipse,
+    #my-extension-defaultroot .sidepopup.open .trial_spinner .ellipse {
+        width: 100%;
+        height: 100%;
+        background-color: #fb542b;
+        border-radius: 50%;
+        -webkit-animation: ellipse-animation 2.4s cubic-bezier(0, -0.26, 0.32, 1.22)
+            0s infinite !important;
+        animation: ellipse-animation 2.4s cubic-bezier(0, -0.26, 0.32, 1.22) 0s
+            infinite !important;
+        -webkit-transform: rotate(0deg) !important;
+        transform: rotate(0deg) !important;
+        -webkit-animation-delay: 0s;
+        animation-delay: 0s;
+        opacity: 1;
+    }
+
+    @-webkit-keyframes ring {
+        0% {
+          transform: rotate(0);
+        }
+      
+        100% {
+          transform: rotate(360deg);
+        }
+    }
+
+    .ring1 {
+        position: absolute;
+        opacity: 1 !important;
+        top: 0;
+        left: 0;
+        animation: ring 1s linear infinite !important;
+        -webkit-animation: ring 1s linear infinite !important;
+    }
+    
+    .ring2 {
+        position: absolute;
+        opacity: 1 !important;
+        top: 0;
+        left: 0;
+        animation: ring 1s linear infinite reverse !important;
+        -webkit-animation: ring 1s linear infinite reverse !important;
+    }
+
+    .ant-form-item-explain.ant-form-item-explain-error {
+        color: #ff4d4f;
     }
 `;
 

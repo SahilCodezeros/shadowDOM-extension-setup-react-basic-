@@ -61,11 +61,11 @@ class WebUserTour extends React.Component {
         }
     }
 
-    getDerivedStateFromProps(props, state) {
-        this.setState({
-            tourStep: props.tourStep
-        })
-    }
+    // getDerivedStateFromProps(props, state) {
+    //     this.setState({
+    //         tourStep: props.tourStep
+    //     })
+    // }
 
     /**
      * get currentweb user tour

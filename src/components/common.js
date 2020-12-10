@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input, Button } from "antd";
-import Icon from '@ant-design/icons';
+import { CloudUploadOutlined } from '@ant-design/icons';
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
 import BlockToolbar from "@ckeditor/ckeditor5-ui/src/toolbar/block/blocktoolbar";
@@ -82,6 +82,7 @@ export function urlStingCheck(url, array) {
 //   }
 
 export const getScrollParent = (node) => {
+    console.log('node', node);
     const regex = /(auto|scroll)/;
     const parents = (_node, ps) => {
         if (_node.parentNode === null) {
@@ -203,8 +204,11 @@ export const commonTooltipFormFunction = (
                 <div className="upload_bx">
                     <div className="ant-upload">    
                         <p className="ant-upload-drag-icon">
-                            {fileLoading && <div class="trial_spinner"><img class="ring1" src={require(`../images/loding1.png`)} /><img class="ring2" src={require(`../images/loding2.png`)} /></div>}
-                            {!fileLoading && <Icon type='cloud-upload' />}
+                            {fileLoading && <div class="trial_spinner">
+                                <img class="ring1" src={require(`../images/loding1.png`)} alt="ring1" />
+                                <img class="ring2" src={require(`../images/loding2.png`)} alt="ring2" />
+                            </div>}
+                            {!fileLoading && <CloudUploadOutlined />}
 
                         </p>
                         <p className="ant-upload-text">Upload {trailStatus}</p>
@@ -255,7 +259,7 @@ export const commonInitialRenderFunction = (
         ],
         toolbar: ["bold", "italic", "underline", "link", "specialCharacters"],
         // toolbar: [ 'bold', 'italic', 'underline', 'link', 'specialCharacters', 'fontcolor', 'fontBackgroundColor', 'undo', 'redo' ],
-        placeholder: "Please Enter Description",
+        placeholder: "Enter Description",
         link: {
             decorators: {
                 addTargetToExternalLinks: {
@@ -273,7 +277,9 @@ export const commonInitialRenderFunction = (
     // Select form according button clicked
     if (trailStatus === "text") {
         tooltipForm = (
-            <Form>
+            <Form
+                onFinish={ onClickToSubmit }
+            >
                 <Form.Item
                     name="title"
                     initialValue={ title }
@@ -293,25 +299,56 @@ export const commonInitialRenderFunction = (
                 </Form.Item>
                 <Form.Item
                     name="desctription"
-                    rules={[{ required: true, message: "Enter description!" }]}
+                    rules={[{ required: true, message: "Please Enter description!" }]}
                 >
                     <CKEditor
                         className="ckeditor"
-                        editor={ClassicEditor}
-                        config={editorConfiguration}
+                        editor={ ClassicEditor }
+                        config={ editorConfiguration }
                         data={ description }
                         onInit={(event, editor) => {
-                            document.getElementById('extension-div').shadowRoot.querySelector(".ck-content")
-                                .addEventListener("keydown", (e) => {
-                                    e.stopPropagation();
-                                });
+                            // ClassicEditor
+                            //     .create(document.getElementById('extension-div').shadowRoot.querySelector('.ck-editor'))
+                            //     .then(editor => {
+                            //         console.log( 'Editor was initialized', editor );
+                            //     })
+                            //     .catch(err => {
+                            //         console.log( err );
+                            //     }) 
+                            // ClassicEditor
+                            //     .create( '<p>Hello world!</p>' )
+                            //     .then( editor => {
+                            //         console.log( 'Editor was initialized', editor );
+                                    
+                            //         const element = editor.ui.element;
+                            //         console.log('element', element);
+
+                            //         // Initial data was provided so the editor UI element needs to be added manually to the DOM.
+                            //         document.getElementById('extension-div').shadowRoot.querySelector('.ant-form-item-control-input-content').appendChild(editor.ui.element);
+                            //     } )
+                            //     .catch( err => {
+                            //         console.error( err.stack );
+                            //     } );
+                            console.log('init', event);
+                            console.log('init', editor);
+
+                            // document.getElementById('extension-div').shadowRoot.querySelector(".ck-content")
+                            //     .addEventListener("keydown", (e) => {
+                            //         e.stopPropagation();
+                            //         console.log('e', e);
+                            //     });
                         }}
                         onChange={(event, editor) => {
+                            console.log('event', event);
+                            console.log('onChange', editor);
+
                             let data = editor.getData();
                             
                             if (data.includes('href="') && !data.includes("https://")) {
                                 data = data.replace('href="', 'href="https://');
                             }
+
+                            console.log('data', data);
 
                             // Add description into state
                             onDescriptionChangeHandler(data);
@@ -330,7 +367,7 @@ export const commonInitialRenderFunction = (
                             </Button>
                          } */}
 
-                        <Button type="primary" onClick={ onClickToSubmit }>
+                        <Button type="primary" htmlType="submit">
                             Add Step
                         </Button>
                     </div>
