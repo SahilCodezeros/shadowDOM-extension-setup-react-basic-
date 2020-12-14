@@ -17,9 +17,14 @@ import WebUserTour from './components/webUserTour';
 import { sendTransection } from './code/sendtx';
 import { getScrollParent } from './components/common';
 import TooltipOverlay from './components/tooltipOverlay';
+import MySubscription from './components/mySubscription';
 import { handleFileUpload } from './common/audAndVidCommon';
+import CreateNewTrailModal from './components/CreateNewTrailModal';
+import CreateModalComponent from './components/createModalComponent';
 import { queryParentElement, getUrlVars } from './components/common';
+import PreviewModalComponent from './components/previewModalComponent';
 import SortableItem, { SortableContainer } from './components/SortableItem';
+import { addTrailitLogo, removeTrailitLogo } from './common/trailitLogoInPreview';
 import {
 	getTrails,
 	getTrailId,
@@ -36,11 +41,8 @@ import {
 	getAllNotification,
 	unFollowTrailOfUser,
 } from './common/axios';
-import MySubscription from './components/mySubscription';
-import CreateNewTrailModal from './components/CreateNewTrailModal';
-import CreateModalComponent from './components/createModalComponent';
-import PreviewModalComponent from './components/previewModalComponent';
 
+// import './index.css';
 // import './Content.css';
 // import AppStyle from './App.css';
 
@@ -50,6 +52,7 @@ import {
 	myExtensionRootFlipCss0,
 	myExtensionRootFlipCss1, 
 	myExtensionRootFlipCss2,
+	myExtensionRootFlipCss3
 } from './css/myExtensionRootFlip';
 import { 
 	defaultButtonCss1, 
@@ -1196,12 +1199,12 @@ class DefaultButton extends React.PureComponent {
 				// this.setLoadingState(false);
 
 				// Add trailit logo when trail menu open
-				this.addTrailitLogo();
+				addTrailitLogo();
 
 			} else {
 				if (changes.currentTourType && changes.currentTourType.newValue === '') {
 					// Remove trailit logo function
-					this.removeTrailitLogo();					
+					removeTrailitLogo();					
 				}
 			}
 		});
@@ -2187,29 +2190,29 @@ class DefaultButton extends React.PureComponent {
 		this.setState({rowData: result, tourStep, open: false});
 	};
 
-	addTrailitLogo = () => {
-		const extensionDiv = document.getElementById('extension-div').shadowRoot;
-		const image = document.querySelector('.trailit_logoLeftBottom');
-		// <img src={require('/images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/>
-		if (extensionDiv && !image) {
-			const element = document.createElement('img');
-			element.src = "https://trailit.co/wp-content/uploads/2020/04/logo.png";
-			element.className = 'trailit_logoLeftBottom';
-			element.alt = 'logo_image_in_preview';
+	// addTrailitLogo = () => {
+	// 	const extensionDiv = document.getElementById('extension-div').shadowRoot;
+	// 	const image = extensionDiv.querySelector('.trailit_logoLeftBottom');
+	// 	// <img src={require('/images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/>
+	// 	if (extensionDiv && !image) {
+	// 		const element = document.createElement('img');
+	// 		element.src = "https://trailit.co/wp-content/uploads/2020/04/logo.png";
+	// 		element.className = 'trailit_logoLeftBottom';
+	// 		element.alt = 'logo_image_in_preview';
 
-			// Append element in body 
-			extensionDiv.appendChild(element);
-		}
-	};
+	// 		// Append element in body 
+	// 		extensionDiv.appendChild(element);
+	// 	}
+	// };
 
-	removeTrailitLogo = () => {
-		const image = document.getElementById('extension-div').shadowRoot.querySelector('.trailit_logoLeftBottom');
+	// removeTrailitLogo = () => {
+	// 	const image = document.getElementById('extension-div').shadowRoot.querySelector('.trailit_logoLeftBottom');
 
-		if (image) {
-			// Remove image from perent node
-			image.parentNode.removeChild(image);
-		}
-	};
+	// 	if (image) {
+	// 		// Remove image from perent node
+	// 		image.parentNode.removeChild(image);
+	// 	}
+	// };
 
 	// Send tip function
 	sendTip = async (e, toAddress, amount) => {
@@ -2303,7 +2306,6 @@ class DefaultButton extends React.PureComponent {
 		
 		if (!openSidebar && flipped && defaultComp) {
 			const flipId = document.getElementById('extension-div').shadowRoot.getElementById('my-extension-root-flip');
-			console.log(flipId);
 			flipId.setAttribute('class', 'trail_flip_box');
 			
 		} else if (openSidebar || !flipped) {
@@ -2769,6 +2771,9 @@ if (extensionRoot) {
 			const style2 = document.createElement('style');
 			style2.textContent = myExtensionRootFlipCss2;
 
+			const style3 = document.createElement('style');
+			style3.textContent = myExtensionRootFlipCss3;
+
 			// const ckStyle1 = document.createElement('style');
 			// ckStyle1.textContent = ckEditor1;
 
@@ -2790,6 +2795,7 @@ if (extensionRoot) {
 			// extensionRoot.shadowRoot.appendChild(style0);
 			extensionRoot.shadowRoot.appendChild(style1);
 			extensionRoot.shadowRoot.appendChild(style2);
+			extensionRoot.shadowRoot.appendChild(style3);
 			// extensionRoot.shadowRoot.appendChild(ckStyle1);
 			// extensionRoot.shadowRoot.appendChild(ckStyle2);
 			// extensionRoot.shadowRoot.appendChild(ckStyle3);

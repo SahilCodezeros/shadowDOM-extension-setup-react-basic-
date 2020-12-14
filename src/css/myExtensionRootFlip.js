@@ -576,6 +576,388 @@ export const myExtensionRootFlipCss2 = `
     .ant-form-item-explain.ant-form-item-explain-error {
         color: #ff4d4f;
     }
+
+    // .trail_overlay {
+    //     position: fixed !important;
+    // }
+
+    .trail_overlay_style {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 99999999;
+        position: absolute;
+    }
+
+    .trail_tooltip.fade.show,
+    .trail_tooltip_done.fade.show {
+        opacity: 1 !important;
+    }
+
+    @keyframes zoom {
+        0% {
+          opacity: 0 !important;
+        }
+      
+        100% {
+          opacity: 1 !important;
+        }
+    }
+
+    .trail_tooltip_done .popover {
+        z-index: 9999999999;
+        background: #ffffff !important;
+        border-radius: 5px;
+        padding: 0 !important;
+        display: initial !important;
+        box-shadow: none !important;
+        border: none !important;
+        animation: zoom 0.5s forwards;
+        -webkit-animation: zoom 0.5s forwards;
+        width: 460px !important;
+        max-width: 460px !important;
+        background: transparent !important;
+    }
+
+    .trail_tooltip .bs-popover-auto[x-placement^="bottom"],
+    .trail_tooltip_done .bs-popover-auto[x-placement^="bottom"] {
+        margin: 20px 0 0 !important;
+    }
+
+    .popover.show.bs-popover-auto {
+        height: 102px;
+        border-radius: 5px !important;
+        /* overflow: hidden; */
+    }
+
+    .trail_tooltip_done .popover * {
+        animation: opacity2 0.3s forwards !important;
+        -webkit-animation: opacity2 0.3s forwards !important;
+        animation-delay: 0.5s !important;
+        -webkit-animation-delay: 0.5s !important;
+        opacity: 0;
+    }
+
+    .trail_tooltip .popover-inner,
+    .trail_tooltip_done .popover-inner {
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        box-shadow: none;
+    }
+
+    .trail_tooltip_done .popover-inner {
+        overflow: hidden;
+        border-radius: 10px;
+        background: transparent !important;
+    }
+     
+    .trail_text_only .popover.show.bs-popover-auto .popover-inner {
+        overflow: initial;
+    }
+
+    .trailit_IconRightBottom {
+        position: absolute;
+        bottom: -30px;
+        right: 40px;
+        width: 22px;
+        z-index: 222;
+    }
+
+    @keyframes opacity2 {
+        0% {
+        opacity: 0;
+        }
+    
+        100% {
+        opacity: 1;
+        }
+    }
+    
+    @-webkit-keyframes opacity2 {
+        0% {
+        opacity: 0;
+        }
+    
+        100% {
+        opacity: 1;
+        }
+    }
+    
+    @-moz-keyframes opacity2 {
+        0% {
+        opacity: 0;
+        }
+    
+        100% {
+        opacity: 1;
+        }
+    }
+`;
+
+export const myExtensionRootFlipCss3 = `
+    .trail_continue_btn {
+        position: absolute !important;
+        right: 0;
+        bottom: -10px;
+        box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 4px, rgba(0, 0, 0, 0.28) 0px 4px 8px !important;
+        height: 30px;
+        width: 120px !important;
+    }
+
+    @keyframes opacity {
+        0% {
+            opacity: 0;
+            top: calc(100% - 93px);
+            left: 50%;
+            width: 0;
+            height: 0;
+        }
+
+        /* 10% {
+                opacity: 0.8;
+                width: 0;
+                height: 0;
+                top: calc(100% - 93px);
+                left: 50%;
+        } */
+
+        100% {
+            opacity: 1;
+            width: 340px;
+            height: calc(100% - 80px);
+            top: 0;
+            left: 0;
+        }
+    }
+
+    @-webkit-keyframes opacity {
+        0% {
+            opacity: 0;
+            top: calc(100% - 93px);
+            left: 50%;
+            width: 0;
+            height: 0;
+        }
+
+        /* 10% {
+                opacity: 0.8;
+                width: 0;
+                height: 0;
+                top: calc(100% - 93px);
+                left: 50%;
+        } */
+
+        100% {
+            opacity: 1;
+            width: 340px;
+            height: calc(100% - 80px);
+            top: 0;
+            left: 0;
+        }
+    }
+
+    @-moz-keyframes opacity {
+        0% {
+            opacity: 0;
+            top: calc(100% - 93px);
+            left: 50%;
+            width: 0;
+            height: 0;
+        }
+
+        10% {
+            opacity: 0.8;
+            width: 0;
+            height: 0;
+            top: calc(100% - 93px);
+            left: 50%;
+        }
+
+        100% {
+            opacity: 1;
+            width: 340px;
+            height: calc(100% - 80px);
+            top: 0;
+            left: 0;
+        }
+    }
+
+    .trail_preview_bx,
+    .trail_modal_content_main {
+        max-width: calc(100% - 80px) !important;
+        margin: 0 auto !important;
+        border-radius: 10px !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+
+    .trail_text_only .trail_preview_bx,
+    .trail_modal_content_main {
+        background: #ffffff !important;
+        box-shadow: 0 0 9px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .trail_tooltip_done .popover-header {
+        background: none !important;
+        border-bottom: none !important;
+        padding: 12px 15px 0 !important;
+        font-size: 18px !important;
+        line-height: 20px !important;
+        font-weight: 700 !important;
+        font-family: "Lato", sans-serif !important;
+        margin: 0px !important;
+        color: #333333 !important;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    
+    .trail_tooltip_done .popover-body,
+    .trail_tooltip_done .popover-body a {
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 8px 15px 10px !important;
+        font-family: "Lato", sans-serif !important;
+        font-size: 14px !important;
+        line-height: 20px !important;
+        color: #333333 !important;
+    }
+
+    .trail_tooltip_done .popover-body p {
+        width: auto;
+        font-size: 16px !important;
+        line-height: 20px !important;
+        display: inline-block !important;
+        font-family: "Lato", sans-serif !important;
+    }
+
+    .trail_tooltip_done.tr_audio_only [x-placement="top"] .bottom.popover-header,
+    .trail_tooltip_done.tr_audio_only [x-placement="bottom"] .top.popover-header,
+    .trail_tooltip_done.tr_picture_only [x-placement="top"] .bottom.popover-header,
+    .trail_tooltip_done.tr_picture_only [x-placement="bottom"] .top.popover-header,
+    .trail_tooltip_done .bottom.popover-header {
+        display: none;
+    }
+
+    .trail_tooltip_done .btn-wrap {
+        margin: 0 !important;
+        display: flex !important;
+        margin: 15px 0 10px !important;
+        justify-content: flex-end !important;
+    }
+
+    button.ant-btn.trial_button_close.ant-btn-link {
+        background: rgba(255, 255, 255, 0.6) !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 50% !important;
+        position: absolute !important;
+        top: -10px !important;
+        right: 25px !important;
+        overflow: hidden !important;
+        height: 20px !important;
+        width: 20px !important;
+        min-height: 20px !important;
+        font-size: 13px !important;
+        padding: 0 !important;
+        color: #000 !important;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) !important;
+        z-index: 999999;
+    }
+
+    
+    button.ant-btn.trial_button_close.ant-btn-link i {
+        color: #000;
+        display: flex;
+        align-items: center;
+        width: 20px !important;
+        justify-content: center;
+        height: 20px !important;
+        background: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    button.ant-btn.trial_button_close.ant-btn-link svg {
+        width: 13px !important;
+        height: 13px !important;
+    }
+
+    .trail_tooltip_done button.ant-btn.ant-btn-link.next,
+    .trail_tooltip_done button.ant-btn.ant-btn-link.prev,
+    .trail_preview_modal button.ant-btn.ant-btn-link.next,
+    .trail_preview_modal button.ant-btn.ant-btn-link.prev {
+        top: calc(50% - 14px);
+        position: absolute;
+        margin: 0 !important;
+        width: 30px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        overflow: hidden;
+        border: none !important;
+        min-height: 28px;
+        height: 28px;
+    }
+
+    .trail_tooltip_done button.ant-btn.ant-btn-link.next,
+    .trail_preview_modal button.ant-btn.ant-btn-link.next {
+        right: 0;
+        display: block;
+    }
+
+    .trail_tooltip_done button.next i,
+    .trail_tooltip_done button.prev i {
+        color: #ffff;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        height: 28px;
+        width: 30px;
+        background: linear-gradient(
+            324deg,
+            rgba(230, 16, 0, 1) 0%,
+            rgba(255, 136, 78, 1) 100%
+        ) !important;
+    }
+    
+    .trail_preview_modal button.next i svg,
+    .trail_preview_modal button.prev i svg,
+    .trail_tooltip_done button.next i svg,
+    .trail_tooltip_done button.prev i svg {
+        fill: #ffff !important;
+    }
+    
+    .popover .arrow {
+        position: absolute;
+        display: block;
+        width: 1rem;
+        height: 0.5rem;
+        margin: 0 0.3rem;
+        border: none !important;
+    }
+
+    .bs-popover-bottom > .arrow,
+    .bs-popover-auto[x-placement^="bottom"] > .arrow {
+        top: calc(-0.5rem - 1px);
+        bottom: auto;
+    }
+
+    .bs-popover-bottom > .arrow::before,
+    .bs-popover-auto[x-placement^="bottom"] > .arrow::before {
+        top: 0;
+        border-width: 0 0.5rem 0.5rem 0.5rem;
+        border-bottom-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .bs-popover-bottom > .arrow::after,
+    .bs-popover-auto[x-placement^="bottom"] > .arrow::after {
+        top: 1px;
+        border-bottom-color: #fff;
+        border-width: 0 0.5rem 0.5rem 0.5rem;
+    }
+
+
 `;
 
 export const myExtensionRootCss = `

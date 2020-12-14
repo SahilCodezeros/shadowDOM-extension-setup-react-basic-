@@ -410,9 +410,9 @@ module.exports = function (webpackEnv) {
           use: [
             {
               loader: 'style-loader',
-              options: {
-                injectType: 'singletonStyleTag'
-              }
+              // options: {
+              //   injectType: 'singletonStyleTag'
+              // }
             },
             {
               loader: 'postcss-loader',
