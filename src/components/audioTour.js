@@ -74,13 +74,11 @@ class AudioTour extends React.PureComponent {
         // }
         
         if (document.readyState === 'complete') {            
-            console.log('doc is ready');
             $(document).ready(() => {
                 // Stop playing websites audio or video
                 stopMediaPlaying();
             });
         } else if (document.readyState === 'interactive' && document.URL.includes('https://www.youtube.com/')) {            
-            console.log('doc is loading');
             // document.body.onload = function () {
             //     console.log('body is loaded!!!!');
             //     // Stop playing websites audio or video
@@ -133,7 +131,7 @@ class AudioTour extends React.PureComponent {
         if (this.props.tourStep !== prevProps.tourStep && this.props.data[this.props.tourStep - 1].type === this.state.type) {
             this.setState({ audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url) });
         } else if (this.props.tourStep !== prevProps.tourStep && this.props.data[this.props.tourStep - 1].type !== this.state.type) {
-            const tr_audioplayer = document.querySelector(".tr_audioplayer");
+            const tr_audioplayer = document.getElementById('extension-div').shadowRoot.querySelector(".tr_audioplayer");
             const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
             playBtn.classList.remove("tr_audioplayer-playing"); 
             
@@ -162,21 +160,22 @@ class AudioTour extends React.PureComponent {
             this.cleanup();
         }
         
-        const tr_audioplayer = document.querySelector(".tr_audioplayer");
+        const tr_audioplayer = document.getElementById('extension-div').shadowRoot.querySelector(".tr_audioplayer");
         
         // document.querySelector(".tr_audioplayer-time-current").textContent = this.getTimeCodeFromNum(0);
         audio = this.state.audioUrl;
         
         if (this.state.audioLoad) {
             const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
+            const audioWrapTooltip = document.getElementById('extension-div').shadowRoot.querySelector(".audio_wrap_tooltip");
             if (!this.props.previewInTooltip) {
                 //Make the DIV element draggagle:
-                dragElement(document.querySelector(".audio_wrap_tooltip"));
+                dragElement(audioWrapTooltip);
             }
             
             //credit for song: Adrian kreativaweb@gmail.com
             audio.addEventListener("loadeddata", () => {
-                if((this.props.data[this.props.tourStep - 1].url === document.URL) && document.getElementsByClassName('audio_wrap_tooltip').length > 0) {
+                if((this.props.data[this.props.tourStep - 1].url === document.URL) && document.getElementById('extension-div').shadowRoot.getElementsByClassName('audio_wrap_tooltip').length > 0) {
                         chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
                             
                         if(items.AutoPlayMediaToggle===undefined || items.AutoPlayMediaToggle) {
@@ -289,7 +288,6 @@ class AudioTour extends React.PureComponent {
         };
         
         const { tourStep } = this.props;
-        console.log('hii');
         
         return (
             // className={`trail_tooltip_done ${tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"}`}

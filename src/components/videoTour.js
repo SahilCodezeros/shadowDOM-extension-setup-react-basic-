@@ -3,9 +3,10 @@ import ReactPlayer from 'react-player';
 import $ from 'jquery';
 import Dragabilly from 'draggabilly';
 import { Button } from 'antd';
-import Icon from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 
 import dragElement from '../common/draggable';
+import { videoTourCss1 } from '../css/videoTour';
 import { stopMediaPlaying } from '../common/stopePlayingMedia';
 import { addTrailitLogo, removeTrailitLogo } from '../common/trailitLogoInPreview';
 
@@ -276,29 +277,38 @@ class VideoTour extends React.PureComponent {
         const { tourStep, tourSide, play} = this.props;
         
         return (
-            <div className={ [this.state.fullScreen ? tourSide === 'prev' ? "trail_vC trail_video_overlayPrev trail_tooltip_done" : "trail_vC trail_video_overlayNext trail_tooltip_done" : null].join(' ') }>
-                <div className={ ['video-wrap_tooltip', this.state.fullScreen ? 'video-wrap_tooltip-fullScreen' : 'video-wrap_tooltip-smallScreen'].join(' ') }>
-                    {this.props.data.length > 0 && !this.state.fullScreen && <Button type="link" className="trial_button_close" onClick={ this.props.closeButtonHandler }><Icon type="close" /></Button>}
-                    {/* <p className="title videoShow">Next Learn I will show you</p> */}
-                    <div className={[!this.state.fullScreen ? 'tr_gradient_border' : ''].join(' ')}>
-                        <div className='video-wrap_tooltip-inner'>
-                            <video className="tr_video" id="trail_video" controls allow="autoplay" onPause={this.onClickPauseVideo} onEnded={this.onClickPauseVideo} disablePictureInPicture controlsList="nodownload nofullscreen" >
-                                <source id="sourceVideo" src={this.props.data[this.props.tourStep - 1].web_url} />
-                            </video>
-                            <div className="tr_play_button" onClick={this.onClickToPlayVideo}></div>
+            <>
+                <style>{ videoTourCss1 }</style>
+                <div className={ [this.state.fullScreen ? tourSide === 'prev' ? "trail_vC trail_video_overlayPrev trail_tooltip_done" : "trail_vC trail_video_overlayNext trail_tooltip_done" : null].join(' ') }>
+                    <div className={ ['video-wrap_tooltip', this.state.fullScreen ? 'video-wrap_tooltip-fullScreen' : 'video-wrap_tooltip-smallScreen'].join(' ') }>
+                        {this.props.data.length > 0 && !this.state.fullScreen && <Button type="link" className="trial_button_close" onClick={ this.props.closeButtonHandler }><CloseOutlined /></Button>}
+                        {/* <p className="title videoShow">Next Learn I will show you</p> */}
+                        <div className={[!this.state.fullScreen ? 'tr_gradient_border' : ''].join(' ')}>
+                            <div className='video-wrap_tooltip-inner'>
+                                <video className="tr_video" id="trail_video" controls allow="autoplay" onPause={this.onClickPauseVideo} onEnded={this.onClickPauseVideo} disablePictureInPicture controlsList="nodownload nofullscreen" >
+                                    <source id="sourceVideo" src={this.props.data[this.props.tourStep - 1].web_url} />
+                                </video>
+                                <div className="tr_play_button" onClick={this.onClickToPlayVideo}></div>
+                            </div>
                         </div>
-                    </div>
-                    <div className={ ['btn-wrap', 'videoShow', this.state.fullScreen ? 'videoShow-fullScreen' : 'videoShow-smallScreen'].join(' ') }>                    
-                        {1 < (tourStep) && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => this.onClickToManagePopoverButton(e, tourStep - 1, 'prev')}>Previous</button></React.Fragment>}
-                        {this.props.data.length > tourStep && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => this.onClickToManagePopoverButton(e, tourStep + 1, 'next')}>Next</button></React.Fragment>}
-                        {this.props.data.length === tourStep && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={() => this.onClickToDoneTour(tourStep)}>Done</button></React.Fragment>}
-                    </div>                    
+                        <div className={ ['btn-wrap', 'videoShow', this.state.fullScreen ? 'videoShow-fullScreen' : 'videoShow-smallScreen'].join(' ') }>                    
+                            {1 < (tourStep) && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => this.onClickToManagePopoverButton(e, tourStep - 1, 'prev')}>Previous</button></React.Fragment>}
+                            {this.props.data.length > tourStep && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => this.onClickToManagePopoverButton(e, tourStep + 1, 'next')}>Next</button></React.Fragment>}
+                            {this.props.data.length === tourStep && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={() => this.onClickToDoneTour(tourStep)}>Done</button></React.Fragment>}
+                        </div>                    
 
-                    <a onClick={(e) => this.toggleScreen(e)} id="trail_pip_video_button" className={ ['icon videoShow', this.state.fullScreen ? 'video-icon-fullScreen' : 'video-icon-smallScreen'].join(' ') }><img alt="full-small screen button img" src={ !this.state.fullScreen ? "https://www.materialui.co/materialIcons/navigation/fullscreen_white_36x36.png" : "https://res.cloudinary.com/dlhkpit1h/image/upload/v1578376401/iti33lwa5ued6zunxefv.png" } /></a>
+                        <a 
+                            id="trail_pip_video_button" 
+                            onClick={(e) => this.toggleScreen(e)} 
+                            className={ ['icon videoShow', this.state.fullScreen ? 'video-icon-fullScreen' : 'video-icon-smallScreen'].join(' ') }
+                        >
+                            <img alt="full-small screen button img" src={ !this.state.fullScreen ? "https://www.materialui.co/materialIcons/navigation/fullscreen_white_36x36.png" : "https://res.cloudinary.com/dlhkpit1h/image/upload/v1578376401/iti33lwa5ued6zunxefv.png" } />
+                        </a>
+                    </div>
                 </div>
-            </div>
-        )
-    }
-}
+            </>
+        );
+    };
+};
 
 export default VideoTour;

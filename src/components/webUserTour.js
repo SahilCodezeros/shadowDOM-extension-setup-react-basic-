@@ -1,7 +1,7 @@
 import React from 'react';
 import Tour from "react-user-tour";
 import { Button, notification } from 'antd';
-import { CloseCircleOutlined, LeftCircleOutlined, RightCircleOutlined } from '@ant-design/icons';
+import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import ReactDOM from 'react-dom';
 import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import unique from 'unique-selector';
@@ -469,10 +469,9 @@ class WebUserTour extends React.Component {
                         
                         return (
                             <Popover 
-                                target={ unTarget }     
-                                modifiers={{ arrow: { enabled: true, element: true } }}                           
+                                target={ unTarget }                            
                                 container={ [ document.getElementById('extension-div').shadowRoot ] }
-                                className={`trail_tooltip_done ${mediaTypeStatus && mediaTypeStatus === 'text'?'trail_text_only':'' || mediaTypeStatus && mediaTypeStatus === 'video'?'tr_video_only':'' || mediaTypeStatus && mediaTypeStatus === 'image'?'tr_picture_only':''  || mediaTypeStatus && mediaTypeStatus === 'audio'?'tr_audio_only':''}`} placement="top" isOpen={tourSteps[`step${res.step}`]} 
+                                className={`trail_tooltip_done ${mediaTypeStatus && mediaTypeStatus === 'text' ? 'trail_text_only' : '' || mediaTypeStatus && mediaTypeStatus === 'video' ? 'tr_video_only':'' || mediaTypeStatus && mediaTypeStatus === 'image' ? 'tr_picture_only':''  || mediaTypeStatus && mediaTypeStatus === 'audio' ? 'tr_audio_only' : ''}`} placement="top" isOpen={tourSteps[`step${res.step}`]} 
                             >
                                 {/* <button> */}
                                     <img 
@@ -510,10 +509,10 @@ class WebUserTour extends React.Component {
                                     <PopoverHeader className="bottom">{ res.title }</PopoverHeader>
                                 </div>
                                 <div className="btn-wrap">
-                                    {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseCircleOutlined type="close" /></Button>}
-                                    {1 < (tourStep) && <Button type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep - 1, 'prev')}><LeftCircleOutlined type="left" /></Button>}
-                                    {this.props.data.length > tourStep && <Button type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep + 1, 'next')}><RightCircleOutlined type="right" /></Button>}
-                                    {this.props.data.length === tourStep && <Button type="link" className="next" onClick={() => this.onClickToDoneTour(res, tourStep)}><RightCircleOutlined type="right" /></Button>}
+                                    {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseOutlined type="close" /></Button>}
+                                    {1 < (tourStep) && <Button type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep - 1, 'prev')}><LeftOutlined type="left" /></Button>}
+                                    {this.props.data.length > tourStep && <Button type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep + 1, 'next')}><RightOutlined type="right" /></Button>}
+                                    {this.props.data.length === tourStep && <Button type="link" className="next" onClick={() => this.onClickToDoneTour(res, tourStep)}><RightOutlined type="right" /></Button>}
                                 </div>                                
                             </Popover>
                         )

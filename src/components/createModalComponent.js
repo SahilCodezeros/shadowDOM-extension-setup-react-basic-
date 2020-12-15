@@ -177,7 +177,7 @@ class CreateModalComponent extends React.Component {
         }
 
         $(document).ready(() => {
-            const modalDiv = document.querySelector('.trail_create_modal');
+            const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.trail_create_modal');
             
             if (modalDiv) {
                 if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {

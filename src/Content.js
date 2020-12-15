@@ -52,7 +52,9 @@ import {
 	myExtensionRootFlipCss0,
 	myExtensionRootFlipCss1, 
 	myExtensionRootFlipCss2,
-	myExtensionRootFlipCss3
+	myExtensionRootFlipCss3,
+	myExtensionRootFlipCss4,
+	myExtensionRootFlipCss5
 } from './css/myExtensionRootFlip';
 import { 
 	defaultButtonCss1, 
@@ -2774,6 +2776,12 @@ if (extensionRoot) {
 			const style3 = document.createElement('style');
 			style3.textContent = myExtensionRootFlipCss3;
 
+			const style4 = document.createElement('style');
+			style4.textContent = myExtensionRootFlipCss4;
+
+			const style5 = document.createElement('style');
+			style5.textContent = myExtensionRootFlipCss5;
+
 			// const ckStyle1 = document.createElement('style');
 			// ckStyle1.textContent = ckEditor1;
 
@@ -2796,6 +2804,8 @@ if (extensionRoot) {
 			extensionRoot.shadowRoot.appendChild(style1);
 			extensionRoot.shadowRoot.appendChild(style2);
 			extensionRoot.shadowRoot.appendChild(style3);
+			extensionRoot.shadowRoot.appendChild(style4);
+			extensionRoot.shadowRoot.appendChild(style5);
 			// extensionRoot.shadowRoot.appendChild(ckStyle1);
 			// extensionRoot.shadowRoot.appendChild(ckStyle2);
 			// extensionRoot.shadowRoot.appendChild(ckStyle3);

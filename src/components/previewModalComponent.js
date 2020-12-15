@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Form, Input, Button } from 'antd';
-import Icon from '@ant-design/icons';
+import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import $ from 'jquery';
 
 import AudioTour from './audioTour';
@@ -21,7 +21,6 @@ class PreviewModalComponent extends React.PureComponent {
     }
     
     async componentDidMount() {
-        console.log('componentDidMount');
         if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
             window.location.href = this.props.data[this.props.tourStep - 1].url;
         }
@@ -47,14 +46,13 @@ class PreviewModalComponent extends React.PureComponent {
         // Add modal class to dom
         this.addModalClass();
 
-        if (document.readyState === 'loading') {
-            console.log('state loading');            
-        } else if (document.readyState === 'complete') {
-            console.log('state complete');
-        }
+        // if (document.readyState === 'loading') {
+        //     console.log('state loading');            
+        // } else if (document.readyState === 'complete') {
+        //     console.log('state complete');
+        // }
 
         if (document.readyState === 'complete') {            
-            console.log('doc is ready');
             $(document).ready(() => {
                 // Call toggle website media
                 this.toggleWebSitesMedia();
@@ -65,7 +63,6 @@ class PreviewModalComponent extends React.PureComponent {
                 document.URL.includes('https://www.youtube.com/')                
             ) 
         ) {            
-            console.log('doc is loading');
             // document.body.onload = function () { https://www.dailymotion.com/
             //     console.log('body is loaded!!!!');
             //     // Call toggle website media
@@ -83,7 +80,6 @@ class PreviewModalComponent extends React.PureComponent {
             });
         } else {
             $(window).on('load', () => {
-                console.log('in body onload');
                 // Call toggle website media
                 this.toggleWebSitesMedia();
             });
@@ -100,7 +96,6 @@ class PreviewModalComponent extends React.PureComponent {
     };
 
     componentDidUpdate(prevProps, prevState) {
-        console.log('componentDidUpdate');
         // chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
         //     if(prevState.autoPlay !== items.AutoPlayMediaToggle) {
         //         this.setState({ autoPlay: items.AutoPlayMediaToggle });
@@ -144,9 +139,9 @@ class PreviewModalComponent extends React.PureComponent {
     
     onClickToDoneTour = (data, step) => {
         let { tourSteps } = this.props;
-        this.setState({open: false})
-        if(document.querySelector('#my-extension-root-flip').classList.value ==="") {
-            document.querySelector('#my-extension-root-flip').classList.remove('trail_flip_box');
+        this.setState({ open: false });
+        if(document.getElementById('extension-div').shadowRoot.querySelector('#my-extension-root-flip').classList.value === "") {
+            document.getElementById('extension-div').shadowRoot.querySelector('#my-extension-root-flip').classList.remove('trail_flip_box');
         }
         chrome.storage.local.set({closeContinue: false});
         this.props.toggle({ removePreviewTrails: true });
@@ -154,23 +149,22 @@ class PreviewModalComponent extends React.PureComponent {
     
     onButtonCloseHandler = async (e) => {
         // Call parent component function to close tooltip preview
-        if(document.querySelector('#my-extension-root-flip').classList.value ==="") {
-            document.querySelector('#my-extension-root-flip').classList.remove('trail_flip_box');
+        if(document.getElementById('extension-div').shadowRoot.querySelector('#my-extension-root-flip').classList.value === "") {
+            document.getElementById('extension-div').shadowRoot.querySelector('#my-extension-root-flip').classList.remove('trail_flip_box');
         }
         await this.props.closeButtonHandler(e);
     };
 
     toggle = () => {
-        if(document.querySelector('#my-extension-root-flip').classList.value ==="") {
-            document.querySelector('#my-extension-root-flip').classList.remove('trail_flip_box');
+        if(document.getElementById('extension-div').shadowRoot.querySelector('#my-extension-root-flip').classList.value === "") {
+            document.getElementById('extension-div').shadowRoot.querySelector('#my-extension-root-flip').classList.remove('trail_flip_box');
         }
         this.setState({ open: false });
     };
 
     addModalClass = () => {
-        console.log('in addModalClass');
         $(document).ready(() => {
-            const modalDiv = document.querySelector('.trail_preview_modal');
+            const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.trail_preview_modal');
                 
             if (modalDiv) {
                 if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
@@ -193,7 +187,7 @@ class PreviewModalComponent extends React.PureComponent {
     componentWillUnmount() {
         // Remove trailit log
         removeTrailitLogo();
-    }
+    };
     
     render () {
         const { open } = this.state;
@@ -221,8 +215,14 @@ class PreviewModalComponent extends React.PureComponent {
 
         return(
             <React.Fragment>
-                <Modal isOpen={open} toggle={this.onButtonCloseHandler} className={`tr_modal trail_preview_modal trail_tooltip_done ${this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'text'?'trail_text_only':'' || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'video'?'tr_video_only':'' || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'image'?'tr_picture_only':''  || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'audio'?'tr_audio_only':''}`} centered={true}>
-                    <img 
+                <Modal 
+                    isOpen={ open } 
+                    centered={ true }
+                    toggle={ this.onButtonCloseHandler } 
+                    container={ [ document.getElementById('extension-div').shadowRoot ] }
+                    className={`tr_modal trail_preview_modal trail_tooltip_done ${this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'text'?'trail_text_only':'' || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'video' ? 'tr_video_only' : '' || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'image' ? 'tr_picture_only' : ''  || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'audio' ? 'tr_audio_only' : ''}`} 
+                >
+                    {/* <img 
                         alt=".."
                         className="trailit_IconRightBottom" 
                         src={require(`../images/trailit_icon1.png`)}  
@@ -231,7 +231,7 @@ class PreviewModalComponent extends React.PureComponent {
                             // Call send tip open modal function
                             this.props.onSendTipModalOpen();
                         } }
-                    />
+                    /> */}
                     {/* <ModalHeader toggle={this.toggle}>Create Modal</ModalHeader> */}
                     <ModalBody>
 
@@ -241,7 +241,7 @@ class PreviewModalComponent extends React.PureComponent {
                                 <Button className="ant-btn ant-btn-primary" onClick={this.onAddStep}>Add Step</Button>
                             </div>
                         </div> */}
-                        {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={ this.onButtonCloseHandler }><Icon type="close" /></Button>}
+                        {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseOutlined type="close" /></Button>}
                         <div className="trail_modal_content_main">
                             <div className="trail_modal_title">{title}</div>
                             {<span className="trail_modal_content" dangerouslySetInnerHTML={{ __html: description }}></span>}
@@ -249,15 +249,15 @@ class PreviewModalComponent extends React.PureComponent {
                         </div>
                         
                         <div className="btn-wrap">
-                            {1 < (tourStep) && <Button type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep - 1, 'prev')}><Icon type="left" /></Button>}
-                            {this.props.data.length > tourStep && <Button type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep + 1, 'next')}><Icon type="right" /></Button>}
-                            {this.props.data.length === tourStep && <Button type="link" className="next" onClick={() => this.onClickToDoneTour(this.props.data[tourStep - 1], tourStep)}><Icon type="right" /></Button>}
+                            {1 < (tourStep) && <Button type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep - 1, 'prev')}><LeftOutlined type="left" /></Button>}
+                            {this.props.data.length > tourStep && <Button type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep + 1, 'next')}><RightOutlined type="right" /></Button>}
+                            {this.props.data.length === tourStep && <Button type="link" className="next" onClick={() => this.onClickToDoneTour(this.props.data[tourStep - 1], tourStep)}><RightOutlined type="right" /></Button>}
                         </div>
                     </ModalBody>
                 </Modal>
             </React.Fragment>
-        )
-    }
-}
+        );
+    };
+};
 
 export default PreviewModalComponent;
