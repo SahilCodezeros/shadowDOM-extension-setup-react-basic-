@@ -13,6 +13,9 @@
       "http://*/*",
       "https://*/*"
     ],
+    "css": [
+      "/static/css/content.css"
+    ],
     "js": [
       "/static/js/content.js"
     ],

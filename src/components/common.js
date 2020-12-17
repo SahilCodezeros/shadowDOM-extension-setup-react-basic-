@@ -329,8 +329,6 @@ export const commonInitialRenderFunction = (
                             //     .catch( err => {
                             //         console.error( err.stack );
                             //     } );
-                            console.log('init', event);
-                            console.log('init', editor);
 
                             // document.getElementById('extension-div').shadowRoot.querySelector(".ck-content")
                             //     .addEventListener("keydown", (e) => {
@@ -339,9 +337,6 @@ export const commonInitialRenderFunction = (
                             //     });
                         }}
                         onChange={(event, editor) => {
-                            console.log('event', event);
-                            console.log('onChange', editor);
-
                             let data = editor.getData();
                             
                             if (data.includes('href="') && !data.includes("https://")) {

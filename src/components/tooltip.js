@@ -1,9 +1,6 @@
 import React from 'react';
 import { Popover, PopoverBody } from 'reactstrap';
-import { Form, Input, Button } from 'antd';
-import Icon from '@ant-design/icons';
-
-import { handleFileUpload } from '../common/audAndVidCommon';
+import $ from 'jquery';
 
 import {
     commonTypeSelectonButton, 
@@ -12,20 +9,6 @@ import {
     handleFileChange,
     commonFileUploadFunction
 } from './common';
-
-// import { commonTypeSelectonButton } from './common';
-import $ from 'jquery';
-
-const { TextArea } = Input;
-
-const chrome = window.chrome;
-
-const options = [
-    { value: 'text', label: 'Text' },
-    { value: 'audio', label: 'Audio' },
-    { value: 'video', label: 'Video' },
-    { value: 'image', label: 'Image' },
-];
 
 class Tooltip extends React.PureComponent {
     constructor(props) {
@@ -71,7 +54,7 @@ class Tooltip extends React.PureComponent {
      * on click to save tooltip
     */
     onClickToSubmit = e => {
-        e.preventDefault();
+        // e.preventDefault();
         
         let obj = {};
         const { onCancel, onSave, rowData, target, count } = this.props;
@@ -336,7 +319,13 @@ class Tooltip extends React.PureComponent {
         
         return(
             <React.Fragment>
-                <Popover className="trail_tooltip" placement="top" isOpen={this.state.visible} target={'.trail_tour_tooltip'}>
+                <Popover 
+                    placement="top" 
+                    className="trail_tooltip" 
+                    isOpen={this.state.visible} target={'.trail_tour_tooltip'}
+                    modifiers={ { arrow: '' } }
+                    container={ [ document.getElementById('extension-div').shadowRoot ] }
+                >
                     <PopoverBody>
                         { commonTypeSelectonButton(
                             trailStatus, 

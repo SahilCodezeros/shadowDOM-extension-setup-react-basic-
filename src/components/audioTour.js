@@ -2,9 +2,10 @@ import React from 'react';
 import ReactPlayer from 'react-player';
 import $ from 'jquery';
 import { Button } from 'antd';
-import Icon from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 
 import dragElement from '../common/draggable';
+import { audioTourCss1 } from '../css/audioTour';
 import { stopMediaPlaying } from '../common/stopePlayingMedia';
 import { addTrailitLogo, removeTrailitLogo } from '../common/trailitLogoInPreview';
 
@@ -175,10 +176,10 @@ class AudioTour extends React.PureComponent {
             
             //credit for song: Adrian kreativaweb@gmail.com
             audio.addEventListener("loadeddata", () => {
-                if((this.props.data[this.props.tourStep - 1].url === document.URL) && document.getElementById('extension-div').shadowRoot.getElementsByClassName('audio_wrap_tooltip').length > 0) {
+                if((this.props.data[this.props.tourStep - 1].url === document.URL) && document.getElementById('extension-div').shadowRoot.querySelector('.audio_wrap_tooltip')) {
                         chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
                             
-                        if(items.AutoPlayMediaToggle===undefined || items.AutoPlayMediaToggle) {
+                        if (items.AutoPlayMediaToggle === undefined || items.AutoPlayMediaToggle) {
                                         
                             let audioPromise = audio.play();
                             
@@ -292,6 +293,7 @@ class AudioTour extends React.PureComponent {
         return (
             // className={`trail_tooltip_done ${tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"}`}
             <div>
+                <style>{ audioTourCss1 }</style>
                 <div className="audio_wrap_tooltip">
                     <div className="audio_wrap_tooltip_innr">
                         <div className="trialit_audio tr_gradient_border">
@@ -324,7 +326,7 @@ class AudioTour extends React.PureComponent {
                                 audio.pause();
                                 clearInterval(timeInterval);
                                 this.props.closeButtonHandler(e);
-                            }}><Icon type="close" /></Button>}
+                            }}><CloseOutlined /></Button>}
                             {1 < (tourStep) && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => {
                                 audio.pause();
                                 clearInterval(timeInterval);

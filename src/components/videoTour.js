@@ -24,7 +24,7 @@ class VideoTour extends React.PureComponent {
     };
 
     elementDragging = () => {
-        dragEle = document.querySelector('.video-wrap_tooltip');
+        dragEle = document.getElementById('extension-div').shadowRoot.querySelector('.video-wrap_tooltip');
         draggie = new Dragabilly(dragEle);
     };
     
@@ -32,18 +32,22 @@ class VideoTour extends React.PureComponent {
         //Make the DIV element draggable
         // this.elementDragging();
         this.setState({ loadVideo: true, fullScreen: false, draggable: true });
-        let video = $("#trail_video");
-        $('.tr_play_button').css('display', 'block')
+        let video = document.getElementById('extension-div').shadowRoot.getElementById('trail_video');
+        const playButton = document.getElementById('extension-div').shadowRoot.querySelector('.tr_play_button');
+        playButton.style.display = 'block';
+        // $('.tr_play_button').css('display', 'block');
         chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-            if(items.AutoPlayMediaToggle===undefined || items.AutoPlayMediaToggle) {
-                let playPromise = video[0].play();
-                if (playPromise !== undefined) {
-                    playPromise.then(function() {
-                        $('.tr_play_button').css('display', 'none');
-                    }).catch(function(error) {
-                        $('.tr_play_button').css('display', 'block')
-                    });
-                }
+            if(items.AutoPlayMediaToggle === undefined || items.AutoPlayMediaToggle) {
+                video.play();
+                playButton.style.display = 'none';
+                // let playPromise = video[0].play();
+                // if (playPromise !== undefined) {
+                //     playPromise.then(function() {
+                //         $('.tr_play_button').css('display', 'none');
+                //     }).catch(function(error) {
+                //         $('.tr_play_button').css('display', 'block')
+                //     });
+                // }
             }
         })
         
@@ -83,14 +87,12 @@ class VideoTour extends React.PureComponent {
         // }
 
         if (document.readyState === 'complete') {            
-            console.log('doc is ready');
             $(document).ready(() => {
                 // Stop playing websites audio or video
                 stopMediaPlaying();
             });
 
         } else if (document.readyState === 'interactive' && document.URL.includes('https://www.youtube.com/')) {            
-            console.log('doc is loading');
             // document.body.onload = function () {
             //     console.log('body is loaded!!!!');
             //     // Call toggle website media
@@ -168,12 +170,12 @@ class VideoTour extends React.PureComponent {
     }
     
     static getDerivedStateFromProps(nextProps, prevState){
-        let getVideo = document.getElementById("trail_video");
-        let getSource = document.getElementById("sourceVideo");
+        let getVideo = document.getElementById('extension-div').shadowRoot.getElementById("trail_video");
+        let getSource = document.getElementById('extension-div').shadowRoot.getElementById("sourceVideo");
 
-        if(getVideo!==null && (prevState.webUrl !== nextProps.data[nextProps.tourStep - 1].web_url)) {
+        if(getVideo !== null && (prevState.webUrl !== nextProps.data[nextProps.tourStep - 1].web_url)) {
             getVideo.load();
-            if(getSource!==null) {
+            if(getSource !== null) {
                 getSource.setAttribute("src", nextProps.data[nextProps.tourStep - 1].web_url);
             }
         }
@@ -205,9 +207,10 @@ class VideoTour extends React.PureComponent {
             });
         
         } else {
+            const shadowRootDoc = document.getElementById('extension-div').shadowRoot;
             // Setting top and left for small video screen
-            document.querySelector('.video-wrap_tooltip').style.top = 'calc(100% - 180.344px)';
-            document.querySelector('.video-wrap_tooltip').style.left = 'calc(100% - 430px)';
+            shadowRootDoc.querySelector('.video-wrap_tooltip').style.top = 'calc(100% - 205px)';
+            shadowRootDoc.querySelector('.video-wrap_tooltip').style.left = 'calc(100% - 430px)';
         
             $('body').removeClass("trail_fullscreen")
             
@@ -222,13 +225,21 @@ class VideoTour extends React.PureComponent {
     };
     
     onClickToPlayVideo = () => {
-        var video = $("#trail_video");
-        video[0].play();
-        $('.tr_play_button').css('display', 'none')
+        // var video = document.getElementById('extension-div').shadowRoot.getElementById('trail_video'); 
+        // video[0].play();
+
+        let video = document.getElementById('extension-div').shadowRoot.getElementById('trail_video');
+        video.play();
+
+        const playButton = document.getElementById('extension-div').shadowRoot.querySelector('.tr_play_button');
+        playButton.style.display = 'none';
+        // $('.tr_play_button').css('display', 'none');
     }
 
     onClickPauseVideo = () => {
-        $('.tr_play_button').css('display', 'block')
+        const playButton = document.getElementById('extension-div').shadowRoot.querySelector('.tr_play_button');
+        playButton.style.display = 'block';
+        // $('.tr_play_button').css('display', 'block')
     }
 
     componentWillUnmount() {
@@ -258,7 +269,7 @@ class VideoTour extends React.PureComponent {
             if (!this.state.fullScreen) {
                 // Enable dragging
                 // draggie.enable();
-                dragElement(document.querySelector('.video-wrap_tooltip'));
+                dragElement(document.getElementById('extension-div').shadowRoot.querySelector('.video-wrap_tooltip'));
             } else {
                 // Disable dragging
                 // draggie.disable();
@@ -302,7 +313,7 @@ class VideoTour extends React.PureComponent {
                             onClick={(e) => this.toggleScreen(e)} 
                             className={ ['icon videoShow', this.state.fullScreen ? 'video-icon-fullScreen' : 'video-icon-smallScreen'].join(' ') }
                         >
-                            <img alt="full-small screen button img" src={ !this.state.fullScreen ? "https://www.materialui.co/materialIcons/navigation/fullscreen_white_36x36.png" : "https://res.cloudinary.com/dlhkpit1h/image/upload/v1578376401/iti33lwa5ued6zunxefv.png" } />
+                            <img alt="full-small screen button img" src={ !this.state.fullScreen ? "https://www.materialui.co/materialIcons/navigation/fullscreen_white_36x36.png" : "https://www.materialui.co/materialIcons/navigation/fullscreen_exit_white_48x48.png" } />
                         </a>
                     </div>
                 </div>

@@ -7,9 +7,10 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import unique from 'unique-selector';
 import $ from 'jquery';
 
-import { urlStingCheck, getScrollParent } from './common';
 import AudioTour from './audioTour';
+import { urlStingCheck, getScrollParent } from './common';
 import { stopMediaPlaying } from '../common/stopePlayingMedia';
+import { addOverlay, setOverlayHtml, removeOverlay } from '../common/trailOverlay';
 import { addTrailitLogo, removeTrailitLogo } from '../common/trailitLogoInPreview';
 
 const chrome = window.chrome;
@@ -236,7 +237,7 @@ class WebUserTour extends React.Component {
                 }
 
                 if (document.querySelector(unqTarget) != null) {
-                    countN=0;
+                    countN = 0;
                     clearInt();
                     this.createPopOver(step);
                     this.getWebUserTour(event, data, step);
@@ -251,14 +252,18 @@ class WebUserTour extends React.Component {
         
             // notification.open({ message: 'Plese scroll down the page', placement: 'topLeft', className: 'trail_noti' });
         } else {
-            const shadowRoot = document.getElementById('extension-div').shadowRoot;
+            // const shadowRoot = document.getElementById('extension-div').shadowRoot;
 
-            const trailOverlay = document.createElement('div');
-            trailOverlay.setAttribute('class', 'trail_overlay');
+            // const trailOverlay = document.createElement('div');
+            // trailOverlay.setAttribute('class', 'trail_overlay');
 
             // document.querySelector(activeWeb.uniqueTarget).classList.add(`traiil_stop${step}`);
             document.querySelector(unqTarget).classList.add('trail_web_user_tour');
-            shadowRoot.appendChild(trailOverlay);
+
+            // Call Add overlay function
+            addOverlay();
+            // shadowRoot.appendChild(trailOverlay);
+
             let targetElement = "html, body";
             var docHeight = document.documentElement.scrollHeight;
             let original = document.querySelector(unqTarget);
@@ -270,23 +275,30 @@ class WebUserTour extends React.Component {
             setTimeout(() => {
                 if($(unqTarget).offset() !== undefined) {
                     if(topPosition !== $(unqTarget).offset().top) {
-                        shadowRoot.querySelector('.trail_overlay').remove();
+
+                        // Call remove overlay function
+                        removeOverlay();
+
+                        // shadowRoot.querySelector('.trail_overlay').remove();
                         this.createPopOver(step);
                         this.getWebUserTour(event, data, step);
                     }
                 }
             }, 1000);
-                    
-            // let bodyElement = $(unique(getScrollParent(document.querySelector(unqTarget))));
-            shadowRoot.querySelector('.trail_overlay').innerHTML = `
-                <svg height="100%" width="100%">
-                    <polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
-                    Sorry, your browser does not support inline SVG.
-                </svg>
-            `;
 
-            shadowRoot.querySelector('.trail_overlay').setAttribute('height', docHeight);
-            shadowRoot.querySelector('.trail_overlay').classList.add('trail_overlay_style');
+            // Call set overlay html function
+            setOverlayHtml(window, docHeight, topPosition, bounding, leftPosition, 'webUserTour');
+                    
+            // // let bodyElement = $(unique(getScrollParent(document.querySelector(unqTarget))));
+            // shadowRoot.querySelector('.trail_overlay').innerHTML = `
+            //     <svg height="100%" width="100%">
+            //         <polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
+            //         Sorry, your browser does not support inline SVG.
+            //     </svg>
+            // `;
+
+            // shadowRoot.querySelector('.trail_overlay').setAttribute('height', docHeight);
+            // shadowRoot.querySelector('.trail_overlay').classList.add('trail_overlay_style');
             // .height(docHeight)
             // .css({
             //     'position': 'absolute',
@@ -313,9 +325,9 @@ class WebUserTour extends React.Component {
                 }, 2000);
             })
             
-            shadowRoot.querySelector('.trail_overlay').addEventListener('dblclick', () => {
-                shadowRoot.querySelector('.trail_overlay').style.display = "none";
-            });
+            // shadowRoot.querySelector('.trail_overlay').addEventListener('dblclick', () => {
+            //     shadowRoot.querySelector('.trail_overlay').style.display = "none";
+            // });
 
             let content = this.props.data.map((res, index) => {
                 if (res.url == document.URL) {
@@ -342,7 +354,10 @@ class WebUserTour extends React.Component {
      * @step tooltip current step
     */
     onClickToManagePopoverButton = (event, data, step, tourSide) => {
-        document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay').remove();
+        // Call remove overlay function
+        removeOverlay();
+
+        // document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay').remove();
         $('.trail_web_user_tour').parents().css('z-index', '');
         // $('.trail_web_user_tour').parent().parent().removeAttr('style');
         $('.trail_web_user_tour').removeAttr('trail_web_user_tour');
@@ -392,7 +407,10 @@ class WebUserTour extends React.Component {
         $('.trail_tooltip_done').remove();
         $('.trail_web_user_tour').removeAttr('trail_web_user_tour');
         $(`traiil_stop${tourStep}`).removeAttr(`traiil_stop${tourStep}`);
-        document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay').remove();
+
+        // Call remove overlay function
+        removeOverlay();
+        // document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay').remove();
         
         // $('.trail_web_user_tour').parent().parent().removeAttr('style');
         // if(document.querySelector(this.props.data[step - 1].uniqueTarget)) {

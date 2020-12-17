@@ -803,21 +803,9 @@ export const deleteModalCss = `
         margin: 0 !important;
     }
 
-    .trail_create_modal .trailButtonsWrapper {
-        text-align: right;
-        display: flex;
-        justify-content: flex-end;
-        flex-direction: row;
-        position: unset;
-    }
-
     .tr_modal .trailButtonsWrapper {
         text-align: right;
         padding: 0;
-    }
-
-    .trail_create_modal button {
-        margin-left: 10px !important;
     }
 
     button:focus {

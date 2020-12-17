@@ -24,6 +24,7 @@ import CreateModalComponent from './components/createModalComponent';
 import { queryParentElement, getUrlVars } from './components/common';
 import PreviewModalComponent from './components/previewModalComponent';
 import SortableItem, { SortableContainer } from './components/SortableItem';
+import { addOverlay, setOverlayHtml, removeOverlay } from './common/trailOverlay';
 import { addTrailitLogo, removeTrailitLogo } from './common/trailitLogoInPreview';
 import {
 	getTrails,
@@ -42,11 +43,8 @@ import {
 	unFollowTrailOfUser,
 } from './common/axios';
 
-// import './index.css';
-// import './Content.css';
-// import AppStyle from './App.css';
-
 import { mainCss } from './css/main';
+import { tooltipCss1 } from './css/tooltip';
 import { mainFlipCss } from './css/mainflip';
 import { 
 	myExtensionRootFlipCss0,
@@ -70,6 +68,8 @@ import {
 	ckEditor5,
 	ckEditor6
 } from './css/ckEditor';
+
+import './Content.css';
 
 /*global chrome*/
 
@@ -1251,22 +1251,25 @@ class DefaultButton extends React.PureComponent {
 				}
 			}.bind(this));
 
-			if (this.state.tourStatus === 'continue' && (this.state.tourType === 'tooltip' || (this.state.tourType === 'Make Edit' && !_.isEmpty(this.state.rowData)))) {
-				let parentElement = queryParentElement(e.target, '.sidepanal');
-				let parentElement1 = queryParentElement(e.target, '.trail_tooltip');
-				let getClass = parentElement == null ? "" : parentElement.getAttribute('class');
-				let getClass1 = parentElement1 == null ? "" : parentElement1.getAttribute('class');
-				// let root1 = ReactDOM.findDOMNode(this).parentNode.style.display
-				
-				// if(parentElement == null) {
-				// console.log("parentElement1", parentElement1);
-				// 	if(e.target.getAttribute('class') === 'ant-popover-inner-content') {
-				// 		$(e.target).parent().attr("class", "trail_tooltip")
-				// 	}
-				// }
-
-				if (root1 === 'block' && getClass === "" && getClass1 === "") {
-					e.target.classList.add('trail_select_bx');
+			const trailOverlay = document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay');
+			if (!trailOverlay) {
+				if (this.state.tourStatus === 'continue' && (this.state.tourType === 'tooltip' || (this.state.tourType === 'Make Edit' && !_.isEmpty(this.state.rowData)))) {
+					let parentElement = queryParentElement(e.target, '.sidepanal');
+					let parentElement1 = queryParentElement(e.target, '.trail_tooltip');
+					let getClass = parentElement == null ? "" : parentElement.getAttribute('class');
+					let getClass1 = parentElement1 == null ? "" : parentElement1.getAttribute('class');
+					// let root1 = ReactDOM.findDOMNode(this).parentNode.style.display
+					
+					// if(parentElement == null) {
+					// console.log("parentElement1", parentElement1);
+					// 	if(e.target.getAttribute('class') === 'ant-popover-inner-content') {
+					// 		$(e.target).parent().attr("class", "trail_tooltip")
+					// 	}
+					// }
+	
+					if (root1 === 'block' && getClass === "" && getClass1 === "") {
+						e.target.classList.add('trail_select_bx');
+					}
 				}
 			}
 		});
@@ -1282,9 +1285,14 @@ class DefaultButton extends React.PureComponent {
 					let parentElement1 = queryParentElement(e.target, '.trail_tooltip');
 					let getClass = parentElement == null ? "" : parentElement.getAttribute('class');
 					let getClass1 = parentElement1 == null ? "" : parentElement1.getAttribute('class');
-					let getClass2 = $(".trail_overlay").attr('class');
+					let getClass2;
+
+					const trailOverlay = document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay');
+					if (trailOverlay) {
+						getClass2 = trailOverlay.getAttribute('class');
+					}					
 					// let root1 = ReactDOM.findDOMNode(this).parentNode.style.display;
-					
+
 					if (root1 === 'block' && getClass === "" && getClass1 === "" && getClass2 === undefined) {
 						e.preventDefault();
 						e.stopPropagation();
@@ -1301,25 +1309,33 @@ class DefaultButton extends React.PureComponent {
 						
 						let elementIndex = Array.from(e.target.parentElement.children).indexOf(e.target);
 						
-						$('body').append("<div class='trail_overlay'></div>");
+						// Call add overlay function
+						addOverlay();
+
+						// $('body').append("<div class='trail_overlay'></div>");
 						// let bodyElement = $(unique(getScrollParent(document.querySelector(uniqueTarget)))).scrollHeight;
-						$(".trail_overlay").append(`
-							<svg height="100%" width="100%">
-								<polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
-								Sorry, your browser does not support inline SVG.
-							</svg>`
-						);
+
+						// Call set overlay html function
+						setOverlayHtml(window, docHeight, topPosition, bounding, leftPosition);
+						console.log('docheight', docHeight);
+
+						// $(".trail_overlay").append(`
+						// 	<svg height="100%" width="100%">
+						// 		<polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
+						// 		Sorry, your browser does not support inline SVG.
+						// 	</svg>`
+						// );
 						
-						document.querySelector("body").classList.add('trail_body');
-						$(".trail_overlay")
-							.height(docHeight)
-							.css({
-								'position': 'absolute',
-								'top': 0,
-								'left': 0,
-								'width': '100%',
-								'z-index': 99999999
-							});
+						// document.querySelector("body").classList.add('trail_body');
+						// $(".trail_overlay")
+						// 	.height(docHeight)
+						// 	.css({
+						// 		'position': 'absolute',
+						// 		'top': 0,
+						// 		'left': 0,
+						// 		'width': '100%',
+						// 		'z-index': 99999999
+						// 	});
 							
 						ReactDOM.render(
 							<Tooltip 
@@ -1490,13 +1506,17 @@ class DefaultButton extends React.PureComponent {
 		// trail_user_tooltip1
 		// trail_tooltip
 		// $('.trail_tooltip').remove();
-		$('.trail_overlay').remove();
+
+		// Call remove overlay function
+		removeOverlay();
+
+		// $('.trail_overlay').remove();
 		$(`.trail_user_tooltip`).remove();
 		$(`.trail_tour_ToolTipExtend`).remove();
 		
 		this.props.mainToggle();
 		chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
-		this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, rowData:{} });
+		this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, rowData: {} });
 		this.props.onChangeTourType('');
 	};
 	
@@ -1671,11 +1691,14 @@ class DefaultButton extends React.PureComponent {
 			$('.trail_tooltip_done').remove();
 			$('.trail_web_user_tour').removeAttr('trail_web_user_tour');	
 			$(`traiil_stop${this.state.tourStep}`).removeAttr(`traiil_stop${this.state.tourStep}`);
+
+			// Call remove overlay function
+			removeOverlay();
 			
-			const trailOverlay = document.querySelector('.trail_overlay');
-			if (trailOverlay) {
-				trailOverlay.parentNode.removeChild(trailOverlay);
-			}
+			// const trailOverlay = document.querySelector('.trail_overlay');
+			// if (trailOverlay) {
+			// 	trailOverlay.parentNode.removeChild(trailOverlay);
+			// }
 			// this.props.mainToggle();
 		} catch (err) {
 			console.log(err);
@@ -2048,16 +2071,19 @@ class DefaultButton extends React.PureComponent {
 			$(`traiil_stop${this.state.tourStep}`).removeAttr(`traiil_stop${this.state.tourStep}`);
 			
 
-			const tooltip = document.querySelector('.trail_tooltip');
+			const tooltip = document.getElementById('extension-div').shadowRoot.querySelector('.trail_tooltip');
 			if (tooltip) {
 				// $('.trail_tooltip').remove();
 				tooltip.parentNode.removeChild(tooltip);
 			}
 
-			const trailOverlay = document.querySelector('.trail_overlay');
-			if (trailOverlay) {
-				trailOverlay.parentNode.removeChild(trailOverlay);
-			}
+			// Call remove overlay function
+			removeOverlay();
+
+			// const trailOverlay = document.querySelector('.trail_overlay');
+			// if (trailOverlay) {
+			// 	trailOverlay.parentNode.removeChild(trailOverlay);
+			// }
 			
 			// $('.trail_overlay').remove();
 			// $('.trail_web_user_tour').parent().parent().removeAttr('style');
@@ -2317,12 +2343,12 @@ class DefaultButton extends React.PureComponent {
 			}
 		}
 		
-		if (loading) {
-			ReactDOM.render(
-				<TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />, 
-				document.body.appendChild(document.createElement('div'))
-			);
-		}
+		// if (loading) {
+		// 	ReactDOM.render(
+		// 		<TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />, 
+		// 		document.body.appendChild(document.createElement('div'))
+		// 	);
+		// }
 		
 		if ((
 			currentTourType === 'tooltip' || 
@@ -2782,19 +2808,22 @@ if (extensionRoot) {
 			const style5 = document.createElement('style');
 			style5.textContent = myExtensionRootFlipCss5;
 
-			// const ckStyle1 = document.createElement('style');
-			// ckStyle1.textContent = ckEditor1;
+			const tooltipStyle1 = document.createElement('style');
+			tooltipStyle1.textContent = tooltipCss1;
 
-			// const ckStyle2 = document.createElement('style');
-			// ckStyle2.textContent = ckEditor2;
-			// const ckStyle3 = document.createElement('style');
-			// ckStyle3.textContent = ckEditor3;
-			// const ckStyle4 = document.createElement('style');
-			// ckStyle4.textContent = ckEditor4;
-			// const ckStyle5 = document.createElement('style');
-			// ckStyle5.textContent = ckEditor5;
-			// const ckStyle6 = document.createElement('style');
-			// ckStyle6.textContent = ckEditor6;
+			const ckStyle1 = document.createElement('style');
+			ckStyle1.textContent = ckEditor1;
+
+			const ckStyle2 = document.createElement('style');
+			ckStyle2.textContent = ckEditor2;
+			const ckStyle3 = document.createElement('style');
+			ckStyle3.textContent = ckEditor3;
+			const ckStyle4 = document.createElement('style');
+			ckStyle4.textContent = ckEditor4;
+			const ckStyle5 = document.createElement('style');
+			ckStyle5.textContent = ckEditor5;
+			const ckStyle6 = document.createElement('style');
+			ckStyle6.textContent = ckEditor6;
 
             // Append div to shadow DOM
             shadowRoot.appendChild(app);
@@ -2806,12 +2835,13 @@ if (extensionRoot) {
 			extensionRoot.shadowRoot.appendChild(style3);
 			extensionRoot.shadowRoot.appendChild(style4);
 			extensionRoot.shadowRoot.appendChild(style5);
-			// extensionRoot.shadowRoot.appendChild(ckStyle1);
-			// extensionRoot.shadowRoot.appendChild(ckStyle2);
-			// extensionRoot.shadowRoot.appendChild(ckStyle3);
-			// extensionRoot.shadowRoot.appendChild(ckStyle4);
-			// extensionRoot.shadowRoot.appendChild(ckStyle5);
-			// extensionRoot.shadowRoot.appendChild(ckStyle6);
+			extensionRoot.shadowRoot.appendChild(ckStyle1);
+			extensionRoot.shadowRoot.appendChild(ckStyle2);
+			extensionRoot.shadowRoot.appendChild(ckStyle3);
+			extensionRoot.shadowRoot.appendChild(ckStyle4);
+			extensionRoot.shadowRoot.appendChild(ckStyle5);
+			extensionRoot.shadowRoot.appendChild(ckStyle6);
+			extensionRoot.shadowRoot.appendChild(tooltipStyle1);
         }
     }
 }
