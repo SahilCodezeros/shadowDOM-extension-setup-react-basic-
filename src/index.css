@@ -1716,7 +1716,7 @@ body.trailit_EditTrailShow .trailit_userPanalLeftBox {
   cursor: pointer;
 }
 
-#root .trailit_inputTitle {
+.trailit_inputTitle {
   font-weight: bold !important;
   font-size: 18px !important;
   line-height: 28px !important;
@@ -1728,7 +1728,7 @@ body.trailit_EditTrailShow .trailit_userPanalLeftBox {
   width: 100% !important;
 }
 
-#root .trailit_inputIntro {
+.trailit_inputIntro {
   font-weight: 500 !important;
   font-size: 14px !important;
   line-height: 17px !important;
@@ -1780,7 +1780,7 @@ body.trailit_EditTrailShow .trailit_userPanalLeftBox {
   padding: 0 !important;
 }
 
-#root .trailit_inputHashTags {
+.trailit_inputHashTags {
   background: #ffffff !important;
   border: 1px solid #000000 !important;
   box-sizing: border-box !important;

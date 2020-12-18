@@ -35,6 +35,9 @@ export const removeOverlay = () => {
     // Get shadow root document
     const shadowRoot = document.getElementById('extension-div').shadowRoot;
 
+    const trailOverlay = shadowRoot.querySelector('.trail_overlay');
+    if (!trailOverlay) return;
+
     // Remove trail overlay
-    shadowRoot.querySelector('.trail_overlay').remove();
+    trailOverlay.remove();
 };

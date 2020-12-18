@@ -1,4 +1,5 @@
 import React from "react";
+import _ from 'lodash';
 
 import { socket } from "../common/socket";
 import { handleFileUpload } from "../common/audAndVidCommon";
@@ -124,8 +125,9 @@ class UserProfile extends React.Component {
         getAllNotification(data).then(async (res) => {
           const data = res.data.response;
 
-          if (data.result && data.result.length > 0) {
+          if (data.result && _.isArray(data.result) && data.result.length > 0) {
             let user = await getAllUser();
+            console.log('data', data.result);
 
             let filterdFollowers = data.result.map((el) => {
               for (let i = 0; i < user.data.data.response.length; i++) {

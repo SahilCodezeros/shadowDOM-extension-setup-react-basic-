@@ -1345,6 +1345,10 @@ export const myExtensionRootFlipCss5 = `
         animation: animatedgradient 3s ease alternate infinite;
         background-size: 300% 300%;
     } 
+
+    .trail_tooltip_done.tr_video_only .popover-body {
+        padding: 0 !important;
+    }
 `;
 
 // export const myExtensionRootCss = `
