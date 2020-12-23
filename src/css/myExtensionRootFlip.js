@@ -861,7 +861,7 @@ export const myExtensionRootFlipCss3 = `
     .trail_tooltip_done .btn-wrap {
         margin: 0 !important;
         display: flex !important;
-        margin: 15px 0 10px !important;
+        // margin: 15px 0 10px !important;
         justify-content: flex-end !important;
     }
 
