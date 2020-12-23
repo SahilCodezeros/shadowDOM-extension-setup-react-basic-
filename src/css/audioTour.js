@@ -37,7 +37,7 @@ export const audioTourCss1 = `
         align-items: center;
         justify-content: center;
         padding: 15px;
-        background: #333333;
+        // background: #333333;
     }
 
     .tr_audioplayer {

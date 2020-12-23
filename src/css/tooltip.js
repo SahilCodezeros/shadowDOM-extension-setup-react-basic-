@@ -10,10 +10,10 @@ export const tooltipCss1 = `
     
     .trail_tooltip .popover {
         z-index: 9999999999;
-        background: var(--color-white);
+        background: #ffffff;
         width: 300px !important;
         max-width: 300px !important;
-        height: 297px !important;
+        // height: 297px !important;
         padding: 0 !important;
         display: block !important;
     }
@@ -56,6 +56,4 @@ export const tooltipCss1 = `
         height: 28px;
         padding: 0 12px;
     }
-
-    
 `;

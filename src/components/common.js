@@ -16,7 +16,9 @@ import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials.js";
 import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph.js";
 import SpecialCharacters from "@ckeditor/ckeditor5-special-characters/src/specialcharacters";
 import SpecialCharactersEssentials from "@ckeditor/ckeditor5-special-characters/src/specialcharactersessentials";
+
 import { emojis } from "../common/emojis";
+import TextEditor from '../common/textEditor';
 import { handleFileUpload } from '../common/audAndVidCommon';
 
 export function collectionHas(a, b) {
@@ -279,10 +281,13 @@ export const commonInitialRenderFunction = (
         tooltipForm = (
             <Form
                 onFinish={ onClickToSubmit }
+                initialValues={ {
+                    title,
+                    description
+                } }
             >
                 <Form.Item
                     name="title"
-                    initialValue={ title }
                     rules={[
                         {
                             required: true,
@@ -301,53 +306,8 @@ export const commonInitialRenderFunction = (
                     name="desctription"
                     rules={[{ required: true, message: "Please Enter description!" }]}
                 >
-                    <CKEditor
-                        className="ckeditor"
-                        editor={ ClassicEditor }
-                        config={ editorConfiguration }
-                        data={ description }
-                        onInit={(event, editor) => {
-                            // ClassicEditor
-                            //     .create(document.getElementById('extension-div').shadowRoot.querySelector('.ck-editor'))
-                            //     .then(editor => {
-                            //         console.log( 'Editor was initialized', editor );
-                            //     })
-                            //     .catch(err => {
-                            //         console.log( err );
-                            //     }) 
-                            // ClassicEditor
-                            //     .create( '<p>Hello world!</p>' )
-                            //     .then( editor => {
-                            //         console.log( 'Editor was initialized', editor );
-                                    
-                            //         const element = editor.ui.element;
-                            //         console.log('element', element);
-
-                            //         // Initial data was provided so the editor UI element needs to be added manually to the DOM.
-                            //         document.getElementById('extension-div').shadowRoot.querySelector('.ant-form-item-control-input-content').appendChild(editor.ui.element);
-                            //     } )
-                            //     .catch( err => {
-                            //         console.error( err.stack );
-                            //     } );
-
-                            // document.getElementById('extension-div').shadowRoot.querySelector(".ck-content")
-                            //     .addEventListener("keydown", (e) => {
-                            //         e.stopPropagation();
-                            //         console.log('e', e);
-                            //     });
-                        }}
-                        onChange={(event, editor) => {
-                            let data = editor.getData();
-                            
-                            if (data.includes('href="') && !data.includes("https://")) {
-                                data = data.replace('href="', 'href="https://');
-                            }
-
-                            console.log('data', data);
-
-                            // Add description into state
-                            onDescriptionChangeHandler(data);
-                        }}
+                    <TextEditor 
+                        onChange={ onDescriptionChangeHandler }
                     />
                 </Form.Item>
                 <Form.Item className="m-0">

@@ -13,8 +13,8 @@ import Tooltip from './components/tooltip';
 import VideoTour from './components/videoTour';
 import SendTipForm from './common/SendTipForm';
 import AudioTour from './components/audioTour';
-import WebUserTour from './components/webUserTour';
 import { sendTransection } from './code/sendtx';
+import WebUserTour from './components/webUserTour';
 import { getScrollParent } from './components/common';
 import TooltipOverlay from './components/tooltipOverlay';
 import MySubscription from './components/mySubscription';
@@ -57,68 +57,20 @@ import {
 import { 
 	defaultButtonCss1, 
 	defaultButtonCss2, 
-	defaultButtonCss3,
-	deleteModalCss
+	defaultButtonCss3
 } from './css/defaultButton';
-import {
-	ckEditor1,
-	ckEditor2,
-	ckEditor3,
-	ckEditor4,
-	ckEditor5,
-	ckEditor6
-} from './css/ckEditor';
+// import {
+// 	ckEditor1,
+// 	ckEditor2,
+// 	ckEditor3,
+// 	ckEditor4,
+// 	ckEditor5,
+// 	ckEditor6
+// } from './css/ckEditor';
 
 import './Content.css';
 
 /*global chrome*/
-
-// export class Test extends React.Component {
-    
-//     render() {
-//         console.log('content.js loaded');
-
-//         return (
-//             <div className="container" id="top">
-//                 <h2 className="h2 ff-mp-b c-gradient">
-//                     TESTING Shadow dom 
-//                 </h2>
-//                 <button onClick={ () => console.log('hiii') }>Hiii</button>
-//             </div>
-//         );
-//     };
-// };
-
-// // extension-test(content.js)
-// const extensionTestID = 'extension-div';
-// let extensionTest = document.getElementById(extensionTestID);
-
-// if (!extensionTest) {
-//   extensionTest = document.createElement('div');
-//   extensionTest.setAttribute('id', extensionTestID);
-//   window.document.body.append(extensionTest);
-//   extensionTest.attachShadow({mode: 'open'});
-// }
-
-// // Select our shadow host
-// let extensionRoot = document.getElementById('extension-div');
-// if (extensionRoot) {
-//     // Create the shadow root
-//     const shadowRoot = extensionRoot.shadowRoot;
-
-//     if (shadowRoot) {
-//         let div = shadowRoot.getElementById('extension');
-//         if (!div) {
-//             // Create a div element
-//             div = document.createElement('div');
-//             div.setAttribute('id', 'extension');
-
-//             // Append div to shadow DOM
-//             shadowRoot.appendChild(div);
-//             ReactDOM.render(<Test/>, div);
-//         }
-//     }
-// }
 
 let app
 let trailWebUserTour = [];
@@ -147,7 +99,7 @@ class Main extends React.Component {
 
 	async componentDidMount() {
 		chrome.storage.local.get(['trail_web_user_tour', 'trail_id', 'userData', 'previewUserId', "notification", "saveSort", 'tourStep', 'closeContinue'], async (items) => {
-			this.setState({closeContinue: items.closeContinue===undefined?false:items.closeContinue, currentUserId: items.userData._id});
+			this.setState({closeContinue: items.closeContinue === undefined ? false : items.closeContinue, currentUserId: items.userData._id});
 			
 			socket.on('connect', () => {
 				console.log('Client is connected');
@@ -1883,7 +1835,7 @@ class DefaultButton extends React.PureComponent {
 
 			chrome.storage.local.get(["trail_id"], async function (items) {
 				// Get all trail from database
-				let screen = resizeScreen()?'mobile':'web';
+				let screen = resizeScreen() ? 'mobile' : 'web';
 				const allDataRes = await getUserOneTrail(this.state.currUserId, items.trail_id, screen);
 				const newDataArray = allDataRes.data.response.result.map(el => {
 					return {
@@ -2372,16 +2324,6 @@ class DefaultButton extends React.PureComponent {
 		// console.log('tourUrl', tourUrl);
 		$(document).ready(() => {
 			const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
-			
-			// if (modalDiv) {
-			// 	console.log('modalDiv', modalDiv);
-			// 	const modalParents = modalDiv.parentNode.parentNode.parentNode;
-
-			// 	const styleNode = document.createElement('style');
-			// 	styleNode.insertAdjacentHTML('afterbegin', deleteModalCss);
-
-			// 	modalParents.appendChild(styleNode);
-			// }
             
 			if (modalDiv) {
                 if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
@@ -2811,19 +2753,19 @@ if (extensionRoot) {
 			const tooltipStyle1 = document.createElement('style');
 			tooltipStyle1.textContent = tooltipCss1;
 
-			const ckStyle1 = document.createElement('style');
-			ckStyle1.textContent = ckEditor1;
+			// const ckStyle1 = document.createElement('style');
+			// ckStyle1.textContent = ckEditor1;
 
-			const ckStyle2 = document.createElement('style');
-			ckStyle2.textContent = ckEditor2;
-			const ckStyle3 = document.createElement('style');
-			ckStyle3.textContent = ckEditor3;
-			const ckStyle4 = document.createElement('style');
-			ckStyle4.textContent = ckEditor4;
-			const ckStyle5 = document.createElement('style');
-			ckStyle5.textContent = ckEditor5;
-			const ckStyle6 = document.createElement('style');
-			ckStyle6.textContent = ckEditor6;
+			// const ckStyle2 = document.createElement('style');
+			// ckStyle2.textContent = ckEditor2;
+			// const ckStyle3 = document.createElement('style');
+			// ckStyle3.textContent = ckEditor3;
+			// const ckStyle4 = document.createElement('style');
+			// ckStyle4.textContent = ckEditor4;
+			// const ckStyle5 = document.createElement('style');
+			// ckStyle5.textContent = ckEditor5;
+			// const ckStyle6 = document.createElement('style');
+			// ckStyle6.textContent = ckEditor6;
 
             // Append div to shadow DOM
             shadowRoot.appendChild(app);
@@ -2835,12 +2777,12 @@ if (extensionRoot) {
 			extensionRoot.shadowRoot.appendChild(style3);
 			extensionRoot.shadowRoot.appendChild(style4);
 			extensionRoot.shadowRoot.appendChild(style5);
-			extensionRoot.shadowRoot.appendChild(ckStyle1);
-			extensionRoot.shadowRoot.appendChild(ckStyle2);
-			extensionRoot.shadowRoot.appendChild(ckStyle3);
-			extensionRoot.shadowRoot.appendChild(ckStyle4);
-			extensionRoot.shadowRoot.appendChild(ckStyle5);
-			extensionRoot.shadowRoot.appendChild(ckStyle6);
+			// extensionRoot.shadowRoot.appendChild(ckStyle1);
+			// extensionRoot.shadowRoot.appendChild(ckStyle2);
+			// extensionRoot.shadowRoot.appendChild(ckStyle3);
+			// extensionRoot.shadowRoot.appendChild(ckStyle4);
+			// extensionRoot.shadowRoot.appendChild(ckStyle5);
+			// extensionRoot.shadowRoot.appendChild(ckStyle6);
 			extensionRoot.shadowRoot.appendChild(tooltipStyle1);
         }
     }

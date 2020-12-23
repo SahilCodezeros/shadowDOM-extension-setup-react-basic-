@@ -402,14 +402,14 @@ class WebUserTour extends React.Component {
         
     onClickToDoneTour = (data, step) => {
         let { tourSteps, tourStep } = this.state;
-        $('.trail_web_user_tour').parents().css('z-index', '');
-        $(`.trail_tour_ToolTipExtend`).remove();
-        $('.trail_tooltip_done').remove();
-        $('.trail_web_user_tour').removeAttr('trail_web_user_tour');
-        $(`traiil_stop${tourStep}`).removeAttr(`traiil_stop${tourStep}`);
+        // $('.trail_web_user_tour').parents().css('z-index', '');
+        // $(`.trail_tour_ToolTipExtend`).remove();
+        // $('.trail_tooltip_done').remove();
+        // $('.trail_web_user_tour').removeAttr('trail_web_user_tour');
+        // $(`traiil_stop${tourStep}`).removeAttr(`traiil_stop${tourStep}`);
 
-        // Call remove overlay function
-        removeOverlay();
+        // // Call remove overlay function
+        // removeOverlay();
         // document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay').remove();
         
         // $('.trail_web_user_tour').parent().parent().removeAttr('style');
@@ -422,7 +422,7 @@ class WebUserTour extends React.Component {
         });
         
         this.setState({ tourSteps, tourStep: 1 });
-        chrome.storage.local.set({closeContinue: false});
+        chrome.storage.local.set({ closeContinue: false });
         this.props.toggle({ removePreviewTrails: true });
     };
     
