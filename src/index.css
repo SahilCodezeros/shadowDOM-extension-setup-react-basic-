@@ -1281,18 +1281,20 @@ body {
   word-break: break-all !important;
 }
 
-.trailMain {
-  /* height: 600px; */
+/* .trailMain {
+  height: 600px;
   height: 583px;
+  height: 598px;
   width: 380px;
-}
+} */
 body.trailit_EditTrailShow .trailMain {
   width: 780px;
 }
 
 .trailit_userPanal {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  /* height: 100vh; */
   background: #f2f2f2;
 }
 
@@ -1958,7 +1960,8 @@ button {
 .trailMain {
   width: 380px;
   /* height: 600px; */
-  height: 583px;
+  /* height: 583px; */
+  height: 598px;
 }
 
 .tr_wrapper {

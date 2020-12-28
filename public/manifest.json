@@ -1,8 +1,8 @@
 {
-  "short_name": "Trailit(using shadow DOM)",
-  "name": "Trailit(using shadow DOM)",
+  "short_name": "Trailit",
+  "name": "Trailit",
   "icons": {
-    "128": "./logo192.png"
+    "128": "./images/icon128.png"
   },
   "background": {
     "scripts": ["app/background.js"]

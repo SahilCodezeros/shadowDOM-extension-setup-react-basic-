@@ -7,6 +7,7 @@ import { arrayMove } from 'react-sortable-hoc';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import _ from 'lodash';
 import $ from 'jquery';
+import WebFont from 'webfontloader';
 
 import { socket } from './common/socket';
 import Tooltip from './components/tooltip';
@@ -72,12 +73,18 @@ import './Content.css';
 
 /*global chrome*/
 
+WebFont.load({
+	google: {
+		families: ['Lato', 'Raleway:400,500,700', 'sans-serif']
+	}
+});
+
 let app
-let trailWebUserTour = [];
-let allTrails = [];
-let preventToggle = false;
 let obj = {};
 let root1 = 'none';
+let allTrails = [];
+let trailWebUserTour = [];
+let preventToggle = false;
 
 const resizeScreen = () => {
 	return window.innerWidth <= 760;
@@ -822,7 +829,7 @@ class Main extends React.Component {
                                 
                             </button> */}
                             {resizeScreen() && <button className="blob" onClick={e => this.openMenu('Make Edit')} data-title="Make Edit Trail">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
                                     <g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
                                         <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
                                         <g id="signs" transform="translate(-11683 -4599)">
@@ -831,10 +838,19 @@ class Main extends React.Component {
                                             <path id="Path_3" className="svg_btn2" data-name="Path 3" d="M240.634,138.143a.634.634,0,0,1-.634-.634v-8.875a.634.634,0,1,1,1.268,0v8.875A.634.634,0,0,1,240.634,138.143Zm0,0" transform="translate(-230.491 -122.929)" fill="#fb542b"/>
                                         </g>
                                     </g>
-                                </svg>
+                                </svg> */}
+								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+									<g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
+										<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
+										<g id="edit" transform="translate(-11683.37 -4600.589)">
+											<path id="Path_1" className="svg_btn2" data-name="Path 1" d="M18.7,49.861a.5.5,0,0,0-.5.5v4.481a1.515,1.515,0,0,1-1.514,1.514H2.523a1.515,1.515,0,0,1-1.514-1.514V41.7a1.516,1.516,0,0,1,1.514-1.514H7a.5.5,0,0,0,0-1.009H2.523A2.526,2.526,0,0,0,0,41.7V54.846A2.526,2.526,0,0,0,2.523,57.37h14.16a2.526,2.526,0,0,0,2.523-2.523V50.365a.5.5,0,0,0-.5-.5Zm0,0" transform="translate(0 -36.948)" fill="#fb542b"/>
+											<path id="Path_2" className="svg_btn2" data-name="Path 2" d="M121.737.926a2.271,2.271,0,0,0-3.212,0l-9,9a.5.5,0,0,0-.13.222l-1.184,4.274a.5.5,0,0,0,.621.621l4.274-1.184a.5.5,0,0,0,.222-.13l9-9a2.273,2.273,0,0,0,0-3.212Zm-11.115,9.331,7.369-7.369,2.376,2.376L113,12.634Zm-.475.953,1.9,1.9-2.626.728Zm11.469-7.194-.535.535L118.7,2.175l.535-.535a1.262,1.262,0,0,1,1.784,0l.592.592A1.263,1.263,0,0,1,121.616,4.016Zm0,0" transform="translate(-102.73)" fill="#fb542b"/>
+										</g>
+									</g>
+								</svg>
                             </button>}
                             <button className="blob" onClick={e => this.openMenu('Make Edit')} data-title="Edit Trail">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
                                     <g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
                                         <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
                                         <g id="signs" transform="translate(-11683 -4599)">
@@ -843,7 +859,16 @@ class Main extends React.Component {
                                             <path id="Path_3" className="svg_btn2" data-name="Path 3" d="M240.634,138.143a.634.634,0,0,1-.634-.634v-8.875a.634.634,0,1,1,1.268,0v8.875A.634.634,0,0,1,240.634,138.143Zm0,0" transform="translate(-230.491 -122.929)" fill="#fb542b"/>
                                         </g>
                                     </g>
-                                </svg>
+                                </svg> */}
+								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+									<g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
+										<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
+										<g id="edit" transform="translate(-11683.37 -4600.589)">
+											<path id="Path_1" className="svg_btn2" data-name="Path 1" d="M18.7,49.861a.5.5,0,0,0-.5.5v4.481a1.515,1.515,0,0,1-1.514,1.514H2.523a1.515,1.515,0,0,1-1.514-1.514V41.7a1.516,1.516,0,0,1,1.514-1.514H7a.5.5,0,0,0,0-1.009H2.523A2.526,2.526,0,0,0,0,41.7V54.846A2.526,2.526,0,0,0,2.523,57.37h14.16a2.526,2.526,0,0,0,2.523-2.523V50.365a.5.5,0,0,0-.5-.5Zm0,0" transform="translate(0 -36.948)" fill="#fb542b"/>
+											<path id="Path_2" className="svg_btn2" data-name="Path 2" d="M121.737.926a2.271,2.271,0,0,0-3.212,0l-9,9a.5.5,0,0,0-.13.222l-1.184,4.274a.5.5,0,0,0,.621.621l4.274-1.184a.5.5,0,0,0,.222-.13l9-9a2.273,2.273,0,0,0,0-3.212Zm-11.115,9.331,7.369-7.369,2.376,2.376L113,12.634Zm-.475.953,1.9,1.9-2.626.728Zm11.469-7.194-.535.535L118.7,2.175l.535-.535a1.262,1.262,0,0,1,1.784,0l.592.592A1.263,1.263,0,0,1,121.616,4.016Zm0,0" transform="translate(-102.73)" fill="#fb542b"/>
+										</g>
+									</g>
+								</svg>
                             </button>
                             <button className="blob" onClick={this.copyWebApplink} data-title="Share Trail">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">

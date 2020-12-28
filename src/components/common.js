@@ -1,23 +1,7 @@
 import React from "react";
 import { Form, Input, Button } from "antd";
 import { CloudUploadOutlined } from '@ant-design/icons';
-import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-editor-classic/src/classiceditor";
-import BlockToolbar from "@ckeditor/ckeditor5-ui/src/toolbar/block/blocktoolbar";
-import Autoformat from "@ckeditor/ckeditor5-autoformat/src/autoformat.js";
-import Bold from "@ckeditor/ckeditor5-basic-styles/src/bold.js";
-import Italic from "@ckeditor/ckeditor5-basic-styles/src/italic.js";
-import Underline from "@ckeditor/ckeditor5-basic-styles/src/underline.js";
-import Link from "@ckeditor/ckeditor5-link/src/link.js";
-import FontColor from "@ckeditor/ckeditor5-font/src/fontcolor.js";
-import FontBackgroundColor from "@ckeditor/ckeditor5-font/src/fontbackgroundcolor";
-import RemoveFormat from "@ckeditor/ckeditor5-remove-format/src/removeformat.js";
-import Essentials from "@ckeditor/ckeditor5-essentials/src/essentials.js";
-import Paragraph from "@ckeditor/ckeditor5-paragraph/src/paragraph.js";
-import SpecialCharacters from "@ckeditor/ckeditor5-special-characters/src/specialcharacters";
-import SpecialCharactersEssentials from "@ckeditor/ckeditor5-special-characters/src/specialcharactersessentials";
 
-import { emojis } from "../common/emojis";
 import TextEditor from '../common/textEditor';
 import { handleFileUpload } from '../common/audAndVidCommon';
 
@@ -236,45 +220,6 @@ export const commonInitialRenderFunction = (
     selectedTooltipForm
 ) => {
     let tooltipForm = null;
-
-    // Adding emojis in special characters
-    function SpecialCharactersEmoji(editor) {
-        editor.plugins.get("SpecialCharacters").addItems("Emoji", emojis);
-    }
-    
-    const editorConfiguration = {
-        plugins: [
-            Autoformat,
-            Bold,
-            Italic,
-            Underline,
-            SpecialCharacters,
-            SpecialCharactersEssentials,
-            SpecialCharactersEmoji,
-            FontColor,
-            FontBackgroundColor,
-            RemoveFormat,
-            Link,
-            Essentials,
-            Paragraph,
-            BlockToolbar,
-        ],
-        toolbar: ["bold", "italic", "underline", "link", "specialCharacters"],
-        // toolbar: [ 'bold', 'italic', 'underline', 'link', 'specialCharacters', 'fontcolor', 'fontBackgroundColor', 'undo', 'redo' ],
-        placeholder: "Enter Description",
-        link: {
-            decorators: {
-                addTargetToExternalLinks: {
-                    mode: "automatic",
-                    callback: (url) => true,
-                    attributes: {
-                        target: "_blank",
-                        rel: "noopener noreferrer",
-                    },
-                },
-            },
-        },
-    };
     
     // Select form according button clicked
     if (trailStatus === "text") {
