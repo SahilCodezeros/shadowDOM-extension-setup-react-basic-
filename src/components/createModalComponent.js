@@ -106,11 +106,9 @@ class CreateModalComponent extends React.Component {
 				return response;
 			})
 			.then(res => {
-                console.log('res', res);
 				return res.data;
 			})
 			.then(data => {
-                console.log('data', data);
 				this.setState({ 
                     showPreview: true, 
                     fileLoading: false, 

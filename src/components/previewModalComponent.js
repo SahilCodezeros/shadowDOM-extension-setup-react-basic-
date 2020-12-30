@@ -176,7 +176,6 @@ class PreviewModalComponent extends React.PureComponent {
 
     toggleWebSitesMedia = () => {
         const { tourStep, data } = this.props;
-        console.log('mediaType', data[tourStep - 1].mediaType && data[tourStep - 1].mediaType);
         if (data[tourStep - 1].mediaType && data[tourStep - 1].mediaType === 'video') {
 
             // Stop playing websites audio or video

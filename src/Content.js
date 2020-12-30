@@ -109,7 +109,7 @@ class Main extends React.Component {
 			this.setState({closeContinue: items.closeContinue === undefined ? false : items.closeContinue, currentUserId: items.userData._id});
 			
 			socket.on('connect', () => {
-				console.log('Client is connected');
+				console.info('Client is connected');
 			});
 
 			socket.emit('userId', items.userData._id);
@@ -407,9 +407,7 @@ class Main extends React.Component {
 			this.setState({menuOpen: true});
 		}
 		
-		chrome.storage.local.get(["closeContinue"], async function (items) {
-			// console.log('closeContinuecloseContinue', items.closeContinue)
-			
+		chrome.storage.local.get(["closeContinue"], async function (items) {			
 			this.setState({closeContinue: items.closeContinue===undefined?false:items.closeContinue});
 		}.bind(this))
 		
@@ -1186,21 +1184,7 @@ class DefaultButton extends React.PureComponent {
 					removeTrailitLogo();					
 				}
 			}
-		});
-		
-		// console.log('currentTourType', currentTourType);
-		// console.log('tourType', tourType);
-		// console.log('tourUrl', tourUrl);
-
-		// if ((
-		// 	currentTourType === 'tooltip' || 
-		// 	currentTourType === 'audio' || 
-		// 	currentTourType === 'video' || 
-		// 	currentTourType === 'modal'
-		// 	) && tourType === 'preview' && tourUrl
-		// ) {
-		// 	this.setLoadingState(false);
-		// }
+		});		
 	}
 	
 	onCreateTooltipHandle = () => {
@@ -1235,14 +1219,6 @@ class DefaultButton extends React.PureComponent {
 					let parentElement1 = queryParentElement(e.target, '.trail_tooltip');
 					let getClass = parentElement == null ? "" : parentElement.getAttribute('class');
 					let getClass1 = parentElement1 == null ? "" : parentElement1.getAttribute('class');
-					// let root1 = ReactDOM.findDOMNode(this).parentNode.style.display
-					
-					// if(parentElement == null) {
-					// console.log("parentElement1", parentElement1);
-					// 	if(e.target.getAttribute('class') === 'ant-popover-inner-content') {
-					// 		$(e.target).parent().attr("class", "trail_tooltip")
-					// 	}
-					// }
 	
 					if (root1 === 'block' && getClass === "" && getClass1 === "") {
 						e.target.classList.add('trail_select_bx');
@@ -1294,7 +1270,6 @@ class DefaultButton extends React.PureComponent {
 
 						// Call set overlay html function
 						setOverlayHtml(window, docHeight, topPosition, bounding, leftPosition);
-						console.log('docheight', docHeight);
 
 						// $(".trail_overlay").append(`
 						// 	<svg height="100%" width="100%">
@@ -1397,7 +1372,6 @@ class DefaultButton extends React.PureComponent {
 			}
 			
 			if(items.currentTourType === 'Make Edit' || items.tourType === 'Make Edit') {
-				console.log("tourType", items.currentTourType, items.tourType);
 				this.setState({ open: true });
 			}
 			
@@ -1502,7 +1476,6 @@ class DefaultButton extends React.PureComponent {
 	*/
 	onUpdateTrail = async (data) => {
 		let res = await UpdateTrailData(data);
-		console.log("res", res);
 		if(res.status === 200) {
 			let resultData = res.data.response[0];
 			resultData.uniqueTarget = resultData.unique_target
@@ -1618,7 +1591,6 @@ class DefaultButton extends React.PureComponent {
 			this.setState({ trailList: trailData, web_url: '', fileAddStatus: false, fileName: '' });
 			chrome.storage.local.set({ trail_web_user_tour: trailData, tourType: '' });
 			
-			console.log('onSaveTrail', obj);
 			// Save trail into database
 			this.publishTrails(obj);
 
@@ -1818,7 +1790,6 @@ class DefaultButton extends React.PureComponent {
 	// Save trails into database
 	publishTrails = async (data) => {
 		try {
-			console.log('publishTrails', data);
 			const res = await uploadTrails(data);
 			this.setState({publishLoader: false})	
 			if (!res.data.response) {
@@ -1980,7 +1951,7 @@ class DefaultButton extends React.PureComponent {
 		followTrails(followData)
 			.then(res => {
 				if (res.data.response && res.data.response.statusCode !== '201') {
-					console.log('Error while following trail');
+					throw new Error('Error while following trail!');
 				}
 				
 				// Set followData into chrome storage
@@ -2004,7 +1975,7 @@ class DefaultButton extends React.PureComponent {
 		unFollowTrailOfUser(followData)
 			.then(res => {
 				if (res.data.response && res.data.response.statusCode !== '200') {
-					console.log('Error while unFollowing trail');
+					throw new Error('Error while unfollowing trail!');
 				}
 				
 				// Set followData into chrome storage
@@ -2168,14 +2139,12 @@ class DefaultButton extends React.PureComponent {
 		const { trailList, tourStep } = this.state;
 
 		if (trailList.length > 0 && trailList.length === tourStep) {
-			console.log("Helllo")
 			// Hide continue button
 			chrome.storage.local.set({ closeContinue: false });
 
 			// Call clear toggle function
 			this.onClearToggle();
 		} else {
-			console.log("Helllo111")
 			// Show continue button
 			chrome.storage.local.set({closeContinue: true});
 			
@@ -2342,11 +2311,7 @@ class DefaultButton extends React.PureComponent {
 			// // Add trailit logo when trail menu open
 			// this.addTrailitLogo();
 		}
-		
-		// console.log('overlay', overlay);
-		// console.log('currentTourType', currentTourType);
-		// console.log('tourType', tourType);
-		// console.log('tourUrl', tourUrl);
+
 		$(document).ready(() => {
 			const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
             

@@ -106,39 +106,6 @@ module.exports = function (webpackEnv) {
           ? { publicPath: '../../' }
           : {},
       },
-      // {
-      //   loader: 'style-loader',
-      //   options: {
-      //     insert: function (element) {            
-      //       const extensionHostID = 'extension-root';
-      //       let extensionHost = document.getElementById(extensionHostID);
-      //       console.log('extensionHost', extensionHost);
-  
-      //       if (!extensionHost) {
-      //         extensionHost = document.createElement('div');
-      //         extensionHost.setAttribute('id', extensionHostID);
-      //         window.document.body.append(extensionHost);
-      //         extensionHost.attachShadow({mode: 'open'});
-      //         // Add style tag to shadow host
-      //         extensionHost.shadowRoot.appendChild(element);
-      //       }
-
-      //       // extension-test(content.js)
-      //       const extensionTestID = 'extension-div';
-      //       let extensionTest = document.getElementById(extensionTestID);
-  
-      //       if (!extensionTest) {
-      //         extensionTest = document.createElement('div');
-      //         extensionTest.setAttribute('id', extensionTestID);
-      //         window.document.body.append(extensionTest);
-      //         extensionTest.attachShadow({ mode: 'open' });
-      //         // Add style tag to shadow host
-      //         extensionTest.shadowRoot.appendChild(element);
-
-      //       }
-      //     },
-      //   },
-      // },
       {
         loader: require.resolve('css-loader'),
         options: cssOptions,

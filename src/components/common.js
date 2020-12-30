@@ -68,7 +68,6 @@ export function urlStingCheck(url, array) {
 //   }
 
 export const getScrollParent = (node) => {
-    console.log('node', node);
     const regex = /(auto|scroll)/;
     const parents = (_node, ps) => {
         if (_node.parentNode === null) {
@@ -248,7 +247,7 @@ export const commonInitialRenderFunction = (
                     />
                 </Form.Item>
                 <Form.Item
-                    name="desctription"
+                    name="description"
                     rules={[{ required: true, message: "Please Enter description!" }]}
                 >
                     <TextEditor 

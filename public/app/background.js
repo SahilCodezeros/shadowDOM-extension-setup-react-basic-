@@ -88,9 +88,7 @@ function onCaptured(imageUri) {
  
     if (message.type === 'chromeModal') {
        chrome.tabs.query({"active":true, "currentWindow":true},function(tabs){
-          console.log(tabs)
           var activeTab = tabs[0];
-          console.log(activeTab)
           chrome.tabs.sendMessage(activeTab.id, {"message":"chrome_modal", status: message.status})
       })
     }

@@ -55,7 +55,6 @@ class App extends React.Component {
 		
 		Object.keys(active).map(res => active[res] = false);
 		active[cmp] = true;
-		// bkg.console.log(active);
 		this.setState({active});
 	}
 	

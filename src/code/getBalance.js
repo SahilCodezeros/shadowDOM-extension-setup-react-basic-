@@ -8,6 +8,6 @@ export async function getBalance() {
   const provider = new nearAPI.providers.JsonRpcProvider(config.nodeUrl);
   const state = await provider.query(`account/${sender}`, '');
   // console.log(`Account ID: ${sender}`);
-  console.log(`Balance: ${nearAPI.utils.format.formatNearAmount(state.amount, 4)}`);
+  // console.log(`Balance: ${nearAPI.utils.format.formatNearAmount(state.amount, 4)}`);
   return nearAPI.utils.format.formatNearAmount(state.amount, 4);
 }

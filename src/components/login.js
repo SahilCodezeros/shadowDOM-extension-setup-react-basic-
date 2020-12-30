@@ -29,12 +29,8 @@ class Login extends React.Component {
 
 	// On click to submit function
 	onClickToSubmit = values => {
-		console.log('hiii', values);
-
 		axios.post(`${process.env.REACT_APP_MS1_URL}user/login`, values, { withCredentials: true })
 			.then((res, err) => {
-				console.log('res', res);
-				console.log('err', err);
 				if (res.status === 200) {
 
 					const { responseCode, responseMessage } = res.data.data.response;

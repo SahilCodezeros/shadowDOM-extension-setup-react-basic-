@@ -56,7 +56,8 @@ export const myExtensionRootFlipCss1 = `
     }
 
     .trial_create_modal_main .modal {
-        height: 326px !important;
+        // height: 326px !important;
+        height: 100%;
     }
 
     .trial_modal_show .modal {

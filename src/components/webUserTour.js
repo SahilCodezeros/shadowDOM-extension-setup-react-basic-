@@ -111,7 +111,6 @@ class WebUserTour extends React.Component {
                     stopMediaPlaying();
                 });
             } else if (document.readyState === 'interactive' && document.URL.includes('https://www.youtube.com/')) {            
-                console.log('doc is loading');
                 // document.body.onload = function () {
                 //     console.log('body is loaded!!!!');
                 //     // Call toggle website media
@@ -151,8 +150,6 @@ class WebUserTour extends React.Component {
     }
 
     addLogo = () => {
-        console.log('addLogo');
-
         // Add trailit logo
         addTrailitLogo();
     };

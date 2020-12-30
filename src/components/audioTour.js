@@ -80,11 +80,6 @@ class AudioTour extends React.PureComponent {
                 stopMediaPlaying();
             });
         } else if (document.readyState === 'interactive' && document.URL.includes('https://www.youtube.com/')) {            
-            // document.body.onload = function () {
-            //     console.log('body is loaded!!!!');
-            //     // Stop playing websites audio or video
-                // stopMediaPlaying();
-            // };
             $(document).ready(() => {
                 // Stop playing websites audio or video
                 stopMediaPlaying();
@@ -229,7 +224,6 @@ class AudioTour extends React.PureComponent {
             
             //toggle between playing and pausing on button click
             playBtn.addEventListener("click", () => {
-                console.log("audio.paused", audio.paused);
                 if (audio.paused) {
                     playBtn.classList.add("tr_audioplayer-playing");
                     chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {

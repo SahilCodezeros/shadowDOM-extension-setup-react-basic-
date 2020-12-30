@@ -63,7 +63,6 @@ class UserProfile extends React.Component {
     // Get NEAR balance of user
     getBalance()
     .then(res => {
-      console.log('res', res);
       this.setState({ nearBalance: res });
     })
     .catch();
@@ -127,7 +126,6 @@ class UserProfile extends React.Component {
 
           if (data.result && _.isArray(data.result) && data.result.length > 0) {
             let user = await getAllUser();
-            console.log('data', data.result);
 
             let filterdFollowers = data.result.map((el) => {
               for (let i = 0; i < user.data.data.response.length; i++) {

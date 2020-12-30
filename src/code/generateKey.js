@@ -6,7 +6,7 @@ const config = require('./config.json');
 const keyPair = KeyPair.fromRandom('ed25519');
 const publicKey = keyPair.getPublicKey().toString();
 
-console.log(`This should be saved to storage: ${keyPair.toString()}`);
+// console.log(`This should be saved to storage: ${keyPair.toString()}`);
 
 export function keyPairGenerate() {
     // const url = new URL(`${config.walletUrl}/login/`);

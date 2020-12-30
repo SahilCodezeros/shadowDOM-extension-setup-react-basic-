@@ -61,7 +61,6 @@ class userProfileAdd extends Component {
                 
                 this.setState({isLoading: false});
                 if(result.status == 200) {
-                    console.log("result.statusaaaaaa", result.data);
                     if(result.data.response.statusCode == 400) {
                         this.setState({errors: {trail_already_exist: result.data.response.result}})
                         setTimeout(() => {
@@ -70,7 +69,6 @@ class userProfileAdd extends Component {
                     } else {
                         this.onClear();
                         this.props.onAddRaw(result.data.response[0]);
-                        console.log("DDDFDFDFSSSSSSSSDSDSDSDSDSDSD");
                         $('body').attr('class', '');
                     }
                 }
