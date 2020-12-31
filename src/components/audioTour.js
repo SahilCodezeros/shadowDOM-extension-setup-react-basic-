@@ -163,8 +163,9 @@ class AudioTour extends React.PureComponent {
         
         if (this.state.audioLoad) {
             const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
-            const audioWrapTooltip = document.getElementById('extension-div').shadowRoot.querySelector(".audio_wrap_tooltip");
             if (!this.props.previewInTooltip) {
+                const audioWrapTooltip = document.getElementById('extension-div').shadowRoot.querySelector(".audio_wrap_tooltip");
+                
                 //Make the DIV element draggagle:
                 dragElement(audioWrapTooltip);
             }

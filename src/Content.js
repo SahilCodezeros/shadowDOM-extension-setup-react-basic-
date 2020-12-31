@@ -1215,7 +1215,8 @@ class DefaultButton extends React.PureComponent {
 			const trailOverlay = document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay');
 			if (!trailOverlay) {
 				if (this.state.tourStatus === 'continue' && (this.state.tourType === 'tooltip' || (this.state.tourType === 'Make Edit' && !_.isEmpty(this.state.rowData)))) {
-					let parentElement = queryParentElement(e.target, '.sidepanal');
+					// let parentElement = queryParentElement(e.target, '.sidepanal');
+					let parentElement = queryParentElement(e.target, '#extension-div');
 					let parentElement1 = queryParentElement(e.target, '.trail_tooltip');
 					let getClass = parentElement == null ? "" : parentElement.getAttribute('class');
 					let getClass1 = parentElement1 == null ? "" : parentElement1.getAttribute('class');
@@ -1234,7 +1235,8 @@ class DefaultButton extends React.PureComponent {
 			
 			if (this.state.tourStatus === 'continue' && (this.state.tourType === 'tooltip' || this.state.tourType === 'Make Edit')) {
 				if(this.state.tourType === 'tooltip' || (this.state.tourType === 'Make Edit' && !_.isEmpty(this.state.rowData))){
-					let parentElement = queryParentElement(e.target, '.sidepanal');
+					// let parentElement = queryParentElement(e.target, '.sidepanal');
+					let parentElement = queryParentElement(e.target, '#extension-div');
 					let parentElement1 = queryParentElement(e.target, '.trail_tooltip');
 					let getClass = parentElement == null ? "" : parentElement.getAttribute('class');
 					let getClass1 = parentElement1 == null ? "" : parentElement1.getAttribute('class');
@@ -1313,7 +1315,8 @@ class DefaultButton extends React.PureComponent {
 		document.querySelector('body').addEventListener('mouseout', e => {
 			e.preventDefault();
 			if (this.state.tourStatus === 'continue' && (this.state.tourType === 'tooltip' || this.state.tourType === 'Make Edit')) {
-				let parentElement = queryParentElement(e.target, '.sidepanal');
+				// let parentElement = queryParentElement(e.target, '.sidepanal');
+				let parentElement = queryParentElement(e.target, '#extension-div');
 				let parentElement1 = queryParentElement(e.target, '.trail_tooltip');
 				let getClass = parentElement == null ? "" : parentElement.getAttribute('class');
 				let getClass1 = parentElement1 == null ? "" : parentElement1.getAttribute('class');
