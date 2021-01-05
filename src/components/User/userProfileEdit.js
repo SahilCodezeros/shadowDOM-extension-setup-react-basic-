@@ -59,10 +59,10 @@ class UserProfileEdit extends PureComponent {
     
     onChangeInput = (e) => {
         this.setState({[e.target.name]: e.target.value}, () => {
-            if(this.state.isSubmit) {
-                const { errors, isValid } = isValidated(this.state);
-                this.setState({errors});
-            }
+            const { errors, isValid } = isValidated(this.state);
+            this.setState({errors});
+            // if(this.state.isSubmit) {
+            // }
         });
     }
     
@@ -128,16 +128,19 @@ class UserProfileEdit extends PureComponent {
             isLoading: false,
             fileLoading: false
         });
+
+        $('body').attr('class', '');
     }
     
     onClickToSubmit = async (e) => {
         e.preventDefault();
-        this.setState({isSubmit: true, isLoading: true});
         const { errors, isValid } = isValidated(this.state);
-    
+        
         if(!isValid) {
             this.setState({errors})
         } else {
+            this.setState({isSubmit: true, isLoading: true});
+
             const result = await UpdateSingleTrail(this.state.trail_id, this.state);
             this.setState({isLoading: false});
             if(result.status == 200) {
@@ -166,9 +169,10 @@ class UserProfileEdit extends PureComponent {
                 </div>}
                 <div className="trailit_editZTitle trialit_mb4">Edit Trail</div>
                 <form>
-                {errors.trail_already_exist!==undefined && <div className="trailit-already-exist-error">{errors.trail_already_exist}</div>}
+                    {errors.trail_already_exist!==undefined && <div className="trailit-already-exist-error">{errors.trail_already_exist}</div>}
                     <div className="d-block">
                         <input type="text" className="trailit_inputTitle trailit_mb3" placeholder="Trail Title" name="trail_title" value={trail_title} onChange={this.onChangeInput}/>
+                        {errors.trail_title !== undefined && <div className="trailit-validation-error">{errors.trail_title}</div>}
                     </div>
                     <div className="d-block">
                         <textarea rows="5" className="trailit_inputIntro trailit_mb3" placeholder="Type Introduction here ..." name="trail_description" value={trail_description} onChange={this.onChangeInput}></textarea>

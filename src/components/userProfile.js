@@ -173,9 +173,15 @@ class UserProfile extends React.Component {
       }.bind(this)
     );
     
-    let categoryResult = await getAllCategory();
-    if (categoryResult.status == 200) {
-      this.setState({ categoryList: categoryResult.data.response });
+    // Get all category function
+    let { data, status } = await getAllCategory();
+    if (status === 200) {
+      if (data.response && data.response.result) {
+        this.setState({ categoryList: data.response.result });
+
+      } else {
+        this.setState({ categoryList: [] });
+      }
     }
     
     if (document.querySelector("#my-extension-defaultroot")) {

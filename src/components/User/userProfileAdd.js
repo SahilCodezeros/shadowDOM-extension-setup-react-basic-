@@ -34,18 +34,21 @@ class userProfileAdd extends Component {
             errors: {},
             isSubmit: false,
             isLoading: false
-        })
+        });
+
+        $('body').attr('class', '');
     }
     
     onClickToSubmit = (e) => {
         e.preventDefault();
         const { trail_title } = this.state
-        this.setState({isSubmit: true, isLoading: true});
         const { errors, isValid } = isValidated(this.state);
         
         if(!isValid) {
             this.setState({errors})
         } else {
+            this.setState({isSubmit: true, isLoading: true});
+
             const { trail_title, trail_description } = this.state;
             chrome.storage.local.get(["trail_web_user_tour", "userData"], async function (items) {
                 let obj = {
@@ -78,10 +81,10 @@ class userProfileAdd extends Component {
     
     onChangeInput = (e) => {
         this.setState({[e.target.name]: e.target.value}, () => {
-            if(this.state.isSubmit) {
-                const { errors, isValid } = isValidated(this.state);
-                this.setState({errors});
-            }
+            const { errors, isValid } = isValidated(this.state);
+            this.setState({errors});
+            // if(this.state.isSubmit) {
+            // }
         });
     }
 
@@ -94,7 +97,7 @@ class userProfileAdd extends Component {
                    <div class="trial_spinner"><img class="ring1" src={require(`../../images/loding1.png`)} /><img class="ring2" src={require(`../../images/loding2.png`)} /></div>
                 </div>}
                 <div className="trailit_editZTitle trialit_mb4">Add Trail</div>
-                <form onSubmit={this.onClickToSubmit} name="add-trail-frm">
+                <form name="add-trail-frm">
                     {errors.trail_already_exist!==undefined && <div className="trailit-already-exist-error">{errors.trail_already_exist}</div>}
                     <div className="d-block">
                         <input type="text" className="trailit_inputTitle trailit_mb3" name="trail_title" value={trail_title} onChange={this.onChangeInput} placeholder="Trail Title"/>
