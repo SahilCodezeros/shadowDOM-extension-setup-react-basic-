@@ -169,39 +169,81 @@ export const commonTooltipFormFunction = (
                         </Button>
             } */}
 
-            <button
+            <Button
+                // value="ADD"
+                type="primary"
+                htmlType="submit"
                 disabled={ fileLoading }
-                onClick={ onClickToSubmit }
-                value="ADD"
+                // onClick={ onClickToSubmit }
                 className="ant-btn ant-btn-primary trail_add_step_btn"
             >
                 ADD STEP
-            </button>
+            </Button>
         </div>
     );
 
     return (
         <div>
             <div className="pl-4 trail_video_frm">
-                <input type="text" name="title" value={title} placeholder={`Enter ${trailStatus} Title`} className="ant-input mb-2" onChange={onChangeToInput} autoComplete="off" />
-                <input type="text" name="web_url" value={fileName} onChange={onChangeToInput} placeholder={`Add ${trailStatus} URL`} className="ant-input mb-2" />
+                <Form
+                    onFinish={ onClickToSubmit }
+                    initialValues={ {
+                        title
+                    } }
+                >
+                    <Form.Item
+                        name="title"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please enter title!",
+                            },
+                        ]}
+                    >
+                        <Input 
+                            type="text"
+                            autoComplete="off" 
+                            onKeyDown={onChangeToInput} 
+                            placeholder={`Enter ${trailStatus} Title`} 
+                        />
+                    </Form.Item>
 
-                <div className="upload_bx">
-                    <div className="ant-upload">    
-                        <p className="ant-upload-drag-icon">
-                            {fileLoading && <div class="trial_spinner">
-                                <img class="ring1" src={require(`../images/loding1.png`)} alt="ring1" />
-                                <img class="ring2" src={require(`../images/loding2.png`)} alt="ring2" />
-                            </div>}
-                            {!fileLoading && <CloudUploadOutlined />}
+                    {/* <input 
+                        type="text" 
+                        name="title" 
+                        value={title} 
+                        placeholder={`Enter ${trailStatus} Title`} 
+                        className="ant-input mb-2" 
+                        onKeyDown={onChangeToInput} 
+                        autoComplete="off" 
+                    /> */}
+                    <input 
+                        type="text" 
+                        name="web_url" 
+                        value={fileName} 
+                        disabled={ true }
+                        onKeyDown={onChangeToInput} 
+                        placeholder={`Add ${trailStatus} URL`} 
+                        className="ant-input mb-2" 
+                    />
 
-                        </p>
-                        <p className="ant-upload-text">Upload {trailStatus}</p>
+                    <div className="upload_bx">
+                        <div className="ant-upload">    
+                            <p className="ant-upload-drag-icon">
+                                {fileLoading && <div class="trial_spinner">
+                                    <img class="ring1" src={require(`../images/loding1.png`)} alt="ring1" />
+                                    <img class="ring2" src={require(`../images/loding2.png`)} alt="ring2" />
+                                </div>}
+                                {!fileLoading && <CloudUploadOutlined />}
+
+                            </p>
+                            <p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } {trailStatus}</p>
+                        </div>
+                        <input style={{ padding: 0 }} type="file" name="media" onChange={handleChange} />
                     </div>
-                    <input style={{ padding: 0 }} type="file" name="media" onChange={handleChange} />
-                </div>
 
-                {buttons}
+                    {buttons}
+                </Form>
             </div>
         </div>
     );
@@ -241,7 +283,8 @@ export const commonInitialRenderFunction = (
                 >
                     <Input
                         type="text"
-                        onChange={ onTitleChangeHandler }
+                        // onChange={ onTitleChangeHandler }
+                        onKeyDown={ onTitleChangeHandler }
                         placeholder="Enter Title"
                         autoComplete="off"
                     />

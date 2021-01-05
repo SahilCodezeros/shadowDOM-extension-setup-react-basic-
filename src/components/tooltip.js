@@ -228,9 +228,10 @@ class Tooltip extends React.PureComponent {
     
     // Input change handler
     onChangeToInput = (e) => {
-        e.preventDefault();
+        e.stopPropagation();        
         
-        this.setState({ [e.target.name]: e.target.value });
+        // this.setState({ [e.target.name]: e.target.value });
+        this.setState({ title: e.target.value });
     };
     
     uploadFile = (file) => {
@@ -291,7 +292,7 @@ class Tooltip extends React.PureComponent {
     };
     
     onTitleChangeHandler = (e) => {
-        e.preventDefault();
+        e.stopPropagation();
 
         this.setState({ title: e.target.value });
     };

@@ -34,11 +34,15 @@ class CreateModalComponent extends React.Component {
     }
 
     onChangeToInput = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
+        e.stopPropagation();
+
+        // this.setState({ [e.target.name]: e.target.value });
+        this.setState({ title: e.target.value });
     };
 
     onTitleChangeHandler = (e) => {
-        e.preventDefault();
+        e.stopPropagation();
+
         this.setState({ title: e.target.value });
     };
         

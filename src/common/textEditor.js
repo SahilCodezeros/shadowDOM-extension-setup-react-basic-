@@ -184,19 +184,6 @@ const TextEditor = memo((props) => {
         onIframeBodyClick();
     }, []);
 
-    // const shadowRoot = document.getElementById('extension-div').shadowRoot;
-    // if (shadowRoot.querySelector('iframe')) {
-    //     if (shadowRoot.querySelector('iframe').contentWindow.document.body.getAttribute('contenteditable') !== 'true') {
-    //         // Call enable edit mode function
-    //         enableEditMode();
-    //     }
-
-    //     if (shadowRoot.querySelector('iframe').contentWindow.document.body.getAttribute('eventadded') !== 'true') {
-    //         // Call update description function
-    //         updateDescription(); 
-    //     }
-    // }
-
     return (
         <>
             <style>{ textEditor1 }</style>
