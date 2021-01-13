@@ -195,7 +195,7 @@ class CreateModalComponent extends React.Component {
                     isOpen={ modalOpen } 
                     toggle={ this.onButtonCloseHandler } 
                     className="tr_modal trail_create_modal" 
-                    container={ [ document.getElementById('extension-div').shadowRoot ] }
+                    container={ document.getElementById('extension-div').shadowRoot }
                 >
                     <ModalHeader className="tr_modal_trail_modal_header" toggle={this.toggle}>Create Modal</ModalHeader>
                     <ModalBody>

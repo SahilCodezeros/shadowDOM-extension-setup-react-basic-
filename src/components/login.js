@@ -97,6 +97,7 @@ class Login extends React.Component {
 	};
 	
 	render() {		
+		console.log('this.error', this.state.error);
 		return (
 			// <ReactShadowRoot>
 			// 	<style>{ loginStyle }</style>			

@@ -292,7 +292,7 @@ class VideoTour extends React.PureComponent {
                 <style>{ videoTourCss1 }</style>
                 <div className={ [this.state.fullScreen ? tourSide === 'prev' ? "trail_vC trail_video_overlayPrev trail_tooltip_done" : "trail_vC trail_video_overlayNext trail_tooltip_done" : null].join(' ') }>
                     <div className={ ['video-wrap_tooltip', this.state.fullScreen ? 'video-wrap_tooltip-fullScreen' : 'video-wrap_tooltip-smallScreen'].join(' ') }>
-                        {this.props.data.length > 0 && !this.state.fullScreen && <Button type="link" className="trial_button_close" onClick={ this.props.closeButtonHandler }><CloseOutlined /></Button>}
+                        {this.props.data.length > 0 && !this.state.fullScreen && <Button type="link" disabled={ this.props.onDone } className="trial_button_close" onClick={ this.props.closeButtonHandler }><CloseOutlined /></Button>}
                         {/* <p className="title videoShow">Next Learn I will show you</p> */}
                         <div className={[!this.state.fullScreen ? 'tr_gradient_border' : ''].join(' ')}>
                             <div className='video-wrap_tooltip-inner'>
@@ -303,9 +303,9 @@ class VideoTour extends React.PureComponent {
                             </div>
                         </div>
                         <div className={ ['btn-wrap', 'videoShow', this.state.fullScreen ? 'videoShow-fullScreen' : 'videoShow-smallScreen'].join(' ') }>                    
-                            {1 < (tourStep) && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => this.onClickToManagePopoverButton(e, tourStep - 1, 'prev')}>Previous</button></React.Fragment>}
-                            {this.props.data.length > tourStep && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => this.onClickToManagePopoverButton(e, tourStep + 1, 'next')}>Next</button></React.Fragment>}
-                            {this.props.data.length === tourStep && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={() => this.onClickToDoneTour(tourStep)}>Done</button></React.Fragment>}
+                            {1 < (tourStep) && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => this.onClickToManagePopoverButton(e, tourStep - 1, 'prev')}>Previous</button></React.Fragment>}
+                            {this.props.data.length > tourStep && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => this.onClickToManagePopoverButton(e, tourStep + 1, 'next')}>Next</button></React.Fragment>}
+                            {this.props.data.length === tourStep && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary ex_mr_10" onClick={() => this.onClickToDoneTour(tourStep)}>Done</button></React.Fragment>}
                         </div>                    
 
                         <a 

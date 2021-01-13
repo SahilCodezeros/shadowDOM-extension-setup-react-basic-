@@ -37,7 +37,7 @@ class AudioTour extends React.PureComponent {
             });    
         })
         
-        if(this.props.data[this.props.tourStep - 1].url !== document.URL) {
+        if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
             window.location.href = this.props.data[this.props.tourStep - 1].url;
         }
         
@@ -317,22 +317,22 @@ class AudioTour extends React.PureComponent {
 
                     { !this.props.previewInTooltip &&
                         <div className="btn-wrap videoShow">
-                            {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={(e) => {
+                            {this.props.data.length > 0 && <Button type="link" disabled={ this.props.onDone } className="trial_button_close" onClick={(e) => {
                                 audio.pause();
                                 clearInterval(timeInterval);
                                 this.props.closeButtonHandler(e);
                             }}><CloseOutlined /></Button>}
-                            {1 < (tourStep) && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => {
+                            {1 < (tourStep) && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => {
                                 audio.pause();
                                 clearInterval(timeInterval);
                                 this.onClickToManagePopoverButton(e, tourStep - 1, 'prev')
                             }}>Previous</button></React.Fragment>}
-                            {this.props.data.length > tourStep && <React.Fragment><button className="ant-btn ant-btn-primary" onClick={(e) => {
+                            {this.props.data.length > tourStep && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary" onClick={(e) => {
                                 audio.pause();    
                                 clearInterval(timeInterval);                        
                                 this.onClickToManagePopoverButton(e, tourStep + 1, 'next')
                             }}>Next</button></React.Fragment>}
-                            {this.props.data.length === tourStep && <React.Fragment><button className="ant-btn ant-btn-primary" onClick={() => {
+                            {this.props.data.length === tourStep && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary" onClick={() => {
                                 audio.pause();
                                 this.onClickToDoneTour(tourStep)
                             }}>Done</button></React.Fragment>}

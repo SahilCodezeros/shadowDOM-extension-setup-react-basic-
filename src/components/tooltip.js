@@ -324,8 +324,8 @@ class Tooltip extends React.PureComponent {
                     placement="top" 
                     className="trail_tooltip" 
                     isOpen={this.state.visible} target={'.trail_tour_tooltip'}
-                    modifiers={ { arrow: '' } }
-                    container={ [ document.getElementById('extension-div').shadowRoot ] }
+                    // modifiers={ { arrow: '' } }
+                    container={ document.getElementById('extension-div').shadowRoot }
                 >
                     <PopoverBody>
                         { commonTypeSelectonButton(

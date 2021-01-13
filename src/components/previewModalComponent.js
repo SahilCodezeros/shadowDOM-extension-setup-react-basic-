@@ -218,7 +218,7 @@ class PreviewModalComponent extends React.PureComponent {
                     isOpen={ open } 
                     centered={ true }
                     toggle={ this.onButtonCloseHandler } 
-                    container={ [ document.getElementById('extension-div').shadowRoot ] }
+                    container={ document.getElementById('extension-div').shadowRoot }
                     className={`tr_modal trail_preview_modal trail_tooltip_done ${this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'text'?'trail_text_only':'' || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'video' ? 'tr_video_only' : '' || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'image' ? 'tr_picture_only' : ''  || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'audio' ? 'tr_audio_only' : ''}`} 
                 >
                     {/* <img 
@@ -240,7 +240,7 @@ class PreviewModalComponent extends React.PureComponent {
                                 <Button className="ant-btn ant-btn-primary" onClick={this.onAddStep}>Add Step</Button>
                             </div>
                         </div> */}
-                        {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseOutlined type="close" /></Button>}
+                        {this.props.data.length > 0 && <Button type="link" disabled={ this.props.onDone } className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseOutlined type="close" /></Button>}
                         <div className="trail_modal_content_main">
                             <div className="trail_modal_title">{title}</div>
                             {<span className="trail_modal_content" dangerouslySetInnerHTML={{ __html: description }}></span>}
@@ -248,9 +248,9 @@ class PreviewModalComponent extends React.PureComponent {
                         </div>
                         
                         <div className="btn-wrap">
-                            {1 < (tourStep) && <Button type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep - 1, 'prev')}><LeftOutlined type="left" /></Button>}
-                            {this.props.data.length > tourStep && <Button type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep + 1, 'next')}><RightOutlined type="right" /></Button>}
-                            {this.props.data.length === tourStep && <Button type="link" className="next" onClick={() => this.onClickToDoneTour(this.props.data[tourStep - 1], tourStep)}><RightOutlined type="right" /></Button>}
+                            {1 < (tourStep) && <Button type="link" disabled={ this.props.onDone } className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep - 1, 'prev')}><LeftOutlined type="left" /></Button>}
+                            {this.props.data.length > tourStep && <Button type="link" disabled={ this.props.onDone } className="next" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep + 1, 'next')}><RightOutlined type="right" /></Button>}
+                            {this.props.data.length === tourStep && <Button type="link" disabled={ this.props.onDone } className="next" onClick={() => this.onClickToDoneTour(this.props.data[tourStep - 1], tourStep)}><RightOutlined type="right" /></Button>}
                         </div>
                     </ModalBody>
                 </Modal>

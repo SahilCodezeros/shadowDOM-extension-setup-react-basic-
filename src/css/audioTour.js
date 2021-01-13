@@ -12,6 +12,24 @@ export const audioTourCss1 = `
         /* padding: 15px; */
     }
 
+    .trail_preview_bx .audio_wrap_tooltip_innr {
+        background: linear-gradient(
+            60deg,
+            #f79533,
+            #f37055,
+            #ef4e7b,
+            #a166ab,
+            #5073b8,
+            #1098ad,
+            #07b39b,
+            #6fba82
+        );
+        -webkit-animation: animatedgradient 3s ease alternate infinite !important;
+        animation: animatedgradient 3s ease alternate infinite !important;
+        background-size: 300% 300%;
+        opacity: 1;
+    }
+
     .audio_wrap_tooltip_innr {
         border-radius: 50px;
         -webkit-border-radius: 50px;
@@ -162,8 +180,8 @@ export const audioTourCss1 = `
     }
     
     .tr_audioplayer-time-current {
-        border-left: 1px solid #111;
-        border-left-color: rgba(0, 0, 0, 0.25);
+        // border-left: 1px solid #111;
+        // border-left-color: 1px solid rgba(0, 0, 0, 0.25);
         left: 38px;
     }
     
@@ -171,6 +189,13 @@ export const audioTourCss1 = `
         border-right: 1px solid #555;
         border-right-color: rgba(255, 255, 255, 0.1);
         right: 38px;
+    }
+
+    .tr_audioplayer-time.tr_audioplayer-time-current,
+    .tr_audioplayer-time.tr_audioplayer-time-duration {
+        color: #ffffff !important;
+        font-size: 13px !important;
+        font-family: "Lato", sans-serif !important;
     }
     
     .tr_audioplayer-novolume .tr_audioplayer-time-duration {
