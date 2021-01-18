@@ -40,6 +40,8 @@ const selectAllVideos = (time) => {
     chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
         // For videos
         if (videos.length > 0) {
+            console.log('videos', videos);
+            console.log('audios', audios);
             videos.forEach(el => {
                 // For Trailit videos
                 if (el.className === 'preview-video' || el.className === 'tr_video') {

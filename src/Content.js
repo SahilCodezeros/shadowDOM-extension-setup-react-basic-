@@ -1273,6 +1273,22 @@ class DefaultButton extends React.PureComponent {
 						// Call set overlay html function
 						setOverlayHtml(window, docHeight, topPosition, bounding, leftPosition);
 
+						window.addEventListener('resize', () => {
+							if (root1 === 'block' && getClass === "" && getClass1 === "" && getClass2 === undefined) {
+								let docHeight = document.documentElement.scrollHeight;
+								let bounding = original.getBoundingClientRect();
+								let offset = $(uniqueTarget).offset();
+								let leftPosition = offset.left;
+								let topPosition = offset.top;
+	
+								// Call add overlay function
+								addOverlay();							
+	
+								// Call set overlay html function
+								setOverlayHtml(window, docHeight, topPosition, bounding, leftPosition);
+							};							
+						});
+
 						// $(".trail_overlay").append(`
 						// 	<svg height="100%" width="100%">
 						// 		<polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>

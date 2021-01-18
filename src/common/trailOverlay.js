@@ -2,6 +2,11 @@ export const addOverlay = () => {
     // Get shadow root document
     const shadowRoot = document.getElementById('extension-div').shadowRoot;
 
+    // Check if trail overlay not present
+    const trail_overlay = shadowRoot.querySelector('.trail_overlay');
+
+    if (trail_overlay) return;
+
     // Create new div element and set class attribute
     const trailOverlay = document.createElement('div');
     trailOverlay.setAttribute('class', 'trail_overlay');

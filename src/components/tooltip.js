@@ -323,7 +323,8 @@ class Tooltip extends React.PureComponent {
                 <Popover 
                     placement="top" 
                     className="trail_tooltip" 
-                    isOpen={this.state.visible} target={'.trail_tour_tooltip'}
+                    isOpen={this.state.visible} 
+                    target={'.trail_tour_tooltip'}
                     // modifiers={ { arrow: '' } }
                     container={ document.getElementById('extension-div').shadowRoot }
                 >

@@ -65,7 +65,6 @@ class WebUserTour extends React.Component {
         this.createPopOver(tourStep);
 
         window.addEventListener('load', this.handleLoad);
-
         
         chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
         this.getWebUserTour('', this.props.data[tourStep - 1], tourStep);
@@ -99,6 +98,14 @@ class WebUserTour extends React.Component {
                 })
             }, 2000);
         }
+
+        window.addEventListener('resize', () => {
+            const shadowRoot = document.getElementById('extension-div').shadowRoot;
+
+            if (!shadowRoot.querySelector('.trail_tooltip_done')) return;
+            console.log('resized');
+            this.getWebUserTour('', this.props.data[tourStep - 1], tourStep);
+        });
     }
 
     componentDidUpdate() {
@@ -132,6 +139,8 @@ class WebUserTour extends React.Component {
 
         // Remove trailit log
         removeTrailitLogo();
+
+        this.setState({ isTourActive: false });
     }
     
     static getDerivedStateFromProps(props, state) {
