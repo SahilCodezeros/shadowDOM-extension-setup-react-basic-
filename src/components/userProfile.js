@@ -258,7 +258,12 @@ class UserProfile extends React.Component {
               });
 
               if (r.status == 200) {
-                chrome.storage.local.set({ userData: r.data.data.response });
+                chrome.storage.local.set({ 
+                  userData: { 
+                    ...items.userData, 
+                    profileImage: data.response.result.fileUrl 
+                  } 
+                });
               }
 
               this.setState({

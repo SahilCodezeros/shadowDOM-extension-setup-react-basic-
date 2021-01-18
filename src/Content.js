@@ -113,16 +113,16 @@ class Main extends React.Component {
 
 			socket.emit('userId', items.userData._id);
 			
-			socket.on('notification', (data) => {
-				// Get chrome push notification
-				this.getNewNotification();
+			// socket.on('notification', (data) => {
+			// 	// Get chrome push notification
+			// 	this.getNewNotification();
 
-				// Get notifiation data from server when socket notificatin listen
-				this.userNotificaion();
-			});
+			// 	// Get notifiation data from server when socket notificatin listen
+			// 	this.userNotificaion();
+			// });
 			
-			// Get notifiation data from server when page load
-			this.userNotificaion();
+			// // Get notifiation data from server when page load
+			// this.userNotificaion();
 			
 			chrome.storage.onChanged.addListener((changes) => {
 				if(changes.closeContinue!==undefined) {
