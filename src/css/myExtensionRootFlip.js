@@ -1531,9 +1531,9 @@ export const myExtensionRootFlipCss5 = `
     .ant-btn[disabled]:hover,
     .ant-btn[disabled]:focus,
     .ant-btn[disabled]:active {
-        color: rgba(0, 0, 0, 0.25) !important;
-        background: #f5f5f5 !important;
-        border-color: #d9d9d9 !important;
+        color: rgba(0, 0, 0, 0.25);
+        background: #f5f5f5;
+        border-color: #d9d9d9;
         text-shadow: none !important;
         -webkit-box-shadow: none !important;
         box-shadow: none !important;

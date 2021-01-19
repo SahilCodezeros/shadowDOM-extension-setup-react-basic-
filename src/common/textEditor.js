@@ -1,6 +1,7 @@
 import React, { useEffect, memo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBold, faItalic, faUnderline, faLink, faStrikethrough } from '@fortawesome/free-solid-svg-icons';
+import $ from 'jquery';
 
 import { textEditor1 } from '../css/textEditor';
 
@@ -182,8 +183,22 @@ const TextEditor = memo((props) => {
         
         // Call on iframe body click function
         onIframeBodyClick();
-    }, []);
 
+        const shadowRoot = document.getElementById('extension-div').shadowRoot;
+        const frame = shadowRoot.querySelector('iframe');
+
+        if (frame) {
+            const link = document.createElement('link');
+            link.type = 'text/css';
+            link.rel = 'stylesheet';
+            link.href = 'https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap';
+            frame.contentDocument.head.appendChild(link);            
+
+            frame.contentDocument.body.style.fontFamily = 'Lato, sans-serif';
+            frame.contentDocument.body.style.fontSize = '14px';
+        }
+    }, []);
+    
     return (
         <>
             <style>{ textEditor1 }</style>

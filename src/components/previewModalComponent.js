@@ -25,6 +25,8 @@ class PreviewModalComponent extends React.PureComponent {
             window.location.href = this.props.data[this.props.tourStep - 1].url;
         }
 
+        this.setState({ autoPlay: true });
+
         // setTimeout(() => {
         //     document.querySelectorAll('video').forEach(res => {
         //         console.log('res', res);
@@ -101,6 +103,8 @@ class PreviewModalComponent extends React.PureComponent {
         //         this.setState({ autoPlay: items.AutoPlayMediaToggle });
         //     }
         // });
+
+        this.setState({ autoPlay: true });
 
         // Add modal class to dom
         this.addModalClass();

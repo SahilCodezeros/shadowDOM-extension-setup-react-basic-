@@ -76,7 +76,9 @@ import './Content.css';
 WebFont.load({
 	google: {
 		families: ['Lato', 'Raleway:400,500,700', 'sans-serif']
-	}
+	},
+	// eslint-disable-next-line no-restricted-globals
+	context: frames['text-editor-frame']
 });
 
 let app
