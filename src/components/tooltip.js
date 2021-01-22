@@ -275,7 +275,7 @@ class Tooltip extends React.PureComponent {
     //     this.onClickToSubmit(e);
     // };
     
-    selectedTooltipForm = () => {
+    selectedTooltipForm = (mediaType) => {
         const { trailStatus, title, fileName, fileLoading } = this.state;
     
         // Common tooltip form function imported from common file
@@ -287,7 +287,8 @@ class Tooltip extends React.PureComponent {
             this.onClickToVisiblePopover,
             this.onClickToSubmit,
             this.onChangeToInput,
-            this.handleChange
+            this.handleChange,
+            mediaType
         );
     };
     

@@ -5,6 +5,7 @@ import { isValidated } from './validation';
 import { UpdateSingleTrail } from '../../common/axios';
 import { handleFileUpload } from '../../common/audAndVidCommon';
 
+const chrome = window.chrome;
 class UserProfileEdit extends PureComponent {
     constructor(props) {
         super(props);
@@ -140,21 +141,27 @@ class UserProfileEdit extends PureComponent {
             this.setState({errors})
         } else {
             this.setState({isSubmit: true, isLoading: true});
+            
+            chrome.storage.local.get(["userData"], async function (items) {
 
-            const result = await UpdateSingleTrail(this.state.trail_id, this.state);
-            this.setState({isLoading: false});
-            if(result.status == 200) {
-                if(result.data.response.statusCode == 400) {
-                    this.setState({errors: {trail_already_exist: result.data.response.result}})
-                    setTimeout(() => {
-                        this.setState({errors: {}});
-                    }, 2000);
-                } else {
-                    this.props.getEditData(result.data.response[0]);
-                    this.onClear();
-                    $('body').attr('class', '');
+                // Update single trail function
+                const result = await UpdateSingleTrail(items.userData._id, this.state.trail_id, this.state);
+
+                this.setState({isLoading: false});
+
+                if(result.status == 200) {
+                    if(result.data.response.statusCode == 400) {
+                        this.setState({errors: {trail_already_exist: result.data.response.result}})
+                        setTimeout(() => {
+                            this.setState({errors: {}});
+                        }, 2000);
+                    } else {
+                        this.props.getEditData(result.data.response[0]);
+                        this.onClear();
+                        $('body').attr('class', '');
+                    }
                 }
-            }
+            }.bind(this));
         }
     }
     
@@ -186,7 +193,7 @@ class UserProfileEdit extends PureComponent {
                     <label className="trailit_12700 d-block trailit_mb3">COVER IMAGE</label>
                     <label className="trailit_12500 d-block trialit_mb1">{(cover_image_name=="" || cover_image_url=="")?`Choose a photo that represents your trail. Max 8MB.`:(cover_image_name?cover_image_name:cover_image_url)}</label>
                     <div className="trailit_uploadImage trialit_mb4">
-                        <input type="file" name="media" onChange={this.handleChange}/>
+                        <input type="file"  name="media" accept="image/*" onChange={this.handleChange}/>
                         <label className="d-block">Upload Image</label>
                     </div>
                     <label className="trailit_12700 d-block trailit_mb3">ADD MORE CONTENT</label>

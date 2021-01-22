@@ -92,6 +92,10 @@ const resizeScreen = () => {
 	return window.innerWidth <= 760;
 };
 
+if (window.location.href.includes('https://www.and.co')) {
+	document.querySelector('html').style.zoom = '100%';				
+}
+
 class Main extends React.Component {
 	constructor(props) {
 		super(props);
@@ -106,7 +110,8 @@ class Main extends React.Component {
 		};
 	};
 
-	async componentDidMount() {
+	async componentDidMount() {		
+
 		chrome.storage.local.get(['trail_web_user_tour', 'trail_id', 'userData', 'previewUserId', "notification", "saveSort", 'tourStep', 'closeContinue'], async (items) => {
 			this.setState({closeContinue: items.closeContinue === undefined ? false : items.closeContinue, currentUserId: items.userData._id});			
 			socket.on('connect', () => {

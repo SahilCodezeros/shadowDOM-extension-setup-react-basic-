@@ -77,7 +77,6 @@ class UserProfile extends React.Component {
     chrome.storage.local.get(
       ["auth_Tokan", "userData", "reload", 'keypair'],
       async function (items) {        
-        console.log('items.userData._id', items.userData);
         // // Get NEAR balance of user
         this.getNearAccountBalance();
         // getBalance()

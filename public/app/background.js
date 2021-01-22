@@ -1,5 +1,7 @@
 // Called when the user clicks on the browser action
 
+/* global chrome */
+
 function onCaptured(imageUri) {
     console.log(imageUri);
  }
@@ -7,6 +9,18 @@ function onCaptured(imageUri) {
  function onError(error) {
     console.log(`Error: ${error}`);
  }
+
+   chrome.runtime.onMessageExternal.addListener(
+      function(request, sender, sendResponse) {
+         console.log('request', request);
+         console.log('sender', sender);
+         sendResponse('===> message from extension');
+         if (request.openUrlInEditor) window.location.href = request.openUrlInEditor;
+         // if (sender.url == blacklistedWebsite)
+         //    return;  // don't allow this web page access
+
+      }
+   );
  
  if(typeof chrome.app.isInstalled!=='undefined') {
     chrome.browserAction.onClicked.addListener(function(tab) {

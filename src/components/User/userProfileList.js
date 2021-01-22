@@ -75,7 +75,6 @@ class UserProfileList extends Component {
         this.setState({isLoadingLink: true});
         let screen = resizeScreen()?'mobile':'web';
         let result = await getUserOneTrail(res.user_id, res.trail_id, screen);
-        console.log('result', result);
         if(result.status == 200) {
             if(result.data.response.statusCode == 200) {
                 let trailList = result.data.response.result

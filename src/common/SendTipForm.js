@@ -30,9 +30,6 @@ class SendTipForm extends Component {
   render() {
     const { toAddress, amount } = this.state;
     const { isLoading, sendLoader } = this.props;
-    console.log('amount', amount);
-    console.log('sendLoader', sendLoader);
-    console.log('toAddress', toAddress);
 
     return(
       <div>

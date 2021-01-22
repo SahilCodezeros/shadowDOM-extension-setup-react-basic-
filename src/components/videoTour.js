@@ -37,7 +37,6 @@ class VideoTour extends React.PureComponent {
         playButton.style.display = 'block';
         // $('.tr_play_button').css('display', 'block');
         chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-            console.log('item', items);
             if(items.AutoPlayMediaToggle === undefined || items.AutoPlayMediaToggle) {
                 video.play();
                 playButton.style.display = 'none';

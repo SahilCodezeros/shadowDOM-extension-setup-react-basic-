@@ -91,8 +91,8 @@ export const getAllCategory = async (user_id) => {
 };
 
 // Update trail data
-export const UpdateSingleTrail = async (trail_id, data) => {
-    return await axios.put(`${process.env.REACT_APP_MS4_URL}trailitUser/updateTrail_trail_user_tour/${trail_id}`, data);
+export const UpdateSingleTrail = async (user_id, trail_id, data) => {
+    return await axios.put(`${process.env.REACT_APP_MS4_URL}trailitUser/updateTrail_trail_user_tour/${user_id}/${trail_id}`, data);
 };
 
 // Update trail data

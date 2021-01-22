@@ -149,7 +149,8 @@ export const commonTooltipFormFunction = (
     onClickToVisiblePopover, 
     onClickToSubmit, 
     onChangeToInput, 
-    handleChange
+    handleChange,
+    media
 ) => {
     const buttons = (
         <div className="trailButtonsWrapper">
@@ -182,6 +183,18 @@ export const commonTooltipFormFunction = (
         </div>
     );
 
+    let mediaType = '';
+
+    if (media === 'video') {
+        mediaType = 'video/*, .mkv, .mov'
+
+    } else if (media === 'audio') {
+        mediaType = 'audio/*';
+
+    } else if (media === 'image') {
+        mediaType = 'image/*';
+    }
+ 
     return (
         <div>
             <div className="pl-4 trail_video_frm">
@@ -239,7 +252,13 @@ export const commonTooltipFormFunction = (
                             </p>
                             <p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } {trailStatus}</p>
                         </div>
-                        <input style={{ padding: 0 }} type="file" name="media" onChange={handleChange} />
+                        <input 
+                            type="file" 
+                            name="media" 
+                            style={{ padding: 0 }} 
+                            onChange={ handleChange } 
+                            accept={ mediaType } 
+                        />
                     </div>
 
                     {buttons}
@@ -316,12 +335,15 @@ export const commonInitialRenderFunction = (
                 </Form.Item>
             </Form>
         );
+
     } else if (trailStatus === "audio") {
-        tooltipForm = selectedTooltipForm();
+        tooltipForm = selectedTooltipForm(trailStatus);
+
     } else if (trailStatus === "video") {
-        tooltipForm = selectedTooltipForm();
+        tooltipForm = selectedTooltipForm(trailStatus);
+
     } else if (trailStatus === "image") {
-        tooltipForm = selectedTooltipForm();
+        tooltipForm = selectedTooltipForm(trailStatus);
     }
     
     return tooltipForm;
