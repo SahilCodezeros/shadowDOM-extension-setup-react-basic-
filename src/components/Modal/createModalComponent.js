@@ -10,7 +10,7 @@ import {
     commonTooltipFormFunction,
     handleFileChange,
     commonFileUploadFunction
-} from './common';
+} from '../common';
 
 let modalOpen;
 
@@ -30,7 +30,9 @@ class CreateModalComponent extends React.Component {
 	};
     
     componentDidMount() {
-        window.scrollTo(0, 0);
+        // window.scrollTo(0, 0);
+        const scrollTop = $(window).scrollTop();
+        $("html, body").animate({ scrollTop: scrollTop });
     }
 
     onChangeToInput = (e) => {
@@ -133,7 +135,7 @@ class CreateModalComponent extends React.Component {
         handleFileChange(e, trailStatus, this.uploadFile);
     };
 
-    selectedTooltipForm = () => {
+    selectedTooltipForm = (mediaType) => {
         const { trailStatus, title, fileName, fileLoading } = this.state;
 
         // Common tooltip form function imported from common file
@@ -145,7 +147,8 @@ class CreateModalComponent extends React.Component {
             this.toggle,
             this.onAddStep,
             this.onChangeToInput,
-            this.handleChange
+            this.handleChange,
+            mediaType
         );
     };
     
@@ -180,13 +183,12 @@ class CreateModalComponent extends React.Component {
 
         $(document).ready(() => {
             const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.trail_create_modal');
-            
             if (modalDiv) {
                 if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
                     modalDiv.parentNode.parentNode.parentNode.setAttribute('class', 'trial_modal_show trial_create_modal_main');
                 }
             } 
-        });     
+        });   
         
         return(
             <React.Fragment>
@@ -195,7 +197,7 @@ class CreateModalComponent extends React.Component {
                     isOpen={ modalOpen } 
                     toggle={ this.onButtonCloseHandler } 
                     className="tr_modal trail_create_modal" 
-                    container={ document.getElementById('extension-div').shadowRoot }
+                    container={ document.getElementById('extension-div').shadowRoot.querySelector('.modal-open') }
                 >
                     <ModalHeader className="tr_modal_trail_modal_header" toggle={this.toggle}>Create Modal</ModalHeader>
                     <ModalBody>

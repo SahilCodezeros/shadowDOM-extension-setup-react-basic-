@@ -19,11 +19,13 @@ import WebUserTour from './components/webUserTour';
 import { getScrollParent } from './components/common';
 import TooltipOverlay from './components/tooltipOverlay';
 import MySubscription from './components/mySubscription';
+import SendTipModal from './components/Modal/SendTipModal';
 import { handleFileUpload } from './common/audAndVidCommon';
 import CreateNewTrailModal from './components/CreateNewTrailModal';
-import CreateModalComponent from './components/createModalComponent';
+import CreateModalComponent from './components/Modal/createModalComponent';
 import { queryParentElement, getUrlVars } from './components/common';
-import PreviewModalComponent from './components/previewModalComponent';
+import TrailDeleteModal from './components/Modal/TrailDeleteModal';
+import PreviewModalComponent from './components/Modal/previewModalComponent';
 import SortableItem, { SortableContainer } from './components/SortableItem';
 import { addOverlay, setOverlayHtml, removeOverlay } from './common/trailOverlay';
 import { addTrailitLogo, removeTrailitLogo } from './common/trailitLogoInPreview';
@@ -778,8 +780,6 @@ class Main extends React.Component {
                                         </g>
                                     </g>
                                 </svg>
-
-                                {/* <span>Create Modal</span> */}
                             </button>
                             <button className="menu" onClick={(e) => this.openMenu("")}>
                                 <img className="trail_plus"
@@ -1105,6 +1105,13 @@ class DefaultButton extends React.PureComponent {
 		// 	setTimeout(function(){
 		// 		scrollTo(0,-1);
 		// 	},0);
+		// }
+
+		// const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
+		// if (modalDiv) {
+		// 	const scrollTop = $(window).scrollTop();
+		// 	console.log('scrollTop', scrollTop);
+		// 	$("html, body").animate({ scrollTop: scrollTop });			
 		// }
 	
 		const { currentTourType, tourType } = this.state;
@@ -2317,7 +2324,11 @@ class DefaultButton extends React.PureComponent {
 			if (modalDiv) {
                 if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
                     modalDiv.parentNode.parentNode.parentNode.setAttribute('class', 'trial_modal_show trial_create_modal_main');
-                }
+				}
+				
+				const scrollTop = $(window).scrollTop();
+				console.log('scrollTop', scrollTop);
+				$("html, body").animate({ scrollTop: scrollTop });
             }
 		});	
 
@@ -2328,114 +2339,28 @@ class DefaultButton extends React.PureComponent {
 				<style>{ defaultButtonCss3 }</style>
                 <div id="my-extension-defaultroot">
                     {/* Delete modal */}
-                    <Modal
-						centered={ true }
-                        toggle={ this.onDeleteModalClose } 
-                        isOpen={ this.state.deleteModal.show } 
-						className="tr_modal trail_create_modal"
-						container={ document.getElementById('extension-div').shadowRoot }
-                    >
-                        <ModalHeader className="tr_modal_trail_modal_header" closeButton>Delete Alert
-                            {/* <Modal.Title className="w-100 pho_18_600 text-danger text-center">
-                                Status Alert
-                            </Modal.Title> */}
-                        </ModalHeader>
-                        <ModalBody>
-                            <p className="trailit_DeleteText">
-                                {/* Are you sure want to delete Account { props.userDetail ? `(${props.userDetail.firstName} ${props.userDetail.lastName})` : '' } ? */}
-                                Are you sure want to delete trail { this.state.deleteModal.title ? `(${this.state.deleteModal.title})` : '' }?
-                            </p>
-                            <div className="trailButtonsWrapper">
-                                <button 
-                                    type="button" 
-                                    className="ant-btn ant-btn-primary trail_add_step_btn"
-                                    onClick={ this.onDeleteModalClose }
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    type="button" 
-                                    className="ant-btn ant-btn-primary trail_add_step_btn"
-                                    onClick={ (e) => this.onDeleteButtonClick(e) }
-                                >
-                                    DELETE
-                                </button>
-                            </div>
-                        </ModalBody>
-                        {/* <ModalFooter className="d-flex justify-content-center border-0">
-                            <Button 
-                                variant="outline-success" 
-                                className="btn-sm mr-5" 
-                                onClick={ this.onDeleteModalClose }
-                            >
-                                CANCEL
-                            </Button>
-                            <Button 
-                                variant="outline-danger" 
-                                className="btn-sm" 
-                                onClick={ this.onDeleteButtonClick }
-                            >
-                                DELETE                        
-                            </Button>
-                        </ModalFooter> */}
-                    </Modal>
+					{
+						this.state.deleteModal.show &&
+							<TrailDeleteModal 
+								deleteModal={ this.state.deleteModal }
+								onDeleteModalClose={ this.onDeleteModalClose }
+								onDeleteButtonClick={ this.onDeleteButtonClick }
+							/>
+					}                    
 
                     {/* Send tip modal */}
-					<Modal 
-						centered={ true }
-                        isOpen={ this.state.sendTipModal } 
-                        toggle={ this.onSendTipModalClose } 
-						className="tr_modal trail_create_modal"
-						container={ document.getElementById('extension-div').shadowRoot }
-                    >
-                        <ModalHeader className="tr_modal_trail_modal_header" closeButton>
-							Send Tip
-                        </ModalHeader>
-                        <ModalBody>
-                            { 
-                                this.state.isSuccess ?
-                                    <div className="tr_description">
-                                        <p 
-                                            style={{ color: "#0c8026", textAlign: 'center' }}
-                                        >
-                                            Transaction completed successfully.
-                                        </p>
-                                    </div>
-                                :                                    
-                                    !this.state.setError ?
-                                        <SendTipForm 
-                                            sendTip={ this.sendTip }
-                                            onCancel={ this.onSendTipModalClose }
-                                            isLoading={ this.state.isLoading }
-                                            sendLoader={ this.state.sendLoader }
-                                        />
-                                    :
-                                        <div className="tr_description">
-                                            <p 
-                                                style={{ color: "#d21e1e", textAlign: 'center' }}
-                                            >
-                                                { this.state.setError }
-                                            </p>
-                                        </div>          
-							} 
-                        </ModalBody>
-                        {/* <ModalFooter className="d-flex justify-content-center border-0">
-                            <Button 
-                                variant="outline-success" 
-                                className="btn-sm mr-5" 
-                                onClick={ this.onSendTipModalClose }
-                            >
-                                CANCEL
-                            </Button>
-                            <Button 
-                                variant="outline-danger" 
-                                className="btn-sm" 
-                                onClick={ this.onSendButtonClick }
-                            >
-                                SEND                        
-                            </Button>
-                        </ModalFooter> */}
-                    </Modal>
+					{
+						this.state.sendTipModal &&
+							<SendTipModal 
+								sendTip={ this.sendTip }
+								setError={ this.state.setError }
+								isSuccess={ this.state.isSuccess } 
+								isLoading={ this.state.isSuccess }
+								sendLoader={ this.state.sendLoader }
+								sendTipModal={ this.state.sendTipModal }
+								onSendTipModalClose={ this.onSendTipModalClose }
+							/>
+					}
 
                     <div className="sidepanal adadad trail_sidepanel_overlay">
                         { createModalOpen && <CreateModalComponent open={createModalOpen} toggle={this.onToggleCreateModal} closeButtonHandler={ this.onBackArrowClickHandler } onSave={this.onSaveTrail} /> } 
@@ -2720,6 +2645,9 @@ if (extensionRoot) {
             // Create a div element
             app = document.createElement('div');
 			app.setAttribute('id', 'my-extension-root-flip');
+
+			const modalOpen = document.createElement('div');
+			modalOpen.setAttribute('class', 'modal-open');
 			
 			const style0 = document.createElement('style');
 			style0.textContent = myExtensionRootFlipCss0;
@@ -2757,7 +2685,7 @@ if (extensionRoot) {
 			// ckStyle6.textContent = ckEditor6;
 
             // Append div to shadow DOM
-            shadowRoot.appendChild(app);
+			shadowRoot.appendChild(app);
             // ReactDOM.render(<Test/>, app);
 			extensionRoot.shadowRoot.appendChild(app);
 			// extensionRoot.shadowRoot.appendChild(style0);
@@ -2773,6 +2701,7 @@ if (extensionRoot) {
 			// extensionRoot.shadowRoot.appendChild(ckStyle5);
 			// extensionRoot.shadowRoot.appendChild(ckStyle6);
 			extensionRoot.shadowRoot.appendChild(tooltipStyle1);
+			shadowRoot.appendChild(modalOpen);			
         }
     }
 }

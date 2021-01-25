@@ -4,9 +4,9 @@ import { Form, Input, Button } from 'antd';
 import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import $ from 'jquery';
 
-import AudioTour from './audioTour';
-import { stopMediaPlaying } from '../common/stopePlayingMedia';
-import { addTrailitLogo, removeTrailitLogo } from '../common/trailitLogoInPreview';
+import AudioTour from '../audioTour';
+import { stopMediaPlaying } from '../../common/stopePlayingMedia';
+import { addTrailitLogo, removeTrailitLogo } from '../../common/trailitLogoInPreview';
 
 const chrome = window.chrome;
 class PreviewModalComponent extends React.PureComponent {
@@ -21,6 +21,9 @@ class PreviewModalComponent extends React.PureComponent {
     }
     
     async componentDidMount() {
+        const scrollTop = $(window).scrollTop();
+        $("html, body").animate({ scrollTop: scrollTop });
+
         if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
             window.location.href = this.props.data[this.props.tourStep - 1].url;
         }

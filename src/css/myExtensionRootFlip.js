@@ -31,6 +31,15 @@ export const myExtensionRootFlipCss1 = `
         overflow-y: hidden;
     }
 
+    // .modal-open {
+    //     position: fixed;
+    //     top: 0;
+    // }
+
+    // .trial_create_modal_main {
+    //     position: fixed !important;
+    // }
+
     .trial_modal_show .modal {
         position: fixed !important;
         top: 50% !important;
@@ -60,10 +69,10 @@ export const myExtensionRootFlipCss1 = `
         height: 100%;
     }
 
-    .trial_modal_show .modal {
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
+    // .trial_modal_show .modal {
+    //     overflow-x: hidden;
+    //     overflow-y: auto;
+    // }
 
     @media (min-width: 576px) {
         .trial_modal_show .modal-dialog {
@@ -82,7 +91,7 @@ export const myExtensionRootFlipCss1 = `
         transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
         -webkit-transform: translate(0, 0) !important;
         transform: translate(0, 0) !important;
-        position: relative;
+        // position: relative;
         width: auto;
         left: 0 !important;
         padding: 0 !important;
