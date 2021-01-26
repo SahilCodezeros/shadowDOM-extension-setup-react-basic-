@@ -381,7 +381,7 @@ class WebUserTour extends React.Component {
         if (mediaTypeStatus && mediaTypeStatus === 'video') {
             preview = (
                 <div className="tr_preview_video_bx">
-                    <video className="preview-video" disablePictureInPicture controlsList="nodownload" controls onLoadedData={(e) => this.onLoadedEvent(e)} allow="autoplay" autoPlay>
+                    <video className="preview-video" disablePictureInPicture controlsList="nodownload" controls onLoadedData={(e) => this.onLoadedEvent(e)} allow="autoplay" autoPlay={ true }>
                         <source src={this.props.data[tourStep - 1].web_url} />
                     </video>
                 </div> 

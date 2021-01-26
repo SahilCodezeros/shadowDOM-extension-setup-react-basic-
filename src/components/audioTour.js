@@ -165,6 +165,7 @@ class AudioTour extends React.PureComponent {
             // document.querySelector(".tr_audioplayer-time-current").textContent = this.getTimeCodeFromNum(0);
             audio = new Audio();
             audio.src = this.props.data[this.props.tourStep - 1].web_url;
+            audio.autoplay = true;
             
             if (this.state.audioLoad) {
                 const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");

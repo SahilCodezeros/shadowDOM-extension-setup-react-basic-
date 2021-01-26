@@ -89,6 +89,7 @@ class CreateModalComponent extends React.Component {
     };
     
     toggle = () => {
+        console.log('in toggle');
         this.setState({
             title: '',
             description: '',

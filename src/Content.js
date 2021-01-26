@@ -4,34 +4,30 @@ import { Button } from 'antd';
 import { CloudUploadOutlined } from '@ant-design/icons';
 import unique from 'unique-selector';
 import { arrayMove } from 'react-sortable-hoc';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import _ from 'lodash';
 import $ from 'jquery';
 import WebFont from 'webfontloader';
 
 import { socket } from './common/socket';
 import Tooltip from './components/tooltip';
+import dragElement from './common/draggable';
 import VideoTour from './components/videoTour';
-import SendTipForm from './common/SendTipForm';
 import AudioTour from './components/audioTour';
 import { sendTransection } from './code/sendtx';
 import WebUserTour from './components/webUserTour';
-import { getScrollParent } from './components/common';
-import TooltipOverlay from './components/tooltipOverlay';
 import MySubscription from './components/mySubscription';
 import SendTipModal from './components/Modal/SendTipModal';
 import { handleFileUpload } from './common/audAndVidCommon';
+import { initButtonPosition } from './common/initButtonPosition';
 import CreateNewTrailModal from './components/CreateNewTrailModal';
 import CreateModalComponent from './components/Modal/createModalComponent';
-import { queryParentElement, getUrlVars } from './components/common';
+import { queryParentElement } from './components/common';
 import TrailDeleteModal from './components/Modal/TrailDeleteModal';
 import PreviewModalComponent from './components/Modal/previewModalComponent';
 import SortableItem, { SortableContainer } from './components/SortableItem';
 import { addOverlay, setOverlayHtml, removeOverlay } from './common/trailOverlay';
 import { addTrailitLogo, removeTrailitLogo } from './common/trailitLogoInPreview';
 import {
-	getTrails,
-	getTrailId,
 	getAllUser,
 	deleteTrail,
 	uploadTrails,
@@ -62,14 +58,6 @@ import {
 	defaultButtonCss2, 
 	defaultButtonCss3
 } from './css/defaultButton';
-// import {
-// 	ckEditor1,
-// 	ckEditor2,
-// 	ckEditor3,
-// 	ckEditor4,
-// 	ckEditor5,
-// 	ckEditor6
-// } from './css/ckEditor';
 
 import './Content.css';
 
@@ -488,7 +476,7 @@ class Main extends React.Component {
 	}
 	
 	openMenu = async (type, previewId, closeContinue) => {
-		let mainObj = {}, objStatus = true;
+		let mainObj = {}, objStatus = true;	
 		
 		if(document.URL.includes("https://twitter.com") && (type === 'video' || type === 'audio')) {
 			alert(`You don't have permission to add ${type} in this site`);
@@ -1106,13 +1094,6 @@ class DefaultButton extends React.PureComponent {
 		// 		scrollTo(0,-1);
 		// 	},0);
 		// }
-
-		// const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
-		// if (modalDiv) {
-		// 	const scrollTop = $(window).scrollTop();
-		// 	console.log('scrollTop', scrollTop);
-		// 	$("html, body").animate({ scrollTop: scrollTop });			
-		// }
 	
 		const { currentTourType, tourType } = this.state;
 		
@@ -1198,7 +1179,13 @@ class DefaultButton extends React.PureComponent {
 					removeTrailitLogo();					
 				}
 			}
-		});		
+		});	
+		
+		// Make X button draggable
+		const menuButton = document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot');
+		if (menuButton) {
+			dragElement(menuButton);
+		}
 	}
 	
 	onCreateTooltipHandle = () => {
@@ -1330,7 +1317,7 @@ class DefaultButton extends React.PureComponent {
 								type={this.state.tourType}
 								rowData={this.state.rowData} 
 								count={popoverCount}
-								onSave={this.state.tourType === 'Make Edit'?this.onUpdateTrail:this.onSaveTrail} 
+								onSave={ this.state.tourType === 'Make Edit' ? this.onUpdateTrail : this.onSaveTrail } 
 								onCancel={this.onCancelTooltip} 
 								onHandleChange={ this.handleChange }	
 							/>, node
@@ -1484,6 +1471,9 @@ class DefaultButton extends React.PureComponent {
 		* on cancel tooltip data
 	*/
 	onCancelTooltip = (target, count) => {
+		// Call init button position function
+		initButtonPosition();
+		
 		$('.trail_tour_tooltip').parents().css('z-index', '');
 		target.classList.remove('trail_web_user');
 		target.classList.remove(`trail_tour_tooltip`);
@@ -1508,6 +1498,9 @@ class DefaultButton extends React.PureComponent {
 	* on click to Update tour
 	*/
 	onUpdateTrail = async (data) => {
+		// Call init button position function
+		initButtonPosition();
+
 		let res = await UpdateTrailData(data);
 		if(res.status === 200) {
 			let resultData = res.data.response[0];
@@ -1624,6 +1617,9 @@ class DefaultButton extends React.PureComponent {
 			this.setState({ trailList: trailData, web_url: '', fileAddStatus: false, fileName: '' });
 			chrome.storage.local.set({ trail_web_user_tour: trailData, tourType: '' });
 			
+			// Call init button position function
+			initButtonPosition();
+
 			// Save trail into database
 			this.publishTrails(obj);
 
@@ -1657,6 +1653,9 @@ class DefaultButton extends React.PureComponent {
 				chrome.storage.local.set({ previewUserId: '', trail_web_user_tour: userTrails });
 			}
 		});
+
+		// Call init button position function
+		initButtonPosition();
 		
 		try {
 			const data = {
@@ -2022,10 +2021,15 @@ class DefaultButton extends React.PureComponent {
 		
 	// Save last show preview trail
 	onBackArrowClickHandler = async (e, close) => {			
+		const shadowRoot = document.getElementById('extension-div').shadowRoot;
+
 		if(close === undefined) {
 			chrome.storage.local.set({closeContinue: false});
 		}
-		
+
+		// Call init button position function
+		initButtonPosition();
+
 		const removeThisElements = () => {
 			// Remove overlay and other added element
 			$('.trail_web_user_tour').parents().css('z-index', '');
@@ -2034,7 +2038,7 @@ class DefaultButton extends React.PureComponent {
 			$('.trail_web_user_tour').removeAttr('trail_web_user_tour');	
 			$(`traiil_stop${this.state.tourStep}`).removeAttr(`traiil_stop${this.state.tourStep}`);			
 
-			const tooltip = document.getElementById('extension-div').shadowRoot.querySelector('.trail_tooltip');
+			const tooltip = shadowRoot.querySelector('.trail_tooltip');
 			if (tooltip) {
 				tooltip.parentNode.removeChild(tooltip);
 			}
@@ -2118,6 +2122,11 @@ class DefaultButton extends React.PureComponent {
 	};
 	
 	onToggleCreateModal = (status) => {
+		if (!status) {
+			// Call init button position function
+			initButtonPosition();
+		}
+
 		if(!status) {
 			chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
 			this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, createModalOpen: status });
@@ -2136,7 +2145,10 @@ class DefaultButton extends React.PureComponent {
 		// , document.querySelector('body'));
 	}
 	
-	onCloseTooltipHandle = async (e) => {		
+	onCloseTooltipHandle = async (e) => {	
+		// Call init button position function
+		initButtonPosition();
+
 		// Set onDone state
 		this.setState({ onDone: true });
 
@@ -2325,11 +2337,11 @@ class DefaultButton extends React.PureComponent {
                 if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
                     modalDiv.parentNode.parentNode.parentNode.setAttribute('class', 'trial_modal_show trial_create_modal_main');
 				}
-				
-				const scrollTop = $(window).scrollTop();
-				console.log('scrollTop', scrollTop);
-				$("html, body").animate({ scrollTop: scrollTop });
-            }
+			}
+			
+			if (tourType && tourType !== '') {
+				document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot').style.position = 'relative';
+			}
 		});	
 
 		return (
@@ -2603,7 +2615,10 @@ class DefaultButton extends React.PureComponent {
                         </div> */}
                             <div className="space"></div>
                         </div>
-                        <button className="menu pop" onClick={ this.openPopup }>
+						<button 
+							className="menu pop" 							
+							onClick={ this.openPopup }
+						>
                             <img
                                 alt=""
                                 src={ require('./images/imgpsh_fullsize_anim.png') }
