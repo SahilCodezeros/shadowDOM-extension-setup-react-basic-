@@ -2036,7 +2036,8 @@ class DefaultButton extends React.PureComponent {
 			$(`.trail_tour_ToolTipExtend`).remove();
 			$('.trail_tooltip_done').remove();
 			$('.trail_web_user_tour').removeAttr('trail_web_user_tour');	
-			$(`traiil_stop${this.state.tourStep}`).removeAttr(`traiil_stop${this.state.tourStep}`);			
+			$(`traiil_stop${this.state.tourStep}`).removeAttr(`traiil_stop${this.state.tourStep}`);				
+			$('.trail_select_bx').removeClass('trail_select_bx');
 
 			const tooltip = shadowRoot.querySelector('.trail_tooltip');
 			if (tooltip) {
