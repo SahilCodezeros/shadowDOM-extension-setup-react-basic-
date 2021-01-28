@@ -14,7 +14,7 @@ import {
 
 let modalOpen;
 
-class CreateModalComponent extends React.Component {
+class CreateModalComponent extends React.PureComponent {
     constructor(props) {
         super(props)
 
@@ -30,9 +30,22 @@ class CreateModalComponent extends React.Component {
 	};
     
     componentDidMount() {
+        console.log('this.props.stepType', this.props.stepType);
         // window.scrollTo(0, 0);
         const scrollTop = $(window).scrollTop();
         $("html, body").animate({ scrollTop: scrollTop });
+
+        // Set trail status state
+        this.setState({ trailStatus: this.props.stepType });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        console.log('prevProps', prevProps);
+        console.log('this.props', this.props);
+        if (prevProps.stepType !== this.props.stepType) {
+            // Set trail status state
+            this.setState({ trailStatus: this.props.stepType });
+        }
     }
 
     onChangeToInput = (e) => {
@@ -89,7 +102,6 @@ class CreateModalComponent extends React.Component {
     };
     
     toggle = () => {
-        console.log('in toggle');
         this.setState({
             title: '',
             description: '',
@@ -163,6 +175,7 @@ class CreateModalComponent extends React.Component {
         const { title, description, fileName, fileLoading } = this.state;
         let tourType = 'modal';
 
+        
         let tooltipForm = commonInitialRenderFunction(
             this.state.trailStatus,
             title,
@@ -173,8 +186,9 @@ class CreateModalComponent extends React.Component {
             this.onAddStep,
             this.selectedTooltipForm
         );
-        
+            
         const { trailStatus } = this.state;
+        console.log('trailStatus', trailStatus);
         
         if (document.getElementById('extension-div').shadowRoot.getElementById('my-extension-root-flip').style.display === "none") {
             modalOpen = false;
@@ -190,6 +204,16 @@ class CreateModalComponent extends React.Component {
                 }
             } 
         });   
+
+        let headerTitle = '';
+
+        if (trailStatus === 'video') {
+            headerTitle = 'Video';
+
+        } else if (trailStatus === 'audio') {
+            headerTitle = 'Audio';
+        }
+
         
         return(
             <React.Fragment>
@@ -200,7 +224,12 @@ class CreateModalComponent extends React.Component {
                     className="tr_modal trail_create_modal" 
                     container={ document.getElementById('extension-div').shadowRoot.querySelector('.modal-open') }
                 >
-                    <ModalHeader className="tr_modal_trail_modal_header" toggle={this.toggle}>Create Modal</ModalHeader>
+                    <ModalHeader 
+                        toggle={ this.toggle }
+                        className="tr_modal_trail_modal_header" 
+                    >
+                        Create { headerTitle } Modal
+                    </ModalHeader>
                     <ModalBody>
                         { commonTypeSelectonButton(
                             trailStatus, 

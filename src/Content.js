@@ -27,6 +27,7 @@ import PreviewModalComponent from './components/Modal/previewModalComponent';
 import SortableItem, { SortableContainer } from './components/SortableItem';
 import { addOverlay, setOverlayHtml, removeOverlay } from './common/trailOverlay';
 import { addTrailitLogo, removeTrailitLogo } from './common/trailitLogoInPreview';
+import CreateTourConfirmationModal from './components/Modal/CreateTourConfirmationModal';
 import {
 	getAllUser,
 	deleteTrail,
@@ -90,19 +91,24 @@ class Main extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			initMenu: true,
 			menuOpen: false,
 			trail_web_user_tour: [],
 			modalSubscription: false,
 			modalCreateNewTrailModal: false,
 			currentUserId: null,
 			followerList: [],
-			closeContinue: false
+			closeContinue: false,
+			confirmationModal: {
+				show: false,
+				tourType: ''
+			}
 		};
 	};
 
 	async componentDidMount() {		
 
-		chrome.storage.local.get(['trail_web_user_tour', 'trail_id', 'userData', 'previewUserId', "notification", "saveSort", 'tourStep', 'closeContinue'], async (items) => {
+		chrome.storage.local.get(['trail_web_user_tour', 'trail_id', 'userData', 'previewUserId', "notification", "saveSort", 'tourStep', 'closeContinue'], async (items) => {			
 			this.setState({closeContinue: items.closeContinue === undefined ? false : items.closeContinue, currentUserId: items.userData._id});			
 			socket.on('connect', () => {
 				console.info('Client is connected');
@@ -134,8 +140,8 @@ class Main extends React.Component {
 					(changes.tourStep && changes.tourStep.newValue === '') &&
 					(changes.tourType && changes.tourType.newValue === '')
 				) {
-					chrome.storage.local.get(['trail_web_user_tour', 'userData', 'trail_id', 'previewUserId', "notification", "saveSort", 'tourStep'], async (items) => {
-						try {
+					chrome.storage.local.get(['trail_web_user_tour', 'userData', 'trail_id', 'previewUserId', "notification", "saveSort", 'tourStep'], async (items) => {						
+						try {							
 							// Call common get user data function
 							await this.getCurrUserDataCommon(items);							
 						} catch (err) {
@@ -265,7 +271,10 @@ class Main extends React.Component {
 		chrome.storage.local.get(["trail_web_user_tour", "tourStatus", "tourType", "tourStep", "currentTourType", "loadingCount", "userData"], async function (items) {
 			this.setState({ trail_web_user_tour: items.trail_web_user_tour });
 			// trailWebUserTour = items.trail_web_user_tour;
-			this.setState({menuOpen: true});
+			this.setState({ 
+				menuOpen: true, 
+				initMenu: false 
+			});
 			// Store totalTrails number in localStorage
 			localStorage.setItem(
 				process.env.REACT_APP_LOCALSTORAGE, 
@@ -400,7 +409,10 @@ class Main extends React.Component {
 				await this.getCurrUserDataCommon(items);
 			});
 
-			this.setState({menuOpen: true});
+			this.setState({ 
+				menuOpen: true,
+				initMenu: false 
+			});
 		}
 		
 		chrome.storage.local.get(["closeContinue"], async function (items) {			
@@ -474,8 +486,49 @@ class Main extends React.Component {
 		// 	}
 		// });
 	}
+
+	// On media tour tour select
+	onMediaTourSelect = (tourType) => {
+
+		// Set confirmation modal state
+		this.setState({
+			confirmationModal: {
+				show: true,
+				tourType
+			}
+		});
+	};
+
+	// On confirmation modal close
+	confirmationModalClose = () => {
+
+		// Set confirmation modal state
+		this.setState({
+			confirmationModal: {
+				show: false,
+				tourType: ''
+			}
+		});
+	};
+
+	// On select tour type click
+	onTourTypeSelect = (tourType, tourStep) => {
+		// Call close confirmation modal
+		this.confirmationModalClose();
+
+		console.log('onTourTypeSelect', tourType);
+
+		setTimeout(() => {
+			if (tourStep === `${tourType} Modal`) {
+				this.openMenu('modal', undefined, undefined, tourType);
 	
-	openMenu = async (type, previewId, closeContinue) => {
+			} else {
+				this.openMenu(tourType);
+			}
+		}, 200);
+	};
+	
+	openMenu = async (type, previewId, closeContinue, stepType) => {
 		let mainObj = {}, objStatus = true;	
 		
 		if(document.URL.includes("https://twitter.com") && (type === 'video' || type === 'audio')) {
@@ -502,6 +555,7 @@ class Main extends React.Component {
 				break;
 			case 'modal':
 				mainObj.tourType = "modal";
+				mainObj.stepType = stepType;
 				chrome.runtime.sendMessage('', {
 					type: 'chromeModal',
 					status: true
@@ -630,7 +684,10 @@ class Main extends React.Component {
 
 				break;
 			case '':
-				this.setState({ menuOpen: !this.state.menuOpen });
+				this.setState({ 
+					menuOpen: !this.state.menuOpen,
+					initMenu: !this.state.initMenu
+				});
 				break;
 			case 'audio':
 				mainObj.tourType = "audio";
@@ -642,7 +699,21 @@ class Main extends React.Component {
 		}
 		
 		if (mainObj.tourType && objStatus) {
-			chrome.storage.local.set({ openButton: 'CreateTrail', tourType: mainObj.tourType === undefined ? '' : mainObj.tourType, currentTourType: 'preview' });
+			if (mainObj.stepType && mainObj.stepType !== '') {
+				chrome.storage.local.set({ 
+					openButton: 'CreateTrail', 
+					currentTourType: 'preview',
+					stepType: mainObj.stepType,
+					tourType: mainObj.tourType === undefined ? '' : mainObj.tourType, 
+				});
+
+			} else {
+				chrome.storage.local.set({ 
+					openButton: 'CreateTrail', 
+					currentTourType: 'preview',
+					tourType: mainObj.tourType === undefined ? '' : mainObj.tourType, 
+				});
+			}
 		}
 		
 		if(mainObj.tourType !== 'preview') {
@@ -708,172 +779,201 @@ class Main extends React.Component {
     
     
 	render() {
-        const { menuOpen, modalSubscription, modalCreateNewTrailModal, followerList, closeContinue } = this.state;
+        const { 
+			menuOpen, 
+			initMenu,
+			followerList, 
+			closeContinue,
+			modalSubscription, 
+			confirmationModal,
+			modalCreateNewTrailModal, 
+		} = this.state;
 
         return (
             <>  
                 <style>{ mainCss }</style>
                 <div id="my-extension-root">
+					<CreateTourConfirmationModal 
+						data={ confirmationModal } 
+						onModalClose={ this.confirmationModalClose }
+						onTourSelect={ this.onTourTypeSelect }
+					/>
+
                     <div className={'my-extension'}>
                         {closeContinue && <button className="trail_continue_btn" onClick={this.onContinueTour}>Continue...</button>}
                         <MySubscription open={modalSubscription} toggle={this.onToggleSubscription} followerList={followerList}/>
                         <CreateNewTrailModal open={modalCreateNewTrailModal} toggle={this.onToggleCreateNewTrailModal} followerList={followerList}/>
                         
-                        <div className={`wrap ${menuOpen ? 'open' : ''}`}>
-                            <button className="blob" onClick={e => this.openMenu('preview')} data-title="Preview">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                                    <g id="Group_471" data-name="Group 471" transform="translate(11703 4613)">
-                                        <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11703 -4613)" fill="#fff" />
-                                        <g id="visibility" transform="translate(-11694 -4688.449)">
-                                            <g id="Group_278" data-name="Group 278" transform="translate(0 90.449)">
-                                                <g id="Group_277" data-name="Group 277" transform="translate(0)">
-                                                    <path id="Path_103" data-name="Path 103" d="M28.032,98.985c-2.049-5.106-7.668-8.536-13.983-8.536S2.116,93.879.066,98.985a.915.915,0,0,0,0,.682c2.051,5.105,7.671,8.535,13.983,8.535s11.931-3.43,13.983-8.535A.915.915,0,0,0,28.032,98.985Zm-13.983,7.387c-5.428,0-10.253-2.817-12.141-7.047,1.886-4.23,6.711-7.046,12.141-7.046S24.3,95.1,26.19,99.325C24.3,103.555,19.477,106.372,14.049,106.372Z" transform="translate(0 -90.449)" fill="#fb542b" className="svg_btn" stroke="#fff" stroke-width="0.5" />
-                                                </g>
-                                            </g>
-                                            <g id="Group_280" data-name="Group 280" transform="translate(8.66 93.987)">
-                                                <g id="Group_279" data-name="Group 279" transform="translate(0 0)">
-                                                    <path id="Path_104" data-name="Path 104" d="M156.762,152.32a5.338,5.338,0,1,0,5.338,5.338A5.344,5.344,0,0,0,156.762,152.32Zm0,8.846a3.508,3.508,0,1,1,3.508-3.508A3.512,3.512,0,0,1,156.762,161.166Z" transform="translate(-151.424 -152.32)" fill="#fb542b" className="svg_btn" stroke="#fff" stroke-width="0.5" />
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </svg>
-                                {/* <span>Preview</span> */}
-                            </button>
-                            <button class="blob" onClick={e => this.openMenu('tooltip')} data-title="Create Tool Tip">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                                    <g id="Group_471" data-name="Group 471" transform="translate(11703 4613)">
-                                        <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11703 -4613)" fill="#fff" />
-                                        <g id="drawing-tablet" transform="translate(-11693.5 -4603)">
-                                            <path id="Path_105" data-name="Path 105" d="M293.045,393.1a.549.549,0,1,0-.549-.549A.549.549,0,0,0,293.045,393.1Zm0,0" transform="translate(-275.972 -370.488)" fill="#fb542b" className="svg_btn2" stroke="#fb542b" stroke-width="0.25" />
-                                            <path id="Path_107" data-name="Path 107" d="M25.853,6.147H24.348l2.4-2.4a2.195,2.195,0,1,0-3.1-3.1l-5.5,5.5H3.244A2.747,2.747,0,0,0,.5,8.89V25.354A2.747,2.747,0,0,0,3.244,28.1h22.61A2.747,2.747,0,0,0,28.6,25.354V8.89a2.747,2.747,0,0,0-2.744-2.744ZM13.314,12.77a1.652,1.652,0,0,1,.4-.643l.022-.022,1.552,1.552-.022.022a1.655,1.655,0,0,1-.644.4l-1.959.653Zm-.379-1.42a2.754,2.754,0,0,0-.663,1.073l-.956,2.868-.709.662a.549.549,0,1,0,.748.8l.724-.675,2.887-.963a2.755,2.755,0,0,0,1.073-.663l3.917-3.918h4.249V23.708H7.085V10.537h6.664Zm3.126,1.53-1.552-1.552,8.357-8.357,1.552,1.552ZM24.419,1.419a1.1,1.1,0,0,1,1.552,1.552l-.776.776L23.643,2.2ZM27.5,25.354A1.648,1.648,0,0,1,25.853,27H3.244A1.648,1.648,0,0,1,1.6,25.354V8.89A1.648,1.648,0,0,1,3.244,7.244h13.8l-2.2,2.195H6.536a.549.549,0,0,0-.549.549V24.256a.549.549,0,0,0,.549.549h18.22a.549.549,0,0,0,.549-.549V9.988a.549.549,0,0,0-.549-.549h-3.7l2.2-2.195h2.6A1.648,1.648,0,0,1,27.5,8.89Zm0,0" transform="translate(0 0)" fill="#fb542b" className="svg_btn2" stroke="#fb542b" stroke-width="0.25" />
-                                            <path id="Path_108" data-name="Path 108" d="M333.041,317.492h3.293a.549.549,0,0,0,.549-.549v-4.39a.549.549,0,1,0-1.1,0v3.841h-2.744a.549.549,0,0,0,0,1.1Zm0,0" transform="translate(-313.773 -294.882)" fill="#fb542b" className="svg_btn2" stroke="#fb542b" stroke-width="0.25" />
-                                        </g>
-                                    </g>
-                                </svg>
-                                {/* <span>Create Tool Tip</span> */}
-                            </button>
-                            <button class="blob" onClick={e => this.openMenu('modal')} data-title="Create Modal">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                                    <g id="Group_471" data-name="Group 471" transform="translate(11703 4613)">
-                                        <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11703 -4613)" fill="#fff"/>
-                                        <g id="interface" transform="translate(-11693 -4602)">
-                                        <path className="svg_btn" id="Path_1" data-name="Path 1" d="M0,6.186V25.2H27.657V1H0ZM24.2,2.729h1.729V4.457H24.2ZM1.729,6.186h24.2V23.471H1.729Z" fill="#fb542b"/>
-                                        <path className="svg_btn" id="Path_2" data-name="Path 2" d="M3,6H6.457V7.729H3Z" transform="translate(2.186 3.643)" fill="#fb542b"/>
-                                        <path className="svg_btn" id="Path_3" data-name="Path 3" d="M6,6H18.1V7.729H6Z" transform="translate(4.371 3.643)" fill="#fb542b"/>
-                                        <path className="svg_btn" id="Path_4" data-name="Path 4" d="M3,8H6.457V9.729H3Z" transform="translate(2.186 5.1)" fill="#fb542b"/>
-                                        <path className="svg_btn" id="Path_5" data-name="Path 5" d="M6,8H18.1V9.729H6Z" transform="translate(4.371 5.1)" fill="#fb542b"/>
-                                        <path className="svg_btn" id="Path_6" data-name="Path 6" d="M3,10H6.457v1.729H3Z" transform="translate(2.186 6.557)" fill="#fb542b"/>
-                                        <path className="svg_btn" id="Path_7" data-name="Path 7" d="M6,10H18.1v1.729H6Z" transform="translate(4.371 6.557)" fill="#fb542b"/>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </button>
+                        {/* <div className={`wrap open ${menuOpen ? 'createMenu': ''}`}> */}
+						<div className={`wrap open ${!menuOpen ? 'createMenu': ''}`}>
+							{/* Preview Button */}
+							{/* <button className="blob" onClick={e => this.openMenu('preview')} data-title="Preview">
+								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+									<g id="Group_471" data-name="Group 471" transform="translate(11703 4613)">
+										<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11703 -4613)" fill="#fff" />
+										<g id="visibility" transform="translate(-11694 -4688.449)">
+											<g id="Group_278" data-name="Group 278" transform="translate(0 90.449)">
+												<g id="Group_277" data-name="Group 277" transform="translate(0)">
+													<path id="Path_103" data-name="Path 103" d="M28.032,98.985c-2.049-5.106-7.668-8.536-13.983-8.536S2.116,93.879.066,98.985a.915.915,0,0,0,0,.682c2.051,5.105,7.671,8.535,13.983,8.535s11.931-3.43,13.983-8.535A.915.915,0,0,0,28.032,98.985Zm-13.983,7.387c-5.428,0-10.253-2.817-12.141-7.047,1.886-4.23,6.711-7.046,12.141-7.046S24.3,95.1,26.19,99.325C24.3,103.555,19.477,106.372,14.049,106.372Z" transform="translate(0 -90.449)" fill="#fb542b" className="svg_btn" stroke="#fff" stroke-width="0.5" />
+												</g>
+											</g>
+											<g id="Group_280" data-name="Group 280" transform="translate(8.66 93.987)">
+												<g id="Group_279" data-name="Group 279" transform="translate(0 0)">
+													<path id="Path_104" data-name="Path 104" d="M156.762,152.32a5.338,5.338,0,1,0,5.338,5.338A5.344,5.344,0,0,0,156.762,152.32Zm0,8.846a3.508,3.508,0,1,1,3.508-3.508A3.512,3.512,0,0,1,156.762,161.166Z" transform="translate(-151.424 -152.32)" fill="#ffffff" className="svg_btn" stroke="#fff" stroke-width="0.5" />
+												</g>
+											</g>
+										</g>
+									</g>
+								</svg>
+							</button> */}
+							<button className="blob" onClick={e => this.openMenu('preview')} data-title="Preview">
+								<svg width="40" height="30" viewBox="0 0 40 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M20.4531 20.0751C23.3699 20.0751 25.7344 17.7433 25.7344 14.8668C25.7344 11.9903 23.3699 9.65845 20.4531 9.65845C17.5364 9.65845 15.1719 11.9903 15.1719 14.8668C15.1719 17.7433 17.5364 20.0751 20.4531 20.0751Z" fill="white"/>
+									<path d="M39.8757 14.4097C38.3466 10.3186 35.6921 6.78068 32.2403 4.23311C28.7885 1.68554 24.6906 0.240019 20.4531 0.0751953C16.2157 0.240019 12.1178 1.68554 8.66595 4.23311C5.21411 6.78068 2.55963 10.3186 1.03057 14.4097C0.927309 14.7051 0.927309 15.0286 1.03057 15.3241C2.55963 19.4151 5.21411 22.953 8.66595 25.5006C12.1178 28.0482 16.2157 29.4937 20.4531 29.6585C24.6906 29.4937 28.7885 28.0482 32.2403 25.5006C35.6921 22.953 38.3466 19.4151 39.8757 15.3241C39.9789 15.0286 39.9789 14.7051 39.8757 14.4097ZM20.4531 23.6074C18.7818 23.6074 17.1481 23.0948 15.7584 22.1343C14.3688 21.1739 13.2857 19.8088 12.6461 18.2117C12.0065 16.6146 11.8392 14.8572 12.1653 13.1617C12.4913 11.4662 13.2961 9.90876 14.4779 8.68637C15.6597 7.46399 17.1654 6.63153 18.8046 6.29428C20.4438 5.95702 22.1428 6.13012 23.6869 6.79167C25.231 7.45322 26.5507 8.57351 27.4792 10.0109C28.4078 11.4483 28.9034 13.1381 28.9034 14.8669C28.8999 17.1839 28.0085 19.405 26.4246 21.0434C24.8406 22.6818 22.6932 23.6038 20.4531 23.6074Z" fill="white"/>
+								</svg>
+								{/* <span>Preview</span> */}
+							</button>
+
+							{/* Tooltip */}
+							{/* <button class="blob" onClick={e => this.openMenu('tooltip')} data-title="Create Tool Tip">
+								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+									<g id="Group_471" data-name="Group 471" transform="translate(11703 4613)">
+										<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11703 -4613)" fill="#fff" />
+										<g id="drawing-tablet" transform="translate(-11693.5 -4603)">
+											<path id="Path_105" data-name="Path 105" d="M293.045,393.1a.549.549,0,1,0-.549-.549A.549.549,0,0,0,293.045,393.1Zm0,0" transform="translate(-275.972 -370.488)" fill="#ffffff" className="svg_btn2" stroke="#ffffff" stroke-width="0.25" />
+											<path id="Path_107" data-name="Path 107" d="M25.853,6.147H24.348l2.4-2.4a2.195,2.195,0,1,0-3.1-3.1l-5.5,5.5H3.244A2.747,2.747,0,0,0,.5,8.89V25.354A2.747,2.747,0,0,0,3.244,28.1h22.61A2.747,2.747,0,0,0,28.6,25.354V8.89a2.747,2.747,0,0,0-2.744-2.744ZM13.314,12.77a1.652,1.652,0,0,1,.4-.643l.022-.022,1.552,1.552-.022.022a1.655,1.655,0,0,1-.644.4l-1.959.653Zm-.379-1.42a2.754,2.754,0,0,0-.663,1.073l-.956,2.868-.709.662a.549.549,0,1,0,.748.8l.724-.675,2.887-.963a2.755,2.755,0,0,0,1.073-.663l3.917-3.918h4.249V23.708H7.085V10.537h6.664Zm3.126,1.53-1.552-1.552,8.357-8.357,1.552,1.552ZM24.419,1.419a1.1,1.1,0,0,1,1.552,1.552l-.776.776L23.643,2.2ZM27.5,25.354A1.648,1.648,0,0,1,25.853,27H3.244A1.648,1.648,0,0,1,1.6,25.354V8.89A1.648,1.648,0,0,1,3.244,7.244h13.8l-2.2,2.195H6.536a.549.549,0,0,0-.549.549V24.256a.549.549,0,0,0,.549.549h18.22a.549.549,0,0,0,.549-.549V9.988a.549.549,0,0,0-.549-.549h-3.7l2.2-2.195h2.6A1.648,1.648,0,0,1,27.5,8.89Zm0,0" transform="translate(0 0)" fill="#ffffff" className="svg_btn2" stroke="#ffffff" stroke-width="0.25" />
+											<path id="Path_108" data-name="Path 108" d="M333.041,317.492h3.293a.549.549,0,0,0,.549-.549v-4.39a.549.549,0,1,0-1.1,0v3.841h-2.744a.549.549,0,0,0,0,1.1Zm0,0" transform="translate(-313.773 -294.882)" fill="#ffffff" className="svg_btn2" stroke="#ffffff" stroke-width="0.25" />
+										</g>
+									</g>
+								</svg>
+							</button> */}
+							<button class="blob" onClick={e => this.openMenu('tooltip')} data-title="Tooltip">
+								<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M26 13.9998H22V9.99986C22 9.46943 21.7893 8.96073 21.4142 8.58567C21.0391 8.2106 20.5304 7.99989 20 7.99989C19.4696 7.99989 18.9609 8.2106 18.5858 8.58567C18.2107 8.96073 18 9.46943 18 9.99986V13.9998H14C13.4696 13.9998 12.9609 14.2105 12.5858 14.5856C12.2107 14.9607 12 15.4694 12 15.9998C12 16.5302 12.2107 17.0389 12.5858 17.414C12.9609 17.789 13.4696 17.9997 14 17.9997H18V21.9997C18 22.5301 18.2107 23.0388 18.5858 23.4139C18.9609 23.789 19.4696 23.9997 20 23.9997C20.5304 23.9997 21.0391 23.789 21.4142 23.4139C21.7893 23.0388 22 22.5301 22 21.9997V17.9997H26C26.5304 17.9997 27.0391 17.789 27.4142 17.414C27.7893 17.0389 28 16.5302 28 15.9998C28 15.4694 27.7893 14.9607 27.4142 14.5856C27.0391 14.2105 26.5304 13.9998 26 13.9998ZM34 0H6C4.4087 0 2.88258 0.632132 1.75736 1.75733C0.632141 2.88254 0 4.40864 0 5.99992V25.9996C0 27.5909 0.632141 29.117 1.75736 30.2422C2.88258 31.3674 4.4087 31.9996 6 31.9996H29.18L36.58 39.4194C36.7669 39.6048 36.9885 39.7515 37.2322 39.851C37.4759 39.9505 37.7368 40.001 38 39.9994C38.2624 40.0062 38.5226 39.9514 38.76 39.8394C39.1252 39.6894 39.4379 39.4346 39.6586 39.1072C39.8792 38.7797 39.998 38.3943 40 37.9995V5.99992C40 4.40864 39.3679 2.88254 38.2426 1.75733C37.1174 0.632132 35.5913 0 34 0ZM36 33.1795L31.42 28.5796C31.2331 28.3942 31.0115 28.2476 30.7678 28.1481C30.5241 28.0485 30.2632 27.9981 30 27.9996H6C5.46957 27.9996 4.96086 27.7889 4.58579 27.4138C4.21071 27.0388 4 26.5301 4 25.9996V5.99992C4 5.46949 4.21071 4.96079 4.58579 4.58572C4.96086 4.21066 5.46957 3.99994 6 3.99994H34C34.5304 3.99994 35.0391 4.21066 35.4142 4.58572C35.7893 4.96079 36 5.46949 36 5.99992V33.1795Z" fill="white"/>
+								</svg>
+								{/* <span>ToolTip</span> */}
+							</button>
+
+							{/* Create Modal */}
+							{/* <button class="blob" onClick={e => this.openMenu('modal')} data-title="Create Modal">
+								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+									<g id="Group_471" data-name="Group 471" transform="translate(11703 4613)">
+										<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11703 -4613)" fill="#fff"/>
+										<g id="interface" transform="translate(-11693 -4602)">
+										<path className="svg_btn" id="Path_1" data-name="Path 1" d="M0,6.186V25.2H27.657V1H0ZM24.2,2.729h1.729V4.457H24.2ZM1.729,6.186h24.2V23.471H1.729Z" fill="#ffffff"/>
+										<path className="svg_btn" id="Path_2" data-name="Path 2" d="M3,6H6.457V7.729H3Z" transform="translate(2.186 3.643)" fill="#ffffff"/>
+										<path className="svg_btn" id="Path_3" data-name="Path 3" d="M6,6H18.1V7.729H6Z" transform="translate(4.371 3.643)" fill="#ffffff"/>
+										<path className="svg_btn" id="Path_4" data-name="Path 4" d="M3,8H6.457V9.729H3Z" transform="translate(2.186 5.1)" fill="#ffffff"/>
+										<path className="svg_btn" id="Path_5" data-name="Path 5" d="M6,8H18.1V9.729H6Z" transform="translate(4.371 5.1)" fill="#ffffff"/>
+										<path className="svg_btn" id="Path_6" data-name="Path 6" d="M3,10H6.457v1.729H3Z" transform="translate(2.186 6.557)" fill="#ffffff"/>
+										<path className="svg_btn" id="Path_7" data-name="Path 7" d="M6,10H18.1v1.729H6Z" transform="translate(4.371 6.557)" fill="#ffffff"/>
+										</g>
+									</g>
+								</svg>
+							</button> */}
+							{
+								!document.URL.includes("https://twitter.com") &&
+									<button class="blob" onClick={e => this.onMediaTourSelect('video')} data-title="Video">
+										<svg width="41" height="29" viewBox="0 0 41 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M18.8779 6.55304H14.8779V12.553H8.87793V16.553H14.8779V22.553H18.8779V16.553H24.8779V12.553H18.8779V6.55304Z" fill="white"/>
+											<path d="M32.8789 4.55298C32.8789 2.34698 31.0849 0.552979 28.8789 0.552979H4.87891C2.67291 0.552979 0.878906 2.34698 0.878906 4.55298V24.553C0.878906 26.759 2.67291 28.553 4.87891 28.553H28.8789C31.0849 28.553 32.8789 26.759 32.8789 24.553V17.887L40.8789 24.553V4.55298L32.8789 11.219V4.55298ZM28.8809 24.553H4.87891V4.55298H28.8789V14.553L28.8809 24.553Z" fill="white"/>
+										</svg>
+										{/* <span>Video</span> */}
+									</button>
+							}
+
                             <button className="menu" onClick={(e) => this.openMenu("")}>
-                                <img className="trail_plus"
-                                    alt=""
-                                    src={require('./images/imgpsh_fullsize_anim.png')}
-                                />
-                                <img className="trail_edit" src={require(`./images/edit-tools.png`)}/>
-                            </button>
-                            {!document.URL.includes("https://twitter.com") && <React.Fragment>
-                                <button className="blob" onClick={(e) => this.openMenu('video')} data-title="Create Video">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                                        <g id="Group_472" data-name="Group 472" transform="translate(-1820 -597)">
-                                            <circle id="Ellipse_101" data-name="Ellipse 70" cx="24" cy="24" r="24" transform="translate(1820 597)" fill="#fff" />
-                                            <g id="video-camera-side-view-outlined-tool-symbol" transform="translate(1832 502.041)">
-                                                <g id="Group_281" data-name="Group 281" transform="translate(0 111.272)">
-                                                    <path id="Path_109" data-name="Path 109" d="M15.317,126.681a2.156,2.156,0,0,0,2.2-2.2V113.473a2.156,2.156,0,0,0-2.2-2.2H2.2a2.156,2.156,0,0,0-2.2,2.2V124.48a2.156,2.156,0,0,0,2.2,2.2ZM1.1,124.459V113.493a1.092,1.092,0,0,1,1.113-1.12H15.431a1.092,1.092,0,0,1,1.113,1.12v10.966a1.093,1.093,0,0,1-1.113,1.122H2.213A1.093,1.093,0,0,1,1.1,124.459Z" transform="translate(0 -111.272)" fill="#fb542b" className="svg_btn2" stroke="#fb542b" stroke-width="0.2" />
-                                                    <path id="Path_110" data-name="Path 110" d="M475.162,121.072v1.348l5.414,4.261V111.272l-5.414,4.3v1.379l4.313-3.236v10.592Z" transform="translate(-456.362 -111.272)" fill="#fb542b" className="svg_btn2" stroke="#fb542b" stroke-width="0.2" />
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </svg>
-                                        {/* <span>Create Video</span> */}
-                                </button>
-                                <button className="blob" onClick={e => this.openMenu('audio')} data-title="Create Audio">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                                        <g id="Group_471" data-name="Group 471" transform="translate(11717 4613)">
-                                            <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11717 -4613)" fill="#fff" />
-                                            <g id="audio-interface-speaker-symbol" transform="translate(-11707 -4671.857)">
-                                                <g id="Group_282" data-name="Group 282" transform="translate(0 72.857)">
-                                                    <path stroke-width="0" id="Path_111" data-name="Path 111" d="M3.9,86.838l9.831,5.992V72.857L3.9,78.849H1.3A1.3,1.3,0,0,0,0,80.181v5.327A1.3,1.3,0,0,0,1.3,86.84H3.9ZM1.248,80.1H3.9l8.586-4.746v14.98L3.9,85.486H1.248Z" transform="translate(0 -72.857)" fill="#fb542b" className="svg_btn" />
-                                                    <path stroke-width="0" id="Path_112" data-name="Path 112" d="M349.714,171.382v1.387a7.074,7.074,0,0,0,0-12.483v1.387s2.5,1.059,2.5,4.855S349.714,171.382,349.714,171.382Z" transform="translate(-334.734 -156.541)" fill="#fb542b" className="svg_btn" />
-                                                    <path stroke-width="0" id="Path_113" data-name="Path 113" d="M524.571,117.829v1.648s3.745-1.8,3.745-8.738S524.571,102,524.571,102v1.62s2.5,1.378,2.5,7.118S524.571,117.829,524.571,117.829Z" transform="translate(-502.101 -100.752)" className="svg_btn" fill="#fb542b" />
-                                                    <path stroke-width="0" id="Path_114" data-name="Path 114" d="M437.143,144.543v1.58s3.745-2.06,3.745-7.49-3.745-7.49-3.745-7.49v1.528s2.5,1.624,2.5,5.962S437.143,144.543,437.143,144.543Z" transform="translate(-418.418 -128.647)" className="svg_btn" fill="#fb542b" />
-                                                </g>
-                                            </g>
-                                        </g>
-                                    </svg>
-                                    {/* <span>Create Audio</span> */}
-                                </button>
-                            </React.Fragment>}
-                            {/* <button className="blob" onClick={e => this.openMenu('saved')} data-title="Edit Trail">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                            <g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
-                                <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
-                                <g id="edit" transform="translate(-11683.37 -4600.589)">
-                                <path id="Path_1" className="svg_btn2" data-name="Path 1" d="M18.7,49.861a.5.5,0,0,0-.5.5v4.481a1.515,1.515,0,0,1-1.514,1.514H2.523a1.515,1.515,0,0,1-1.514-1.514V41.7a1.516,1.516,0,0,1,1.514-1.514H7a.5.5,0,0,0,0-1.009H2.523A2.526,2.526,0,0,0,0,41.7V54.846A2.526,2.526,0,0,0,2.523,57.37h14.16a2.526,2.526,0,0,0,2.523-2.523V50.365a.5.5,0,0,0-.5-.5Zm0,0" transform="translate(0 -36.948)" fill="#fb542b"/>
-                                <path id="Path_2" className="svg_btn2" data-name="Path 2" d="M121.737.926a2.271,2.271,0,0,0-3.212,0l-9,9a.5.5,0,0,0-.13.222l-1.184,4.274a.5.5,0,0,0,.621.621l4.274-1.184a.5.5,0,0,0,.222-.13l9-9a2.273,2.273,0,0,0,0-3.212Zm-11.115,9.331,7.369-7.369,2.376,2.376L113,12.634Zm-.475.953,1.9,1.9-2.626.728Zm11.469-7.194-.535.535L118.7,2.175l.535-.535a1.262,1.262,0,0,1,1.784,0l.592.592A1.263,1.263,0,0,1,121.616,4.016Zm0,0" transform="translate(-102.73)" fill="#fb542b"/>
-                                </g>
-                            </g>
-                            </svg>
-                                
-                            </button> */}
-                            {resizeScreen() && <button className="blob" onClick={e => this.openMenu('Make Edit')} data-title="Make Edit Trail">
-                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                                    <g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
-                                        <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
-                                        <g id="signs" transform="translate(-11683 -4599)">
-                                            <path id="Path_1" className="svg_btn2" data-name="Path 1" d="M10.143,20.286A10.143,10.143,0,1,1,20.286,10.143,10.154,10.154,0,0,1,10.143,20.286Zm0-19.018a8.875,8.875,0,1,0,8.875,8.875A8.885,8.885,0,0,0,10.143,1.268Zm0,0" fill="#fb542b"/>
-                                            <path id="Path_2" className="svg_btn2" data-name="Path 2" d="M137.509,241.268h-8.875a.634.634,0,0,1,0-1.268h8.875a.634.634,0,1,1,0,1.268Zm0,0" transform="translate(-122.929 -230.491)" fill="#fb542b"/>
-                                            <path id="Path_3" className="svg_btn2" data-name="Path 3" d="M240.634,138.143a.634.634,0,0,1-.634-.634v-8.875a.634.634,0,1,1,1.268,0v8.875A.634.634,0,0,1,240.634,138.143Zm0,0" transform="translate(-230.491 -122.929)" fill="#fb542b"/>
-                                        </g>
-                                    </g>
-                                </svg> */}
+								<img 
+									alt="tour_menu" 
+									className="trail_plus trail_edit_v2" 
+									src={require(`./images/imgpsh_fullsize_anim_new.png`)}
+								/>
+							</button>	
+							{
+								!document.URL.includes("https://twitter.com") && 
+									<React.Fragment>
+										{/* Create Video */}
+										{/* <button className="blob" onClick={(e) => this.openMenu('video')} data-title="Create Video">
+											<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+												<g id="Group_472" data-name="Group 472" transform="translate(-1820 -597)">
+													<circle id="Ellipse_101" data-name="Ellipse 70" cx="24" cy="24" r="24" transform="translate(1820 597)" fill="#fff" />
+													<g id="video-camera-side-view-outlined-tool-symbol" transform="translate(1832 502.041)">
+														<g id="Group_281" data-name="Group 281" transform="translate(0 111.272)">
+															<path id="Path_109" data-name="Path 109" d="M15.317,126.681a2.156,2.156,0,0,0,2.2-2.2V113.473a2.156,2.156,0,0,0-2.2-2.2H2.2a2.156,2.156,0,0,0-2.2,2.2V124.48a2.156,2.156,0,0,0,2.2,2.2ZM1.1,124.459V113.493a1.092,1.092,0,0,1,1.113-1.12H15.431a1.092,1.092,0,0,1,1.113,1.12v10.966a1.093,1.093,0,0,1-1.113,1.122H2.213A1.093,1.093,0,0,1,1.1,124.459Z" transform="translate(0 -111.272)" fill="#ffffff" className="svg_btn2" stroke="#ffffff" stroke-width="0.2" />
+															<path id="Path_110" data-name="Path 110" d="M475.162,121.072v1.348l5.414,4.261V111.272l-5.414,4.3v1.379l4.313-3.236v10.592Z" transform="translate(-456.362 -111.272)" fill="#ffffff" className="svg_btn2" stroke="#ffffff" stroke-width="0.2" />
+														</g>
+													</g>
+												</g>
+											</svg>
+										</button> */}
+										<button className="blob" onClick={e => this.onMediaTourSelect('audio')} data-title="Audio">
+											<svg className="audio_svg" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+												<g id="Group_471" data-name="Group 471" transform="translate(11717 4613)">
+													<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11717 -4613)" fill="#fff" />
+													<g id="audio-interface-speaker-symbol" transform="translate(-11707 -4671.857)">
+														<g id="Group_282" data-name="Group 282" transform="translate(0 72.857)">
+															<path stroke-width="0" id="Path_111" data-name="Path 111" d="M3.9,86.838l9.831,5.992V72.857L3.9,78.849H1.3A1.3,1.3,0,0,0,0,80.181v5.327A1.3,1.3,0,0,0,1.3,86.84H3.9ZM1.248,80.1H3.9l8.586-4.746v14.98L3.9,85.486H1.248Z" transform="translate(0 -72.857)" fill="#ffffff" className="svg_btn" />
+															<path stroke-width="0" id="Path_112" data-name="Path 112" d="M349.714,171.382v1.387a7.074,7.074,0,0,0,0-12.483v1.387s2.5,1.059,2.5,4.855S349.714,171.382,349.714,171.382Z" transform="translate(-334.734 -156.541)" fill="#ffffff" className="svg_btn" />
+															<path stroke-width="0" id="Path_113" data-name="Path 113" d="M524.571,117.829v1.648s3.745-1.8,3.745-8.738S524.571,102,524.571,102v1.62s2.5,1.378,2.5,7.118S524.571,117.829,524.571,117.829Z" transform="translate(-502.101 -100.752)" className="svg_btn" fill="#ffffff" />
+															<path stroke-width="0" id="Path_114" data-name="Path 114" d="M437.143,144.543v1.58s3.745-2.06,3.745-7.49-3.745-7.49-3.745-7.49v1.528s2.5,1.624,2.5,5.962S437.143,144.543,437.143,144.543Z" transform="translate(-418.418 -128.647)" className="svg_btn" fill="#ffffff" />
+														</g>
+													</g>
+												</g>
+											</svg>
+											{/* <span>Create Audio</span> */}
+										</button>
+									</React.Fragment>
+							}
+							{resizeScreen() && <button className="blob" onClick={e => this.openMenu('Make Edit')} data-title="Make Edit Trail">
 								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
 									<g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
 										<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
-										<g id="edit" transform="translate(-11683.37 -4600.589)">
-											<path id="Path_1" className="svg_btn2" data-name="Path 1" d="M18.7,49.861a.5.5,0,0,0-.5.5v4.481a1.515,1.515,0,0,1-1.514,1.514H2.523a1.515,1.515,0,0,1-1.514-1.514V41.7a1.516,1.516,0,0,1,1.514-1.514H7a.5.5,0,0,0,0-1.009H2.523A2.526,2.526,0,0,0,0,41.7V54.846A2.526,2.526,0,0,0,2.523,57.37h14.16a2.526,2.526,0,0,0,2.523-2.523V50.365a.5.5,0,0,0-.5-.5Zm0,0" transform="translate(0 -36.948)" fill="#fb542b"/>
-											<path id="Path_2" className="svg_btn2" data-name="Path 2" d="M121.737.926a2.271,2.271,0,0,0-3.212,0l-9,9a.5.5,0,0,0-.13.222l-1.184,4.274a.5.5,0,0,0,.621.621l4.274-1.184a.5.5,0,0,0,.222-.13l9-9a2.273,2.273,0,0,0,0-3.212Zm-11.115,9.331,7.369-7.369,2.376,2.376L113,12.634Zm-.475.953,1.9,1.9-2.626.728Zm11.469-7.194-.535.535L118.7,2.175l.535-.535a1.262,1.262,0,0,1,1.784,0l.592.592A1.263,1.263,0,0,1,121.616,4.016Zm0,0" transform="translate(-102.73)" fill="#fb542b"/>
+										<g id="signs" transform="translate(-11683 -4599)">
+										<path id="Path_1" className="svg_btn2" data-name="Path 1" d="M10.143,20.286A10.143,10.143,0,1,1,20.286,10.143,10.154,10.154,0,0,1,10.143,20.286Zm0-19.018a8.875,8.875,0,1,0,8.875,8.875A8.885,8.885,0,0,0,10.143,1.268Zm0,0" fill="#ffffff"/>
+										<path id="Path_2" className="svg_btn2" data-name="Path 2" d="M137.509,241.268h-8.875a.634.634,0,0,1,0-1.268h8.875a.634.634,0,1,1,0,1.268Zm0,0" transform="translate(-122.929 -230.491)" fill="#ffffff"/>
+										<path id="Path_3" className="svg_btn2" data-name="Path 3" d="M240.634,138.143a.634.634,0,0,1-.634-.634v-8.875a.634.634,0,1,1,1.268,0v8.875A.634.634,0,0,1,240.634,138.143Zm0,0" transform="translate(-230.491 -122.929)" fill="#ffffff"/>
 										</g>
 									</g>
 								</svg>
-                            </button>}
-                            <button className="blob" onClick={e => this.openMenu('Make Edit')} data-title="Edit Trail">
-                                {/* <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                                    <g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
-                                        <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
-                                        <g id="signs" transform="translate(-11683 -4599)">
-                                            <path id="Path_1" className="svg_btn2" data-name="Path 1" d="M10.143,20.286A10.143,10.143,0,1,1,20.286,10.143,10.154,10.154,0,0,1,10.143,20.286Zm0-19.018a8.875,8.875,0,1,0,8.875,8.875A8.885,8.885,0,0,0,10.143,1.268Zm0,0" fill="#fb542b"/>
-                                            <path id="Path_2" className="svg_btn2" data-name="Path 2" d="M137.509,241.268h-8.875a.634.634,0,0,1,0-1.268h8.875a.634.634,0,1,1,0,1.268Zm0,0" transform="translate(-122.929 -230.491)" fill="#fb542b"/>
-                                            <path id="Path_3" className="svg_btn2" data-name="Path 3" d="M240.634,138.143a.634.634,0,0,1-.634-.634v-8.875a.634.634,0,1,1,1.268,0v8.875A.634.634,0,0,1,240.634,138.143Zm0,0" transform="translate(-230.491 -122.929)" fill="#fb542b"/>
-                                        </g>
-                                    </g>
-                                </svg> */}
+							</button>}
+
+							{/* Edit Trail */}
+							{/* <button className="blob" onClick={e => this.openMenu('Make Edit')} data-title="Edit Trail">
 								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
 									<g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
 										<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
-										<g id="edit" transform="translate(-11683.37 -4600.589)">
-											<path id="Path_1" className="svg_btn2" data-name="Path 1" d="M18.7,49.861a.5.5,0,0,0-.5.5v4.481a1.515,1.515,0,0,1-1.514,1.514H2.523a1.515,1.515,0,0,1-1.514-1.514V41.7a1.516,1.516,0,0,1,1.514-1.514H7a.5.5,0,0,0,0-1.009H2.523A2.526,2.526,0,0,0,0,41.7V54.846A2.526,2.526,0,0,0,2.523,57.37h14.16a2.526,2.526,0,0,0,2.523-2.523V50.365a.5.5,0,0,0-.5-.5Zm0,0" transform="translate(0 -36.948)" fill="#fb542b"/>
-											<path id="Path_2" className="svg_btn2" data-name="Path 2" d="M121.737.926a2.271,2.271,0,0,0-3.212,0l-9,9a.5.5,0,0,0-.13.222l-1.184,4.274a.5.5,0,0,0,.621.621l4.274-1.184a.5.5,0,0,0,.222-.13l9-9a2.273,2.273,0,0,0,0-3.212Zm-11.115,9.331,7.369-7.369,2.376,2.376L113,12.634Zm-.475.953,1.9,1.9-2.626.728Zm11.469-7.194-.535.535L118.7,2.175l.535-.535a1.262,1.262,0,0,1,1.784,0l.592.592A1.263,1.263,0,0,1,121.616,4.016Zm0,0" transform="translate(-102.73)" fill="#fb542b"/>
+										<g id="signs" transform="translate(-11683 -4599)">
+										<path id="Path_1" className="svg_btn2" data-name="Path 1" d="M10.143,20.286A10.143,10.143,0,1,1,20.286,10.143,10.154,10.154,0,0,1,10.143,20.286Zm0-19.018a8.875,8.875,0,1,0,8.875,8.875A8.885,8.885,0,0,0,10.143,1.268Zm0,0" fill="#ffffff"/>
+										<path id="Path_2" className="svg_btn2" data-name="Path 2" d="M137.509,241.268h-8.875a.634.634,0,0,1,0-1.268h8.875a.634.634,0,1,1,0,1.268Zm0,0" transform="translate(-122.929 -230.491)" fill="#ffffff"/>
+										<path id="Path_3" className="svg_btn2" data-name="Path 3" d="M240.634,138.143a.634.634,0,0,1-.634-.634v-8.875a.634.634,0,1,1,1.268,0v8.875A.634.634,0,0,1,240.634,138.143Zm0,0" transform="translate(-230.491 -122.929)" fill="#ffffff"/>
 										</g>
 									</g>
 								</svg>
-                            </button>
-                            <button className="blob" onClick={this.copyWebApplink} data-title="Share Trail">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
-                                    <g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
-                                        <circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
-                                        <g id="signs" transform="translate(-11683 -4599)">
-                                            <path id="Path_1" className="svg_btn2" data-name="Path 1" d="M10.143,20.286A10.143,10.143,0,1,1,20.286,10.143,10.154,10.154,0,0,1,10.143,20.286Zm0-19.018a8.875,8.875,0,1,0,8.875,8.875A8.885,8.885,0,0,0,10.143,1.268Zm0,0" fill="#fb542b"/>
-                                            <path id="Path_2" className="svg_btn2" data-name="Path 2" d="M137.509,241.268h-8.875a.634.634,0,0,1,0-1.268h8.875a.634.634,0,1,1,0,1.268Zm0,0" transform="translate(-122.929 -230.491)" fill="#fb542b"/>
-                                            <path id="Path_3" className="svg_btn2" data-name="Path 3" d="M240.634,138.143a.634.634,0,0,1-.634-.634v-8.875a.634.634,0,1,1,1.268,0v8.875A.634.634,0,0,1,240.634,138.143Zm0,0" transform="translate(-230.491 -122.929)" fill="#fb542b"/>
-                                        </g>
-                                    </g>
-                                </svg>
-                            </button>
+							</button> */}
+							<button className="blob" onClick={e => this.openMenu('Make Edit')} data-title="Edit">
+								<svg width="40" height="29" viewBox="0 0 40 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M0 0V4.12698H24.1631V0H0ZM0 8.25397V12.381H24.1631V8.25397H0ZM36.3252 8.52222C36.0433 8.52222 35.7614 8.64603 35.5399 8.87302L33.5263 10.9365L37.6542 15.1667L39.6678 13.1032C40.1107 12.6698 40.1107 11.9476 39.6678 11.5143L37.0904 8.87302C36.9923 8.76493 36.874 8.67817 36.7426 8.6179C36.6111 8.55763 36.4692 8.52509 36.3252 8.52222ZM32.3584 12.1333L20.1359 24.6381V28.8889H24.2839L36.4863 16.3635L32.3584 12.1333ZM0 16.5079V20.6349H16.1087V16.5079H0Z" fill="white"/>
+								</svg>
+							</button>
+
+							{/* Share Trail Button */}
+							{/* <button className="blob" onClick={this.copyWebApplink} data-title="Share Trail">
+								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
+									<g id="Group_471" data-name="Group 471" transform="translate(11697 4613)">
+										<circle id="Ellipse_101" data-name="Ellipse 101" cx="24" cy="24" r="24" transform="translate(-11697 -4613)" fill="#fff"/>
+										<g id="signs" transform="translate(-11683 -4599)">
+										<path id="Path_1" className="svg_btn2" data-name="Path 1" d="M10.143,20.286A10.143,10.143,0,1,1,20.286,10.143,10.154,10.154,0,0,1,10.143,20.286Zm0-19.018a8.875,8.875,0,1,0,8.875,8.875A8.885,8.885,0,0,0,10.143,1.268Zm0,0" fill="#ffffff"/>
+										<path id="Path_2" className="svg_btn2" data-name="Path 2" d="M137.509,241.268h-8.875a.634.634,0,0,1,0-1.268h8.875a.634.634,0,1,1,0,1.268Zm0,0" transform="translate(-122.929 -230.491)" fill="#ffffff"/>
+										<path id="Path_3" className="svg_btn2" data-name="Path 3" d="M240.634,138.143a.634.634,0,0,1-.634-.634v-8.875a.634.634,0,1,1,1.268,0v8.875A.634.634,0,0,1,240.634,138.143Zm0,0" transform="translate(-230.491 -122.929)" fill="#ffffff"/>
+										</g>
+									</g>
+								</svg>
+							</button> */}
+							<button className="blob" onClick={this.copyWebApplink} data-title="Share">
+								<svg width="40" height="36" viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M3.75 0C1.7 0 0 1.70201 0 3.75443V31.2869C0 33.3393 1.7 35.0413 3.75 35.0413H26.25C28.3 35.0413 30 33.3393 30 31.2869V25.0295H25V30.0354H5V5.0059H15V0H3.75ZM30 0V5.0059C19.75 5.0059 11.5 12.715 10.3 22.6767C11.35 18.2715 15.25 15.0177 20 15.0177H30V20.0236L40 10.0118L30 0Z" fill="white"/>
+								</svg>
+							</button>
                         </div>
                     </div>
                 </div>			
@@ -915,6 +1015,7 @@ class DefaultButton extends React.PureComponent {
 			tourStatus: 'continue',
 			tourType: '',
 			tourStep: '',
+			stepType: '',
 			currentTourType: '',
 			web_url: '',
 			tourSide: 'next',
@@ -1355,7 +1456,7 @@ class DefaultButton extends React.PureComponent {
 	}
 
 	onChromeStorageChange = () => {
-		chrome.storage.local.get(["trail_web_user_tour", "tourStatus", "tourType", "tourStep", "currentTourType", "userData", "previewUserId", 'followData', 'saveSort', 'loading', 'MobileTargetNotFound'], async function (items) {
+		chrome.storage.local.get(["trail_web_user_tour", "tourStatus", "tourType", "stepType", "tourStep", "currentTourType", "userData", "previewUserId", 'followData', 'saveSort', 'loading', 'MobileTargetNotFound'], async function (items) {
 			if (items.followData) {
 				obj.followingData = items.followData;
 			}
@@ -1404,6 +1505,12 @@ class DefaultButton extends React.PureComponent {
 			if (items.tourStep !== undefined) {
 				obj.tourStep = items.tourStep;
 			}
+
+			console.log('items.stepType', items.stepType);
+
+			if (items.stepType !== undefined) {
+				obj.stepType = items.stepType;
+			}
 				
 			if (items.userData._id !== undefined) {
 				obj.currUserId = items.userData._id;
@@ -1434,6 +1541,7 @@ class DefaultButton extends React.PureComponent {
 				tourType: obj.tourType ? obj.tourType : '',
 				currentTourType: obj.currentTourType ? obj.currentTourType : '',
 				tourStep: obj.tourStep ? obj.tourStep : '',
+				stepType: obj.stepType ? obj.stepType: '',
 				currUserId: obj.currUserId ? obj.currUserId : null,
 				follow: obj.followingData ? obj.followingData.follow : false,
 				count: this.state.count++,
@@ -2087,8 +2195,8 @@ class DefaultButton extends React.PureComponent {
 					} else if (currentTourType === 'preview' && tourType === 'modal') {
 						this.props.mainToggle();
 						this.props.onChangeTourType("");
-						this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, createModalOpen: false, loading: false });
-						chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });			
+						this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, createModalOpen: false, loading: false, stepType: '', open: false });
+						chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '', stepType: '' });			
 	
 					} else {
 						// Remove elements
@@ -2096,8 +2204,8 @@ class DefaultButton extends React.PureComponent {
 						
 						this.props.mainToggle();
 						this.props.onChangeTourType("");
-						this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, fileName: '', loading: false });
-						chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });		
+						this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, fileName: '', loading: false, stepType: '', open: false });
+						chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '', stepType: '' });		
 					}
 	
 					if (this.state.deleteModal.show) {
@@ -2129,8 +2237,8 @@ class DefaultButton extends React.PureComponent {
 		}
 
 		if(!status) {
-			chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
-			this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, createModalOpen: status });
+			chrome.storage.local.set({ tourType: '', stepType: '', currentTourType: '', tourStep: '' });
+			this.setState({ web_url: '', tourType: '', stepType: '', open: false, currentTourType: '', tourStep: '', overlay: false, createModalOpen: status });
 			this.props.mainToggle();
 			this.props.onChangeTourType('');
 		} else {
@@ -2272,8 +2380,11 @@ class DefaultButton extends React.PureComponent {
 			fileLoading,
 			createModalOpen,
 			loading,
+			stepType,
 			onDone
 		} = this.state;
+
+		console.log('open', open);
 		
 		const localStorageCount = localStorage.getItem(process.env.REACT_APP_LOCALSTORAGE);
 		const stateCount = trailList.length;
@@ -2293,8 +2404,9 @@ class DefaultButton extends React.PureComponent {
 		
 		let openSidebar = open;
 		
-		if (tourType==='audio' || tourType==='video') {
-			openSidebar = true
+		if (tourType=== 'audio' || tourType=== 'video') {
+			openSidebar = true;
+
 		}
 		
 		if (!openSidebar && flipped && defaultComp) {
@@ -2331,7 +2443,7 @@ class DefaultButton extends React.PureComponent {
 			// this.addTrailitLogo();
 		}
 
-		$(document).ready(() => {
+		$(() => {
 			const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
             
 			if (modalDiv) {
@@ -2376,7 +2488,7 @@ class DefaultButton extends React.PureComponent {
 					}
 
                     <div className="sidepanal adadad trail_sidepanel_overlay">
-                        { createModalOpen && <CreateModalComponent open={createModalOpen} toggle={this.onToggleCreateModal} closeButtonHandler={ this.onBackArrowClickHandler } onSave={this.onSaveTrail} /> } 
+                        { createModalOpen && <CreateModalComponent stepType={ stepType } open={createModalOpen} toggle={this.onToggleCreateModal} closeButtonHandler={ this.onBackArrowClickHandler } onSave={this.onSaveTrail} /> } 
                         <div>
                             {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
                             {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
@@ -2622,7 +2734,7 @@ class DefaultButton extends React.PureComponent {
 						>
                             <img
                                 alt=""
-                                src={ require('./images/imgpsh_fullsize_anim.png') }
+                                src={ require('./images/imgpsh_fullsize_anim_new.png') }
                             />
                         </button>
                     </div>
@@ -2686,36 +2798,14 @@ if (extensionRoot) {
 			const tooltipStyle1 = document.createElement('style');
 			tooltipStyle1.textContent = tooltipCss1;
 
-			// const ckStyle1 = document.createElement('style');
-			// ckStyle1.textContent = ckEditor1;
-
-			// const ckStyle2 = document.createElement('style');
-			// ckStyle2.textContent = ckEditor2;
-			// const ckStyle3 = document.createElement('style');
-			// ckStyle3.textContent = ckEditor3;
-			// const ckStyle4 = document.createElement('style');
-			// ckStyle4.textContent = ckEditor4;
-			// const ckStyle5 = document.createElement('style');
-			// ckStyle5.textContent = ckEditor5;
-			// const ckStyle6 = document.createElement('style');
-			// ckStyle6.textContent = ckEditor6;
-
             // Append div to shadow DOM
 			shadowRoot.appendChild(app);
-            // ReactDOM.render(<Test/>, app);
 			extensionRoot.shadowRoot.appendChild(app);
-			// extensionRoot.shadowRoot.appendChild(style0);
 			extensionRoot.shadowRoot.appendChild(style1);
 			extensionRoot.shadowRoot.appendChild(style2);
 			extensionRoot.shadowRoot.appendChild(style3);
 			extensionRoot.shadowRoot.appendChild(style4);
 			extensionRoot.shadowRoot.appendChild(style5);
-			// extensionRoot.shadowRoot.appendChild(ckStyle1);
-			// extensionRoot.shadowRoot.appendChild(ckStyle2);
-			// extensionRoot.shadowRoot.appendChild(ckStyle3);
-			// extensionRoot.shadowRoot.appendChild(ckStyle4);
-			// extensionRoot.shadowRoot.appendChild(ckStyle5);
-			// extensionRoot.shadowRoot.appendChild(ckStyle6);
 			extensionRoot.shadowRoot.appendChild(tooltipStyle1);
 			shadowRoot.appendChild(modalOpen);			
         }
@@ -2783,7 +2873,7 @@ class MainFlip extends React.Component {
 	}
 	
 	onChangeTourType = (type) => {
-		if(type==="" || type === undefined) {
+		if(type=== "" || type === undefined) {
 			this.setState({isFlipped: false, tourType: ""})
 		} else {
 			this.setState({isFlipped: true, tourType: type})

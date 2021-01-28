@@ -21,7 +21,7 @@ class SendTipModal extends Component {
             sendLoader 
         } = this.props;
 
-		$(document).ready(() => {
+		$(() => {
 			const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
             
 			if (modalDiv) {

@@ -65,6 +65,9 @@ export const defaultButtonCss1 = `
         right: 0;
         width: 65px;
         height: 65px;
+        background: transparent !important;
+        border: none !important;
+        transition: all 0.2s ease-out;
     }
     
     #my-extension-defaultroot .title {

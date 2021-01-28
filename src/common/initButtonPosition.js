@@ -1,5 +1,4 @@
 export const initButtonPosition = (num) => {
-    console.log('in init button position', num);
     const shadowRoot = document.getElementById('extension-div').shadowRoot;
 
     // Remove postion relative

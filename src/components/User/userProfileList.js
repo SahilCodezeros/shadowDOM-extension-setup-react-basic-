@@ -194,17 +194,17 @@ class UserProfileList extends Component {
                                             <div className="trailit_img_content">
                                                 <div className="trailit_top">
                                                     <div className="trailit_dotsMenu">
-                                                    <button type="button" onClick={this.handleClickMenu} className="trailit_dotsButton">
-                                                    <img width="16px" src={require('../../images/dots.svg')} alt="dots"/>
-                                                    </button>
-                                                    {this.state.showMenu && 
-                                                    <div className="trailit_dotsMenuList">
-                                                        <button type="button" onClick={(e) => this.onPublishLink(e, res)}>Share</button>
-                                                        <button type="button" onClick={(e) => this.onClickToEdit(e, res)}>Edit</button>
-                                                        <button type="button">Publish</button>
-                                                        <button type="button">Delete</button>
-                                                    </div>
-                                                    }
+                                                        <button type="button" onClick={this.handleClickMenu} className="trailit_dotsButton">
+                                                            <img width="16px" src={require('../../images/dots.svg')} alt="dots"/>
+                                                        </button>
+                                                        {this.state.showMenu && 
+                                                            <div className="trailit_dotsMenuList">
+                                                                <button type="button" onClick={(e) => this.onPublishLink(e, res)}>Share</button>
+                                                                <button type="button" onClick={(e) => this.onClickToEdit(e, res)}>Edit</button>
+                                                                <button type="button">Publish</button>
+                                                                <button type="button">Delete</button>
+                                                            </div>
+                                                        }
                                                     </div>
                                                 </div>
                                                 <div className="trailit_bottom">

@@ -360,7 +360,7 @@ export const commonTypeSelectonButton = (
     
     return (
         <div className="tr_select_type">
-            <div className="tr_icon_grp">
+            {/* <div className="tr_icon_grp">
                 <button
                     className={trailStatus === "text" ? "tr_active" : ""}
                     onClick={() => onSelectOption("text")}
@@ -396,7 +396,7 @@ export const commonTypeSelectonButton = (
                 >
                     <img alt="image_tooltip" src={require(`../images/photo.png`)} />
                 </button>
-            </div>
+            </div> */}
         
             {tooltipForm}
         </div>
@@ -404,13 +404,14 @@ export const commonTypeSelectonButton = (
 };
 
 export const getUrlVars = () => {
-    var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(var i = 0; i < hashes.length; i++)
-    {
+    let vars = [], hash;
+    let hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+
+    for (let i = 0; i < hashes.length; i++) {
         hash = hashes[i].split('=');
         vars.push(hash[0]);
         vars[hash[0]] = hash[1];
-    }
+    };
+
     return vars;
 }
