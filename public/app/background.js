@@ -146,9 +146,6 @@ chrome.runtime.onMessageExternal.addListener(function (
   sender,
   sendResponse
 ) {
-  console.log("request", request);
-  console.log("sender", sender);
-
   switch (request.type) {
     case "STATUS":
       if (request.user_id) {
@@ -159,8 +156,18 @@ chrome.runtime.onMessageExternal.addListener(function (
       break;
 
     case "WEB_REQUEST":
-      if (request.action === "PREVEIW") {
-        console.log("preview action");
+      if (request.action === "PREVIEW") {
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            var activeTab = tabs[0];
+            console.log("active", activeTab.id, tabs);
+            chrome.tabs.sendMessage(activeTab.id, {
+              message: "web_request",
+              payload: { ...request, url: tabs[0].url },
+            });
+          }
+        );
       }
       break;
 
