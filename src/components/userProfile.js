@@ -121,38 +121,38 @@ class UserProfile extends React.Component {
 
         this.setState({ isLoading: false });
 
-        getAllNotification(data).then(async (res) => {
-          const data = res.data.response;
+        // getAllNotification(data).then(async (res) => {
+        //   const data = res.data.response;
 
-          if (data.result && _.isArray(data.result) && data.result.length > 0) {
-            let user = await getAllUser();
+        //   if (data.result && _.isArray(data.result) && data.result.length > 0) {
+        //     let user = await getAllUser();
 
-            let filterdFollowers = data.result.map((el) => {
-              for (let i = 0; i < user.data.data.response.length; i++) {
-                if (el.creator_id === user.data.data.response[i]._id) {
-                  return {
-                    email: user.data.data.response[i].email,
-                    pictures: user.data.data.response[i].pictures,
-                    creator_id: user.data.data.response[i]._id,
-                    currUserId: el.user_id,
-                    created: el.created,
-                  };
-                }
-              }
-            });
+        //     let filterdFollowers = data.result.map((el) => {
+        //       for (let i = 0; i < user.data.data.response.length; i++) {
+        //         if (el.creator_id === user.data.data.response[i]._id) {
+        //           return {
+        //             email: user.data.data.response[i].email,
+        //             pictures: user.data.data.response[i].pictures,
+        //             creator_id: user.data.data.response[i]._id,
+        //             currUserId: el.user_id,
+        //             created: el.created,
+        //           };
+        //         }
+        //       }
+        //     });
 
-            filterdFollowers = filterdFollowers.sort((a, b) => {
-              return b.created - a.created;
-            });
+        //     filterdFollowers = filterdFollowers.sort((a, b) => {
+        //       return b.created - a.created;
+        //     });
 
-            // Update notificationData state
-            this.setState({
-              notificationData: filterdFollowers,
-              getOneEditRow: {},
-              addRaw: {},
-            });
-          }
-        });
+        //     // Update notificationData state
+        //     this.setState({
+        //       notificationData: filterdFollowers,
+        //       getOneEditRow: {},
+        //       addRaw: {},
+        //     });
+        //   }
+        // });
 
         this.setState({
           email: items.userData.email,
@@ -257,7 +257,12 @@ class UserProfile extends React.Component {
               });
 
               if (r.status == 200) {
-                chrome.storage.local.set({ userData: r.data.data.response });
+                chrome.storage.local.set({ 
+                  userData: { 
+                    ...items.userData, 
+                    profileImage: data.response.result.fileUrl 
+                  } 
+                });
               }
 
               this.setState({

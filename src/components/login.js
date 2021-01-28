@@ -15,7 +15,8 @@ class Login extends React.Component {
 		super(props);
 		this.state = {
 			errors: "",
-			isAuth: false
+			isAuth: false,
+			isLoading: false
 		}
 	}
 
@@ -29,6 +30,8 @@ class Login extends React.Component {
 
 	// On click to submit function
 	onClickToSubmit = values => {
+		this.setState({ isLoading: true });
+
 		axios.post(`${process.env.REACT_APP_MS1_URL}user/login`, values, { withCredentials: true })
 			.then((res, err) => {
 				if (res.status === 200) {
@@ -58,7 +61,14 @@ class Login extends React.Component {
 						this.setState({ isAuth: true });
 					}
 				}
-		});	
+
+				this.setState({ isLoading: false });
+			})
+			.catch(err => {
+				console.log('err', err);
+
+				this.setState({ isLoading: false });
+			});	
 	};
 	
 	// Validate password with regular expression function
@@ -166,7 +176,12 @@ class Login extends React.Component {
 								<a className="tr_link flex_grow_1" href="javascript:;">
 									Forgot password?
 								</a>
-								<Button type="primary" htmlType="submit" className="tr_button">
+								<Button 
+									disabled={ this.state.isLoading } 
+									type="primary" 
+									htmlType="submit" 
+									className="tr_button"
+								>
 									Log in now
 								</Button>
 							</Form.Item>

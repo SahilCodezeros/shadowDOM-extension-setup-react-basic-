@@ -65,57 +65,17 @@ class WebUserTour extends React.Component {
         this.createPopOver(tourStep);
 
         window.addEventListener('load', this.handleLoad);
-
         
         chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
         this.getWebUserTour('', this.props.data[tourStep - 1], tourStep);
         
-        if(this.props.data[tourStep - 1].mediaType && (this.props.data[tourStep - 1].mediaType === 'video' || this.props.data[tourStep - 1].mediaType === 'audio')) {
-            // if(document.URL.includes('youtube.com')) {
-            //     let videoElem = document.querySelector('.video-stream.html5-main-video');
-            //     videoElem.addEventListener('onloadeddata', () => {
-            //         videoElem.pause();
-            //     });
-            //     setTimeout(() => {
-            //         videoElem.pause();
-            //     }, 1000);
-            // }
-
-            // setTimeout(() => {
-            //     console.log("dfdfdf111")
-            //     document.querySelectorAll('video').forEach(res => {
-            //         console.log("dfdfdf222222222222")
-            //         console.log("reee", res);
-            //         if(res.className !== "preview-video") {
-            //             res.pause()    
-            //         }
-            //     })
-            // }, 2000);
-
-            // if (document.readyState === 'complete') {
-            //     $(document).ready(() => {
-            //         // Stop playing websites audio or video
-            //         stopMediaPlaying();
-            //     });
-            
-            // } else {
-            //     document.body.onload = function () {
-            //         // Stop playing websites audio or video
-            //         stopMediaPlaying();
-            //     };
-            // }
-            
+        if(this.props.data[tourStep - 1].mediaType && (this.props.data[tourStep - 1].mediaType === 'video' || this.props.data[tourStep - 1].mediaType === 'audio')) {            
             if (document.readyState === 'complete') {
                 $(document).ready(() => {
                     // Stop playing websites audio or video
                     stopMediaPlaying();
                 });
             } else if (document.readyState === 'interactive' && document.URL.includes('https://www.youtube.com/')) {            
-                // document.body.onload = function () {
-                //     console.log('body is loaded!!!!');
-                //     // Call toggle website media
-                //     this.toggleWebSitesMedia();
-                // };
                 $(document).ready(() => {
                     // Stop playing websites audio or video
                     stopMediaPlaying();
@@ -138,6 +98,14 @@ class WebUserTour extends React.Component {
                 })
             }, 2000);
         }
+
+        window.addEventListener('resize', () => {
+            const shadowRoot = document.getElementById('extension-div').shadowRoot;
+
+            if (!shadowRoot.querySelector('.trail_tooltip_done')) return;
+            console.log('resized');
+            this.getWebUserTour('', this.props.data[tourStep - 1], tourStep);
+        });
     }
 
     componentDidUpdate() {
@@ -171,6 +139,8 @@ class WebUserTour extends React.Component {
 
         // Remove trailit log
         removeTrailitLogo();
+
+        this.setState({ isTourActive: false });
     }
     
     static getDerivedStateFromProps(props, state) {
@@ -246,20 +216,12 @@ class WebUserTour extends React.Component {
             function clearInt() {
                 clearInterval(interval);
             }
-        
-            // notification.open({ message: 'Plese scroll down the page', placement: 'topLeft', className: 'trail_noti' });
+
         } else {
-            // const shadowRoot = document.getElementById('extension-div').shadowRoot;
-
-            // const trailOverlay = document.createElement('div');
-            // trailOverlay.setAttribute('class', 'trail_overlay');
-
-            // document.querySelector(activeWeb.uniqueTarget).classList.add(`traiil_stop${step}`);
             document.querySelector(unqTarget).classList.add('trail_web_user_tour');
 
             // Call Add overlay function
             addOverlay();
-            // shadowRoot.appendChild(trailOverlay);
 
             let targetElement = "html, body";
             var docHeight = document.documentElement.scrollHeight;
@@ -285,25 +247,6 @@ class WebUserTour extends React.Component {
 
             // Call set overlay html function
             setOverlayHtml(window, docHeight, topPosition, bounding, leftPosition, 'webUserTour');
-                    
-            // // let bodyElement = $(unique(getScrollParent(document.querySelector(unqTarget))));
-            // shadowRoot.querySelector('.trail_overlay').innerHTML = `
-            //     <svg height="100%" width="100%">
-            //         <polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
-            //         Sorry, your browser does not support inline SVG.
-            //     </svg>
-            // `;
-
-            // shadowRoot.querySelector('.trail_overlay').setAttribute('height', docHeight);
-            // shadowRoot.querySelector('.trail_overlay').classList.add('trail_overlay_style');
-            // .height(docHeight)
-            // .css({
-            //     'position': 'absolute',
-            //     'top': 0,
-            //     'left': 0,
-            //     'width': '100%',
-            //     'z-index': 99999999
-            // });
             
             if (event != '') {
                 event.preventDefault();
@@ -320,11 +263,7 @@ class WebUserTour extends React.Component {
                         scrollTop: y
                     }, 1000);
                 }, 2000);
-            })
-            
-            // shadowRoot.querySelector('.trail_overlay').addEventListener('dblclick', () => {
-            //     shadowRoot.querySelector('.trail_overlay').style.display = "none";
-            // });
+            });
 
             let content = this.props.data.map((res, index) => {
                 if (res.url == document.URL) {
@@ -399,20 +338,6 @@ class WebUserTour extends React.Component {
         
     onClickToDoneTour = (data, step) => {
         let { tourSteps, tourStep } = this.state;
-        // $('.trail_web_user_tour').parents().css('z-index', '');
-        // $(`.trail_tour_ToolTipExtend`).remove();
-        // $('.trail_tooltip_done').remove();
-        // $('.trail_web_user_tour').removeAttr('trail_web_user_tour');
-        // $(`traiil_stop${tourStep}`).removeAttr(`traiil_stop${tourStep}`);
-
-        // // Call remove overlay function
-        // removeOverlay();
-        // document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay').remove();
-        
-        // $('.trail_web_user_tour').parent().parent().removeAttr('style');
-        // if(document.querySelector(this.props.data[step - 1].uniqueTarget)) {
-        //     document.querySelector(this.props.data[step - 1].uniqueTarget).classList.remove('trail_web_user_tour');
-        // }
         
         Object.keys(tourSteps).map((r, i) => {
             tourSteps[r] = false;
@@ -434,8 +359,12 @@ class WebUserTour extends React.Component {
     };
     
     onButtonCloseHandler = async (e) => {
-        // Call parent component function to close tooltip preview
-        await this.props.closeButtonHandler(e);
+        try {
+            // Call parent component function to close tooltip preview
+            await this.props.closeButtonHandler(e);
+        } catch (err) {
+            console.log('err', err);
+        }
     };
     
     render() {
@@ -452,7 +381,7 @@ class WebUserTour extends React.Component {
         if (mediaTypeStatus && mediaTypeStatus === 'video') {
             preview = (
                 <div className="tr_preview_video_bx">
-                    <video className="preview-video" disablePictureInPicture controlsList="nodownload" controls onLoadedData={(e) => this.onLoadedEvent(e)} allow="autoplay" autoPlay>
+                    <video className="preview-video" disablePictureInPicture controlsList="nodownload" controls onLoadedData={(e) => this.onLoadedEvent(e)} allow="autoplay" autoPlay={ true }>
                         <source src={this.props.data[tourStep - 1].web_url} />
                     </video>
                 </div> 
@@ -485,7 +414,7 @@ class WebUserTour extends React.Component {
                         return (
                             <Popover 
                                 target={ unTarget }                            
-                                container={ [ document.getElementById('extension-div').shadowRoot ] }
+                                container={ document.getElementById('extension-div').shadowRoot }
                                 className={`trail_tooltip_done ${mediaTypeStatus && mediaTypeStatus === 'text' ? 'trail_text_only' : '' || mediaTypeStatus && mediaTypeStatus === 'video' ? 'tr_video_only':'' || mediaTypeStatus && mediaTypeStatus === 'image' ? 'tr_picture_only':''  || mediaTypeStatus && mediaTypeStatus === 'audio' ? 'tr_audio_only' : ''}`} placement="top" isOpen={tourSteps[`step${res.step}`]} 
                             >
                                 {/* <button> */}
@@ -504,30 +433,15 @@ class WebUserTour extends React.Component {
                                     <PopoverHeader className="top">{ title }</PopoverHeader>
                                     <PopoverBody>
                                         {<span dangerouslySetInnerHTML={{ __html: description }}></span>}
-
                                         { preview }
-                                        
-                                        {/* {this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'video' && 
-                                            <div className="btn-wrap">
-                                                {1 < (tourStep) && <Button type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep - 1, 'prev')}><Icon type="left" /></Button>}
-                                                {this.props.data.length > tourStep && <Button type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep + 1, 'next')}><Icon type="right" /></Button>}
-                                                {this.props.data.length === tourStep && <Button type="link" className="next" onClick={() => this.onClickToDoneTour(res, tourStep)}><Icon type="right" /></Button>}
-                                            </div>
-                                        }
-                                        
-                                        {this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType !== 'video' && <div className="btn-wrap">
-                                            {1 < (tourStep) && <Button type="primary" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep - 1, 'prev')}>Previous</Button>}
-                                            {this.props.data.length > tourStep && <Button type="primary" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep + 1, 'next')}>Next</Button>}
-                                            {this.props.data.length === tourStep && <Button type="primary" onClick={() => this.onClickToDoneTour(res, tourStep)}>Done</Button>}
-                                        </div>} */}
                                     </PopoverBody>
                                     <PopoverHeader className="bottom">{ res.title }</PopoverHeader>
                                 </div>
                                 <div className="btn-wrap">
-                                    {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseOutlined type="close" /></Button>}
-                                    {1 < (tourStep) && <Button type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep - 1, 'prev')}><LeftOutlined type="left" /></Button>}
-                                    {this.props.data.length > tourStep && <Button type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep + 1, 'next')}><RightOutlined type="right" /></Button>}
-                                    {this.props.data.length === tourStep && <Button type="link" className="next" onClick={() => this.onClickToDoneTour(res, tourStep)}><RightOutlined type="right" /></Button>}
+                                    {this.props.data.length > 0 && <Button disabled={ this.props.onDone } type="link" className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseOutlined type="close" /></Button>}
+                                    {1 < (tourStep) && <Button disabled={ this.props.onDone } type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep - 1, 'prev')}><LeftOutlined type="left" /></Button>}
+                                    {this.props.data.length > tourStep && <Button disabled={ this.props.onDone } type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, res, tourStep + 1, 'next')}><RightOutlined type="right" /></Button>}
+                                    {this.props.data.length === tourStep && <Button disabled={ this.props.onDone } type="link" className="next" onClick={() => this.onClickToDoneTour(res, tourStep)}><RightOutlined type="right" /></Button>}
                                 </div>                                
                             </Popover>
                         )

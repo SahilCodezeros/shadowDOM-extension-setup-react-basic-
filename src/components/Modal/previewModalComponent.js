@@ -4,9 +4,9 @@ import { Form, Input, Button } from 'antd';
 import { CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import $ from 'jquery';
 
-import AudioTour from './audioTour';
-import { stopMediaPlaying } from '../common/stopePlayingMedia';
-import { addTrailitLogo, removeTrailitLogo } from '../common/trailitLogoInPreview';
+import AudioTour from '../audioTour';
+import { stopMediaPlaying } from '../../common/stopePlayingMedia';
+import { addTrailitLogo, removeTrailitLogo } from '../../common/trailitLogoInPreview';
 
 const chrome = window.chrome;
 class PreviewModalComponent extends React.PureComponent {
@@ -16,14 +16,19 @@ class PreviewModalComponent extends React.PureComponent {
             title: '',
             description: '',
             open: true,
-            autoPlay: false
+            autoPlay: true
         }
     }
     
     async componentDidMount() {
+        const scrollTop = $(window).scrollTop();
+        $("html, body").animate({ scrollTop: scrollTop });
+
         if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
             window.location.href = this.props.data[this.props.tourStep - 1].url;
         }
+
+        // this.setState({ autoPlay: true });
 
         // setTimeout(() => {
         //     document.querySelectorAll('video').forEach(res => {
@@ -101,6 +106,8 @@ class PreviewModalComponent extends React.PureComponent {
         //         this.setState({ autoPlay: items.AutoPlayMediaToggle });
         //     }
         // });
+
+        // this.setState({ autoPlay: true });
 
         // Add modal class to dom
         this.addModalClass();
@@ -189,7 +196,7 @@ class PreviewModalComponent extends React.PureComponent {
     };
     
     render () {
-        const { open } = this.state;
+        const { open, autoPlay } = this.state;
         const { tourStep, tourSide, play} = this.props;
         const { title, description } = this.props.data[tourStep - 1];
         let preview = null;
@@ -197,7 +204,7 @@ class PreviewModalComponent extends React.PureComponent {
         if (this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'video') {            
             preview = (
                 <div className="tr_preview_video_bx">
-                    <video className="preview-video" disablePictureInPicture controlsList="nodownload" controls allow="autoplay" autoPlay={ this.state.autoPlay }>
+                    <video className="preview-video" disablePictureInPicture controlsList="nodownload" controls allow="autoplay" autoPlay={ autoPlay }>
                         <source src={this.props.data[tourStep - 1].web_url} />
                     </video>
                 </div> 
@@ -218,29 +225,11 @@ class PreviewModalComponent extends React.PureComponent {
                     isOpen={ open } 
                     centered={ true }
                     toggle={ this.onButtonCloseHandler } 
-                    container={ [ document.getElementById('extension-div').shadowRoot ] }
+                    container={ document.getElementById('extension-div').shadowRoot }
                     className={`tr_modal trail_preview_modal trail_tooltip_done ${this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'text'?'trail_text_only':'' || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'video' ? 'tr_video_only' : '' || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'image' ? 'tr_picture_only' : ''  || this.props.data[tourStep - 1].mediaType && this.props.data[tourStep - 1].mediaType === 'audio' ? 'tr_audio_only' : ''}`} 
                 >
-                    {/* <img 
-                        alt=".."
-                        className="trailit_IconRightBottom" 
-                        src={require(`../images/trailit_icon1.png`)}  
-                        onClick={ (e) => {
-                            
-                            // Call send tip open modal function
-                            this.props.onSendTipModalOpen();
-                        } }
-                    /> */}
-                    {/* <ModalHeader toggle={this.toggle}>Create Modal</ModalHeader> */}
                     <ModalBody>
-
-                        {/* <div className="m-0">
-                            <div className="trailButtonsWrapper">
-                                <Button className="ant-btn ant-btn-primary" onClick={this.toggle}>Cancel</Button>
-                                <Button className="ant-btn ant-btn-primary" onClick={this.onAddStep}>Add Step</Button>
-                            </div>
-                        </div> */}
-                        {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseOutlined type="close" /></Button>}
+                        {this.props.data.length > 0 && <Button type="link" disabled={ this.props.onDone } className="trial_button_close" onClick={ this.onButtonCloseHandler }><CloseOutlined type="close" /></Button>}
                         <div className="trail_modal_content_main">
                             <div className="trail_modal_title">{title}</div>
                             {<span className="trail_modal_content" dangerouslySetInnerHTML={{ __html: description }}></span>}
@@ -248,9 +237,9 @@ class PreviewModalComponent extends React.PureComponent {
                         </div>
                         
                         <div className="btn-wrap">
-                            {1 < (tourStep) && <Button type="link" className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep - 1, 'prev')}><LeftOutlined type="left" /></Button>}
-                            {this.props.data.length > tourStep && <Button type="link" className="next" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep + 1, 'next')}><RightOutlined type="right" /></Button>}
-                            {this.props.data.length === tourStep && <Button type="link" className="next" onClick={() => this.onClickToDoneTour(this.props.data[tourStep - 1], tourStep)}><RightOutlined type="right" /></Button>}
+                            {1 < (tourStep) && <Button type="link" disabled={ this.props.onDone } className="prev" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep - 1, 'prev')}><LeftOutlined type="left" /></Button>}
+                            {this.props.data.length > tourStep && <Button type="link" disabled={ this.props.onDone } className="next" onClick={(e) => this.onClickToManagePopoverButton(e, this.props.data[tourStep - 1], tourStep + 1, 'next')}><RightOutlined type="right" /></Button>}
+                            {this.props.data.length === tourStep && <Button type="link" disabled={ this.props.onDone } className="next" onClick={() => this.onClickToDoneTour(this.props.data[tourStep - 1], tourStep)}><RightOutlined type="right" /></Button>}
                         </div>
                     </ModalBody>
                 </Modal>

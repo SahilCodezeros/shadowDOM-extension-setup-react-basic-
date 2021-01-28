@@ -37,9 +37,12 @@ class AudioTour extends React.PureComponent {
             });    
         })
         
-        if(this.props.data[this.props.tourStep - 1].url !== document.URL) {
+        if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
             window.location.href = this.props.data[this.props.tourStep - 1].url;
         }
+
+        //        
+
         
         // if(document.URL.includes('youtube.com')) {
         //     let videoElem = document.querySelector('.video-stream.html5-main-video');
@@ -155,133 +158,135 @@ class AudioTour extends React.PureComponent {
         if (audio && timeInterval) {
             this.cleanup();
         }
-        
-        const tr_audioplayer = document.getElementById('extension-div').shadowRoot.querySelector(".tr_audioplayer");
-        
-        // document.querySelector(".tr_audioplayer-time-current").textContent = this.getTimeCodeFromNum(0);
-        audio = this.state.audioUrl;
-        
-        if (this.state.audioLoad) {
-            const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
-            if (!this.props.previewInTooltip) {
-                const audioWrapTooltip = document.getElementById('extension-div').shadowRoot.querySelector(".audio_wrap_tooltip");
-                
-                //Make the DIV element draggagle:
-                dragElement(audioWrapTooltip);
-            }
-            
-            //credit for song: Adrian kreativaweb@gmail.com
-            audio.addEventListener("loadeddata", () => {
-                if((this.props.data[this.props.tourStep - 1].url === document.URL) && document.getElementById('extension-div').shadowRoot.querySelector('.audio_wrap_tooltip')) {
-                        chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-                            
-                        if (items.AutoPlayMediaToggle === undefined || items.AutoPlayMediaToggle) {
-                                        
-                            let audioPromise = audio.play();
-                            
-                            if (audioPromise !== undefined) {
-                                audioPromise
-                                    .then(res => {
-                                        playBtn.classList.add("tr_audioplayer-playing");
 
-                                        //check audio percentage and update time accordingly
-                                        const progressBar = tr_audioplayer.querySelector(".tr_audioplayer-bar-played");
-                                        timeInterval = setInterval(() => {
-                                            progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-                                            tr_audioplayer.querySelector(".tr_audioplayer-time-current").textContent = getTimeCodeFromNum(audio.currentTime);
-                                        }, 500);
-                                        
-                                        audio.volume = .75;
-                                    })
-                                    .catch((err) => console.log("err", err));
-                            }
-                        }
-                    });
-                }
-                tr_audioplayer.querySelector(".tr_audioplayer-time-duration").textContent = isNaN(audio.duration)?0.00:getTimeCodeFromNum(audio.duration);
-            });
+        $(document).ready(() => {
+            const tr_audioplayer = document.getElementById('extension-div').shadowRoot.querySelector(".tr_audioplayer");
             
-            //Audio ended event
-            audio.onended = function() {
-                playBtn.classList.remove("tr_audioplayer-playing");
-            };
+            // document.querySelector(".tr_audioplayer-time-current").textContent = this.getTimeCodeFromNum(0);
+            audio = new Audio();
+            audio.src = this.props.data[this.props.tourStep - 1].web_url;
+            audio.autoplay = true;
             
-            //click on timeline to skip around
-            const timeline = tr_audioplayer.querySelector(".tr_audioplayer-bar");
-            timeline.addEventListener("click", e => {
-                const timelineWidth = window.getComputedStyle(timeline).width;
-                const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
-                audio.currentTime = timeToSeek;
-            }, false);
-            
-            //click volume slider to change volume
-            const volumeSlider = tr_audioplayer.querySelector(".volume-slider-root");
-            volumeSlider.addEventListener('click', e => {
-                const sliderWidth = window.getComputedStyle(volumeSlider).width;
-                const newVolume = e.offsetX / parseInt(sliderWidth);
-                audio.volume = newVolume;
-                tr_audioplayer.querySelector(".volume-percentage").style.width = newVolume * 100 + '%';
-            }, false);
-            
-            //toggle between playing and pausing on button click
-            playBtn.addEventListener("click", () => {
-                if (audio.paused) {
-                    playBtn.classList.add("tr_audioplayer-playing");
-                    chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-                        if(!items.AutoPlayMediaToggle || items.AutoPlayMediaToggle) {
-                            audio.autoplay = true;
-                            let audioPromise = audio.play();
-                            
-                            if (audioPromise !== undefined) {
-                                audioPromise
-                                    .then(res => {
-                                            playBtn.classList.add("tr_audioplayer-playing");                                        
-                                        //check audio percentage and update time accordingly
-                                        const progressBar = tr_audioplayer.querySelector(".tr_audioplayer-bar-played");
-                                        timeInterval = setInterval(() => {
-                                            progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
-                                            tr_audioplayer.querySelector(".tr_audioplayer-time-current").textContent = getTimeCodeFromNum(audio.currentTime);
-                                        }, 500);
-    
-                                        audio.volume = .75;
-                                    }).catch((err) => console.log("err", err));
-                            }
-                        }
-                    });
+            if (this.state.audioLoad) {
+                const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
+                if (!this.props.previewInTooltip) {
+                    const audioWrapTooltip = document.getElementById('extension-div').shadowRoot.querySelector(".audio_wrap_tooltip");
                     
-                    tr_audioplayer.querySelector(".tr_audioplayer-time-duration").textContent = isNaN(audio.duration)?0.00:getTimeCodeFromNum(audio.duration);                    
-                } else {
-                    audio.pause();
+                    //Make the DIV element draggagle:
+                    dragElement(audioWrapTooltip);
+                }    
+                
+                //credit for song: Adrian kreativaweb@gmail.com
+                audio.addEventListener("loadeddata", () => {
+                    if ((this.props.data[this.props.tourStep - 1].url === document.URL) && document.getElementById('extension-div').shadowRoot.querySelector('.audio_wrap_tooltip')) {
+                        chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {                        
+                                
+                            if (items.AutoPlayMediaToggle === undefined || items.AutoPlayMediaToggle) {                                            
+                                let audioPromise = audio.play();    
+                                if (audioPromise !== undefined) {
+                                    audioPromise
+                                        .then(res => {
+                                            playBtn.classList.add("tr_audioplayer-playing");
+    
+                                            //check audio percentage and update time accordingly
+                                            const progressBar = tr_audioplayer.querySelector(".tr_audioplayer-bar-played");
+                                            timeInterval = setInterval(() => {
+                                                progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+                                                tr_audioplayer.querySelector(".tr_audioplayer-time-current").textContent = getTimeCodeFromNum(audio.currentTime);
+                                            }, 500);
+                                            
+                                            audio.volume = .75;
+                                        })
+                                        .catch((err) => console.log("err", err));
+                                }
+                            }
+                        });
+                    }
+                    tr_audioplayer.querySelector(".tr_audioplayer-time-duration").textContent = isNaN(audio.duration)?0.00:getTimeCodeFromNum(audio.duration);
+                });
+                
+                //Audio ended event
+                audio.onended = function() {
                     playBtn.classList.remove("tr_audioplayer-playing");
+                };
+                
+                //click on timeline to skip around
+                const timeline = tr_audioplayer.querySelector(".tr_audioplayer-bar");
+                timeline.addEventListener("click", e => {
+                    const timelineWidth = window.getComputedStyle(timeline).width;
+                    const timeToSeek = e.offsetX / parseInt(timelineWidth) * audio.duration;
+                    audio.currentTime = timeToSeek;
+                }, false);
+                
+                //click volume slider to change volume
+                const volumeSlider = tr_audioplayer.querySelector(".volume-slider-root");
+                volumeSlider.addEventListener('click', e => {
+                    const sliderWidth = window.getComputedStyle(volumeSlider).width;
+                    const newVolume = e.offsetX / parseInt(sliderWidth);
+                    audio.volume = newVolume;
+                    tr_audioplayer.querySelector(".volume-percentage").style.width = newVolume * 100 + '%';
+                }, false);
+                
+                //toggle between playing and pausing on button click
+                playBtn.addEventListener("click", () => {
+                    if (audio.paused) {
+                        playBtn.classList.add("tr_audioplayer-playing");
+                        chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
+                            if(!items.AutoPlayMediaToggle || items.AutoPlayMediaToggle) {
+                                audio.autoplay = true;
+                                let audioPromise = audio.play();
+                                
+                                if (audioPromise !== undefined) {
+                                    audioPromise
+                                        .then(res => {
+                                                playBtn.classList.add("tr_audioplayer-playing");                                        
+                                            //check audio percentage and update time accordingly
+                                            const progressBar = tr_audioplayer.querySelector(".tr_audioplayer-bar-played");
+                                            timeInterval = setInterval(() => {
+                                                progressBar.style.width = audio.currentTime / audio.duration * 100 + "%";
+                                                tr_audioplayer.querySelector(".tr_audioplayer-time-current").textContent = getTimeCodeFromNum(audio.currentTime);
+                                            }, 500);
+        
+                                            audio.volume = .75;
+                                        }).catch((err) => console.log("err", err));
+                                }
+                            }
+                        });
+                        
+                        tr_audioplayer.querySelector(".tr_audioplayer-time-duration").textContent = isNaN(audio.duration)?0.00:getTimeCodeFromNum(audio.duration);                    
+                    } else {
+                        audio.pause();
+                        playBtn.classList.remove("tr_audioplayer-playing");
+                    }
+                });
+                
+                tr_audioplayer.querySelector(".volume-button").addEventListener("click", () => {
+                    const volumeEl = tr_audioplayer.querySelector(".volume-container .volume");
+                    audio.muted = !audio.muted;
+                    if (audio.muted) {
+                        volumeEl.classList.remove("icono-volumeMedium");
+                        volumeEl.classList.add("icono-volumeMute");
+                    } else {
+                        volumeEl.classList.add("icono-volumeMedium");
+                        volumeEl.classList.remove("icono-volumeMute");
+                    }
+                });
+                
+                //turn 128 seconds into 2:08
+                function getTimeCodeFromNum(num) {
+                    let seconds = parseInt(num);
+                    let minutes = parseInt(seconds / 60);
+                    seconds -= minutes * 60;
+                    const hours = parseInt(minutes / 60);
+                    minutes -= hours * 60;
+                
+                    if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`;
+                    return `${String(hours).padStart(2, 0)}:${minutes}:${String(
+                        seconds % 60
+                    ).padStart(2, 0)}`;
                 }
-            });
-            
-            tr_audioplayer.querySelector(".volume-button").addEventListener("click", () => {
-                const volumeEl = tr_audioplayer.querySelector(".volume-container .volume");
-                audio.muted = !audio.muted;
-                if (audio.muted) {
-                    volumeEl.classList.remove("icono-volumeMedium");
-                    volumeEl.classList.add("icono-volumeMute");
-                } else {
-                    volumeEl.classList.add("icono-volumeMedium");
-                    volumeEl.classList.remove("icono-volumeMute");
-                }
-            });
-            
-            //turn 128 seconds into 2:08
-            function getTimeCodeFromNum(num) {
-                let seconds = parseInt(num);
-                let minutes = parseInt(seconds / 60);
-                seconds -= minutes * 60;
-                const hours = parseInt(minutes / 60);
-                minutes -= hours * 60;
-            
-                if (hours === 0) return `${minutes}:${String(seconds % 60).padStart(2, 0)}`;
-                return `${String(hours).padStart(2, 0)}:${minutes}:${String(
-                    seconds % 60
-                ).padStart(2, 0)}`;
-            }
-        };
+            };            
+        });
         
         const { tourStep } = this.props;
         
@@ -317,22 +322,22 @@ class AudioTour extends React.PureComponent {
 
                     { !this.props.previewInTooltip &&
                         <div className="btn-wrap videoShow">
-                            {this.props.data.length > 0 && <Button type="link" className="trial_button_close" onClick={(e) => {
+                            {this.props.data.length > 0 && <Button type="link" disabled={ this.props.onDone } className="trial_button_close" onClick={(e) => {
                                 audio.pause();
                                 clearInterval(timeInterval);
                                 this.props.closeButtonHandler(e);
                             }}><CloseOutlined /></Button>}
-                            {1 < (tourStep) && <React.Fragment><button className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => {
+                            {1 < (tourStep) && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary ex_mr_10" onClick={(e) => {
                                 audio.pause();
                                 clearInterval(timeInterval);
                                 this.onClickToManagePopoverButton(e, tourStep - 1, 'prev')
                             }}>Previous</button></React.Fragment>}
-                            {this.props.data.length > tourStep && <React.Fragment><button className="ant-btn ant-btn-primary" onClick={(e) => {
+                            {this.props.data.length > tourStep && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary" onClick={(e) => {
                                 audio.pause();    
                                 clearInterval(timeInterval);                        
                                 this.onClickToManagePopoverButton(e, tourStep + 1, 'next')
                             }}>Next</button></React.Fragment>}
-                            {this.props.data.length === tourStep && <React.Fragment><button className="ant-btn ant-btn-primary" onClick={() => {
+                            {this.props.data.length === tourStep && <React.Fragment><button disabled={ this.props.onDone } className="ant-btn ant-btn-primary" onClick={() => {
                                 audio.pause();
                                 this.onClickToDoneTour(tourStep)
                             }}>Done</button></React.Fragment>}

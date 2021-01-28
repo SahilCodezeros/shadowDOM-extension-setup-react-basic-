@@ -31,6 +31,15 @@ export const myExtensionRootFlipCss1 = `
         overflow-y: hidden;
     }
 
+    // .modal-open {
+    //     position: fixed;
+    //     top: 0;
+    // }
+
+    // .trial_create_modal_main {
+    //     position: fixed !important;
+    // }
+
     .trial_modal_show .modal {
         position: fixed !important;
         top: 50% !important;
@@ -60,10 +69,10 @@ export const myExtensionRootFlipCss1 = `
         height: 100%;
     }
 
-    .trial_modal_show .modal {
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
+    // .trial_modal_show .modal {
+    //     overflow-x: hidden;
+    //     overflow-y: auto;
+    // }
 
     @media (min-width: 576px) {
         .trial_modal_show .modal-dialog {
@@ -82,7 +91,7 @@ export const myExtensionRootFlipCss1 = `
         transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
         -webkit-transform: translate(0, 0) !important;
         transform: translate(0, 0) !important;
-        position: relative;
+        // position: relative;
         width: auto;
         left: 0 !important;
         padding: 0 !important;
@@ -681,6 +690,7 @@ export const myExtensionRootFlipCss2 = `
         right: 40px;
         width: 22px;
         z-index: 222;
+        cursor: pointer;
     }
 
     @keyframes opacity2 {
@@ -1133,8 +1143,8 @@ export const myExtensionRootFlipCss4 = `
     }
 
     .trail_preview_modal .trail_modal_content {
-        display: flex !important;
-        flex-direction: column !important;
+        // display: flex !important;
+        // flex-direction: column !important;
         padding: 8px 15px 10px !important;
     }
 
@@ -1355,26 +1365,26 @@ export const myExtensionRootFlipCss4 = `
         position: static !important;
     }
 
-    .trail_tooltip_done .audio_wrap_tooltip_innr {
-        background: linear-gradient(
-            60deg,
-            #f79533,
-            #f37055,
-            #ef4e7b,
-            #a166ab,
-            #5073b8,
-            #1098ad,
-            #07b39b,
-            #6fba82
-        );
-        -webkit-animation: animatedgradient 3s ease alternate infinite !important;
-        animation: animatedgradient 3s ease alternate infinite !important;
-        background-size: 300% 300%;
-        opacity: 1;
-    }
+    // .trail_tooltip_done .audio_wrap_tooltip_innr {
+    //     background: linear-gradient(
+    //         60deg,
+    //         #f79533,
+    //         #f37055,
+    //         #ef4e7b,
+    //         #a166ab,
+    //         #5073b8,
+    //         #1098ad,
+    //         #07b39b,
+    //         #6fba82
+    //     );
+    //     -webkit-animation: animatedgradient 3s ease alternate infinite !important;
+    //     animation: animatedgradient 3s ease alternate infinite !important;
+    //     background-size: 300% 300%;
+    //     opacity: 1;
+    // }
 
     .tr_gradient_border {
-        // --borderWidth: 5px;
+        --borderWidth: 5px;
         background: #1d1f20;
         position: relative;
     }
@@ -1464,29 +1474,37 @@ export const myExtensionRootFlipCss5 = `
         background-color: #000;
     }
 
+    p:not(.fancy) {
+        color: green;
+    }
+
     .tr_gradient_border:after {
         content: "";
         position: absolute;
         top: calc(-1 * var(--borderWidth));
         left: calc(-1 * var(--borderWidth));
         height: calc(100% + var(--borderWidth) * 2);
-        width: calc(100% + var(--borderWidth) * 2);
+        width: calc(100% + var(--borderWidth) * 2);        
         background: linear-gradient(
-          60deg,
-          #f79533,
-          #f37055,
-          #ef4e7b,
-          #a166ab,
-          #5073b8,
-          #1098ad,
-          #07b39b,
-          #6fba82
+            60deg,
+            #f79533,
+            #f37055,
+            #ef4e7b,
+            #a166ab,
+            #5073b8,
+            #1098ad,
+            #07b39b,
+            #6fba82
         );
         z-index: -1;
         -webkit-animation: animatedgradient 3s ease alternate infinite;
         animation: animatedgradient 3s ease alternate infinite;
         background-size: 300% 300%;
     } 
+
+    .trail_preview_bx .tr_gradient_border:after {
+        content: none;
+    }
 
     .trail_tooltip_done.tr_video_only .popover-body {
         padding: 0 !important;
@@ -1509,6 +1527,25 @@ export const myExtensionRootFlipCss5 = `
         color: #4d8cff !important;
         padding: 0px !important;
         text-decoration: none;
+    }
+
+    .ant-btn[disabled] {
+        cursor: not-allowed !important;
+    }
+    .ant-btn[disabled] > * {
+        pointer-events: none !important;
+    }
+
+    .ant-btn[disabled],
+    .ant-btn[disabled]:hover,
+    .ant-btn[disabled]:focus,
+    .ant-btn[disabled]:active {
+        color: rgba(0, 0, 0, 0.25);
+        background: #f5f5f5;
+        border-color: #d9d9d9;
+        text-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
     }
 `;
 

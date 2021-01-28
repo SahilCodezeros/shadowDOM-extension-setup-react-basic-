@@ -228,9 +228,10 @@ class Tooltip extends React.PureComponent {
     
     // Input change handler
     onChangeToInput = (e) => {
-        e.preventDefault();
+        e.stopPropagation();        
         
-        this.setState({ [e.target.name]: e.target.value });
+        // this.setState({ [e.target.name]: e.target.value });
+        this.setState({ title: e.target.value });
     };
     
     uploadFile = (file) => {
@@ -274,7 +275,7 @@ class Tooltip extends React.PureComponent {
     //     this.onClickToSubmit(e);
     // };
     
-    selectedTooltipForm = () => {
+    selectedTooltipForm = (mediaType) => {
         const { trailStatus, title, fileName, fileLoading } = this.state;
     
         // Common tooltip form function imported from common file
@@ -286,12 +287,13 @@ class Tooltip extends React.PureComponent {
             this.onClickToVisiblePopover,
             this.onClickToSubmit,
             this.onChangeToInput,
-            this.handleChange
+            this.handleChange,
+            mediaType
         );
     };
     
     onTitleChangeHandler = (e) => {
-        e.preventDefault();
+        e.stopPropagation();
 
         this.setState({ title: e.target.value });
     };
@@ -322,9 +324,10 @@ class Tooltip extends React.PureComponent {
                 <Popover 
                     placement="top" 
                     className="trail_tooltip" 
-                    isOpen={this.state.visible} target={'.trail_tour_tooltip'}
-                    modifiers={ { arrow: '' } }
-                    container={ [ document.getElementById('extension-div').shadowRoot ] }
+                    isOpen={this.state.visible} 
+                    target={'.trail_tour_tooltip'}
+                    // modifiers={ { arrow: '' } }
+                    container={ document.getElementById('extension-div').shadowRoot }
                 >
                     <PopoverBody>
                         { commonTypeSelectonButton(

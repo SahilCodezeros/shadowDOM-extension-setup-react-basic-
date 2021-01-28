@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input } from "antd";
+import { Form, Input, Button } from "antd";
 
 class SendTipForm extends Component {
   constructor(props) {
@@ -11,6 +11,8 @@ class SendTipForm extends Component {
   }
 
   onChangeInput = (e) => {
+    e.stopPropagation();
+    
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -42,44 +44,66 @@ class SendTipForm extends Component {
         {/* <div className="tr_description">
           <p>Microtipping enabled through Celo Blockchain cUSD</p>
         </div> */}
-        <Form>
-          <Form.Item>
-          <Input
+        <Form 
+          onFinish={ () => this.props.sendTip(toAddress, amount) }
+          initialValues={ {
+            toAddress,
+            amount
+        } }
+        >
+          <Form.Item
+            className="mb-2"
+            name="toAddress"
+            rules={[
+              {
+                required: true,
+                message: "Please enter address!",
+              },
+            ]}
+          >
+            <Input
               type="text"
               placeholder="Enter your to address"
               autoComplete="off"
-              name="toAddress"
-              onChange={this.onChangeInput}
-              value={toAddress }
-          />
+              onKeyDown={this.onChangeInput}
+            />
           </Form.Item>
-          <Form.Item>
-          <Input
-              type="text"
+          <Form.Item
+            name="amount"
+            rules={[
+              {
+                required: true,
+                message: "Please enter amount!",
+              },
+            ]}
+          >
+            <Input
+              type="text"              
               placeholder="Enter your amount"
               autoComplete="off"
-              name="amount"
-              onChange={this.onChangeInput}
-              value={amount }
-          />
+              onKeyDown={this.onChangeInput}
+            />
           </Form.Item>
           <div className="trailButtonsWrapper">
-            <button 
-              type="button" 
-              className="ant-btn ant-btn-primary trail_add_step_btn"
+            <Button 
+              type="primary"
+              disabled={ sendLoader }
               onClick={ this.onCancelButtonClick }
+              // className="ant-btn ant-btn-primary trail_add_step_btn"
             >
               Cancel
-            </button>
+            </Button>
 
-            <button
-              type="submit"              
-              onClick={ (e) => this.props.sendTip(e, toAddress, amount) }
-              disabled={ sendLoader || ( !this.state.amount.length > 0 && !this.state.length > 0 ) }
+            <Button
+              type="primary"
+              htmlType="submit"          
               className="ant-btn ant-btn-primary trail_add_step_btn"
+              // onClick={ (e) => this.props.sendTip(toAddress, amount) }
+              disabled={ sendLoader }
             >
-              {sendLoader ? "Loading..." : "Send Tip"}
-            </button>
+              Send Tip
+              {/* {sendLoader ? "Sending..." : "Send Tip"} */}
+            </Button>
           </div>
         </Form>        
         {/* <form> */}

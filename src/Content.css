@@ -2,3 +2,8 @@
   box-shadow: 0 0 10px 5px #fb542b !important;
   -webkit-box-shadow:0 0 10px 5px #fb542b !important;
 }
+
+.modal-open {
+  /* overflow: hidden; */
+  padding-right: 0 !important;
+}

@@ -17,7 +17,8 @@ class Signup extends React.Component {
       errors: "",
       fileLoading: false,
       profileImage: '',
-      filename: ''
+      filename: '',
+      isLoading: false
     }
   }
 
@@ -32,31 +33,37 @@ class Signup extends React.Component {
    * onClick to submit
   */
   onClickToSubmit = values => {
-    // this.formRef.validateFields((err, values) => {
-      // if (!err) {
-        values = {...values, profileImage: this.state.profileImage};
-        axios.post(`${process.env.REACT_APP_MS1_URL}user/register`, values, {withCredentials: true}).then(res => {
-        	if(res.status == 200) {
-            const { responseCode, responseMessage } = res.data.data.response;
+    this.setState({ isLoading: true });
+
+    values = {...values, profileImage: this.state.profileImage};
+    axios.post(`${process.env.REACT_APP_MS1_URL}user/register`, values, {withCredentials: true})
+      .then(res => {
+        if(res.status == 200) {
+          const { responseCode, responseMessage } = res.data.data.response;
+          
+          if(responseCode === 208) {
+            this.setState({errors: responseMessage});
+            setTimeout(() => {
+              this.setState({errors: ""});
+            }, 3000)
+          } else {
+            const user_id = res.data.data.response.userProfile.id;
+            const trail_name = 'init trail';
+            this.setState({profileImage: '', filename: ''});
+            // Use user_id to create trail_id in user_tour table
+            // createTrailId(user_id, trail_name);
             
-            if(responseCode === 208) {
-              this.setState({errors: responseMessage});
-              setTimeout(() => {
-                this.setState({errors: ""});
-              }, 3000)
-            } else {
-              const user_id = res.data.data.response.userProfile.id;
-              const trail_name = 'init trail';
-              this.setState({profileImage: '', filename: ''});
-              // Use user_id to create trail_id in user_tour table
-              // createTrailId(user_id, trail_name);
-              
-              this.props.clickToRedirect('userConfirmation');
-            }
-        	}
-        })
-      // }
-    // });
+            this.props.clickToRedirect('userConfirmation');
+          }
+        }
+
+        this.setState({ isLoading: false });
+      })
+      .catch(err => {
+        console.log('err', err);
+
+        this.setState({ isLoading: false });
+      });
   };
   
   /**
@@ -168,7 +175,13 @@ class Signup extends React.Component {
               />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="tr_button" onClick={this.onClickToSubmit}>
+              <Button
+                type="primary" 
+                htmlType="submit" 
+                className="tr_button" 
+                onClick={this.onClickToSubmit}
+                disabled={ this.state.isLoading }
+              >
                 Signup Now
               </Button>
             </Form.Item>

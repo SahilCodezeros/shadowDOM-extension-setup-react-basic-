@@ -671,10 +671,10 @@ export const deleteModalCss = `
         height: 326px !important;
     }
 
-    .modal-open .trial_modal_show .modal {
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
+    // .modal-open .trial_modal_show .modal {
+    //     overflow-x: hidden;
+    //     overflow-y: auto;
+    // }
 
     @media (min-width: 576px) {
         .trial_modal_show .modal-dialog {

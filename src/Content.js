@@ -4,32 +4,30 @@ import { Button } from 'antd';
 import { CloudUploadOutlined } from '@ant-design/icons';
 import unique from 'unique-selector';
 import { arrayMove } from 'react-sortable-hoc';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import _ from 'lodash';
 import $ from 'jquery';
 import WebFont from 'webfontloader';
 
 import { socket } from './common/socket';
 import Tooltip from './components/tooltip';
+import dragElement from './common/draggable';
 import VideoTour from './components/videoTour';
-import SendTipForm from './common/SendTipForm';
 import AudioTour from './components/audioTour';
 import { sendTransection } from './code/sendtx';
 import WebUserTour from './components/webUserTour';
-import { getScrollParent } from './components/common';
-import TooltipOverlay from './components/tooltipOverlay';
 import MySubscription from './components/mySubscription';
+import SendTipModal from './components/Modal/SendTipModal';
 import { handleFileUpload } from './common/audAndVidCommon';
+import { initButtonPosition } from './common/initButtonPosition';
 import CreateNewTrailModal from './components/CreateNewTrailModal';
-import CreateModalComponent from './components/createModalComponent';
-import { queryParentElement, getUrlVars } from './components/common';
-import PreviewModalComponent from './components/previewModalComponent';
+import CreateModalComponent from './components/Modal/createModalComponent';
+import { queryParentElement } from './components/common';
+import TrailDeleteModal from './components/Modal/TrailDeleteModal';
+import PreviewModalComponent from './components/Modal/previewModalComponent';
 import SortableItem, { SortableContainer } from './components/SortableItem';
 import { addOverlay, setOverlayHtml, removeOverlay } from './common/trailOverlay';
 import { addTrailitLogo, removeTrailitLogo } from './common/trailitLogoInPreview';
 import {
-	getTrails,
-	getTrailId,
 	getAllUser,
 	deleteTrail,
 	uploadTrails,
@@ -60,14 +58,6 @@ import {
 	defaultButtonCss2, 
 	defaultButtonCss3
 } from './css/defaultButton';
-// import {
-// 	ckEditor1,
-// 	ckEditor2,
-// 	ckEditor3,
-// 	ckEditor4,
-// 	ckEditor5,
-// 	ckEditor6
-// } from './css/ckEditor';
 
 import './Content.css';
 
@@ -76,7 +66,9 @@ import './Content.css';
 WebFont.load({
 	google: {
 		families: ['Lato', 'Raleway:400,500,700', 'sans-serif']
-	}
+	},
+	// eslint-disable-next-line no-restricted-globals
+	context: frames['text-editor-frame']
 });
 
 let app
@@ -89,6 +81,10 @@ let preventToggle = false;
 const resizeScreen = () => {
 	return window.innerWidth <= 760;
 };
+
+if (window.location.href.includes('https://www.and.co')) {
+	document.querySelector('html').style.zoom = '100%';				
+}
 
 class Main extends React.Component {
 	constructor(props) {
@@ -104,26 +100,26 @@ class Main extends React.Component {
 		};
 	};
 
-	async componentDidMount() {
+	async componentDidMount() {		
+
 		chrome.storage.local.get(['trail_web_user_tour', 'trail_id', 'userData', 'previewUserId', "notification", "saveSort", 'tourStep', 'closeContinue'], async (items) => {
-			this.setState({closeContinue: items.closeContinue === undefined ? false : items.closeContinue, currentUserId: items.userData._id});
-			
+			this.setState({closeContinue: items.closeContinue === undefined ? false : items.closeContinue, currentUserId: items.userData._id});			
 			socket.on('connect', () => {
 				console.info('Client is connected');
 			});
 
 			socket.emit('userId', items.userData._id);
 			
-			socket.on('notification', (data) => {
-				// Get chrome push notification
-				this.getNewNotification();
+			// socket.on('notification', (data) => {
+			// 	// Get chrome push notification
+			// 	this.getNewNotification();
 
-				// Get notifiation data from server when socket notificatin listen
-				this.userNotificaion();
-			});
+			// 	// Get notifiation data from server when socket notificatin listen
+			// 	this.userNotificaion();
+			// });
 			
-			// Get notifiation data from server when page load
-			this.userNotificaion();
+			// // Get notifiation data from server when page load
+			// this.userNotificaion();
 			
 			chrome.storage.onChanged.addListener((changes) => {
 				if(changes.closeContinue!==undefined) {
@@ -480,7 +476,7 @@ class Main extends React.Component {
 	}
 	
 	openMenu = async (type, previewId, closeContinue) => {
-		let mainObj = {}, objStatus = true;
+		let mainObj = {}, objStatus = true;	
 		
 		if(document.URL.includes("https://twitter.com") && (type === 'video' || type === 'audio')) {
 			alert(`You don't have permission to add ${type} in this site`);
@@ -772,8 +768,6 @@ class Main extends React.Component {
                                         </g>
                                     </g>
                                 </svg>
-
-                                {/* <span>Create Modal</span> */}
                             </button>
                             <button className="menu" onClick={(e) => this.openMenu("")}>
                                 <img className="trail_plus"
@@ -950,7 +944,8 @@ class DefaultButton extends React.PureComponent {
 			isLoading: false,
 			sendLoader: false,
 			isSuccess: false,
-      		setError: null
+			onDone: false,
+      		setError: null,
 		};
 
 		this.onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
@@ -1184,7 +1179,13 @@ class DefaultButton extends React.PureComponent {
 					removeTrailitLogo();					
 				}
 			}
-		});		
+		});	
+		
+		// Make X button draggable
+		const menuButton = document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot');
+		if (menuButton) {
+			dragElement(menuButton);
+		}
 	}
 	
 	onCreateTooltipHandle = () => {
@@ -1273,6 +1274,22 @@ class DefaultButton extends React.PureComponent {
 						// Call set overlay html function
 						setOverlayHtml(window, docHeight, topPosition, bounding, leftPosition);
 
+						window.addEventListener('resize', () => {
+							if (root1 === 'block' && getClass === "" && getClass1 === "" && getClass2 === undefined) {
+								let docHeight = document.documentElement.scrollHeight;
+								let bounding = original.getBoundingClientRect();
+								let offset = $(uniqueTarget).offset();
+								let leftPosition = offset.left;
+								let topPosition = offset.top;
+	
+								// Call add overlay function
+								addOverlay();							
+	
+								// Call set overlay html function
+								setOverlayHtml(window, docHeight, topPosition, bounding, leftPosition);
+							};							
+						});
+
 						// $(".trail_overlay").append(`
 						// 	<svg height="100%" width="100%">
 						// 		<polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
@@ -1300,7 +1317,7 @@ class DefaultButton extends React.PureComponent {
 								type={this.state.tourType}
 								rowData={this.state.rowData} 
 								count={popoverCount}
-								onSave={this.state.tourType === 'Make Edit'?this.onUpdateTrail:this.onSaveTrail} 
+								onSave={ this.state.tourType === 'Make Edit' ? this.onUpdateTrail : this.onSaveTrail } 
 								onCancel={this.onCancelTooltip} 
 								onHandleChange={ this.handleChange }	
 							/>, node
@@ -1454,6 +1471,9 @@ class DefaultButton extends React.PureComponent {
 		* on cancel tooltip data
 	*/
 	onCancelTooltip = (target, count) => {
+		// Call init button position function
+		initButtonPosition();
+		
 		$('.trail_tour_tooltip').parents().css('z-index', '');
 		target.classList.remove('trail_web_user');
 		target.classList.remove(`trail_tour_tooltip`);
@@ -1478,6 +1498,9 @@ class DefaultButton extends React.PureComponent {
 	* on click to Update tour
 	*/
 	onUpdateTrail = async (data) => {
+		// Call init button position function
+		initButtonPosition();
+
 		let res = await UpdateTrailData(data);
 		if(res.status === 200) {
 			let resultData = res.data.response[0];
@@ -1594,6 +1617,9 @@ class DefaultButton extends React.PureComponent {
 			this.setState({ trailList: trailData, web_url: '', fileAddStatus: false, fileName: '' });
 			chrome.storage.local.set({ trail_web_user_tour: trailData, tourType: '' });
 			
+			// Call init button position function
+			initButtonPosition();
+
 			// Save trail into database
 			this.publishTrails(obj);
 
@@ -1627,6 +1653,9 @@ class DefaultButton extends React.PureComponent {
 				chrome.storage.local.set({ previewUserId: '', trail_web_user_tour: userTrails });
 			}
 		});
+
+		// Call init button position function
+		initButtonPosition();
 		
 		try {
 			const data = {
@@ -1636,6 +1665,7 @@ class DefaultButton extends React.PureComponent {
 			
 			// Call update trail api to add flag into table
 			await updateTrailFlag(data);
+
 			// Call back arrow click handler function
 			// Remove overlay and other added element
 			$('.trail_web_user_tour').parents().css('z-index', '');
@@ -1646,30 +1676,14 @@ class DefaultButton extends React.PureComponent {
 
 			// Call remove overlay function
 			removeOverlay();
-			
-			// const trailOverlay = document.querySelector('.trail_overlay');
-			// if (trailOverlay) {
-			// 	trailOverlay.parentNode.removeChild(trailOverlay);
-			// }
-			// this.props.mainToggle();
 		} catch (err) {
 			console.log(err);
 		}
-		
-		// chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
-		// this.setState({
-		// 	tourType: '',
-		// 	tourStep: '',
-		// 	currentTourType: ''
-		// });
-		// this.props.onChangeTourType("");
-		
+
 		chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
 		this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, loading: false });						
 		this.props.onChangeTourType("");
 		this.props.mainToggle();
-		
-		// Clear continue flag from trail data
 	}
 	
 	openPopup = () => {
@@ -2006,120 +2020,113 @@ class DefaultButton extends React.PureComponent {
 	};
 		
 	// Save last show preview trail
-	onBackArrowClickHandler = async (e, close) => {	
-		// e.preventDefault();
-		
+	onBackArrowClickHandler = async (e, close) => {			
+		const shadowRoot = document.getElementById('extension-div').shadowRoot;
+
 		if(close === undefined) {
 			chrome.storage.local.set({closeContinue: false});
 		}
-		
+
+		// Call init button position function
+		initButtonPosition();
+
 		const removeThisElements = () => {
 			// Remove overlay and other added element
 			$('.trail_web_user_tour').parents().css('z-index', '');
 			$(`.trail_tour_ToolTipExtend`).remove();
 			$('.trail_tooltip_done').remove();
 			$('.trail_web_user_tour').removeAttr('trail_web_user_tour');	
-			$(`traiil_stop${this.state.tourStep}`).removeAttr(`traiil_stop${this.state.tourStep}`);
-			
+			$(`traiil_stop${this.state.tourStep}`).removeAttr(`traiil_stop${this.state.tourStep}`);			
 
-			const tooltip = document.getElementById('extension-div').shadowRoot.querySelector('.trail_tooltip');
+			const tooltip = shadowRoot.querySelector('.trail_tooltip');
 			if (tooltip) {
-				// $('.trail_tooltip').remove();
 				tooltip.parentNode.removeChild(tooltip);
 			}
 
 			// Call remove overlay function
 			removeOverlay();
-
-			// const trailOverlay = document.querySelector('.trail_overlay');
-			// if (trailOverlay) {
-			// 	trailOverlay.parentNode.removeChild(trailOverlay);
-			// }
-			
-			// $('.trail_overlay').remove();
-			// $('.trail_web_user_tour').parent().parent().removeAttr('style');
-
-			// if(this.state.tourStep && 
-			// 	this.state.tourStep !== '' && 
-			// 	this.state.tourType === 'preview' &&
-			// 	this.state.trailList[this.state.tourStep - 1].uniqueTarget && 
-			// 	document.querySelector(this.state.trailList[this.state.tourStep - 1]) &&				
-			// 	document.querySelector(this.state.trailList[this.state.tourStep - 1].uniqueTarget)
-			// ) {
-			// 	document.querySelector(this.state.trailList[this.state.tourStep - 1].uniqueTarget).classList.remove('trail_web_user_tour');
-			// 	document.querySelector(this.state.trailList[this.state.tourStep - 1].uniqueTarget).classList.remove(`traiil_stop${this.state.tourStep}`);
-			// }
-		
 		};
-		
-		chrome.storage.local.get(['previewUserId'], async (items) => {
-			if (!items.previewUserId || items.previewUserId === '') {
-				const { currentTourType, tourType } = this.state;
-				if ((currentTourType === 'tooltip' || 
-					currentTourType === 'audio' || 
-					currentTourType === 'video' || 
-					currentTourType === 'modal') &&
-					tourType === 'preview'
-				) {
-					// Remove elements
-					await removeThisElements();
-										
-					if (this.state.trailList.length > 0) {
-						try {
-							const data = {
-								trail_data_id: this.state.trailList[this.state.tourStep - 1].trail_data_id,
-								flag: 'continue'
-							};	
-							
-							// Call update trail api to add flag into table
-							await updateTrailFlag(data);			
-						} catch (err) {
-							console.log(err);
+
+		return new Promise((resolve, reject) => {
+			chrome.storage.local.get(['previewUserId'], async (items) => {
+				if (!items.previewUserId || items.previewUserId === '') {
+					const { currentTourType, tourType } = this.state;
+					if ((currentTourType === 'tooltip' || 
+						currentTourType === 'audio' || 
+						currentTourType === 'video' || 
+						currentTourType === 'modal') &&
+						tourType === 'preview'
+					) {					
+						if (this.state.trailList.length > 0) {
+							try {
+								const data = {
+									trail_data_id: this.state.trailList[this.state.tourStep - 1].trail_data_id,
+									flag: 'continue'
+								};	
+								
+								// Call update trail api to add flag into table
+								await updateTrailFlag(data);			
+							} catch (err) {
+								console.log(err);
+							}
+						
+							// Remove elements
+							await removeThisElements();
+						
+							// Call toggle function
+							chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
+							this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, loading: false });						
+							this.props.onChangeTourType("");
+							this.props.mainToggle();
 						}
-					
-						await removeThisElements();
-					
-						// Call toggle function
-						chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
-						this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, loading: false });						
-						this.props.onChangeTourType("");
+	
+						// // Remove elements
+						// await removeThisElements();
+	
+					} else if (currentTourType === 'preview' && tourType === 'modal') {
 						this.props.mainToggle();
+						this.props.onChangeTourType("");
+						this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, createModalOpen: false, loading: false });
+						chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });			
+	
+					} else {
+						// Remove elements
+						await removeThisElements();
+						
+						this.props.mainToggle();
+						this.props.onChangeTourType("");
+						this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, fileName: '', loading: false });
+						chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });		
 					}
+	
+					if (this.state.deleteModal.show) {
+	
+						// Hide delete modal
+						this.onDeleteModalClose();
+					}
+	
+					resolve();
 
-				} else if (currentTourType === 'preview' && tourType === 'modal') {
-					this.props.mainToggle();
-					this.props.onChangeTourType("");
-					this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, createModalOpen: false, loading: false });
-					chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
-			
-				} else {
+				}  else {
 					// Remove elements
 					await removeThisElements();
-					
 					this.props.mainToggle();
 					this.props.onChangeTourType("");
-					this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, fileName: '', loading: false });
-					chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });		
+					this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, loading: false });
+					chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
+					resolve();
 				}
-
-				if (this.state.deleteModal.show) {
-
-					// Hide delete modal
-					this.onDeleteModalClose();
-				}
-
-			}  else {
-				// Remove elements
-				await removeThisElements();
-				this.props.mainToggle();
-				this.props.onChangeTourType("");
-				this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, loading: false });
-				chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });		
-			}
+			});
 		});
+		
 	};
 	
 	onToggleCreateModal = (status) => {
+		if (!status) {
+			// Call init button position function
+			initButtonPosition();
+		}
+
 		if(!status) {
 			chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
 			this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, createModalOpen: status });
@@ -2138,7 +2145,13 @@ class DefaultButton extends React.PureComponent {
 		// , document.querySelector('body'));
 	}
 	
-	onCloseTooltipHandle = (e) => {		
+	onCloseTooltipHandle = async (e) => {	
+		// Call init button position function
+		initButtonPosition();
+
+		// Set onDone state
+		this.setState({ onDone: true });
+
 		const { trailList, tourStep } = this.state;
 
 		if (trailList.length > 0 && trailList.length === tourStep) {
@@ -2146,14 +2159,17 @@ class DefaultButton extends React.PureComponent {
 			chrome.storage.local.set({ closeContinue: false });
 
 			// Call clear toggle function
-			this.onClearToggle();
+			await this.onClearToggle();
 		} else {
 			// Show continue button
 			chrome.storage.local.set({closeContinue: true});
 			
 			// Call back arrow click handler function
-			this.onBackArrowClickHandler(e, 'close');
+			await this.onBackArrowClickHandler(e, 'close');
 		}
+
+		// Set onDone state
+		this.setState({ onDone: false });
 	}
 	
 	setLoadingState = (query) => {
@@ -2192,9 +2208,7 @@ class DefaultButton extends React.PureComponent {
 	// };
 
 	// Send tip function
-	sendTip = async (e, toAddress, amount) => {
-		e.preventDefault();
-
+	sendTip = async (toAddress, amount) => {
 		this.setState({ sendLoader: true });
 
 		// const { privateKey } = this.state;
@@ -2256,7 +2270,8 @@ class DefaultButton extends React.PureComponent {
 			fileName,
 			fileLoading,
 			createModalOpen,
-			loading
+			loading,
+			onDone
 		} = this.state;
 		
 		const localStorageCount = localStorage.getItem(process.env.REACT_APP_LOCALSTORAGE);
@@ -2321,8 +2336,12 @@ class DefaultButton extends React.PureComponent {
 			if (modalDiv) {
                 if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
                     modalDiv.parentNode.parentNode.parentNode.setAttribute('class', 'trial_modal_show trial_create_modal_main');
-                }
-            }
+				}
+			}
+			
+			if (tourType && tourType !== '') {
+				document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot').style.position = 'relative';
+			}
 		});	
 
 		return (
@@ -2332,124 +2351,38 @@ class DefaultButton extends React.PureComponent {
 				<style>{ defaultButtonCss3 }</style>
                 <div id="my-extension-defaultroot">
                     {/* Delete modal */}
-                    <Modal
-                        toggle={ this.onDeleteModalClose } 
-                        isOpen={ this.state.deleteModal.show } 
-						className="tr_modal trail_create_modal"
-						container={ [ document.getElementById('extension-div').shadowRoot ] }
-                    >
-                        <ModalHeader className="tr_modal_trail_modal_header" closeButton>Delete Alert
-                            {/* <Modal.Title className="w-100 pho_18_600 text-danger text-center">
-                                Status Alert
-                            </Modal.Title> */}
-                        </ModalHeader>
-                        <ModalBody>
-                            <p className="trailit_DeleteText">
-                                {/* Are you sure want to delete Account { props.userDetail ? `(${props.userDetail.firstName} ${props.userDetail.lastName})` : '' } ? */}
-                                Are you sure want to delete trail { this.state.deleteModal.title ? `(${this.state.deleteModal.title})` : '' }?
-                            </p>
-                            <div className="trailButtonsWrapper">
-                                <button 
-                                    type="button" 
-                                    className="ant-btn ant-btn-primary trail_add_step_btn"
-                                    onClick={ this.onDeleteModalClose }
-                                >
-                                    Cancel
-                                </button>
-                                <button 
-                                    type="button" 
-                                    className="ant-btn ant-btn-primary trail_add_step_btn"
-                                    onClick={ (e) => this.onDeleteButtonClick(e) }
-                                >
-                                    DELETE
-                                </button>
-                            </div>
-                        </ModalBody>
-                        {/* <ModalFooter className="d-flex justify-content-center border-0">
-                            <Button 
-                                variant="outline-success" 
-                                className="btn-sm mr-5" 
-                                onClick={ this.onDeleteModalClose }
-                            >
-                                CANCEL
-                            </Button>
-                            <Button 
-                                variant="outline-danger" 
-                                className="btn-sm" 
-                                onClick={ this.onDeleteButtonClick }
-                            >
-                                DELETE                        
-                            </Button>
-                        </ModalFooter> */}
-                    </Modal>
+					{
+						this.state.deleteModal.show &&
+							<TrailDeleteModal 
+								deleteModal={ this.state.deleteModal }
+								onDeleteModalClose={ this.onDeleteModalClose }
+								onDeleteButtonClick={ this.onDeleteButtonClick }
+							/>
+					}                    
 
                     {/* Send tip modal */}
-                    <Modal 
-                        className="tr_modal trail_create_modal"
-                        toggle={ this.onSendTipModalClose } 
-                        isOpen={ this.state.sendTipModal } 
-                    >
-                        <ModalHeader className="tr_modal_trail_modal_header" closeButton>Send Tip
-                            {/* <Modal.Title className="w-100 pho_18_600 text-danger text-center">
-                                Status Alert
-                            </Modal.Title> */}
-                        </ModalHeader>
-                        <ModalBody>
-                            { 
-                                this.state.isSuccess ?
-                                    <div className="tr_description">
-                                        <p 
-                                            style={{ color: "#0c8026", textAlign: 'center' }}
-                                        >
-                                            Transaction completed successfully.
-                                        </p>
-                                    </div>
-                                :
-                                    
-                                    !this.state.setError ?
-                                        <SendTipForm 
-                                            sendTip={ this.sendTip }
-                                            onCancel={ this.onSendTipModalClose }
-                                            isLoading={ this.state.isLoading }
-                                            sendLoader={ this.state.sendLoader }
-                                        />
-                                    :
-                                        <div className="tr_description">
-                                            <p 
-                                                style={{ color: "#d21e1e", textAlign: 'center' }}
-                                            >
-                                                { this.state.setError }
-                                            </p>
-                                        </div>          
-                                } 
-                        </ModalBody>
-                        {/* <ModalFooter className="d-flex justify-content-center border-0">
-                            <Button 
-                                variant="outline-success" 
-                                className="btn-sm mr-5" 
-                                onClick={ this.onSendTipModalClose }
-                            >
-                                CANCEL
-                            </Button>
-                            <Button 
-                                variant="outline-danger" 
-                                className="btn-sm" 
-                                onClick={ this.onSendButtonClick }
-                            >
-                                SEND                        
-                            </Button>
-                        </ModalFooter> */}
-                    </Modal>
+					{
+						this.state.sendTipModal &&
+							<SendTipModal 
+								sendTip={ this.sendTip }
+								setError={ this.state.setError }
+								isSuccess={ this.state.isSuccess } 
+								isLoading={ this.state.isSuccess }
+								sendLoader={ this.state.sendLoader }
+								sendTipModal={ this.state.sendTipModal }
+								onSendTipModalClose={ this.onSendTipModalClose }
+							/>
+					}
 
                     <div className="sidepanal adadad trail_sidepanel_overlay">
                         { createModalOpen && <CreateModalComponent open={createModalOpen} toggle={this.onToggleCreateModal} closeButtonHandler={ this.onBackArrowClickHandler } onSave={this.onSaveTrail} /> } 
                         <div>
                             {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
                             {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
-                            {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <WebUserTour data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} closeButtonHandler={ this.onCloseTooltipHandle  } setLoadingState={ this.setLoadingState } onNotFoundTarget={ this.onNotFoundTarget } onSendTipModalOpen={ this.onSendTipModalOpen } />}
-                            {currentTourType === 'video' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <VideoTour data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} closeButtonHandler={ this.onCloseTooltipHandle } setLoadingState={ this.setLoadingState } />}
-                            {currentTourType === 'audio' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <AudioTour data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} closeButtonHandler={ this.onCloseTooltipHandle } setLoadingState={ this.setLoadingState } />}
-                            {currentTourType === 'modal' && tourType === 'preview'&& !overlay && tourStep!=='' && tourUrl && <PreviewModalComponent data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} closeButtonHandler={ this.onCloseTooltipHandle } setLoadingState={ this.setLoadingState } onSendTipModalOpen={ this.onSendTipModalOpen } />}
+                            {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <WebUserTour onDone={onDone} data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} closeButtonHandler={ this.onCloseTooltipHandle  } setLoadingState={ this.setLoadingState } onNotFoundTarget={ this.onNotFoundTarget } onSendTipModalOpen={ this.onSendTipModalOpen } />}
+                            {currentTourType === 'video' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <VideoTour onDone={onDone} data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} closeButtonHandler={ this.onCloseTooltipHandle } setLoadingState={ this.setLoadingState } />}
+                            {currentTourType === 'audio' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <AudioTour onDone={onDone} data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} closeButtonHandler={ this.onCloseTooltipHandle } setLoadingState={ this.setLoadingState } />}
+                            {currentTourType === 'modal' && tourType === 'preview'&& !overlay && tourStep!=='' && tourUrl && <PreviewModalComponent onDone={onDone} data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} closeButtonHandler={ this.onCloseTooltipHandle } setLoadingState={ this.setLoadingState } onSendTipModalOpen={ this.onSendTipModalOpen } />}
                             {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
                         </div>
                         <div className={`sidepopup ${openSidebar ? 'open trail_builder_side_panel_open' : ''}`}>
@@ -2509,7 +2442,7 @@ class DefaultButton extends React.PureComponent {
                                                         {fileLoading && <div class="trial_spinner"><img class="ring1" src={require(`./images/loding1.png`)} /><img class="ring2" src={require(`./images/loding2.png`)} /></div>}
                                                         {!fileLoading && <CloudUploadOutlined />}
                                                     </p>
-                                                    <p className="ant-upload-text">Upload Video</p>
+                                                    <p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } Video</p>
                                                 </div>
                                                 <input type="file" name="media" onChange={this.handleChange} />
                                             </div>}
@@ -2532,7 +2465,7 @@ class DefaultButton extends React.PureComponent {
                                                         {fileLoading && <div class="trial_spinner"><img class="ring1" src={require(`./images/loding1.png`)} /><img class="ring2" src={require(`./images/loding2.png`)} /></div>}
                                                         {!fileLoading && <CloudUploadOutlined />}
                                                     </p>
-                                                    <p className="ant-upload-text">Upload Audio</p>
+                                                    <p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } Audio</p>
                                                 </div>
                                                 <input type="file" name="media" onChange={this.handleChange} />
                                             </div>}
@@ -2682,7 +2615,10 @@ class DefaultButton extends React.PureComponent {
                         </div> */}
                             <div className="space"></div>
                         </div>
-                        <button className="menu pop" onClick={ this.openPopup }>
+						<button 
+							className="menu pop" 							
+							onClick={ this.openPopup }
+						>
                             <img
                                 alt=""
                                 src={ require('./images/imgpsh_fullsize_anim.png') }
@@ -2724,6 +2660,9 @@ if (extensionRoot) {
             // Create a div element
             app = document.createElement('div');
 			app.setAttribute('id', 'my-extension-root-flip');
+
+			const modalOpen = document.createElement('div');
+			modalOpen.setAttribute('class', 'modal-open');
 			
 			const style0 = document.createElement('style');
 			style0.textContent = myExtensionRootFlipCss0;
@@ -2761,7 +2700,7 @@ if (extensionRoot) {
 			// ckStyle6.textContent = ckEditor6;
 
             // Append div to shadow DOM
-            shadowRoot.appendChild(app);
+			shadowRoot.appendChild(app);
             // ReactDOM.render(<Test/>, app);
 			extensionRoot.shadowRoot.appendChild(app);
 			// extensionRoot.shadowRoot.appendChild(style0);
@@ -2777,6 +2716,7 @@ if (extensionRoot) {
 			// extensionRoot.shadowRoot.appendChild(ckStyle5);
 			// extensionRoot.shadowRoot.appendChild(ckStyle6);
 			extensionRoot.shadowRoot.appendChild(tooltipStyle1);
+			shadowRoot.appendChild(modalOpen);			
         }
     }
 }
