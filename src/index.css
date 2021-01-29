@@ -20,6 +20,10 @@ body {
   height: auto !important;
 }
 
+#extension-div {
+  overflow: hidden;
+}
+
 .tr_wrapper {
   position: relative;
   min-height: 420px;

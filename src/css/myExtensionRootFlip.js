@@ -1474,10 +1474,6 @@ export const myExtensionRootFlipCss5 = `
         background-color: #000;
     }
 
-    p:not(.fancy) {
-        color: green;
-    }
-
     .tr_gradient_border:after {
         content: "";
         position: absolute;

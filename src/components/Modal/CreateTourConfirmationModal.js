@@ -19,9 +19,10 @@ class CreateTourConfirmationModal extends Component {
 
         return (
             <Modal
+                // size='sm'
+                isOpen={ show } 
                 centered={ true }
                 toggle={ onModalClose } 
-                isOpen={ show } 
                 className="tr_modal trail_create_modal"
                 container={ document.getElementById('extension-div').shadowRoot }
             >
@@ -30,7 +31,7 @@ class CreateTourConfirmationModal extends Component {
                 </ModalHeader>
                 <ModalBody>
                     <p className="trailit_DeleteText">                        
-                        Please select step type
+                        Please select tour type
                     </p>
                     <div className="trailButtonsWrapper">
                         <button 

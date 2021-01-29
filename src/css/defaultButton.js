@@ -1,9 +1,9 @@
 export const defaultButtonCss1 = `
     #my-extension-defaultroot .sidepopup {
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
-        -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
-        -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
-        background: #fff;
+        // box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
+        // -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
+        // -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
+        background: transparent;
         width: 340px;
         height: calc(100% - 80px);
         padding: 0 25px;
@@ -74,7 +74,7 @@ export const defaultButtonCss1 = `
         font-size: 22px;
         font-weight: bold;
         line-height: 24px;
-        color: #000;
+        color: #fb542b;
         text-transform: unset;
         -webkit-text-transform: unset;
         font-family: 'Lato', sans-serif;
@@ -95,6 +95,10 @@ export const defaultButtonCss1 = `
         font-size: 17px;
         font-weight: bold;
         display: table;
+    }
+
+    .trail_builder-back-button {
+        background: transparent !important;
     }
     
     #my-extension-defaultroot .hdr {
@@ -278,9 +282,13 @@ export const defaultButtonCss1 = `
         height: 100%;
     }
 
-    #my-extension-defaultroot .titleBack button:not(.s-btn),
+    // #my-extension-defaultroot .titleBack button:not(.s-btn),
     #my-extension-defaultroot .optionBtn button:not(.s-btn) {
         background: #fff !important;
+    }
+
+    .trail_builder-back-button {
+        background: transparent;
     }
 
     #my-extension-defaultroot .titleBack button:not(.s-btn) {
@@ -604,10 +612,10 @@ export const defaultButtonCss3 = `
 
     .trailit_dotsMenuList {
         position: absolute;
-        width: 110px;
-        top: 20px;
-        right: 0;
-        padding: 15px 10px;
+        width: 80px;
+        // top: 20px;
+        right: 30px;
+        padding: 12px 10px;
         background: #f2f2f2;
         border-radius: 7px;
         box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.2);
@@ -814,4 +822,6 @@ export const deleteModalCss = `
     button:focus {
         outline: none !important;
     }
+
+    //
 `;

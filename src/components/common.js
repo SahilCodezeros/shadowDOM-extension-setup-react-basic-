@@ -355,12 +355,14 @@ export const commonTypeSelectonButton = (
     onSelectOption,
     tooltipForm,
     fileName,
-    fileLoading
+    fileLoading,
+    tourType
 ) => {
-    
-    return (
-        <div className="tr_select_type">
-            {/* <div className="tr_icon_grp">
+
+    let buttons;
+    if (tourType !== 'modal') {
+        buttons = (
+            <div className="tr_icon_grp">
                 <button
                     className={trailStatus === "text" ? "tr_active" : ""}
                     onClick={() => onSelectOption("text")}
@@ -396,9 +398,15 @@ export const commonTypeSelectonButton = (
                 >
                     <img alt="image_tooltip" src={require(`../images/photo.png`)} />
                 </button>
-            </div> */}
+            </div>
+        );
+    }
+    
+    return (
+        <div className="tr_select_type">
+            { buttons }
         
-            {tooltipForm}
+            { tooltipForm }
         </div>
     );
 };

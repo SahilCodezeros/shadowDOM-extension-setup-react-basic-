@@ -188,7 +188,6 @@ class CreateModalComponent extends React.PureComponent {
         );
             
         const { trailStatus } = this.state;
-        console.log('trailStatus', trailStatus);
         
         if (document.getElementById('extension-div').shadowRoot.getElementById('my-extension-root-flip').style.display === "none") {
             modalOpen = false;

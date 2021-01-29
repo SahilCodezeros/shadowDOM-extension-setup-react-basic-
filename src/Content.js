@@ -516,8 +516,6 @@ class Main extends React.Component {
 		// Call close confirmation modal
 		this.confirmationModalClose();
 
-		console.log('onTourTypeSelect', tourType);
-
 		setTimeout(() => {
 			if (tourStep === `${tourType} Modal`) {
 				this.openMenu('modal', undefined, undefined, tourType);
@@ -525,7 +523,7 @@ class Main extends React.Component {
 			} else {
 				this.openMenu(tourType);
 			}
-		}, 200);
+		}, 400);
 	};
 	
 	openMenu = async (type, previewId, closeContinue, stepType) => {
@@ -886,7 +884,7 @@ class Main extends React.Component {
 								<img 
 									alt="tour_menu" 
 									className="trail_plus trail_edit_v2" 
-									src={require(`./images/imgpsh_fullsize_anim_new.png`)}
+									src={require(`./images/trailit_X_button_new.png`)}
 								/>
 							</button>	
 							{
@@ -1280,13 +1278,7 @@ class DefaultButton extends React.PureComponent {
 					removeTrailitLogo();					
 				}
 			}
-		});	
-		
-		// Make X button draggable
-		const menuButton = document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot');
-		if (menuButton) {
-			dragElement(menuButton);
-		}
+		});			
 	}
 	
 	onCreateTooltipHandle = () => {
@@ -2138,6 +2130,12 @@ class DefaultButton extends React.PureComponent {
 		// Call init button position function
 		initButtonPosition();
 
+		if (!this.state.onDone) {
+
+			// Set onDone state
+			this.setState({ onDone: true });
+		}
+
 		const removeThisElements = () => {
 			// Remove overlay and other added element
 			$('.trail_web_user_tour').parents().css('z-index', '');
@@ -2213,6 +2211,12 @@ class DefaultButton extends React.PureComponent {
 						// Hide delete modal
 						this.onDeleteModalClose();
 					}
+
+					if (this.state.onDone) {
+			
+						// Set onDone state
+						this.setState({ onDone: false });
+					}
 	
 					resolve();
 
@@ -2223,6 +2227,13 @@ class DefaultButton extends React.PureComponent {
 					this.props.onChangeTourType("");
 					this.setState({ web_url: '', tourType: '', currentTourType: '', tourStep: '', overlay: false, loading: false });
 					chrome.storage.local.set({ tourType: '', currentTourType: '', tourStep: '' });
+
+					if (this.state.onDone) {
+			
+						// Set onDone state
+						this.setState({ onDone: false });
+					}
+
 					resolve();
 				}
 			});
@@ -2236,7 +2247,7 @@ class DefaultButton extends React.PureComponent {
 			initButtonPosition();
 		}
 
-		if(!status) {
+		if (!status) {
 			chrome.storage.local.set({ tourType: '', stepType: '', currentTourType: '', tourStep: '' });
 			this.setState({ web_url: '', tourType: '', stepType: '', open: false, currentTourType: '', tourStep: '', overlay: false, createModalOpen: status });
 			this.props.mainToggle();
@@ -2383,8 +2394,6 @@ class DefaultButton extends React.PureComponent {
 			stepType,
 			onDone
 		} = this.state;
-
-		console.log('open', open);
 		
 		const localStorageCount = localStorage.getItem(process.env.REACT_APP_LOCALSTORAGE);
 		const stateCount = trailList.length;
@@ -2404,9 +2413,21 @@ class DefaultButton extends React.PureComponent {
 		
 		let openSidebar = open;
 		
-		if (tourType=== 'audio' || tourType=== 'video') {
+		if (tourType === 'audio' || tourType === 'video') {
 			openSidebar = true;
+		}
 
+		const sidepopup = document.getElementById('extension-div').shadowRoot.querySelector('.sidepopup');
+		if (sidepopup) {
+
+			if (tourType === 'audio' || tourType === 'video') {
+				// Add white background
+				sidepopup.style.background = '#ffffff';
+
+			} else {
+				// Add white background
+				sidepopup.style.background = 'transparent';
+			}
 		}
 		
 		if (!openSidebar && flipped && defaultComp) {
@@ -2426,6 +2447,20 @@ class DefaultButton extends React.PureComponent {
 		// 		document.body.appendChild(document.createElement('div'))
 		// 	);
 		// }
+
+		$(() => {
+			const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
+            
+			if (modalDiv) {
+                if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
+                    modalDiv.parentNode.parentNode.parentNode.setAttribute('class', 'trial_modal_show trial_create_modal_main');
+				}
+			}
+			
+			if (tourType && tourType !== '') {
+				document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot').style.position = 'relative';
+			}
+		});	
 		
 		if ((
 			currentTourType === 'tooltip' || 
@@ -2441,21 +2476,146 @@ class DefaultButton extends React.PureComponent {
 
 			// // Add trailit logo when trail menu open
 			// this.addTrailitLogo();
+		}		
+
+		console.log('currentTourType', currentTourType);
+		console.log('tourType', tourType);
+
+		if (currentTourType === 'preview' && tourType !== 'Make Edit') {
+			const menuButton = document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot');
+			if (menuButton) {
+
+				// Make X button draggable
+				dragElement(menuButton);
+			}
 		}
 
-		$(() => {
-			const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.tr_modal');
-            
-			if (modalDiv) {
-                if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
-                    modalDiv.parentNode.parentNode.parentNode.setAttribute('class', 'trial_modal_show trial_create_modal_main');
-				}
-			}
-			
-			if (tourType && tourType !== '') {
-				document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot').style.position = 'relative';
-			}
-		});	
+		let sideBar = (
+			<div>
+				<div className="first_step">
+					<div className="hdr">
+						<div className="titleBack">
+							<button 
+								disabled={ onDone }
+								className="trail_builder-back-button"
+								onClick={ this.onBackArrowClickHandler }
+							>
+								<svg xmlns="http://www.w3.org/2000/svg" width="7.734" height="13.404" viewBox="0 0 7.734 13.404">
+									<g id="left-arrow" transform="translate(0.557 0.557)">
+										<path id="Path_2" data-name="Path 2" d="M39.276,18.719a.437.437,0,0,0,.617,0,.437.437,0,0,0,0-.617l-5.428-5.428,5.428-5.428a.437.437,0,0,0-.617-.617l-5.748,5.737a.437.437,0,0,0,0,.617Z" transform="translate(-33.4 -6.5)" fill="#289728" stroke="#fb542b" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
+									</g>
+								</svg>								
+							</button>
+							<span>Trail Builder</span>
+						</div>
+						{obj.previewUserId && obj.previewUserId !== ''  && <div className="optionBtn">
+							{follow
+								?	
+									<Button type="primary" onClick={ this.unFollowTrail }>Unfollow</Button>
+								:
+									<Button type="primary" onClick={ this.followTrail }>Follow</Button>
+							}
+						</div>}
+					</div>
+					<div id="scroll" className="sidepopcontent scrollbar">
+						{
+							tourType === 'audio' || tourType === 'video'
+								? 
+									<h4 className="title my-4">Upload Media</h4>
+								: 
+									<h4 className="title my-4">Trail It, Curated Guided Tour</h4>
+
+						}
+						<div className="pl-4 trail_video_frm">
+							{tourStatus !== 'preview' && tourType === 'video' && <input type="text" name="title" onChange={this.onChangeToInput} placeholder="Enter Video title" className="ant-input mb-2" autoComplete="off" />}
+							{tourStatus !== 'preview' && tourType === 'video' && <input type="text" name="web_url" value={ fileName } onChange={this.onChangeToInput} placeholder="Add Video URL" className="ant-input mb-2" />}
+							{tourStatus !== 'preview' && tourType === 'video' && <div className="upload_bx">
+								<div className="ant-upload">
+									<p className="ant-upload-drag-icon">
+										{fileLoading && <div class="trial_spinner"><img class="ring1" src={require(`./images/loding1.png`)} /><img class="ring2" src={require(`./images/loding2.png`)} /></div>}
+										{!fileLoading && <CloudUploadOutlined />}
+									</p>
+									<p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } Video</p>
+								</div>
+								<input type="file" name="media" onChange={this.handleChange} />
+							</div>}
+							{tourStatus !== 'preview' && tourType === 'video' && <button disabled={ fileLoading } onClick={this.onSaveTrail} value="ADD" className="ant-btn ant-btn-primary trail_add_step_btn">ADD STEP</button>}
+							{tourStatus === 'preview' && tourType === 'video' && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)} value="Previous" className="ant-btn ant-btn-primary" />}
+							{tourStatus === 'preview' && tourType === 'video' && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)} value="Next" className="ant-btn ant-btn-primary" />}
+							{tourStatus !== 'preview' && tourType === 'audio' && <input type="text" name="title" placeholder="Enter Audio Title" className="ant-input mb-2" onChange={this.onChangeToInput} autoComplete="off" />}
+							{tourStatus !== 'preview' && tourType === 'audio' && <input type="text" name="web_url" value={fileName} onChange={this.onChangeToInput} placeholder="Add Audio URL" className="ant-input mb-2" />}
+							{tourStatus !== 'preview' && tourType === 'audio' && <div className="upload_bx">
+								<div className="ant-upload">
+									<p className="ant-upload-drag-icon">
+										{fileLoading && <div class="trial_spinner"><img class="ring1" src={require(`./images/loding1.png`)} /><img class="ring2" src={require(`./images/loding2.png`)} /></div>}
+										{!fileLoading && <CloudUploadOutlined />}
+									</p>
+									<p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } Audio</p>
+								</div>
+								<input type="file" name="media" onChange={this.handleChange} />
+							</div>}
+							{tourStatus !== 'preview' && tourType === 'audio' && <button disabled={ fileLoading } onClick={this.onSaveTrail} value="ADD" className="ant-btn ant-btn-primary trail_add_step_btn" >ADD STEP</button>}
+							{tourStatus === 'preview' && tourType === 'audio' && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)} value="Previous" className="ant-btn ant-btn-primary" />}
+							{tourStatus === 'preview' && tourType === 'audio' && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)} value="Next" className="ant-btn ant-btn-primary" />}
+						</div>
+						<form className="flow tr_side_form" id="">
+							<SortableContainer onSortEnd={this.onSectionDragAndDrop} useDragHandle>
+								{ this.state.trailList.map((result, index) => (
+									<SortableItem 
+										key={`item-${index}`} 
+										tourType={this.state.tourType} 
+										onClick={this.onClickToGetRow} 
+										index={index} 
+										i={index} 
+										tourStep={tourStep} 
+										result={result} 
+										isDeleteModalOpen={ this.state.deleteModal.show }
+										onDeleteModalOpen={ this.onDeleteModalOpen }
+										MobileTargetNotFound={this.state.MobileTargetNotFound}
+									/>
+								)) }
+							</SortableContainer>
+						</form>
+						<div>
+							{ this.state.saveSort && 
+								<div className="trailButtonsWrapper">
+									<Button type="primary" onClick={ this.saveSortedTrails }>Save</Button>
+								</div>
+							}
+							{ 
+								this.state.trailList.length > 0 && 
+									<div className="trailButtonsWrapper">
+										<Button type="primary" onClick={ this.tooltipShareBtn }>Share</Button>
+									</div>
+							}							
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+		
+		if (tourType === 'preview') {
+			sideBar = (
+				<form className="flow tr_side_form" id="">
+					<SortableContainer onSortEnd={this.onSectionDragAndDrop} useDragHandle>
+						{ this.state.trailList.map((result, index) => (
+							<SortableItem 
+								key={`item-${index}`} 
+								tourType={this.state.tourType} 
+								onClick={this.onClickToGetRow} 
+								index={index} 
+								i={index} 
+								tourStep={tourStep} 
+								result={result} 
+								isDeleteModalOpen={ this.state.deleteModal.show }
+								onDeleteModalOpen={ this.onDeleteModalOpen }
+								MobileTargetNotFound={this.state.MobileTargetNotFound}
+							/>
+						)) }
+					</SortableContainer>
+				</form>
+			);
+		}
 
 		return (
             <>
@@ -2506,220 +2666,9 @@ class DefaultButton extends React.PureComponent {
                                 <div className="createToolTip">.
                                     Create Tool Tip
                                 </div> */}
-                            <div>
-                                {/* ----------------befor submit------------- */}
-                                <div className="first_step">
-                                    <div className="hdr">
-                                        <div className="titleBack">
-                                            <button onClick={ this.onBackArrowClickHandler }>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="7.734" height="13.404" viewBox="0 0 7.734 13.404">
-                                                    <g id="left-arrow" transform="translate(0.557 0.557)">
-                                                        <path id="Path_2" data-name="Path 2" d="M39.276,18.719a.437.437,0,0,0,.617,0,.437.437,0,0,0,0-.617l-5.428-5.428,5.428-5.428a.437.437,0,0,0-.617-.617l-5.748,5.737a.437.437,0,0,0,0,.617Z" transform="translate(-33.4 -6.5)" fill="#289728" stroke="#fb542b" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" />
-                                                    </g>
-                                                </svg>
-                                                {/* <img src="https://res.cloudinary.com/dlhkpit1h/image/upload/v1569327303/pfeba7xz9tqogmh7wb2r.png" /> */}
-                                            </button>
-                                            <span>Trail Builder</span>
-                                        </div>
-                                        {/* {trailList.length > 0 && <div className="optionBtn">
-                                            <Button type="0primary" onClick={this.copyWebApplink}>Copy Web App Link</Button>
-                                        </div>} */}
-                                        {obj.previewUserId && obj.previewUserId !== ''  && <div className="optionBtn">
-                                            {follow
-                                                ?	
-                                                    <Button type="primary" onClick={ this.unFollowTrail }>Unfollow</Button>
-                                                :
-                                                    <Button type="primary" onClick={ this.followTrail }>Follow</Button>
-                                            }
-                                            {/* <Button type="primary">Subscribe</Button> */}
-                                            {/* <button>
-                                                <img src="https://res.cloudinary.com/dlhkpit1h/image/upload/v1569314445/yj7ztrq0c7oqw1acpxtn.png" alt="optionBtn" />
-                                            </button> */}
-                                        </div>}
-                                    </div>
-                                    <div id="scroll" className="sidepopcontent scrollbar">
-                                        {
-                                            tourType === 'audio' || tourType === 'video'
-                                                ? 
-                                                    <h4 className="title my-4">Upload Media</h4>
-                                                : 
-                                                    <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
+                            
+							{ sideBar }
 
-                                        }
-                                        <div className="pl-4 trail_video_frm">
-                                            {tourStatus !== 'preview' && tourType === 'video' && <input type="text" name="title" onChange={this.onChangeToInput} placeholder="Enter Video title" className="ant-input mb-2" autoComplete="off" />}
-                                            {tourStatus !== 'preview' && tourType === 'video' && <input type="text" name="web_url" value={ fileName } onChange={this.onChangeToInput} placeholder="Add Video URL" className="ant-input mb-2" />}
-                                            {tourStatus !== 'preview' && tourType === 'video' && <div className="upload_bx">
-                                                <div className="ant-upload">
-                                                    <p className="ant-upload-drag-icon">
-                                                        {fileLoading && <div class="trial_spinner"><img class="ring1" src={require(`./images/loding1.png`)} /><img class="ring2" src={require(`./images/loding2.png`)} /></div>}
-                                                        {!fileLoading && <CloudUploadOutlined />}
-                                                    </p>
-                                                    <p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } Video</p>
-                                                </div>
-                                                <input type="file" name="media" onChange={this.handleChange} />
-                                            </div>}
-                                            {/* {imageUrl ? <input type="text" value={imageUrl} className="ant-input mb-2"/> : ''} */}
-                                            {tourStatus !== 'preview' && tourType === 'video' && <button disabled={ fileLoading } onClick={this.onSaveTrail} value="ADD" className="ant-btn ant-btn-primary trail_add_step_btn">ADD STEP</button>}
-
-                                            {/* { tourType === 'video' && web_url && fileAddStatus &&
-                                                <Button type="primary">
-                                                    Preview
-                                                </Button>
-                                            } */}
-
-                                            {tourStatus === 'preview' && tourType === 'video' && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)} value="Previous" className="ant-btn ant-btn-primary" />}
-                                            {tourStatus === 'preview' && tourType === 'video' && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)} value="Next" className="ant-btn ant-btn-primary" />}
-                                            {tourStatus !== 'preview' && tourType === 'audio' && <input type="text" name="title" placeholder="Enter Audio Title" className="ant-input mb-2" onChange={this.onChangeToInput} autoComplete="off" />}
-                                            {tourStatus !== 'preview' && tourType === 'audio' && <input type="text" name="web_url" value={fileName} onChange={this.onChangeToInput} placeholder="Add Audio URL" className="ant-input mb-2" />}
-                                            {tourStatus !== 'preview' && tourType === 'audio' && <div className="upload_bx">
-                                                <div className="ant-upload">
-                                                    <p className="ant-upload-drag-icon">
-                                                        {fileLoading && <div class="trial_spinner"><img class="ring1" src={require(`./images/loding1.png`)} /><img class="ring2" src={require(`./images/loding2.png`)} /></div>}
-                                                        {!fileLoading && <CloudUploadOutlined />}
-                                                    </p>
-                                                    <p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } Audio</p>
-                                                </div>
-                                                <input type="file" name="media" onChange={this.handleChange} />
-                                            </div>}
-                                            {tourStatus !== 'preview' && tourType === 'audio' && <button disabled={ fileLoading } onClick={this.onSaveTrail} value="ADD" className="ant-btn ant-btn-primary trail_add_step_btn" >ADD STEP</button>}
-                                            
-                                            {/* { tourType === 'audio' && web_url && fileAddStatus &&
-                                                <Button type="primary">
-                                                    Preview
-                                                </Button>
-                                            } */}
-
-                                            {tourStatus === 'preview' && tourType === 'audio' && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)} value="Previous" className="ant-btn ant-btn-primary" />}
-                                            {tourStatus === 'preview' && tourType === 'audio' && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)} value="Next" className="ant-btn ant-btn-primary" />}
-                                        </div>
-                                        {/* <div className="trailit_loaderBox">
-                                            <div class="trial_spinner"><img class="ring1" src={require(`./images/loding1.png`)} /><img class="ring2" src={require(`./images/loding2.png`)} /></div>
-                                        </div> */}
-                                        <form className="flow tr_side_form" id="">
-                                            <SortableContainer onSortEnd={this.onSectionDragAndDrop} useDragHandle>
-                                                { this.state.trailList.map((result, index) => (
-                                                    <SortableItem 
-                                                        key={`item-${index}`} 
-                                                        tourType={this.state.tourType} 
-                                                        onClick={this.onClickToGetRow} 
-                                                        index={index} 
-                                                        i={index} 
-                                                        tourStep={tourStep} 
-                                                        result={result} 
-                                                        isDeleteModalOpen={ this.state.deleteModal.show }
-                                                        onDeleteModalOpen={ this.onDeleteModalOpen }
-                                                        MobileTargetNotFound={this.state.MobileTargetNotFound}
-                                                    />
-                                                )) }
-                                            </SortableContainer>
-                                            {/* {trailList.map((result, i) => {
-                                                return (<div key={i} className={`li done trailTourStep ${tourStep === (i + 1)?'active':''}`}>
-                                                    <div className="counter">{i + 1}</div>
-                                                    <div contenteditable="true" className="en_title">
-                                                        {result.title}
-                                                    </div>
-                                                    <div contenteditable="true" className="en_desc mb-2">
-                                                    {(result.type !== 'audio' && result.type !== 'video')?result.description:result.web_url}
-                                                    </div>
-                                                </div>)
-                                            })} */}
-
-                                            {/* {(tourStep === (i + 1)) && <div>
-                                                {1 < (i + 1) && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)} value="Previous" className="btn" />}
-                                                {trailList.length > (i + 1) && <input type="submit" onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)} value="Next" className="btn" />}
-                                                {trailList.length === (i + 1) && <input type="submit" onClick={this.onClearToggle} value="Done" className="btn" />}
-                                            </div>} */}
-                                            {/* <div className="li done">
-                                            <div className="counter">2</div>
-                                            <div contenteditable="true" className="en_title">
-                                                Enter Title
-                                            </div>
-                                            <div contenteditable="true" className="en_desc mb-2">
-                                                Lorem ipsum dolor sit conctetur adipiscing elit imperdiet eget voluteuismod
-                                                tortor diam con lorem.
-                                            </div>
-                                        </div>
-                                        <div className="li done">
-                                            <div className="counter">3</div>
-                                            <div contenteditable="true" className="en_title">
-                                                Enter Title
-                                            </div>
-                                            <div contenteditable="true" className="en_desc mb-2">
-                                                Lorem ipsum dolor sit conctetur adipiscing elit imperdiet eget voluteuismod
-                                                tortor diam con lorem.
-                                            </div>
-                                        </div> */}
-                                            {/* {(tourStatus !== 'preview' && tourType === 'video') && <input type="submit" onClick={this.onClickToSubmitTour} value="DONE" className="btn" />} */}
-                                        </form>
-                                            {/* <div className="trailButtonsWrapper">
-                                                <Button type="primary" >Done </Button>
-                                                { this.state.follow
-                                                    ?	
-                                                        <Button type="primary" onClick={ this.unFollowTrail }>Unfollow</Button>
-                                                    :
-                                                        <Button type="primary" onClick={ this.followTrail }>Follow</Button>
-                                                }
-                                            </div> */}
-                                            
-                                            <div>
-                                                {/* <div className="trailButtonsWrapper">
-                                                    <Button type="primary" >Add </Button>
-                                                    <Button type="primary" >Done </Button>
-                                                </div> */}
-
-                                                { this.state.saveSort && 
-                                                    <div className="trailButtonsWrapper">
-                                                        <Button type="primary" onClick={ this.saveSortedTrails }>Save</Button>
-                                                    </div>
-                                                }
-
-                                                { 
-                                                    this.state.trailList.length > 0 
-                                                        && 
-                                                    <div className="trailButtonsWrapper">
-                                                        {/* { tourType === 'preview' && trailList[trailList.length - 1].trail_data_id && <Button type="primary" onClick={ this.tooltipShareBtn }>Share</Button>} */}													
-                                                        <Button type="primary" onClick={ this.tooltipShareBtn }>Share</Button>
-                                                        {/* <Button type="primary" onClick={ this.sendNotification }>{publishLoader?'Loading...':'Publish'} </Button>  */}
-                                                    </div>
-                                                }
-                                                
-                                            </div>
-                                    </div>
-                                </div>
-                                {/* ----------------after submit------------- */}
-                                {/* <div className="last_step">
-                                    <div className="hdr">
-                                        <div className="titleBack">
-                                            <button>
-                                                <img src="https://res.cloudinary.com/dlhkpit1h/image/upload/v1569327303/pfeba7xz9tqogmh7wb2r.png" />
-                                            </button>
-                                            <span>BACK</span>
-                                        </div>
-                                        <div className="optionBtn">
-                                            <button>
-                                                <img src="https://res.cloudinary.com/dlhkpit1h/image/upload/v1569314445/yj7ztrq0c7oqw1acpxtn.png" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <h4 className="title my-4">Neque lorem quisquam dolorem ipsum dummy</h4>
-                                    <form className="pl-4 flow">
-                                        <div className="li done">
-                                            <div className="counter">1</div>
-                                            <div contenteditable="true" className="en_title">
-                                                Enter Title
-                                            </div>
-                                            <div contenteditable="true" className="en_desc mb-2">
-                                                Lorem ipsum dolor sit conctetur adipiscing elit imperdiet eget voluteuismod
-                                                tortor diam con lorem.
-                                            </div>
-                                        </div>
-                                        <input type="submit" value="PUBLISH" className="btn" />
-                                        <input type="submit" value="SAVE LATER" className="btn mr-2" />
-                                    </form>
-                                </div> */}
-                                {/* ------------------------------ */}
-                            </div>
                             {/* <div className="audio">.
                             Create Audio
                         </div>
@@ -2734,7 +2683,7 @@ class DefaultButton extends React.PureComponent {
 						>
                             <img
                                 alt=""
-                                src={ require('./images/imgpsh_fullsize_anim_new.png') }
+                                src={ require('./images/trailit_X_button_new.png') }
                             />
                         </button>
                     </div>
@@ -2977,3 +2926,64 @@ const toggle = () => {
 // 		appd.style.display = 'none';
 // 	}
 // }
+
+{/* <div className="info_bbx">
+	<div className="d-flex">
+		<div className="d-flex-1">
+			<h4>Step 1</h4>
+			<img
+				width="16px"
+				src={require("./images/vd_ic.png")}
+				alt="dots"
+			/>
+		</div>
+		<div className="d-flex-2">
+			<p>Two Lines For Title To Take Up</p>
+		</div>
+	</div>
+</div>
+<div className="info_bbx">
+	<div className="d-flex">
+		<div className="d-flex-1">
+			<h4>Step 2</h4>
+			<img
+				width="16px"
+				src={require("./images/mp3_ic.png")}
+				alt="dots"
+			/>
+		</div>
+		<div className="d-flex-2">
+			<p>Two Lines For Title To Take Up</p>
+		</div>
+	</div>
+</div>
+<div className="info_bbx">
+	<div className="d-flex">
+		<div className="d-flex-1">
+			<h4>Step 2</h4>
+			<img
+				width="16px"
+				src={require("./images/img_ic.png")}
+				alt="dots"
+			/>
+		</div>
+		<div className="d-flex-2">
+			<p>Two Lines For Title To Take Up</p>
+		</div>
+	</div>
+</div>
+<div className="info_bbx">
+	<div className="d-flex">
+		<div className="d-flex-1">
+			<h4>Step 2</h4>
+			<img
+				width="16px"
+				src={require("./images/txt_ic.png")}
+				alt="dots"
+			/>
+		</div>
+		<div className="d-flex-2">
+			<p>Two Lines For Title To Take Up</p>
+		</div>
+	</div>
+</div> */}

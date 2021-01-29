@@ -16,7 +16,12 @@ export const mainCss = `
         outline: none;
         position: relative;
         z-index: 10;
-        background: linear-gradient(321.4deg, #D02176 15.15%, #EC8FBC 84.05%) !important;
+        // background: linear-gradient(321.4deg, #D02176 15.15%, #EC8FBC 84.05%) !important;
+        background: rgb(253,215,86);
+        background: -moz-linear-gradient(135deg, rgba(253,215,86,1) 0%, rgba(218,28,92,1) 85%);
+        background: -webkit-linear-gradient(135deg, rgba(253,215,86,1) 0%, rgba(218,28,92,1) 85%);
+        background: linear-gradient(135deg, rgba(253,215,86,1) 0%, rgba(218,28,92,1) 85%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fdd756",endColorstr="#da1c5c",GradientType=1);
         box-shadow: -4px -4px 9px 29px rgba(237, 237, 237, 0.1), 0px 4px 76px 8px rgba(0, 0, 0, 0.2);
         right: 0;
         width: 60px;
@@ -25,7 +30,8 @@ export const mainCss = `
     }
 
     #my-extension-root .wrap .blob:hover {
-        background: linear-gradient(321.4deg, #D02176 15.15%, #faaed3 84.05%) !important;
+        // background: linear-gradient(321.4deg, #D02176 15.15%, #faaed3 84.05%) !important;
+        background: linear-gradient(135deg, rgba(253,215,86,1) 0%, rgba(218,28,92,1) 70%);
     }
 
     #my-extension-root .wrap.open .blob,
@@ -83,7 +89,8 @@ export const mainCss = `
 
     #my-extension-root .wrap .blob:after {
         content: attr(data-title);
-        color: #DA5E9A;
+        // color: #DA5E9A;
+        color: #ff7958;
         width: 220px;
         margin-right: 6px;
         /* box-shadow:0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
@@ -329,18 +336,19 @@ export const mainCss = `
     .info_bbx {
         background: linear-gradient(208.4deg, #9085f3 15.15%, #ef7e81 84.05%);
         width: 100%;
-        height: 60px;
+        height: 45px;
         border-radius: 7px;
         padding: 10px;
-        margin-bottom: 20px;
+        margin: 0px 0px 10px 5px !important;
     }
 
     .d-flex {
         display: flex;
+        justify-content: space-between;
     }
 
     .d-flex-1 {
-        width: 70px;
+        // width: 70px;
     }
 
     .d-flex-1 h4 {
@@ -352,5 +360,36 @@ export const mainCss = `
         margin: 0 0 0px 0;
         color: #fff;
         line-height: 20px;
+    }
+
+    .d-flex-3 {
+        margin-top: -5px;
+    }
+
+    .d-flex-image {
+        margin-top: 10px
+    }
+
+    #my-extension-defaultroot .sidepopup.open::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        // background-color: #f5f5f5;
+        background-color: transparent;
+        width: 0;
+    }
+
+    #my-extension-defaultroot .sidepopup.open::-webkit-scrollbar {
+        width: 8px;
+        // background-color: #f5f5f5;
+        background-color: transparent;
+        width: 0;
+    }
+    
+    #my-extension-defaultroot .sidepopup.open::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        // background-color: #555;
+        background-color: transparent;
+        width: 0;
     }
 `;

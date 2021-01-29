@@ -144,7 +144,92 @@ class SortableItem extends React.Component {
       //       : ""
       //   }`}>
       <div>
-        <div
+        <div 
+          key={i}
+          onMouseLeave={ this.onMouseLeave }
+          className={`info_bbx ${
+            tourStep === i + 1
+              ? "active"
+              : "" } ${this.state.showMenu
+              ? "z-index-2"
+              : ""
+          }`}
+        >
+          <div className="d-flex">
+            <div className="d-flex-1">
+              <h4>Step {i + 1}</h4>
+              <div className="d-flex-image">
+                {result.mediaType === "video" && (
+                  <img
+                    width="16px"
+                    src={require("../images/vd_ic.png")}
+                    alt="dots"
+                  />
+                )}
+                {result.mediaType === "audio" && (
+                  <img
+                    width="16px"
+                    src={require("../images/mp3_ic.png")}
+                    alt="dots"
+                  />
+                )}
+                {result.mediaType === "image" && (
+                  <img
+                    width="16px"
+                    src={require("../images/img_ic.png")}
+                    alt="dots"
+                  />
+                )}
+                {result.mediaType === "text" && (
+                  <img
+                    width="16px"
+                    src={require("../images/txt_ic.png")}
+                    alt="dots"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="d-flex-2">
+              <p>{result.title}</p>
+            </div>
+            <div className="d-flex-3">
+              <div>
+                {
+                  this.props.tourType === 'Make Edit' &&
+                    <button
+                      type="button"
+                      className="trailit_dotsButton"
+                      onClick={ this.handleClickMenu }
+                    >
+                      <img
+                        width="16px"
+                        src={require("../images/trailit_dotsPink.png")}
+                        alt="dots"
+                      />
+                    </button>
+                }
+                {this.state.showMenu && (
+                  <div className={`trailit_dotsMenuList`}>
+                    <button 
+                      type="button"
+                      onClick={ (e) => {
+                        // Set show state
+                        this.setState({ showMenu: false });
+
+                        // Show delete modal
+                        this.props.onDeleteModalOpen(result.title, result.trail_data_id);
+                      } }
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* <div
           key={i}
           onMouseLeave={ this.onMouseLeave }
           className={`trailitStepBox ${
@@ -180,7 +265,6 @@ class SortableItem extends React.Component {
               }
               {this.state.showMenu && (
                 <div className={`trailit_dotsMenuList`}>
-                  {/* <button type="button">Edit</button> */}
                   <button 
                     type="button"
                     onClick={ (e) => {
@@ -229,7 +313,7 @@ class SortableItem extends React.Component {
               />
             )}
           </div>
-        </div>
+        </div> */}
         {subStep && <div
           key={i}
           className={`trailitStepBox trailitSubStepBox ${
