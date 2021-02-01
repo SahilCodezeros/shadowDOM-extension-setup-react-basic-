@@ -126,7 +126,7 @@ class Main extends React.Component {
           currentUserId: items.userData._id,
         });
         socket.on("connect", () => {
-          console.info("Client is connected");
+          
         });
 
         socket.emit("userId", items.userData._id);
@@ -180,7 +180,7 @@ class Main extends React.Component {
                   // Call common get user data function
                   await this.getCurrUserDataCommon(items);
                 } catch (err) {
-                  console.log(err);
+                  
                 }
               }
             );
@@ -226,7 +226,7 @@ class Main extends React.Component {
             // 	previewUserId = items.previewUserId
             // }
           } catch (err) {
-            console.log(err);
+            
           }
 
           const params = new URLSearchParams(url.search.substring(1));
@@ -387,13 +387,13 @@ class Main extends React.Component {
     chrome.runtime.onMessage.addListener(this.onHandleSubscription);
 
     // 	(msg) => {
-    // 	console.log("msg", msg.subject);
+    // 	
     // 	if(msg.subject === 'DOMObj') {
     // 		chrome.storage.local.get(["userData"], async function (items) {
     // 			socket.emit('userId', items.userData._id)
     // 		})
     // 		socket.on('followerList', data => {
-    // 			console.log('followerListdata', data);
+    // 			
     // 			let follower = data.map(result => {
 
     // 			})
@@ -414,7 +414,7 @@ class Main extends React.Component {
       res = await getUserOneTrail(user_id, trail_id, screen);
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {
-      console.log("err", err);
+      
     }
 
     // if (items.trail_web_user_tour && items.trail_web_user_tour.length > 0) {
@@ -555,7 +555,7 @@ class Main extends React.Component {
           });
         }
       } catch (err) {
-        console.log(err);
+        
       }
     });
   }
@@ -732,7 +732,7 @@ class Main extends React.Component {
                 // });
 
                 // } else if(tour.url && tour.url !== document.URL && closeContinue===undefined) {
-                // 	console.log('url 3333');
+                // 	
 
                 // 	// Set loading state to false
                 // 	chrome.storage.local.set({ loading: 'true' });
@@ -1601,7 +1601,7 @@ class DefaultButton extends React.PureComponent {
       // Call on delete modal close to hide modal
       this.onDeleteModalClose();
     } catch (err) {
-      console.log(err);
+      
     }
   }
 
@@ -1609,15 +1609,16 @@ class DefaultButton extends React.PureComponent {
     const user_id = items.userData._id;
     let res,
       trail_id = items.trail_id;
+   
 
     try {
       // Get user's trails from database
       let screen = resizeScreen() ? "mobile" : "web";
       res = await getUserOneTrail(user_id, trail_id, screen);
-      console.log({ res });
+      
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {
-      console.log("err", err);
+      
     }
 
     // if (items.trail_web_user_tour && items.trail_web_user_tour.length > 0) {
@@ -1678,23 +1679,23 @@ class DefaultButton extends React.PureComponent {
     obj.trailList = allTrails;
 
     this.setState({ trail_web_user_tour: trailWebUserTour });
-    console.log({
-      trail_web_user_tour: allTrails,
-      tourStep: items.tourStep ? items.tourStep : "",
-      trail_id,
-    });
-
-    chrome.storage.local.set({
-      trail_web_user_tour: allTrails,
-      tourStep: items.tourStep ? items.tourStep : "",
-      trail_id,
-      isPreview: false,
-      webUrl: "",
-      guess_id: "",
+    
+    chrome.storage.local.get(["trail_id","userData", "tourStep"], (items) => {
+      chrome.storage.local.set({
+        trail_web_user_tour: allTrails,
+        tourStep: items.tourStep ? items.tourStep : "",
+        trail_id,
+        old_trail_id: items.trail_id,
+        isPreview: false,
+        old_user_data: { ...items.userData },
+        webUrl: "",
+        userData: {_id: user_id}
+      });
     });
   }
 
   async handlePreviewFromWeb(msg) {
+    
     if (msg.message === "web_request") {
       // Call common get user data function
       await this.getCurrUserDataCommon({
@@ -1702,7 +1703,14 @@ class DefaultButton extends React.PureComponent {
         trail_id: msg.payload.trail_id,
         trail_web_user_tour: [],
       });
-      chrome.storage.local.set({ isPreview: true, webUrl: msg.payload.url });
+      chrome.storage.local.get(["trail_id"], (items) => {
+        chrome.storage.local.set({
+          isPreview: true,
+          webUrl: msg.payload.url,
+          old_trail_id: items.trail_id,
+
+        });
+      });
     }
   }
 
@@ -1735,7 +1743,7 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener((changes) => {
-      console.log({ changes });
+      
       if (
         (changes.tourType && changes.tourType.newValue === "preview") ||
         (changes.currentTourType &&
@@ -2190,7 +2198,7 @@ class DefaultButton extends React.PureComponent {
         });
 
         // this.setState({...this.state, obj}, () => {
-        // 	console.log("this.steete", this.state);
+        // 	
         // });
       }.bind(this)
     );
@@ -2455,7 +2463,7 @@ class DefaultButton extends React.PureComponent {
       // Call remove overlay function
       removeOverlay();
     } catch (err) {
-      console.log(err);
+      
     }
 
     chrome.storage.local.set({
@@ -2532,7 +2540,7 @@ class DefaultButton extends React.PureComponent {
       })
       .catch((err) => {
         this.setState({ fileLoading: false });
-        console.log("Error fetching profile " + err);
+        
       });
   };
 
@@ -2675,7 +2683,7 @@ class DefaultButton extends React.PureComponent {
       );
     } catch (err) {
       this.setState({ publishLoader: false });
-      console.log("from publish trails", err);
+      
     }
   };
 
@@ -2773,7 +2781,7 @@ class DefaultButton extends React.PureComponent {
         this.setState({ follow: true });
       })
       .catch((err) => {
-        console.log(err);
+        
       });
   };
 
@@ -2797,7 +2805,7 @@ class DefaultButton extends React.PureComponent {
         this.setState({ follow: false });
       })
       .catch((err) => {
-        console.log(err);
+        
       });
   };
 
@@ -2871,7 +2879,7 @@ class DefaultButton extends React.PureComponent {
                 // Call update trail api to add flag into table
                 await updateTrailFlag(data);
               } catch (err) {
-                console.log(err);
+                
               }
 
               // Remove elements
@@ -3087,7 +3095,7 @@ class DefaultButton extends React.PureComponent {
         }, 5000);
       })
       .catch((err) => {
-        console.log("err", err);
+        
 
         this.setState({ setError: err.message });
 

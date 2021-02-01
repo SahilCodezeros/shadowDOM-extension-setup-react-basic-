@@ -118,7 +118,7 @@ class WebUserTour extends React.Component {
       const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
       if (!shadowRoot.querySelector(".trail_tooltip_done")) return;
-      console.log("resized");
+      
       this.getWebUserTour("", this.props.data[tourStep - 1], tourStep);
     });
   }
@@ -403,22 +403,30 @@ class WebUserTour extends React.Component {
 
     this.setState({ tourSteps, tourStep: 1 });
 
-    chrome.storage.local.get(["isPreview", "webUrl"], (result) => {
-      if (result.isPreview) {
-        this.props.onChangeTourType("");
-        this.props.mainToggle();
-        window.location.href = result.webUrl;
-      } else {
-        this.props.toggle({ removePreviewTrails: true });
+    chrome.storage.local.get(
+      ["isPreview", "webUrl", "old_trail_id", "old_user_data"],
+      (result) => {
+        
+
+        if (result.isPreview) {
+          this.props.onChangeTourType("");
+          this.props.mainToggle();
+          window.location.href = result.webUrl;
+        } else {
+          this.props.toggle({ removePreviewTrails: true });
+        }
+        chrome.storage.local.set({
+          closeContinue: false,
+          isPreview: false,
+          trail_web_user_tour: [],
+          trail_id: result.old_trail_id,
+          guest_id: "",
+          tourType: "",
+          currentTourType: "",
+          userData: { ...result.old_user_data },
+        });
       }
-      chrome.storage.local.set({
-        closeContinue: false,
-        isPreview: false,
-        trail_web_user_tour: [],
-        trail_id: "",
-        guest_id: "",
-      });
-    });
+    );
   };
 
   onLoadedEvent = (e) => {
@@ -441,21 +449,28 @@ class WebUserTour extends React.Component {
   onButtonCloseHandler = async (e) => {
     let res = await this.props.closeButtonHandler(e);
 
-    chrome.storage.local.get(["isPreview", "webUrl"], (result) => {
-      if (result.isPreview) {
-        this.props.onChangeTourType("");
-        this.props.mainToggle();
-        window.location.href = result.webUrl;
-      } else {
-        return res;
+    chrome.storage.local.get(
+      ["isPreview", "webUrl", "old_trail_id", "old_user_data"],
+      (result) => {
+        
+        if (result.isPreview) {
+          this.props.onChangeTourType("");
+          this.props.mainToggle();
+          window.location.href = result.webUrl;
+        } else {
+          return res;
+        }
+        chrome.storage.local.set({
+          isPreview: false,
+          tourType: "",
+          currentTourType: "",
+          trail_id: result.old_trail_id,
+          guest_id: "",
+          trail_web_user_tour: [],
+          userData: { ...result.old_user_data },
+        });
       }
-      chrome.storage.local.set({
-        isPreview: false,
-        trail_id: "",
-        guest_id: "",
-        trail_web_user_tour: [],
-      });
-    });
+    );
   };
 
   render() {
