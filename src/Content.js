@@ -1399,6 +1399,7 @@ class DefaultButton extends React.PureComponent {
       setError: null,
       draggable: true,
       dragPosition: { x: 0, y: 0 },
+      dynamicPopupButton: true,
     };
 
     this.onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
@@ -1600,7 +1601,6 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener((changes) => {
-      console.log("changes", changes);
       if (
         (changes.tourType && changes.tourType.newValue === "preview") ||
         (changes.currentTourType &&
@@ -1699,6 +1699,12 @@ class DefaultButton extends React.PureComponent {
           // Remove trailit logo function
           removeTrailitLogo();
         }
+      }
+    });
+
+    chrome.storage.local.get(["isPreview"], (items) => {
+      if (items.isPreview) {
+        this.setState({ dynamicPopupButton: false });
       }
     });
   }
@@ -4411,6 +4417,8 @@ class DefaultButton extends React.PureComponent {
         <style>{defaultButtonCss1}</style>
         <style>{defaultButtonCss2}</style>
         <style>{defaultButtonCss3}</style>
+        {}
+
         <Draggable
           disabled={!draggable}
           // onStart={ (data) => {
@@ -4557,12 +4565,14 @@ class DefaultButton extends React.PureComponent {
 						</div> */}
                 <div className="space"></div>
               </div>
-              <button className="menu pop" onClick={this.openPopup}>
-                <img
-                  alt=""
-                  src={require("./images/trailit_X_button_new.png")}
-                />
-              </button>
+              {this.state.dynamicPopupButton && (
+                <button className="menu pop" onClick={this.openPopup}>
+                  <img
+                    alt=""
+                    src={require("./images/trailit_X_button_new.png")}
+                  />
+                </button>
+              )}
             </div>
           </div>
         </Draggable>
