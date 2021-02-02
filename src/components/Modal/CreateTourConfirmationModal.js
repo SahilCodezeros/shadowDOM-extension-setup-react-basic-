@@ -3,6 +3,12 @@ import { Modal, ModalBody, ModalHeader } from 'reactstrap';
 import $ from 'jquery';
 
 class CreateTourConfirmationModal extends Component {
+    componentDidMount() {
+        const scrollTop = $(window).scrollTop();
+        console.log('scrollTop', scrollTop);
+        $("html, body").animate({ scrollTop: scrollTop });
+    };
+
     render() {
         const { data, onModalClose, onTourSelect } = this.props;
         const { show, tourType } = data;

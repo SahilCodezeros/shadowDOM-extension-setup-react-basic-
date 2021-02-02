@@ -30,7 +30,6 @@ class CreateModalComponent extends React.PureComponent {
 	};
     
     componentDidMount() {
-        console.log('this.props.stepType', this.props.stepType);
         // window.scrollTo(0, 0);
         const scrollTop = $(window).scrollTop();
         $("html, body").animate({ scrollTop: scrollTop });
@@ -40,8 +39,6 @@ class CreateModalComponent extends React.PureComponent {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.log('prevProps', prevProps);
-        console.log('this.props', this.props);
         if (prevProps.stepType !== this.props.stepType) {
             // Set trail status state
             this.setState({ trailStatus: this.props.stepType });

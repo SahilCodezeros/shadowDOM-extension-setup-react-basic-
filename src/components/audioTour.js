@@ -159,15 +159,17 @@ class AudioTour extends React.PureComponent {
             this.cleanup();
         }
 
-        $(document).ready(() => {
+        // $(() => {
             const tr_audioplayer = document.getElementById('extension-div').shadowRoot.querySelector(".tr_audioplayer");
             
             // document.querySelector(".tr_audioplayer-time-current").textContent = this.getTimeCodeFromNum(0);
-            audio = new Audio();
-            audio.src = this.props.data[this.props.tourStep - 1].web_url;
-            audio.autoplay = true;
+            // audio = this.state.audioUrl;
+            // audio.src = this.props.data[this.props.tourStep - 1].web_url;
+            // audio.src = this.state.audioUrl;
             
             if (this.state.audioLoad) {
+                audio = this.state.audioUrl;
+                audio.autoplay = true;
                 const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
                 if (!this.props.previewInTooltip) {
                     const audioWrapTooltip = document.getElementById('extension-div').shadowRoot.querySelector(".audio_wrap_tooltip");
@@ -229,6 +231,8 @@ class AudioTour extends React.PureComponent {
                 
                 //toggle between playing and pausing on button click
                 playBtn.addEventListener("click", () => {
+                    console.log('on play button click');
+                    console.log('audio', audio);
                     if (audio.paused) {
                         playBtn.classList.add("tr_audioplayer-playing");
                         chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
@@ -286,7 +290,7 @@ class AudioTour extends React.PureComponent {
                     ).padStart(2, 0)}`;
                 }
             };            
-        });
+        // });
         
         const { tourStep } = this.props;
         

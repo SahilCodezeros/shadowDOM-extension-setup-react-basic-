@@ -1,4 +1,4 @@
-export const mainCss = `
+export const main1Css = `
     #my-extension-root {
         font-family: 'Lato', sans-serif !important;
         width: 60px !important;
@@ -355,7 +355,9 @@ export const mainCss = `
         margin: 0 0 0px 0;
         color: #fff;
     }
+`;
 
+export const main2Css = `
     .d-flex-2 p {
         margin: 0 0 0px 0;
         color: #fff;
@@ -384,12 +386,20 @@ export const mainCss = `
         background-color: transparent;
         width: 0;
     }
-    
+
     #my-extension-defaultroot .sidepopup.open::-webkit-scrollbar-thumb {
         border-radius: 10px;
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
         // background-color: #555;
         background-color: transparent;
         width: 0;
+    }
+
+    .react-draggable-transparent-selection *::-moz-selection {
+        all: inherit;
+    }
+
+    .react-draggable-transparent-selection *::selection {
+        all: inherit;
     }
 `;
