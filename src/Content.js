@@ -4479,6 +4479,8 @@ class DefaultButton extends React.PureComponent {
                       setLoadingState={this.setLoadingState}
                       onNotFoundTarget={this.onNotFoundTarget}
                       onSendTipModalOpen={this.onSendTipModalOpen}
+                      onChangeTourType={this.props.onChangeTourType}
+                      mainToggle={this.props.mainToggle}
                     />
                   )}
                 {currentTourType === "video" &&
