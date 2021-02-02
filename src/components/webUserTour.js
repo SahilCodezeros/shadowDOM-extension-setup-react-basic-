@@ -410,20 +410,20 @@ class WebUserTour extends React.Component {
           this.props.onChangeTourType("");
           this.props.mainToggle();
           window.location.href = result.webUrl;
+
+          chrome.storage.local.set({
+            closeContinue: false,
+            isPreview: false,
+            trail_web_user_tour: [],
+            trail_id: result.old_trail_id,
+            guest_id: "",
+            tourType: "",
+            currentTourType: "",
+            userData: { ...result.old_user_data },
+          });
         } else {
           this.props.toggle({ removePreviewTrails: true });
         }
-
-        chrome.storage.local.set({
-          closeContinue: false,
-          isPreview: false,
-          trail_web_user_tour: [],
-          trail_id: result.old_trail_id,
-          guest_id: "",
-          tourType: "",
-          currentTourType: "",
-          userData: { ...result.old_user_data },
-        });
       }
     );
   };
@@ -455,18 +455,19 @@ class WebUserTour extends React.Component {
           this.props.onChangeTourType("");
           this.props.mainToggle();
           window.location.href = result.webUrl;
+
+          chrome.storage.local.set({
+            isPreview: false,
+            tourType: "",
+            currentTourType: "",
+            trail_id: result.old_trail_id,
+            guest_id: "",
+            trail_web_user_tour: [],
+            userData: { ...result.old_user_data },
+          });
         } else {
           return res;
         }
-        chrome.storage.local.set({
-          isPreview: false,
-          tourType: "",
-          currentTourType: "",
-          trail_id: result.old_trail_id,
-          guest_id: "",
-          trail_web_user_tour: [],
-          userData: { ...result.old_user_data },
-        });
       }
     );
   };
