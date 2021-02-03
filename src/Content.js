@@ -126,6 +126,8 @@ class Main extends React.Component {
         "saveSort",
         "tourStep",
         "closeContinue",
+        "isPreview",
+        "authorData",
       ],
       async (items) => {
         this.setState({
@@ -150,7 +152,19 @@ class Main extends React.Component {
         // // Get notifiation data from server when page load
         // this.userNotificaion();
 
-        chrome.storage.onChanged.addListener((changes) => {
+        chrome.storage.onChanged.addListener(async (changes) => {
+          console.log("changes", changes);
+          // if (changes.authorData && changes.authorData.userName.newValue) {
+          //   let { data } = await getUserData(
+          //     changes.authorData.newValue.userName
+          //   );
+          //   console.log("data", data);
+
+          //   chrome.storage.local.set({
+          //     authorData: data.response.result.userData,
+          //   });
+          // }
+
           if (changes.isPreview && changes.isPreview.newValue) {
             this.openMenu("preview");
           }
@@ -330,8 +344,18 @@ class Main extends React.Component {
             preventToggle = false;
           }
 
-          // Call function to get logged in user's data
-          await this.getCurrUserDataCommon(items);
+          if (items.isPreview) {
+            const data = {
+              userData: { ...items.authorData },
+              trail_id: items.trail_id,
+              trail_web_user_tour: items.trail_web_user_tour,
+            };
+            // Call get current user data common function
+            await this.getCurrUserDataCommon(data);
+          } else {
+            // Call get current user data common function
+            await this.getCurrUserDataCommon(items);
+          }
         }
       }
     );
@@ -501,9 +525,26 @@ class Main extends React.Component {
   onHandleSubscription = async (msObj) => {
     if (msObj.subject === "DOMInfo") {
       chrome.storage.local.get(
-        ["userData", "trail_id", "trail_web_user_tour"],
+        [
+          "userData",
+          "trail_id",
+          "trail_web_user_tour",
+          "isPreview",
+          "authorData",
+        ],
         async (items) => {
-          await this.getCurrUserDataCommon(items);
+          if (items.isPreview) {
+            const data = {
+              userData: { ...items.authorData },
+              trail_id: items.trail_id,
+              trail_web_user_tour: items.trail_web_user_tour,
+            };
+            // Call get current user data common function
+            await this.getCurrUserDataCommon(data);
+          } else {
+            // Call get current user data common function
+            await this.getCurrUserDataCommon(items);
+          }
         }
       );
 
@@ -652,14 +693,13 @@ class Main extends React.Component {
     ) {
       alert(`We don't have permission to add ${type} in this site`);
       return "";
+    } else if (
+      document.URL.includes("https://docs.google.com") &&
+      type === "tooltip"
+    ) {
+      alert(`We don't have permission to add ${type} in this site`);
+      return "";
     }
-    // else if (
-    //   document.URL.includes("https://docs.google.com") &&
-    //   type === "tooltip"
-    // ) {
-    //   alert(`We don't have permission to add ${type} in this site`);
-    //   return "";
-    // }
 
     switch (type) {
       case "tooltip":
@@ -1544,18 +1584,18 @@ class DefaultButton extends React.PureComponent {
 
     chrome.storage.local.get(
       ["trail_id", "userData", "tourStep", "isPreview"],
-      (items) => {
-        if (items.isPreview) {
+      (storage) => {
+        if (items.loggedInData) {
           chrome.storage.local.set({
             trail_web_user_tour: allTrails,
-            tourStep: items.tourStep ? items.tourStep : "",
+            tourStep: storage.tourStep ? storage.tourStep : "",
             trail_id,
-            old_trail_id: items.trail_id,
+            old_trail_id: storage.trail_id,
             isPreview: false,
-            old_user_data: { ...items.userData },
+            old_user_data: { ...storage.userData },
             webUrl: "",
-            userData: { _id: items.loggedInData },
-            authorData: { _id: items.userData },
+            userData: { ...items.loggedInData },
+            authorData: { ...items.userData },
           });
         } else {
           chrome.storage.local.set({
@@ -1616,12 +1656,6 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      if (changes.authorData && changes.authorData.userName.newValue) {
-        let { data } = await getUserData(changes.authorData.userName.newValue);
-
-        chrome.storage.local.set({ authorData: data.response.result.userData });
-      }
-
       if (
         (changes.tourType && changes.tourType.newValue === "preview") ||
         (changes.currentTourType &&
@@ -3247,8 +3281,11 @@ class DefaultButton extends React.PureComponent {
     );
     const stateCount = trailList.length;
 
+    console.log("trailList", trailList);
     console.log("tourType", tourType);
     console.log("currentTourType", currentTourType);
+    console.log("overlay", overlay);
+    console.log("tourStep", tourStep);
 
     if (web_url !== "") {
       this.setState({ fileAddStatus: true });
@@ -3263,6 +3300,7 @@ class DefaultButton extends React.PureComponent {
       // }
     }
 
+    console.log("tourUrl", tourUrl);
     let openSidebar = open;
 
     if (tourType === "audio" || tourType === "video") {
