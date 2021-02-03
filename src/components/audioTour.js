@@ -31,14 +31,19 @@ class AudioTour extends React.PureComponent {
 
   componentDidMount() {
     let self = this;
-    chrome.storage.local.get(["userData"], (items) => {
-      self.setState({
-        profileImage: items.userData.profileImage,
-        audioLoad: true,
-        audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
-        tourStep: this.props.tourStep,
-      });
-    });
+    chrome.storage.local.get(
+      ["userData", "isPreview", "authorData"],
+      (items) => {
+        self.setState({
+          profileImage: items.isPreview
+            ? items.authorData.profileImage
+            : items.userData.profileImage,
+          audioLoad: true,
+          audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
+          tourStep: this.props.tourStep,
+        });
+      }
+    );
 
     if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
       window.location.href = this.props.data[this.props.tourStep - 1].url;

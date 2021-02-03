@@ -169,3 +169,10 @@ export const updateTrailTrack = async (data) => {
     data
   );
 };
+
+// Get User data by username
+export const getUserData = async (data) => {
+  return await axios.get(
+    `${process.env.REACT_APP_MS4_URL}profileData/getProfileData/${data}`
+  );
+};

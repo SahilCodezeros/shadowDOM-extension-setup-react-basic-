@@ -403,30 +403,7 @@ class WebUserTour extends React.Component {
 
     this.setState({ tourSteps, tourStep: 1 });
 
-    chrome.storage.local.get(
-      ["isPreview", "webUrl", "old_trail_id", "old_user_data"],
-      (result) => {
-        
-        if (result.isPreview) {
-          this.props.onChangeTourType("");
-          this.props.mainToggle();
-          window.location.href = result.webUrl;
-
-          chrome.storage.local.set({
-            closeContinue: false,
-            isPreview: false,
-            trail_web_user_tour: [],
-            trail_id: result.old_trail_id,
-            guest_id: "",
-            tourType: "",
-            currentTourType: "",
-            userData: { ...result.old_user_data },
-          });
-        } else {
-          this.props.toggle({ removePreviewTrails: true });
-        }
-      }
-    );
+    this.props.toggle({ removePreviewTrails: true });
   };
 
   onLoadedEvent = (e) => {
@@ -449,28 +426,7 @@ class WebUserTour extends React.Component {
   onButtonCloseHandler = async (e) => {
     let res = await this.props.closeButtonHandler(e);
 
-    chrome.storage.local.get(
-      ["isPreview", "webUrl", "old_trail_id", "old_user_data"],
-      (result) => {
-        if (result.isPreview) {
-          this.props.onChangeTourType("");
-          this.props.mainToggle();
-          window.location.href = result.webUrl;
-
-          chrome.storage.local.set({
-            isPreview: false,
-            tourType: "",
-            currentTourType: "",
-            trail_id: result.old_trail_id,
-            guest_id: "",
-            trail_web_user_tour: [],
-            userData: { ...result.old_user_data },
-          });
-        } else {
-          return res;
-        }
-      }
-    );
+    return res;
   };
 
   render() {

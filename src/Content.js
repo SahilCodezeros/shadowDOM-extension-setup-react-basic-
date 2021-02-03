@@ -49,6 +49,7 @@ import {
   updateNotification,
   getAllNotification,
   unFollowTrailOfUser,
+  getUserData,
 } from "./common/axios";
 
 import { main1Css, main2Css } from "./css/main";
@@ -1553,7 +1554,8 @@ class DefaultButton extends React.PureComponent {
             isPreview: false,
             old_user_data: { ...items.userData },
             webUrl: "",
-            userData: { _id: user_id },
+            userData: { _id: items.loggedInData },
+            authorData: { _id: items.userData },
           });
         } else {
           chrome.storage.local.set({
@@ -1570,9 +1572,10 @@ class DefaultButton extends React.PureComponent {
     if (msg.message === "web_request") {
       // Call common get user data function
       await this.getCurrUserDataCommon({
-        userData: { _id: msg.payload.user_id },
+        userData: msg.payload.userData,
         trail_id: msg.payload.trail_id,
         trail_web_user_tour: [],
+        loggedInData: msg.payload.loggedInData,
       });
       chrome.storage.local.get(["trail_id"], (items) => {
         chrome.storage.local.set({
@@ -1612,8 +1615,13 @@ class DefaultButton extends React.PureComponent {
     );
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
-    chrome.storage.onChanged.addListener((changes) => {
-      console.log("changes", changes);
+    chrome.storage.onChanged.addListener(async (changes) => {
+      if (changes.authorData && changes.authorData.userName.newValue) {
+        let { data } = await getUserData(changes.authorData.userName.newValue);
+
+        chrome.storage.local.set({ authorData: data.response.result.userData });
+      }
+
       if (
         (changes.tourType && changes.tourType.newValue === "preview") ||
         (changes.currentTourType &&
@@ -2431,7 +2439,28 @@ class DefaultButton extends React.PureComponent {
         };
 
         // Call update track data function
-        updateTrailTrack(trackData);
+        await updateTrailTrack(trackData);
+
+        chrome.storage.local.get(
+          ["isPreview", "webUrl", "old_trail_id", "old_user_data"],
+          (result) => {
+            if (result.isPreview) {
+              this.props.onChangeTourType("");
+              this.props.mainToggle();
+              window.location.href = result.webUrl;
+
+              chrome.storage.local.set({
+                isPreview: false,
+                tourType: "",
+                currentTourType: "",
+                trail_id: result.old_trail_id,
+                guest_id: "",
+                trail_web_user_tour: [],
+                userData: { ...result.old_user_data },
+              });
+            }
+          }
+        );
       }
 
       // Call back arrow click handler function
@@ -2485,10 +2514,7 @@ class DefaultButton extends React.PureComponent {
    * @type tourType
    */
   tourManage = (step, type, tourSide) => {
-    chrome.storage.local.set({ currentTourType: type, tourStep: step });
-    this.setState({ currentTourType: type, tourStep: step, tourSide });
-
-    chrome.storage.local.get(["isPreview", "userData"], (items) => {
+    chrome.storage.local.get(["isPreview", "userData"], async (items) => {
       // Update step data when guest visit trail
       if (items.isPreview) {
         const trackData = {
@@ -2498,9 +2524,11 @@ class DefaultButton extends React.PureComponent {
         };
 
         // Call update track data function
-        updateTrailTrack(trackData);
+        await updateTrailTrack(trackData);
       }
     });
+    chrome.storage.local.set({ currentTourType: type, tourStep: step });
+    this.setState({ currentTourType: type, tourStep: step, tourSide });
   };
 
   /**
@@ -3061,7 +3089,7 @@ class DefaultButton extends React.PureComponent {
       // Call back arrow click handler function
       await this.onBackArrowClickHandler(e, "close");
 
-      chrome.storage.local.get(["isPreview", "userData"], (items) => {
+      chrome.storage.local.get(["isPreview", "userData"], async (items) => {
         // Update step data when guest visit trail
         if (items.isPreview) {
           const trackData = {
@@ -3071,7 +3099,28 @@ class DefaultButton extends React.PureComponent {
           };
 
           // Call update track data function
-          updateTrailTrack(trackData);
+          await updateTrailTrack(trackData);
+
+          chrome.storage.local.get(
+            ["isPreview", "webUrl", "old_trail_id", "old_user_data"],
+            (result) => {
+              if (result.isPreview) {
+                this.props.onChangeTourType("");
+                this.props.mainToggle();
+                window.location.href = result.webUrl;
+
+                chrome.storage.local.set({
+                  isPreview: false,
+                  tourType: "",
+                  currentTourType: "",
+                  trail_id: result.old_trail_id,
+                  guest_id: "",
+                  trail_web_user_tour: [],
+                  userData: { ...result.old_user_data },
+                });
+              }
+            }
+          );
         }
       });
     }
