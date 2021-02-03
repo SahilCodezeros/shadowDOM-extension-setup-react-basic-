@@ -164,6 +164,7 @@ export const deleteTrail = async (trailId) => {
 
 // Update trail track
 export const updateTrailTrack = async (data) => {
+  console.log("data", data);
   return await axios.post(
     `${process.env.REACT_APP_MS4_URL}userTourDataDetail/addUpdateTrailTrack`,
     data

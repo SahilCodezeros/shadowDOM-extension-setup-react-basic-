@@ -2549,12 +2549,13 @@ class DefaultButton extends React.PureComponent {
    */
   tourManage = (step, type, tourSide) => {
     chrome.storage.local.get(["isPreview", "userData"], async (items) => {
+      const trail = this.state.trailList[this.state.tourStep - 1];
       // Update step data when guest visit trail
       if (items.isPreview) {
         const trackData = {
+          trail_id: trail.trail_id,
           user_id: items.userData._id,
-          trail_id: items.trail_data_id,
-          steps_visited: items.trail_data_id,
+          steps_visited: trail.trail_data_id,
         };
 
         // Call update track data function
@@ -3124,12 +3125,14 @@ class DefaultButton extends React.PureComponent {
       await this.onBackArrowClickHandler(e, "close");
 
       chrome.storage.local.get(["isPreview", "userData"], async (items) => {
+        const trail = this.state.trailList[this.state.tourStep - 1];
+
         // Update step data when guest visit trail
         if (items.isPreview) {
           const trackData = {
+            trail_id: trail.trail_id,
             user_id: items.userData._id,
-            trail_id: items.trail_data_id,
-            steps_visited: items.trail_data_id,
+            steps_visited: trail.trail_data_id,
           };
 
           // Call update track data function
