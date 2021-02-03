@@ -1,5 +1,5 @@
 import React from "react";
-import _ from 'lodash';
+import _ from "lodash";
 
 import { socket } from "../common/socket";
 import { handleFileUpload } from "../common/audAndVidCommon";
@@ -32,6 +32,7 @@ class UserProfile extends React.Component {
     super(props);
     this.state = {
       email: "",
+      userName: "",
       reload: false,
       response: false,
       balance: "0.00",
@@ -52,22 +53,21 @@ class UserProfile extends React.Component {
       isLoading: false,
       profileImage: "",
       slideBalance: false,
-      privateKey: '',
-      nearBalance: 0
+      privateKey: "",
+      nearBalance: 0,
     };
   }
 
   // Get NEAR account balance
   getNearAccountBalance() {
-
     // Get NEAR balance of user
     getBalance()
-    .then(res => {
-      this.setState({ nearBalance: res });
-    })
-    .catch();
-  };
-  
+      .then((res) => {
+        this.setState({ nearBalance: res });
+      })
+      .catch();
+  }
+
   async componentDidMount() {
     let balance = await wallet.balance();
     let address = await getAddress(
@@ -75,8 +75,9 @@ class UserProfile extends React.Component {
     );
     this.setState({ isLoading: true });
     chrome.storage.local.get(
-      ["auth_Tokan", "userData", "reload", 'keypair'],
-      async function (items) {        
+      ["auth_Tokan", "userData", "reload", "keypair"],
+      async function (items) {
+        console.log("items", items);
         // // Get NEAR balance of user
         this.getNearAccountBalance();
         // getBalance()
@@ -85,13 +86,14 @@ class UserProfile extends React.Component {
         //     this.setState({ nearBalance: res });
         //   })
         //   .catch();
-          
-        this.setState({ 
+
+        this.setState({
           profileImage: items.userData.profileImage,
           privateKey: items.keypair,
+          userName: items.userData.userName,
           // nearBalance: balance
         });
-        
+
         let followerLength;
         socket.emit("userId", items.userData._id);
         socket.on("followerList", (data) => {
@@ -108,9 +110,9 @@ class UserProfile extends React.Component {
           user_id: items.userData._id,
           flag: "unread",
         };
-        
+
         const result = await getUserSingleTrail(items.userData._id);
-        
+
         if (result.status == 200) {
           this.setState({
             myTrilsListData: result.data.response,
@@ -172,18 +174,17 @@ class UserProfile extends React.Component {
         }
       }.bind(this)
     );
-    
+
     // Get all category function
     let { data, status } = await getAllCategory();
     if (status === 200) {
       if (data.response && data.response.result) {
         this.setState({ categoryList: data.response.result });
-
       } else {
         this.setState({ categoryList: [] });
       }
     }
-    
+
     if (document.querySelector("#my-extension-defaultroot")) {
       document.querySelector("#my-extension-defaultroot").style.display =
         "none";
@@ -215,7 +216,7 @@ class UserProfile extends React.Component {
 
   onClickToCreateTrail = (e) => {
     this.onChangeTrailEdit(false);
-    this.setState({ listTitle: "My Trails", slideBalance: false});
+    this.setState({ listTitle: "My Trails", slideBalance: false });
     $("body").attr("class", "trailit_EditTrailShow");
   };
 
@@ -257,11 +258,11 @@ class UserProfile extends React.Component {
               });
 
               if (r.status == 200) {
-                chrome.storage.local.set({ 
-                  userData: { 
-                    ...items.userData, 
-                    profileImage: data.response.result.fileUrl 
-                  } 
+                chrome.storage.local.set({
+                  userData: {
+                    ...items.userData,
+                    profileImage: data.response.result.fileUrl,
+                  },
                 });
               }
 
@@ -302,13 +303,14 @@ class UserProfile extends React.Component {
     // Get NEAR balance of user
     this.getNearAccountBalance();
 
-    this.setState({ slideBalance: false });    
+    this.setState({ slideBalance: false });
     $("body").attr("class", "");
   };
 
   render() {
     // console.log('getBalance', getBalance());
     const {
+      userName,
       isLoading,
       listTitle,
       myTrilsListData,
@@ -317,11 +319,11 @@ class UserProfile extends React.Component {
       editTrail,
       getOneEditRow,
       addRaw,
-	    profileImage,
+      profileImage,
       slideBalance,
-      nearBalance
+      nearBalance,
     } = this.state;
-    
+
     let list = [];
     if (listTitle == "My Trails") {
       list = myTrilsListData;
@@ -341,7 +343,12 @@ class UserProfile extends React.Component {
         {!editTrail && !slideBalance && (
           <UserProfileAdd onAddRaw={this.onAddRaw} addRaw={addRaw} />
         )}
-		    {slideBalance && <UserCUSD privateKey={this.state.privateKey} onHideSlide={ this.onHideSlide } />}
+        {slideBalance && (
+          <UserCUSD
+            privateKey={this.state.privateKey}
+            onHideSlide={this.onHideSlide}
+          />
+        )}
         {isLoading && (
           <div className="trailit_loaderBox">
             <div class="trial_spinner">
@@ -367,12 +374,16 @@ class UserProfile extends React.Component {
               </span>
             </div>
             <div className="trailit_userBxs">
-              <div className="trailit_userName trailit_ellips">Jon Jones</div>
+              <div className="trailit_userName trailit_ellips">{userName}</div>
               <div className="trailit_userSubName trailit_ellips">
                 Founder, Creator, Designer
               </div>
-              <div className="trailit_userName cursor_pointer" onClick={this.onSlide}>
-                {this.state.nearBalance} <span className="trailit_userSubName"> NEAR</span>
+              <div
+                className="trailit_userName cursor_pointer"
+                onClick={this.onSlide}
+              >
+                {this.state.nearBalance}{" "}
+                <span className="trailit_userSubName"> NEAR</span>
               </div>
               <div className="trailit_3Boxs">
                 <div className="trailit_3Boxs1">

@@ -406,6 +406,7 @@ class WebUserTour extends React.Component {
     chrome.storage.local.get(
       ["isPreview", "webUrl", "old_trail_id", "old_user_data"],
       (result) => {
+        
         if (result.isPreview) {
           this.props.onChangeTourType("");
           this.props.mainToggle();

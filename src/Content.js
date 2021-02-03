@@ -150,7 +150,7 @@ class Main extends React.Component {
         // this.userNotificaion();
 
         chrome.storage.onChanged.addListener((changes) => {
-          if (changes.isPreview.newValue === true) {
+          if (changes.isPreview && changes.isPreview.newValue) {
             this.openMenu("preview");
           }
 
@@ -651,13 +651,14 @@ class Main extends React.Component {
     ) {
       alert(`We don't have permission to add ${type} in this site`);
       return "";
-    } else if (
-      document.URL.includes("https://docs.google.com") &&
-      type === "tooltip"
-    ) {
-      alert(`We don't have permission to add ${type} in this site`);
-      return "";
     }
+    // else if (
+    //   document.URL.includes("https://docs.google.com") &&
+    //   type === "tooltip"
+    // ) {
+    //   alert(`We don't have permission to add ${type} in this site`);
+    //   return "";
+    // }
 
     switch (type) {
       case "tooltip":
@@ -1399,6 +1400,7 @@ class DefaultButton extends React.PureComponent {
       setError: null,
       draggable: true,
       dragPosition: { x: 0, y: 0 },
+      dynamicPopupButton: true,
     };
 
     this.onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
@@ -1710,6 +1712,12 @@ class DefaultButton extends React.PureComponent {
           // Remove trailit logo function
           removeTrailitLogo();
         }
+      }
+    });
+
+    chrome.storage.local.get(["isPreview"], (items) => {
+      if (items.isPreview) {
+        this.setState({ dynamicPopupButton: false });
       }
     });
   }
@@ -2479,6 +2487,20 @@ class DefaultButton extends React.PureComponent {
   tourManage = (step, type, tourSide) => {
     chrome.storage.local.set({ currentTourType: type, tourStep: step });
     this.setState({ currentTourType: type, tourStep: step, tourSide });
+
+    chrome.storage.local.get(["isPreview", "userData"], (items) => {
+      // Update step data when guest visit trail
+      if (items.isPreview) {
+        const trackData = {
+          user_id: items.userData._id,
+          trail_id: items.trail_data_id,
+          steps_visited: items.trail_data_id,
+        };
+
+        // Call update track data function
+        updateTrailTrack(trackData);
+      }
+    });
   };
 
   /**
@@ -3026,9 +3048,6 @@ class DefaultButton extends React.PureComponent {
 
     const { trailList, tourStep } = this.state;
 
-    console.log("tourStep", tourStep);
-    console.log("trailList", trailList);
-
     if (trailList.length > 0 && trailList.length === tourStep) {
       // Hide continue button
       chrome.storage.local.set({ closeContinue: false });
@@ -3041,6 +3060,20 @@ class DefaultButton extends React.PureComponent {
 
       // Call back arrow click handler function
       await this.onBackArrowClickHandler(e, "close");
+
+      chrome.storage.local.get(["isPreview", "userData"], (items) => {
+        // Update step data when guest visit trail
+        if (items.isPreview) {
+          const trackData = {
+            user_id: items.userData._id,
+            trail_id: items.trail_data_id,
+            steps_visited: items.trail_data_id,
+          };
+
+          // Call update track data function
+          updateTrailTrack(trackData);
+        }
+      });
     }
 
     // Set onDone state
@@ -3165,8 +3198,8 @@ class DefaultButton extends React.PureComponent {
     );
     const stateCount = trailList.length;
 
-    // console.log('tourType', tourType);
-    // console.log('currentTourType', currentTourType);
+    console.log("tourType", tourType);
+    console.log("currentTourType", currentTourType);
 
     if (web_url !== "") {
       this.setState({ fileAddStatus: true });
@@ -3586,6 +3619,8 @@ class DefaultButton extends React.PureComponent {
         <style>{defaultButtonCss1}</style>
         <style>{defaultButtonCss2}</style>
         <style>{defaultButtonCss3}</style>
+        {}
+
         <Draggable
           disabled={!draggable}
           // onStart={ (data) => {
@@ -3732,12 +3767,14 @@ class DefaultButton extends React.PureComponent {
 						</div> */}
                 <div className="space"></div>
               </div>
-              <button className="menu pop" onClick={this.openPopup}>
-                <img
-                  alt=""
-                  src={require("./images/trailit_X_button_new.png")}
-                />
-              </button>
+              {this.state.dynamicPopupButton && (
+                <button className="menu pop" onClick={this.openPopup}>
+                  <img
+                    alt=""
+                    src={require("./images/trailit_X_button_new.png")}
+                  />
+                </button>
+              )}
             </div>
           </div>
         </Draggable>
