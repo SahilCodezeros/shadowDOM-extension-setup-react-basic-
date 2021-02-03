@@ -24,7 +24,7 @@ class TooltipOverlay extends React.Component {
      * @data tooltip data
      * @step tooltip current step
     */
-    onClickToManagePopoverButton = (event, step, tourSide) => {
+    onClickToManagePopoverButton = async(event, step, tourSide) => {
         let { tourStep } = this.props;
         
         if(this.props.data[step - 1].url === document.URL) {
@@ -33,7 +33,7 @@ class TooltipOverlay extends React.Component {
             this.props.tour(step, type, tourSide)
         } else {
             let type = this.props.data[step - 1].type;
-            this.props.tour(step, type, tourSide)
+            await this.props.tour(step, type, tourSide)
             window.location.href = this.props.data[step - 1].url;
         }
     }
