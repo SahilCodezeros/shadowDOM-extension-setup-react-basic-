@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-target-blank */
 import React, { useRef, createRef } from 'react';
 import { Form, Input, Button } from 'antd';
 import axios from 'axios';
@@ -117,7 +118,7 @@ class Login extends React.Component {
 						<div className="tr_title">Welcome to the Trailit.</div>
 						<div className="tr_subtitle">
 							Enter your details to login. If you have not login details than
-							<a href="javascript:;" onClick={(e) => this.props.clickToRedirect('signup')} className="tr_link fw_400">
+							<a className="tr_link fw_400" target="_blank" href="http://169.61.16.14/?signUp=true">
 								Signup Now
 							</a>
 						</div>
