@@ -9,7 +9,7 @@
   },
 
   "externally_connectable": {
-    "matches": ["*://localhost/*"]
+    "matches": ["*://localhost/*", "*://169.61.16.14/*"]
   },
   "content_scripts": [
     {
@@ -28,6 +28,7 @@
   "browser_action": {
     "default_popup": "index.html"
   },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuW9bfVOKPWQ2NyjBpGEMLcs9AR7ndJdJE1K3zC+i11rTWbMVnZKHdxYH7uCM0rLqbSoAyen9e0bsr2BA6W8kL3ZO18f6WiuelWOCVs1ATXDtiCo8UU16tbJVHQXQIYaF3ggBsG7ruG4t+O0sFxVZNFd25t3nrP0CzNCFkgJ4iIw5NQYEsDrXpLK0tYdI60neiVIxH6tYqcGJpAt1ggJHWsBNmTGjfbgZjrQCsJe80CUhFHRW/DxYm4/lO0t6wMVo0B05YW/wjh5A2BexpAHf7+gXo2FsPTlG/DtkxexxxJDNAHiXCTLBr5hpEFWYeejvh9+gFADHutzcEodnaHG/TwIDAQAB",
   "permissions": ["storage", "activeTab", "notifications", "<all_urls>"],
   "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk=';script-src-elem *; object-src 'self';"
 }
