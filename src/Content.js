@@ -70,6 +70,7 @@ import {
 } from "./css/defaultButton";
 
 import "./Content.css";
+import resolve from "resolve";
 
 /*global chrome*/
 
@@ -2467,8 +2468,8 @@ class DefaultButton extends React.PureComponent {
       // Update step data when guest visit trail
       if (isPreview) {
         const trackData = {
-          trail_id: trail.trail_id,
           user_id: userId,
+          trail_id: trail.trail_id,
           steps_visited: trail.trail_data_id,
         };
 
@@ -2566,37 +2567,32 @@ class DefaultButton extends React.PureComponent {
   //   this.setState({ currentTourType: type, tourStep: step, tourSide });
   // };
   tourManage = (step, type, tourSide) => {
-    let isWebPreview = false;
-    chrome.storage.local.get(["isPreview", "userData"], async (items) => {
-      const trail = this.state.trailList[this.state.tourStep - 1];
-      // Update step data when guest visit trail
-      if (items.isPreview) {
-        isWebPreview = true;
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get(["isPreview", "userData"], async (items) => {
+        const trail = this.state.trailList[this.state.tourStep - 1];
+        // Update step data when guest visit trail
+        if (items.isPreview) {
+          const trackData = {
+            trail_id: trail.trail_id,
+            user_id: items.userData._id,
+            steps_visited: trail.trail_data_id,
+          };
 
-        const trackData = {
-          trail_id: trail.trail_id,
-          user_id: items.userData._id,
-          steps_visited: trail.trail_data_id,
-        };
+          // Call update track data function
+          await updateTrailTrack(trackData);
 
-        // Call update track data function
-        await updateTrailTrack(trackData);
-      } else {
-        isWebPreview = false;
-      }
-    });
+          chrome.storage.local.set({ currentTourType: type, tourStep: step });
+          this.setState({ currentTourType: type, tourStep: step, tourSide });
 
-    if (isWebPreview) {
-     return new Promise((resolve, reject) => {
-        chrome.storage.local.set({ currentTourType: type, tourStep: step });
-        this.setState({ currentTourType: type, tourStep: step, tourSide });
+          resolve();
+        } else {
+          chrome.storage.local.set({ currentTourType: type, tourStep: step });
+          this.setState({ currentTourType: type, tourStep: step, tourSide });
 
-        return resolve();
+          resolve();
+        }
       });
-    }
-
-    chrome.storage.local.set({ currentTourType: type, tourStep: step });
-    this.setState({ currentTourType: type, tourStep: step, tourSide });
+    });
   };
 
   /**
@@ -3312,12 +3308,6 @@ class DefaultButton extends React.PureComponent {
     );
     const stateCount = trailList.length;
 
-    console.log("trailList", trailList);
-    console.log("tourType", tourType);
-    console.log("currentTourType", currentTourType);
-    console.log("overlay", overlay);
-    console.log("tourStep", tourStep);
-
     if (web_url !== "") {
       this.setState({ fileAddStatus: true });
     }
@@ -3331,7 +3321,6 @@ class DefaultButton extends React.PureComponent {
       // }
     }
 
-    console.log("tourUrl", tourUrl);
     let openSidebar = open;
 
     if (tourType === "audio" || tourType === "video") {

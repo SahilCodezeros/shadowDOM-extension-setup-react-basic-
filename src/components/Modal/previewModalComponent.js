@@ -135,7 +135,7 @@ class PreviewModalComponent extends React.PureComponent {
       this.props.setLoadingState(true);
 
       let type = this.props.data[step - 1].type;
-     await this.props.tour(step, type, tourSide);
+      await this.props.tour(step, type, tourSide);
       window.location.href = this.props.data[step - 1].url;
     }
     // if(document.querySelector('#my-extension-root-flip').classList.value ==="") {
