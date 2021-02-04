@@ -33,6 +33,9 @@ class UserProfile extends React.Component {
     this.state = {
       email: "",
       userName: "",
+      firstName: "",
+      lastName: "",
+      isPreview: false,
       reload: false,
       response: false,
       balance: "0.00",
@@ -75,9 +78,8 @@ class UserProfile extends React.Component {
     );
     this.setState({ isLoading: true });
     chrome.storage.local.get(
-      ["auth_Tokan", "userData", "reload", "keypair"],
+      ["auth_Tokan", "userData", "reload", "keypair", "isPreview"],
       async function (items) {
-        console.log("items", items);
         // // Get NEAR balance of user
         this.getNearAccountBalance();
         // getBalance()
@@ -91,6 +93,9 @@ class UserProfile extends React.Component {
           profileImage: items.userData.profileImage,
           privateKey: items.keypair,
           userName: items.userData.userName,
+          firstName: items.userData.firstName ? items.userData.firstName : null,
+          lastName: items.userData.lastName ? items.userData.lastName : null,
+          isPreview: items.isPreview,
           // nearBalance: balance
         });
 
@@ -311,6 +316,9 @@ class UserProfile extends React.Component {
     // console.log('getBalance', getBalance());
     const {
       userName,
+      firstName,
+      lastName,
+      isPreview,
       isLoading,
       listTitle,
       myTrilsListData,
@@ -374,7 +382,9 @@ class UserProfile extends React.Component {
               </span>
             </div>
             <div className="trailit_userBxs">
-              <div className="trailit_userName trailit_ellips">{userName}</div>
+              <div className="trailit_userName trailit_ellips">
+                {firstName && lastName ? `${firstName} ${lastName}` : userName}
+              </div>
               <div className="trailit_userSubName trailit_ellips">
                 Founder, Creator, Designer
               </div>
@@ -460,13 +470,15 @@ class UserProfile extends React.Component {
                   My Trails
                 </button>
               )}
-              <button
-                type="button"
-                className="trailit_btnPink"
-                onClick={this.onClickToCreateTrail}
-              >
-                Create Trail
-              </button>
+              {!isPreview && (
+                <button
+                  type="button"
+                  className="trailit_btnPink"
+                  onClick={this.onClickToCreateTrail}
+                >
+                  Create Trail
+                </button>
+              )}
             </div>
           </div>
         </div>

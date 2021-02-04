@@ -113,7 +113,7 @@ class AudioTour extends React.PureComponent {
    * @data tooltip data
    * @step tooltip current step
    */
-  onClickToManagePopoverButton = (event, step, tourSide) => {
+  onClickToManagePopoverButton = async (event, step, tourSide) => {
     let { tourStep } = this.props;
     if (this.props.data[step - 1].url === document.URL) {
       let type = this.props.data[step - 1].type;
@@ -123,7 +123,7 @@ class AudioTour extends React.PureComponent {
       this.props.setLoadingState(true);
 
       let type = this.props.data[step - 1].type;
-      this.props.tour(step, type, tourSide);
+      await this.props.tour(step, type, tourSide);
       window.location.href = this.props.data[step - 1].url;
     }
   };

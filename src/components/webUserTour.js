@@ -347,7 +347,7 @@ class WebUserTour extends React.Component {
    * @data tooltip data
    * @step tooltip current step
    */
-  onClickToManagePopoverButton = (event, data, step, tourSide) => {
+  onClickToManagePopoverButton = async (event, data, step, tourSide) => {
     // Call remove overlay function
     removeOverlay();
 
@@ -382,10 +382,11 @@ class WebUserTour extends React.Component {
       // Set loading true to show overlay
       this.props.setLoadingState(true);
       let type = this.props.data[step - 1].type;
-      this.props.tour(step, type, tourSide);
+      await this.props.tour(step, type, tourSide);
       // chrome.runtime.sendMessage({type: "notification", options: {
       //     url: this.props.data[step - 1].url
       // }});
+
       window.location.href = this.props.data[step - 1].url;
       setTimeout(() => {
         this.createPopOver(step);
