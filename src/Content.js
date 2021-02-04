@@ -2987,9 +2987,13 @@ class DefaultButton extends React.PureComponent {
     };
 
     return new Promise((resolve, reject) => {
-      chrome.storage.local.get(["previewUserId"], async (items) => {
+      chrome.storage.local.get(["previewUserId", "isPreview"], async (items) => {
+
+        
+
         if (!items.previewUserId || items.previewUserId === "") {
           const { currentTourType, tourType } = this.state;
+
           if (
             (currentTourType === "tooltip" ||
               currentTourType === "audio" ||
@@ -2998,17 +3002,20 @@ class DefaultButton extends React.PureComponent {
             tourType === "preview"
           ) {
             if (this.state.trailList.length > 0) {
-              try {
-                const data = {
-                  trail_data_id: this.state.trailList[this.state.tourStep - 1]
-                    .trail_data_id,
-                  flag: "continue",
-                };
+              if(!items.isPreview){
 
-                // Call update trail api to add flag into table
-                await updateTrailFlag(data);
-              } catch (err) {
-                console.log(err);
+                try {
+                  const data = {
+                    trail_data_id: this.state.trailList[this.state.tourStep - 1]
+                      .trail_data_id,
+                    flag: "continue",
+                  };
+  
+                  // Call update trail api to add flag into table
+                  await updateTrailFlag(data);
+                } catch (err) {
+                  console.log(err);
+                }
               }
 
               // Remove elements
@@ -3179,8 +3186,13 @@ class DefaultButton extends React.PureComponent {
       // Call clear toggle function
       await this.onClearToggle();
     } else {
+      chrome.storage.local.get(["isPreview"],(items)=>{
+        if(!items.isPreview){
+          chrome.storage.local.set({ closeContinue: true });
+          
+        }
+      })
       // Show continue button
-      chrome.storage.local.set({ closeContinue: true });
 
       // Call back arrow click handler function
       await this.onBackArrowClickHandler(e, "close");

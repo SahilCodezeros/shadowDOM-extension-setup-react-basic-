@@ -9,7 +9,7 @@
   },
 
   "externally_connectable": {
-    "matches": ["*://localhost/*"]
+    "matches": ["*://localhost/*", "*://169.61.16.14/*"]
   },
   "content_scripts": [
     {
