@@ -65,18 +65,18 @@ class SortableItem extends React.Component {
   onClickToAddSubMenu = (e, result, tourStep) => {
     this.props.onClick(e, result, tourStep);
   };
-  
+
   handleClickMenu = (e) => {
     e.stopPropagation();
 
     // Set show menu state
-    this.setState({showMenu: !this.state.showMenu});
+    this.setState({ showMenu: !this.state.showMenu });
   };
 
   onMouseLeave = (e) => {
     if (this.state.showMenu) {
       // Set show menu state
-      this.setState({showMenu: false});
+      this.setState({ showMenu: false });
     }
   };
 
@@ -91,7 +91,7 @@ class SortableItem extends React.Component {
   //     this.setState({ showMenu: false });
   //   }
   // };
-  
+
   render() {
     let { i, result, tourStep, tourType } = this.props;
 
@@ -103,7 +103,7 @@ class SortableItem extends React.Component {
       subStepStatus =
         result.trail_data_id === MobileTargetNotFound.trail_data_id;
     }
-    
+
     if (!resizeScreen()) {
       subStepStatus = false;
       subStep = false;
@@ -137,69 +137,65 @@ class SortableItem extends React.Component {
       //         </div>}
       //     </div>
       // </div>
-      
+
       //   <div className={`${
       //     this.state.showMenu
       //       ? "z-index-2"
       //       : ""
       //   }`}>
       <div>
-        <div 
-          key={i}
-          onMouseLeave={ this.onMouseLeave }
-          className={`info_bbx ${
-            tourStep === i + 1
-              ? "active"
-              : "" } ${this.state.showMenu
-              ? "z-index-2"
-              : ""
-          }`}
-        >
-          <div className="d-flex">
-            <div className="d-flex-1">
-              <h4>Step {i + 1}</h4>
-              <div className="d-flex-image">
-                {result.mediaType === "video" && (
-                  <img
-                    width="16px"
-                    src={require("../images/vd_ic.png")}
-                    alt="dots"
-                  />
-                )}
-                {result.mediaType === "audio" && (
-                  <img
-                    width="16px"
-                    src={require("../images/mp3_ic.png")}
-                    alt="dots"
-                  />
-                )}
-                {result.mediaType === "image" && (
-                  <img
-                    width="16px"
-                    src={require("../images/img_ic.png")}
-                    alt="dots"
-                  />
-                )}
-                {result.mediaType === "text" && (
-                  <img
-                    width="16px"
-                    src={require("../images/txt_ic.png")}
-                    alt="dots"
-                  />
-                )}
+        {tourType !== "Make Edit" ? (
+          <div
+            key={i}
+            onMouseLeave={this.onMouseLeave}
+            className={`info_bbx ${tourStep === i + 1 ? "active" : ""} ${
+              this.state.showMenu ? "z-index-2" : ""
+            }`}
+          >
+            <div className="d-flex">
+              <div className="d-flex-1">
+                <h4>Step {i + 1}</h4>
+                <div className="d-flex-image">
+                  {result.mediaType === "video" && (
+                    <img
+                      width="16px"
+                      src={require("../images/vd_ic.png")}
+                      alt="dots"
+                    />
+                  )}
+                  {result.mediaType === "audio" && (
+                    <img
+                      width="16px"
+                      src={require("../images/mp3_ic.png")}
+                      alt="dots"
+                    />
+                  )}
+                  {result.mediaType === "image" && (
+                    <img
+                      width="16px"
+                      src={require("../images/img_ic.png")}
+                      alt="dots"
+                    />
+                  )}
+                  {result.mediaType === "text" && (
+                    <img
+                      width="16px"
+                      src={require("../images/txt_ic.png")}
+                      alt="dots"
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-            <div className="d-flex-2">
-              <p>{result.title}</p>
-            </div>
-            <div className="d-flex-3">
-              <div>
-                {
-                  this.props.tourType === 'Make Edit' &&
+              <div className="d-flex-2">
+                <p>{result.title}</p>
+              </div>
+              <div className="d-flex-3">
+                <div>
+                  {this.props.tourType === "Make Edit" && (
                     <button
                       type="button"
                       className="trailit_dotsButton"
-                      onClick={ this.handleClickMenu }
+                      onClick={this.handleClickMenu}
                     >
                       <img
                         width="16px"
@@ -207,53 +203,48 @@ class SortableItem extends React.Component {
                         alt="dots"
                       />
                     </button>
-                }
-                {this.state.showMenu && (
-                  <div className={`trailit_dotsMenuList`}>
-                    <button 
-                      type="button"
-                      onClick={ (e) => {
-                        // Set show state
-                        this.setState({ showMenu: false });
+                  )}
+                  {this.state.showMenu && (
+                    <div className={`trailit_dotsMenuList`}>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          // Set show state
+                          this.setState({ showMenu: false });
 
-                        // Show delete modal
-                        this.props.onDeleteModalOpen(result.title, result.trail_data_id);
-                      } }
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )}
+                          // Show delete modal
+                          this.props.onDeleteModalOpen(
+                            result.title,
+                            result.trail_data_id
+                          );
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        {/* <div
-          key={i}
-          onMouseLeave={ this.onMouseLeave }
-          className={`trailitStepBox ${
-            tourStep === i + 1
-              ? "active"
-              : "" } ${this.state.showMenu
-              ? "z-index-2"
-              : ""
-          }`}
-        >
-          {
-            tourType !== 'preview' &&
-              <DragHandle />
-          }
-          <div className="trailitStepTitle">
-            Step {i + 1} - {result.title}
-          </div>
-          <div className="trailitIconRight">
-            <div>
-              {
-                this.props.tourType === 'Make Edit' &&
+        ) : (
+          <div
+            key={i}
+            onMouseLeave={this.onMouseLeave}
+            className={`trailitStepBox ${tourStep === i + 1 ? "active" : ""} ${
+              this.state.showMenu ? "z-index-2" : ""
+            }`}
+          >
+            {tourType !== "preview" && <DragHandle />}
+            <div className="trailitStepTitle">
+              Step {i + 1} - {result.title}
+            </div>
+            <div className="trailitIconRight">
+              <div>
+                {this.props.tourType === "Make Edit" && (
                   <button
                     type="button"
-                    onClick={ this.handleClickMenu }
+                    onClick={this.handleClickMenu}
                     className="trailit_dotsButton"
                   >
                     <img
@@ -262,69 +253,75 @@ class SortableItem extends React.Component {
                       alt="dots"
                     />
                   </button>
-              }
-              {this.state.showMenu && (
-                <div className={`trailit_dotsMenuList`}>
-                  <button 
-                    type="button"
-                    onClick={ (e) => {
-                      // Set show state
-                      this.setState({ showMenu: false });
+                )}
+                {this.state.showMenu && (
+                  <div className={`trailit_dotsMenuList`}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        // Set show state
+                        this.setState({ showMenu: false });
 
-                      // Show delete modal
-                      this.props.onDeleteModalOpen(result.title, result.trail_data_id);
-                    } }
-                  >
-                    Delete
-                  </button>
-                </div>
+                        // Show delete modal
+                        this.props.onDeleteModalOpen(
+                          result.title,
+                          result.trail_data_id
+                        );
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+              {result.mediaType === "image" && (
+                <img
+                  width="16px"
+                  height="14px"
+                  src={require("../images/trialit_image.png")}
+                  alt="dots"
+                />
+              )}
+              {result.mediaType === "video" && (
+                <img
+                  width="18px"
+                  height="18px"
+                  src={require("../images/trialit_video.png")}
+                  alt="dots"
+                />
+              )}
+              {result.mediaType === "text" && (
+                <img
+                  width="16px"
+                  height="14px"
+                  src={require("../images/trailit_text.png")}
+                  alt="dots"
+                />
+              )}
+              {result.mediaType === "audio" && (
+                <img
+                  width="18px"
+                  height="18px"
+                  src={require("../images/trailit_audio.png")}
+                  alt="dots"
+                />
               )}
             </div>
-            {result.mediaType === "image" && (
-              <img
-                width="16px"
-                height="14px"
-                src={require("../images/trialit_image.png")}
-                alt="dots"
-              />
-            )}
-            {result.mediaType === "video" && (
-              <img
-                width="18px"
-                height="18px"
-                src={require("../images/trialit_video.png")}
-                alt="dots"
-              />
-            )}
-            {result.mediaType === "text" && (
-              <img
-                width="16px"
-                height="14px"
-                src={require("../images/trailit_text.png")}
-                alt="dots"
-              />
-            )}
-            {result.mediaType === "audio" && (
-              <img
-                width="18px"
-                height="18px"
-                src={require("../images/trailit_audio.png")}
-                alt="dots"
-              />
-            )}
           </div>
-        </div> */}
-        {subStep && <div
-          key={i}
-          className={`trailitStepBox trailitSubStepBox ${
-            tourStep === i + 1 ? "active" : ""} ${this.state.showMenu ? "z-index-2" : "" 
-          }`}
-        >
-          <DragHandle />
-          <div className="trailitStepTitle">
-            Step {i + 1} - {result.title}
-          </div>
-          {/* <div>
+        )}
+
+        {subStep && (
+          <div
+            key={i}
+            className={`trailitStepBox trailitSubStepBox ${
+              tourStep === i + 1 ? "active" : ""
+            } ${this.state.showMenu ? "z-index-2" : ""}`}
+          >
+            <DragHandle />
+            <div className="trailitStepTitle">
+              Step {i + 1} - {result.title}
+            </div>
+            {/* <div>
             <button
               type="button"
               onClick={this.handleClickMenu}
@@ -343,17 +340,23 @@ class SortableItem extends React.Component {
               </div>
             )}
           </div> */}
-        </div>}
-        {subStepStatus && tourType=='Make Edit' && <div className="trailitAddSubStep">
-          <button type="button" onClick={(e) => this.onClickToAddSubMenu(e, result, (i + 1))}>
-            <img
-              width="10px"
-              src={require("../images/imgpsh_fullsize_anim.png")}
-              alt="..."
-            />
-            Substep
-          </button>
-        </div>}
+          </div>
+        )}
+        {subStepStatus && tourType == "Make Edit" && (
+          <div className="trailitAddSubStep">
+            <button
+              type="button"
+              onClick={(e) => this.onClickToAddSubMenu(e, result, i + 1)}
+            >
+              <img
+                width="10px"
+                src={require("../images/imgpsh_fullsize_anim.png")}
+                alt="..."
+              />
+              Substep
+            </button>
+          </div>
+        )}
       </div>
     );
   }

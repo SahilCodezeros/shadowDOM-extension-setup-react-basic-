@@ -131,7 +131,7 @@ class WebUserTour extends React.Component {
      * @data tooltip data
      * @step tooltip current step
     */
-    onClickToManagePopoverButton = (event, data, step, tourSide) => {
+    onClickToManagePopoverButton = async(event, data, step, tourSide) => {
         let { tourSteps, tourStep, tourContent } = this.state;
         document.querySelector(this.props.data[tourStep - 1].uniqueTarget).classList.remove('trail_web_user_tour');
         if((this.props.data[step - 1].url === document.URL) || (urlStingCheck(this.props.data[step - 1].url, ['/#', '/#/']) && urlStingCheck(document.URL, ['/#', '/#/']))) {            
@@ -170,7 +170,7 @@ class WebUserTour extends React.Component {
             Object.keys(tourSteps).map((r, i) => {
                 tourSteps[r] = false
             })            
-            this.props.tour(step, type, tourSide)
+           await this.props.tour(step, type, tourSide)
             chrome.runtime.sendMessage({type: "notification", options: { 
                 url: this.props.data[step - 1].url
             }});

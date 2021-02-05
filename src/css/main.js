@@ -52,12 +52,14 @@ export const main1Css = `
     #my-extension-root .wrap.open {
         width: 100%;
         height: 100%;
-        position: relative;
+        // position: relative;
+        position: absolute;
         text-align: right;
     }
 
     #my-extension-root .wrap.open {
-        margin-top: 80px;
+        // margin-top: 80px;
+        margin-top: 70px;
     }
 
     #my-extension-root .wrap.open.createMenu {
@@ -401,5 +403,22 @@ export const main2Css = `
 
     .react-draggable-transparent-selection *::selection {
         all: inherit;
+    }
+
+    .trail_settings_container {
+        padding: 10px;
+    }
+
+    .trail_settings {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .trail_settings span {
+        font-size: 14px;
+        font-family: "Lato", sans-serif !important;
     }
 `;

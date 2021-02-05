@@ -5,6 +5,7 @@ import { socket } from "../common/socket";
 import { handleFileUpload } from "../common/audAndVidCommon";
 import { wallet, getAddress } from "../common/celo";
 import { getBalance } from "../code/getBalance";
+import SettingsComponent from "../components/settingsComponents";
 
 // import BgImage from "../images/trailit_bx_img.png";
 import {
@@ -58,6 +59,7 @@ class UserProfile extends React.Component {
       slideBalance: false,
       privateKey: "",
       nearBalance: 0,
+      showSetting: false,
     };
   }
 
@@ -69,6 +71,18 @@ class UserProfile extends React.Component {
         this.setState({ nearBalance: res });
       })
       .catch();
+  }
+
+  // On setting button click function
+  onSettingButtonClick() {
+    chrome.storage.local.set({ showSetting: true });
+    // chrome.storage.local.get(["showSetting"], (items) => {
+    //   if (!items.showSetting) {
+    //     chrome.storage.local.set({ showSetting: true });
+    //   } else {
+    //     chrome.storage.local.set({ showSetting: false });
+    //   }
+    // });
   }
 
   async componentDidMount() {
@@ -321,6 +335,7 @@ class UserProfile extends React.Component {
       isPreview,
       isLoading,
       listTitle,
+      showSetting,
       myTrilsListData,
       categoryList,
       notificationData,
@@ -409,6 +424,7 @@ class UserProfile extends React.Component {
                   <div className="trailit_userSubName">Following</div>
                 </div>
               </div>
+              {showSetting && <SettingsComponent />}
             </div>
             <div
               className="trailit_dotsMenuMain"
@@ -424,7 +440,9 @@ class UserProfile extends React.Component {
                 </button>
                 {this.state.showMenu && (
                   <div className="trailit_dotsMenuList">
-                    <button type="button">Settings</button>
+                    <button type="button" onClick={this.onSettingButtonClick}>
+                      Settings
+                    </button>
                     <button type="button">Notifications</button>
                     <button
                       type="button"

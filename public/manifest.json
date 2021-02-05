@@ -1,4 +1,5 @@
 {
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzdvkKlsijA+DOkAEyct30xTcyU10LH2SBWTvFhvxquuWwg6mP9A0Fm1b7zNOnYrIJHi2nkME5SYUKgs6wB9xxFZ1uw0bbhO7ESKRUMpb88HtupcWbCLvHl0IeN6N+cLTfbcvYZ7Ob188z3m+abZUwr9ECRwIWQxwE/DkxVhr6N/9l+EV09rwZaGM1Ih3OwW3ikhbNiYf7CnMrsW/RBP0058gDg+Gk/nY4BVsRdHcEPC77PsQZ9Pc+c6sOpsCd+tps/rXIjnLwREMWHozPiLdFwt4whYePWnfSDTxXUCSXTwWiyTj5BtWHB61PvKzemzr+mlThxP6BHxgBFN4D5pq3wIDAQAB",
   "short_name": "Trailit",
   "name": "Trailit",
   "icons": {
@@ -28,7 +29,6 @@
   "browser_action": {
     "default_popup": "index.html"
   },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuW9bfVOKPWQ2NyjBpGEMLcs9AR7ndJdJE1K3zC+i11rTWbMVnZKHdxYH7uCM0rLqbSoAyen9e0bsr2BA6W8kL3ZO18f6WiuelWOCVs1ATXDtiCo8UU16tbJVHQXQIYaF3ggBsG7ruG4t+O0sFxVZNFd25t3nrP0CzNCFkgJ4iIw5NQYEsDrXpLK0tYdI60neiVIxH6tYqcGJpAt1ggJHWsBNmTGjfbgZjrQCsJe80CUhFHRW/DxYm4/lO0t6wMVo0B05YW/wjh5A2BexpAHf7+gXo2FsPTlG/DtkxexxxJDNAHiXCTLBr5hpEFWYeejvh9+gFADHutzcEodnaHG/TwIDAQAB",
   "permissions": ["storage", "activeTab", "notifications", "<all_urls>"],
   "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk=';script-src-elem *; object-src 'self';"
 }

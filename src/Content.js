@@ -17,6 +17,7 @@ import { sendTransection } from "./code/sendtx";
 import WebUserTour from "./components/webUserTour";
 import MySubscription from "./components/mySubscription";
 import SendTipModal from "./components/Modal/SendTipModal";
+import TrailSetting from "./components/Modal/TrailSettingsModal";
 import { handleFileUpload } from "./common/audAndVidCommon";
 import { initButtonPosition } from "./common/initButtonPosition";
 import CreateNewTrailModal from "./components/CreateNewTrailModal";
@@ -101,7 +102,6 @@ class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      initMenu: true,
       menuOpen: false,
       trail_web_user_tour: [],
       modalSubscription: false,
@@ -109,6 +109,7 @@ class Main extends React.Component {
       currentUserId: null,
       followerList: [],
       closeContinue: false,
+      showSetting: false,
       confirmationModal: {
         show: false,
         tourType: "",
@@ -129,6 +130,7 @@ class Main extends React.Component {
         "closeContinue",
         "isPreview",
         "authorData",
+        "showSetting",
       ],
       async (items) => {
         this.setState({
@@ -153,8 +155,13 @@ class Main extends React.Component {
         // // Get notifiation data from server when page load
         // this.userNotificaion();
 
+        if (items.showSetting !== undefined && items.showSetting !== null) {
+          // Set show setting state
+          this.setState({ showSetting: items.showSetting });
+        }
+
         chrome.storage.onChanged.addListener(async (changes) => {
-          console.log("changes", changes);
+          // console.log("changes", changes);
           // if (changes.authorData && changes.authorData.userName.newValue) {
           //   let { data } = await getUserData(
           //     changes.authorData.newValue.userName
@@ -165,6 +172,11 @@ class Main extends React.Component {
           //     authorData: data.response.result.userData,
           //   });
           // }
+
+          if (changes.showSetting) {
+            // Set show setting state
+            this.setState({ showSetting: changes.showSetting.newValue });
+          }
 
           if (changes.isPreview && changes.isPreview.newValue) {
             this.openMenu("preview");
@@ -374,10 +386,7 @@ class Main extends React.Component {
       async function (items) {
         this.setState({ trail_web_user_tour: items.trail_web_user_tour });
         // trailWebUserTour = items.trail_web_user_tour;
-        this.setState({
-          menuOpen: true,
-          initMenu: false,
-        });
+        this.setState({ menuOpen: true });
         // Store totalTrails number in localStorage
         localStorage.setItem(
           process.env.REACT_APP_LOCALSTORAGE,
@@ -520,7 +529,7 @@ class Main extends React.Component {
   }
 
   componentWillUnmount() {
-    chrome.storage.local.set({ loadingCount: 0 });
+    chrome.storage.local.set({ loadingCount: 0, showSetting: false });
   }
 
   onHandleSubscription = async (msObj) => {
@@ -549,10 +558,7 @@ class Main extends React.Component {
         }
       );
 
-      this.setState({
-        menuOpen: true,
-        initMenu: false,
-      });
+      this.setState({ menuOpen: true });
     }
 
     chrome.storage.local.get(
@@ -877,7 +883,6 @@ class Main extends React.Component {
       case "":
         this.setState({
           menuOpen: !this.state.menuOpen,
-          initMenu: !this.state.initMenu,
         });
         break;
       case "audio":
@@ -980,10 +985,18 @@ class Main extends React.Component {
     );
   };
 
+  hideSettingModal() {
+    // Set chrome storage
+    chrome.storage.local.set({ showSetting: false });
+
+    // Set show setting state
+    // this.setState({ showSetting: false });
+  }
+
   render() {
     const {
       menuOpen,
-      initMenu,
+      showSetting,
       followerList,
       closeContinue,
       modalSubscription,
@@ -991,11 +1004,27 @@ class Main extends React.Component {
       modalCreateNewTrailModal,
     } = this.state;
 
+    if (document.URL.includes("https://docs.google.com")) {
+      const tooltipButton = document
+        .getElementById("extension-div")
+        .shadowRoot.querySelector(".create_tooltip_button");
+
+      if (tooltipButton) {
+        tooltipButton.style.visibility = "hidden";
+      }
+    }
+
     return (
       <>
         <style>{main1Css}</style>
         <style>{main2Css}</style>
         <div id="my-extension-root">
+          {showSetting && (
+            <TrailSetting
+              show={showSetting}
+              hideModal={this.hideSettingModal}
+            />
+          )}
           {confirmationModal.show && (
             <CreateTourConfirmationModal
               data={confirmationModal}
@@ -1084,7 +1113,7 @@ class Main extends React.Component {
 								</svg>
 							</button> */}
               <button
-                class="blob"
+                className="blob create_tooltip_button"
                 onClick={(e) => this.openMenu("tooltip")}
                 data-title="Tooltip"
               >
@@ -1440,6 +1469,7 @@ class DefaultButton extends React.PureComponent {
       isSuccess: false,
       onDone: false,
       setError: null,
+      isDraggable: false,
       draggable: true,
       dragPosition: { x: 0, y: 0 },
       dynamicPopupButton: true,
@@ -1657,6 +1687,12 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
+      // console.log("default button changes", changes);
+      if (changes.isDraggable) {
+        // Set is draggable state
+        this.setState({ isDraggable: changes.isDraggable.newValue });
+      }
+
       if (
         (changes.tourType && changes.tourType.newValue === "preview") ||
         (changes.currentTourType &&
@@ -1667,6 +1703,8 @@ class DefaultButton extends React.PureComponent {
         this.setState({ overlay: false });
       } else if (
         changes.trail_web_user_tour &&
+        changes.trail_web_user_tour.newValue &&
+        changes.trail_web_user_tour.oldValue &&
         (changes.trail_web_user_tour.newValue.length > 0 ||
           changes.trail_web_user_tour.newValue.length !==
             changes.trail_web_user_tour.oldValue.length)
@@ -1686,40 +1724,64 @@ class DefaultButton extends React.PureComponent {
         this.onChromeStorageChange();
       }
 
-      if (
-        changes.currentTourType &&
-        changes.currentTourType.newValue === "preview" &&
-        changes.tourType &&
-        (changes.tourType.newValue === "audio" ||
-          changes.tourType.newValue === "video")
-      ) {
-        if (changes.tourType && changes.tourType.newValue === "tooltip") {
-          this.setState({ open: false });
-        } else {
-          this.setState({ open: true });
-        }
-      }
+      // if (
+      //   changes.currentTourType &&
+      //   changes.currentTourType.newValue === "preview" &&
+      //   changes.tourType &&
+      //   (changes.tourType.newValue === "audio" ||
+      //     changes.tourType.newValue === "video")
+      // ) {
+      //   if (changes.tourType && changes.tourType.newValue === "tooltip") {
+      //     this.setState({ open: false });
+      //   } else {
+      //     this.setState({ open: true });
+      //   }
+      // }
 
-      // For my extenstion root div draggable functionality
-      if (
-        changes.tourType &&
-        (changes.tourType.newValue === "Make Edit" ||
-          changes.tourType.newValue === "preview") &&
-        changes.currentTourType &&
-        (changes.currentTourType.newValue === "preview" ||
-          changes.currentTourType.newValue === "video" ||
-          changes.currentTourType.newValue === "audio")
-      ) {
-        // Set draggable state
-        this.setState({ draggable: false });
+      // // For my extenstion root div draggable functionality
+      // if (
+      //   changes.tourType &&
+      //   changes.tourType.newValue === "Make Edit" &&
+      //   changes.currentTourType &&
+      //   changes.currentTourType.newValue === "preview"
+      // ) {
+      //   console.log("draggable is false 1");
+      //   // Set draggable state
+      //   this.setState({ isDraggable: false });
+      // } else {
+      //   chrome.storage.local.get(["isDraggable"], (items) => {
+      //     if (items.isDraggable !== undefined && items.isDraggable !== null) {
+      //       console.log("items.isDraggable 1", items.isDraggable);
+      //       // Set draggable state
+      //       this.setState({ isDraggable: items.isDraggable });
+      //     }
+      //   });
+      // }
 
-        this.setState({ dragPosition: { x: 0, y: 0 } });
-      } else {
-        // Set draggable state
-        this.setState({ draggable: true });
-
-        this.setState({ dragPosition: { x: 0, y: 0 } });
-      }
+      // if (
+      //   changes.tourType &&
+      //   (changes.tourType.newValue === "Make Edit" ||
+      //     changes.tourType.newValue === "preview") &&
+      //   changes.currentTourType &&
+      //   (changes.currentTourType.newValue === "preview" ||
+      //     changes.currentTourType.newValue === "video" ||
+      //     changes.currentTourType.newValue === "audio")
+      // ) {
+      //   console.log("draggable is false");
+      //   // Set draggable state
+      //   this.setState({ isDraggable: false, dragPosition: { x: 0, y: 0 } });
+      // } else {
+      //   chrome.storage.local.get(["isDraggable"], (items) => {
+      //     if (items.isDraggable !== undefined && items.isDraggable !== null) {
+      //       console.log("items.isDraggable", items.isDraggable);
+      //       // Set draggable state
+      //       this.setState({
+      //         isDraggable: items.isDraggable,
+      //         dragPosition: { x: 0, y: 0 },
+      //       });
+      //     }
+      //   });
+      // }
 
       // if (changes.tourStep && changes.tourStep.newValue && changes.tourStep.newValue > 0) {
       // 	// this.setLoadingState(false);
@@ -1758,9 +1820,18 @@ class DefaultButton extends React.PureComponent {
       }
     });
 
-    chrome.storage.local.get(["isPreview"], (items) => {
+    chrome.storage.local.get(["isPreview", "isDraggable"], (items) => {
+      // console.log("items.isDraggable", items.isDraggable);
       if (items.isPreview) {
         this.setState({ dynamicPopupButton: false });
+      }
+
+      if (items.isDraggable !== undefined && items.isDraggable !== null) {
+        // Set draggable state
+        this.setState({
+          isDraggable: items.isDraggable,
+          dragPosition: { x: 0, y: 0 },
+        });
       }
     });
   }
@@ -2108,10 +2179,15 @@ class DefaultButton extends React.PureComponent {
         "saveSort",
         "loading",
         "MobileTargetNotFound",
+        "isDraggable",
       ],
       async function (items) {
         if (items.followData) {
           obj.followingData = items.followData;
+        }
+
+        if (items.isDraggable) {
+          obj.isDraggable = items.isDraggable;
         }
 
         if (items.previewUserId && items.previewUserId !== "") {
@@ -2172,7 +2248,7 @@ class DefaultButton extends React.PureComponent {
           obj.stepType = items.stepType;
         }
 
-        if (items.userData._id !== undefined) {
+        if (items.userData && items.userData._id !== undefined) {
           obj.currUserId = items.userData._id;
         }
 
@@ -2213,6 +2289,7 @@ class DefaultButton extends React.PureComponent {
           count: this.state.count++,
           saveSort: items.saveSort ? items.saveSort : false,
           loading: obj.loading ? obj.loading : false,
+          isDraggable: obj.isDraggable ? obj.isDraggable : false,
           // publishButtonShow: localStorageCount && +localStorageCount !== trailListCount
         });
 
@@ -2548,6 +2625,24 @@ class DefaultButton extends React.PureComponent {
    * @step tourStep
    * @type tourType
    */
+  // tourManage = (step, type, tourSide) => {
+  //   chrome.storage.local.get(["isPreview", "userData"], async (items) => {
+  //     const trail = this.state.trailList[this.state.tourStep - 1];
+  //     // Update step data when guest visit trail
+  //     if (items.isPreview) {
+  //       const trackData = {
+  //         trail_id: trail.trail_id,
+  //         user_id: items.userData._id,
+  //         steps_visited: trail.trail_data_id,
+  //       };
+
+  //       // Call update track data function
+  //       await updateTrailTrack(trackData);
+  //     }
+  //   });
+  //   chrome.storage.local.set({ currentTourType: type, tourStep: step });
+  //   this.setState({ currentTourType: type, tourStep: step, tourSide });
+  // };
   tourManage = (step, type, tourSide) => {
     return new Promise((resolve, reject) => {
       chrome.storage.local.get(["isPreview", "userData"], async (items) => {
@@ -2934,7 +3029,6 @@ class DefaultButton extends React.PureComponent {
         }
       }
     );
-
     const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
     if (close === undefined) {
@@ -2970,79 +3064,121 @@ class DefaultButton extends React.PureComponent {
     };
 
     return new Promise((resolve, reject) => {
-      chrome.storage.local.get(["previewUserId"], async (items) => {
-        if (!items.previewUserId || items.previewUserId === "") {
-          const { currentTourType, tourType } = this.state;
-          if (
-            (currentTourType === "tooltip" ||
-              currentTourType === "audio" ||
-              currentTourType === "video" ||
-              currentTourType === "modal") &&
-            tourType === "preview"
-          ) {
-            if (this.state.trailList.length > 0) {
-              try {
-                const data = {
-                  trail_data_id: this.state.trailList[this.state.tourStep - 1]
-                    .trail_data_id,
-                  flag: "continue",
-                };
+      chrome.storage.local.get(
+        ["previewUserId", "isPreview"],
+        async (items) => {
+          if (!items.previewUserId || items.previewUserId === "") {
+            const { currentTourType, tourType } = this.state;
 
-                // Call update trail api to add flag into table
-                await updateTrailFlag(data);
-              } catch (err) {
-                console.log(err);
+            if (
+              (currentTourType === "tooltip" ||
+                currentTourType === "audio" ||
+                currentTourType === "video" ||
+                currentTourType === "modal") &&
+              tourType === "preview"
+            ) {
+              if (this.state.trailList.length > 0) {
+                if (!items.isPreview) {
+                  try {
+                    const data = {
+                      trail_data_id: this.state.trailList[
+                        this.state.tourStep - 1
+                      ].trail_data_id,
+                      flag: "continue",
+                    };
+
+                    // Call update trail api to add flag into table
+                    await updateTrailFlag(data);
+                  } catch (err) {
+                    console.log(err);
+                  }
+                }
+
+                // Remove elements
+                await removeThisElements();
+
+                // Call toggle function
+                chrome.storage.local.set({
+                  tourType: "",
+                  currentTourType: "",
+                  tourStep: "",
+                });
+                this.setState({
+                  web_url: "",
+                  tourType: "",
+                  currentTourType: "",
+                  tourStep: "",
+                  overlay: false,
+                  loading: false,
+                  draggable: false,
+                });
+                this.props.onChangeTourType("");
+                this.props.mainToggle();
               }
 
-              // Remove elements
-              await removeThisElements();
-
-              // Call toggle function
-              chrome.storage.local.set({
-                tourType: "",
-                currentTourType: "",
-                tourStep: "",
-              });
+              // // Remove elements
+              // await removeThisElements();
+            } else if (currentTourType === "preview" && tourType === "modal") {
+              this.props.mainToggle();
+              this.props.onChangeTourType("");
               this.setState({
                 web_url: "",
                 tourType: "",
                 currentTourType: "",
                 tourStep: "",
                 overlay: false,
+                createModalOpen: false,
                 loading: false,
+                stepType: "",
+                open: false,
                 draggable: false,
               });
-              this.props.onChangeTourType("");
+              chrome.storage.local.set({
+                tourType: "",
+                currentTourType: "",
+                tourStep: "",
+                stepType: "",
+              });
+            } else {
+              // Remove elements
+              await removeThisElements();
+
               this.props.mainToggle();
+              this.props.onChangeTourType("");
+              this.setState({
+                web_url: "",
+                tourType: "",
+                currentTourType: "",
+                tourStep: "",
+                overlay: false,
+                fileName: "",
+                loading: false,
+                stepType: "",
+                open: false,
+                draggable: false,
+              });
+              chrome.storage.local.set({
+                tourType: "",
+                currentTourType: "",
+                tourStep: "",
+                stepType: "",
+              });
             }
 
-            // // Remove elements
-            // await removeThisElements();
-          } else if (currentTourType === "preview" && tourType === "modal") {
-            this.props.mainToggle();
-            this.props.onChangeTourType("");
-            this.setState({
-              web_url: "",
-              tourType: "",
-              currentTourType: "",
-              tourStep: "",
-              overlay: false,
-              createModalOpen: false,
-              loading: false,
-              stepType: "",
-              open: false,
-              draggable: false,
-            });
-            chrome.storage.local.set({
-              tourType: "",
-              currentTourType: "",
-              tourStep: "",
-              stepType: "",
-            });
+            if (this.state.deleteModal.show) {
+              // Hide delete modal
+              this.onDeleteModalClose();
+            }
+
+            if (this.state.onDone) {
+              // Set onDone state
+              this.setState({ onDone: false });
+            }
+
+            resolve();
           } else {
             // Remove elements
             await removeThisElements();
-
             this.props.mainToggle();
             this.props.onChangeTourType("");
             this.setState({
@@ -3051,59 +3187,24 @@ class DefaultButton extends React.PureComponent {
               currentTourType: "",
               tourStep: "",
               overlay: false,
-              fileName: "",
               loading: false,
-              stepType: "",
-              open: false,
               draggable: false,
             });
             chrome.storage.local.set({
               tourType: "",
               currentTourType: "",
               tourStep: "",
-              stepType: "",
             });
+
+            if (this.state.onDone) {
+              // Set onDone state
+              this.setState({ onDone: false });
+            }
+
+            resolve();
           }
-
-          if (this.state.deleteModal.show) {
-            // Hide delete modal
-            this.onDeleteModalClose();
-          }
-
-          if (this.state.onDone) {
-            // Set onDone state
-            this.setState({ onDone: false });
-          }
-
-          resolve();
-        } else {
-          // Remove elements
-          await removeThisElements();
-          this.props.mainToggle();
-          this.props.onChangeTourType("");
-          this.setState({
-            web_url: "",
-            tourType: "",
-            currentTourType: "",
-            tourStep: "",
-            overlay: false,
-            loading: false,
-            draggable: false,
-          });
-          chrome.storage.local.set({
-            tourType: "",
-            currentTourType: "",
-            tourStep: "",
-          });
-
-          if (this.state.onDone) {
-            // Set onDone state
-            this.setState({ onDone: false });
-          }
-
-          resolve();
         }
-      });
+      );
     });
   };
 
@@ -3162,8 +3263,12 @@ class DefaultButton extends React.PureComponent {
       // Call clear toggle function
       await this.onClearToggle();
     } else {
+      chrome.storage.local.get(["isPreview"], (items) => {
+        if (!items.isPreview) {
+          chrome.storage.local.set({ closeContinue: true });
+        }
+      });
       // Show continue button
-      chrome.storage.local.set({ closeContinue: true });
 
       // Call back arrow click handler function
       await this.onBackArrowClickHandler(e, "close");
@@ -3283,6 +3388,7 @@ class DefaultButton extends React.PureComponent {
       stepType,
       onDone,
       draggable,
+      isDraggable,
       dragPosition,
     } = this.state;
 
@@ -3314,7 +3420,11 @@ class DefaultButton extends React.PureComponent {
       .getElementById("extension-div")
       .shadowRoot.querySelector(".sidepopup");
     if (sidepopup) {
-      if (tourType === "audio" || tourType === "video") {
+      if (
+        tourType === "audio" ||
+        tourType === "video" ||
+        tourType === "Make Edit"
+      ) {
         // Add white background
         sidepopup.style.background = "#ffffff";
       } else {
@@ -3704,15 +3814,149 @@ class DefaultButton extends React.PureComponent {
       );
     }
 
-    return (
-      <>
-        <style>{defaultButtonCss1}</style>
-        <style>{defaultButtonCss2}</style>
-        <style>{defaultButtonCss3}</style>
-        {}
+    let componentData = (
+      <div id="my-extension-defaultroot">
+        {/* Delete modal */}
+        {this.state.deleteModal.show && (
+          <TrailDeleteModal
+            deleteModal={this.state.deleteModal}
+            onDeleteModalClose={this.onDeleteModalClose}
+            onDeleteButtonClick={this.onDeleteButtonClick}
+          />
+        )}
 
+        {/* Send tip modal */}
+        {this.state.sendTipModal && (
+          <SendTipModal
+            sendTip={this.sendTip}
+            setError={this.state.setError}
+            isSuccess={this.state.isSuccess}
+            isLoading={this.state.isSuccess}
+            sendLoader={this.state.sendLoader}
+            sendTipModal={this.state.sendTipModal}
+            onSendTipModalClose={this.onSendTipModalClose}
+          />
+        )}
+
+        <div className="sidepanal adadad trail_sidepanel_overlay">
+          {createModalOpen && (
+            <CreateModalComponent
+              stepType={stepType}
+              open={createModalOpen}
+              toggle={this.onToggleCreateModal}
+              closeButtonHandler={this.onBackArrowClickHandler}
+              onSave={this.onSaveTrail}
+            />
+          )}
+          <div>
+            {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
+            {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
+            {currentTourType === "tooltip" &&
+              tourType === "preview" &&
+              !overlay &&
+              tourStep !== "" &&
+              tourUrl && (
+                <WebUserTour
+                  onDone={onDone}
+                  data={trailList}
+                  toggle={this.onClearToggle}
+                  tourStep={tourStep}
+                  tour={this.tourManage}
+                  closeButtonHandler={this.onCloseTooltipHandle}
+                  setLoadingState={this.setLoadingState}
+                  onNotFoundTarget={this.onNotFoundTarget}
+                  onSendTipModalOpen={this.onSendTipModalOpen}
+                  onChangeTourType={this.props.onChangeTourType}
+                  mainToggle={this.props.mainToggle}
+                />
+              )}
+            {currentTourType === "video" &&
+              tourType === "preview" &&
+              !overlay &&
+              tourStep !== "" &&
+              tourUrl && (
+                <VideoTour
+                  onDone={onDone}
+                  data={trailList}
+                  toggle={this.onClearToggle}
+                  tourStep={tourStep}
+                  tour={this.tourManage}
+                  tourSide={this.state.tourSide}
+                  closeButtonHandler={this.onCloseTooltipHandle}
+                  setLoadingState={this.setLoadingState}
+                />
+              )}
+            {currentTourType === "audio" &&
+              tourType === "preview" &&
+              !overlay &&
+              tourStep !== "" &&
+              tourUrl && (
+                <AudioTour
+                  onDone={onDone}
+                  data={trailList}
+                  toggle={this.onClearToggle}
+                  tourStep={tourStep}
+                  tour={this.tourManage}
+                  tourSide={this.state.tourSide}
+                  closeButtonHandler={this.onCloseTooltipHandle}
+                  setLoadingState={this.setLoadingState}
+                />
+              )}
+            {currentTourType === "modal" &&
+              tourType === "preview" &&
+              !overlay &&
+              tourStep !== "" &&
+              tourUrl && (
+                <PreviewModalComponent
+                  onDone={onDone}
+                  data={trailList}
+                  toggle={this.onClearToggle}
+                  tourStep={tourStep}
+                  tour={this.tourManage}
+                  tourSide={this.state.tourSide}
+                  closeButtonHandler={this.onCloseTooltipHandle}
+                  setLoadingState={this.setLoadingState}
+                  onSendTipModalOpen={this.onSendTipModalOpen}
+                />
+              )}
+            {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
+          </div>
+          <div
+            className={`sidepopup ${
+              openSidebar ? "open trail_builder_side_panel_open" : ""
+            }`}
+          >
+            <div className="space"></div>
+            {/* <div className="preview">.
+              Preview
+            </div>
+            <div className="createToolTip">.
+              Create Tool Tip
+            </div> */}
+
+            {sideBar}
+
+            {/* <div className="audio">.
+          Create Audio
+        </div>
+        <div className="savedTrails">.
+          Saved Trails
+        </div> */}
+            <div className="space"></div>
+          </div>
+          {this.state.dynamicPopupButton && (
+            <button className="menu pop" onClick={this.openPopup}>
+              <img alt="" src={require("./images/trailit_X_button_new.png")} />
+            </button>
+          )}
+        </div>
+      </div>
+    );
+
+    if (isDraggable) {
+      componentData = (
         <Draggable
-          disabled={!draggable}
+          disabled={!isDraggable}
           // onStart={ (data) => {
           // 	// console.log('drag start data', data);
           // } }
@@ -3728,146 +3972,158 @@ class DefaultButton extends React.PureComponent {
           position={null}
           // // defaultPosition={ { x: 0, y: 0 } }
         >
-          <div id="my-extension-defaultroot">
-            {/* Delete modal */}
-            {this.state.deleteModal.show && (
-              <TrailDeleteModal
-                deleteModal={this.state.deleteModal}
-                onDeleteModalClose={this.onDeleteModalClose}
-                onDeleteButtonClick={this.onDeleteButtonClick}
-              />
-            )}
-
-            {/* Send tip modal */}
-            {this.state.sendTipModal && (
-              <SendTipModal
-                sendTip={this.sendTip}
-                setError={this.state.setError}
-                isSuccess={this.state.isSuccess}
-                isLoading={this.state.isSuccess}
-                sendLoader={this.state.sendLoader}
-                sendTipModal={this.state.sendTipModal}
-                onSendTipModalClose={this.onSendTipModalClose}
-              />
-            )}
-
-            <div className="sidepanal adadad trail_sidepanel_overlay">
-              {createModalOpen && (
-                <CreateModalComponent
-                  stepType={stepType}
-                  open={createModalOpen}
-                  toggle={this.onToggleCreateModal}
-                  closeButtonHandler={this.onBackArrowClickHandler}
-                  onSave={this.onSaveTrail}
+          <div>
+            <div id="my-extension-defaultroot">
+              {/* Delete modal */}
+              {this.state.deleteModal.show && (
+                <TrailDeleteModal
+                  deleteModal={this.state.deleteModal}
+                  onDeleteModalClose={this.onDeleteModalClose}
+                  onDeleteButtonClick={this.onDeleteButtonClick}
                 />
               )}
-              <div>
-                {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
-                {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
-                {currentTourType === "tooltip" &&
-                  tourType === "preview" &&
-                  !overlay &&
-                  tourStep !== "" &&
-                  tourUrl && (
-                    <WebUserTour
-                      onDone={onDone}
-                      data={trailList}
-                      toggle={this.onClearToggle}
-                      tourStep={tourStep}
-                      tour={this.tourManage}
-                      closeButtonHandler={this.onCloseTooltipHandle}
-                      setLoadingState={this.setLoadingState}
-                      onNotFoundTarget={this.onNotFoundTarget}
-                      onSendTipModalOpen={this.onSendTipModalOpen}
-                      onChangeTourType={this.props.onChangeTourType}
-                      mainToggle={this.props.mainToggle}
-                    />
-                  )}
-                {currentTourType === "video" &&
-                  tourType === "preview" &&
-                  !overlay &&
-                  tourStep !== "" &&
-                  tourUrl && (
-                    <VideoTour
-                      onDone={onDone}
-                      data={trailList}
-                      toggle={this.onClearToggle}
-                      tourStep={tourStep}
-                      tour={this.tourManage}
-                      tourSide={this.state.tourSide}
-                      closeButtonHandler={this.onCloseTooltipHandle}
-                      setLoadingState={this.setLoadingState}
-                    />
-                  )}
-                {currentTourType === "audio" &&
-                  tourType === "preview" &&
-                  !overlay &&
-                  tourStep !== "" &&
-                  tourUrl && (
-                    <AudioTour
-                      onDone={onDone}
-                      data={trailList}
-                      toggle={this.onClearToggle}
-                      tourStep={tourStep}
-                      tour={this.tourManage}
-                      tourSide={this.state.tourSide}
-                      closeButtonHandler={this.onCloseTooltipHandle}
-                      setLoadingState={this.setLoadingState}
-                    />
-                  )}
-                {currentTourType === "modal" &&
-                  tourType === "preview" &&
-                  !overlay &&
-                  tourStep !== "" &&
-                  tourUrl && (
-                    <PreviewModalComponent
-                      onDone={onDone}
-                      data={trailList}
-                      toggle={this.onClearToggle}
-                      tourStep={tourStep}
-                      tour={this.tourManage}
-                      tourSide={this.state.tourSide}
-                      closeButtonHandler={this.onCloseTooltipHandle}
-                      setLoadingState={this.setLoadingState}
-                      onSendTipModalOpen={this.onSendTipModalOpen}
-                    />
-                  )}
-                {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
-              </div>
-              <div
-                className={`sidepopup ${
-                  openSidebar ? "open trail_builder_side_panel_open" : ""
-                }`}
-              >
-                <div className="space"></div>
-                {/* <div className="preview">.
-									Preview
-								</div>
-								<div className="createToolTip">.
-									Create Tool Tip
-								</div> */}
 
-                {sideBar}
-
-                {/* <div className="audio">.
-							Create Audio
-						</div>
-						<div className="savedTrails">.
-							Saved Trails
-						</div> */}
-                <div className="space"></div>
-              </div>
-              {this.state.dynamicPopupButton && (
-                <button className="menu pop" onClick={this.openPopup}>
-                  <img
-                    alt=""
-                    src={require("./images/trailit_X_button_new.png")}
-                  />
-                </button>
+              {/* Send tip modal */}
+              {this.state.sendTipModal && (
+                <SendTipModal
+                  sendTip={this.sendTip}
+                  setError={this.state.setError}
+                  isSuccess={this.state.isSuccess}
+                  isLoading={this.state.isSuccess}
+                  sendLoader={this.state.sendLoader}
+                  sendTipModal={this.state.sendTipModal}
+                  onSendTipModalClose={this.onSendTipModalClose}
+                />
               )}
+
+              <div className="sidepanal adadad trail_sidepanel_overlay">
+                {createModalOpen && (
+                  <CreateModalComponent
+                    stepType={stepType}
+                    open={createModalOpen}
+                    toggle={this.onToggleCreateModal}
+                    closeButtonHandler={this.onBackArrowClickHandler}
+                    onSave={this.onSaveTrail}
+                  />
+                )}
+                <div>
+                  {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
+                  {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
+                  {currentTourType === "tooltip" &&
+                    tourType === "preview" &&
+                    !overlay &&
+                    tourStep !== "" &&
+                    tourUrl && (
+                      <WebUserTour
+                        onDone={onDone}
+                        data={trailList}
+                        toggle={this.onClearToggle}
+                        tourStep={tourStep}
+                        tour={this.tourManage}
+                        closeButtonHandler={this.onCloseTooltipHandle}
+                        setLoadingState={this.setLoadingState}
+                        onNotFoundTarget={this.onNotFoundTarget}
+                        onSendTipModalOpen={this.onSendTipModalOpen}
+                        onChangeTourType={this.props.onChangeTourType}
+                        mainToggle={this.props.mainToggle}
+                      />
+                    )}
+                  {currentTourType === "video" &&
+                    tourType === "preview" &&
+                    !overlay &&
+                    tourStep !== "" &&
+                    tourUrl && (
+                      <VideoTour
+                        onDone={onDone}
+                        data={trailList}
+                        toggle={this.onClearToggle}
+                        tourStep={tourStep}
+                        tour={this.tourManage}
+                        tourSide={this.state.tourSide}
+                        closeButtonHandler={this.onCloseTooltipHandle}
+                        setLoadingState={this.setLoadingState}
+                      />
+                    )}
+                  {currentTourType === "audio" &&
+                    tourType === "preview" &&
+                    !overlay &&
+                    tourStep !== "" &&
+                    tourUrl && (
+                      <AudioTour
+                        onDone={onDone}
+                        data={trailList}
+                        toggle={this.onClearToggle}
+                        tourStep={tourStep}
+                        tour={this.tourManage}
+                        tourSide={this.state.tourSide}
+                        closeButtonHandler={this.onCloseTooltipHandle}
+                        setLoadingState={this.setLoadingState}
+                      />
+                    )}
+                  {currentTourType === "modal" &&
+                    tourType === "preview" &&
+                    !overlay &&
+                    tourStep !== "" &&
+                    tourUrl && (
+                      <PreviewModalComponent
+                        onDone={onDone}
+                        data={trailList}
+                        toggle={this.onClearToggle}
+                        tourStep={tourStep}
+                        tour={this.tourManage}
+                        tourSide={this.state.tourSide}
+                        closeButtonHandler={this.onCloseTooltipHandle}
+                        setLoadingState={this.setLoadingState}
+                        onSendTipModalOpen={this.onSendTipModalOpen}
+                      />
+                    )}
+                  {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
+                </div>
+                <div
+                  className={`sidepopup ${
+                    openSidebar ? "open trail_builder_side_panel_open" : ""
+                  }`}
+                >
+                  <div className="space"></div>
+                  {/* <div className="preview">.
+                Preview
+              </div>
+              <div className="createToolTip">.
+                Create Tool Tip
+              </div> */}
+
+                  {sideBar}
+
+                  {/* <div className="audio">.
+            Create Audio
+          </div>
+          <div className="savedTrails">.
+            Saved Trails
+          </div> */}
+                  <div className="space"></div>
+                </div>
+                {this.state.dynamicPopupButton && (
+                  <button className="menu pop" onClick={this.openPopup}>
+                    <img
+                      alt=""
+                      src={require("./images/trailit_X_button_new.png")}
+                    />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </Draggable>
+      );
+    }
+
+    return (
+      <>
+        <style>{defaultButtonCss1}</style>
+        <style>{defaultButtonCss2}</style>
+        <style>{defaultButtonCss3}</style>
+
+        {componentData}
       </>
     );
   }

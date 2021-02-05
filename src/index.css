@@ -1,6 +1,5 @@
 /* @import url('https://fonts.googleapis.com/css?family=Lato|Raleway:400,500,700&display=swap'); */
 
-
 :root {
   --color-white: #ffffff;
   --color: #fb542b;
@@ -21,7 +20,7 @@ body {
 }
 
 #extension-div {
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .tr_wrapper {
@@ -38,7 +37,9 @@ body {
   width: 100%;
 }
 
-.tr_wrapper .ant-form-item-control .ant-form-item-explain.ant-form-item-explain-error {
+.tr_wrapper
+  .ant-form-item-control
+  .ant-form-item-explain.ant-form-item-explain-error {
   color: #ff4d4f;
 }
 
@@ -55,7 +56,7 @@ body {
 }
 
 .tr_wrapper .ant-avatar {
-  border: 2px solid  #fb542b;
+  border: 2px solid #fb542b;
   margin: 0;
 }
 
@@ -63,7 +64,7 @@ body {
   font-size: 24px;
   line-height: 30px;
   font-weight: 700;
-  color:  #fb542b;
+  color: #fb542b;
   margin-bottom: 10px;
   text-align: center;
 }
@@ -85,7 +86,7 @@ body {
   font-size: 14px;
   line-height: 22px;
   font-weight: 400;
-  color:  #fb542b;
+  color: #fb542b;
 }
 
 .tr_wrapper .tr_link.gray {
@@ -177,7 +178,7 @@ body {
   font-size: 14px;
   line-height: 22px;
   font-weight: 700;
-  color:  #fb542b;
+  color: #fb542b;
   text-transform: uppercase;
   margin-bottom: 15px;
 }
@@ -197,9 +198,9 @@ body {
   font-size: 14px;
   line-height: 22px;
   font-weight: 500;
-  color:  #ffffff;
+  color: #ffffff;
   border: none;
-  background:  #fb542b;
+  background: #fb542b;
   padding: 0 22px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -211,9 +212,9 @@ body {
   font-size: 14px;
   line-height: 22px;
   font-weight: 500;
-  background:  #ffffff;
-  border: 1px solid  #fb542b;
-  color:  #fb542b;
+  background: #ffffff;
+  border: 1px solid #fb542b;
+  color: #fb542b;
   padding: 0 20px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -222,9 +223,9 @@ body {
 }
 
 .tr_wrapper .tr_button1:hover {
-  background:  #fb542b;
-  color:  #ffffff;
-  border-color:  #fb542b;
+  background: #fb542b;
+  color: #ffffff;
+  border-color: #fb542b;
 }
 
 .tr_wrapper .tr_button1.capitalize {
@@ -233,7 +234,7 @@ body {
 
 .tr_wrapper .bottom_links {
   height: 46px;
-  background:  #fb542b;
+  background: #fb542b;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -254,7 +255,7 @@ body {
   font-size: 16px;
   line-height: 22px;
   font-weight: 500;
-  color:  #ffffff;
+  color: #ffffff;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -309,9 +310,9 @@ button:focus {
 
 .trail_tooltip .ant-btn.ant-btn-primary,
 #my-extension-defaultroot .optionBtn button.ant-btn {
-  background:  #ffffff;
-  color:  #fb542b;
-  border: 1px solid  #fb542b;
+  background: #ffffff;
+  color: #fb542b;
+  border: 1px solid #fb542b;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
@@ -322,24 +323,24 @@ button:focus {
 
 .trail_tooltip .ant-btn.ant-btn-primary:hover,
 #my-extension-defaultroot .optionBtn button.ant-btn:hover {
-  background:  #fb542b;
-  border: 1px solid  #fb542b;
-  color:  #ffffff;
+  background: #fb542b;
+  border: 1px solid #fb542b;
+  color: #ffffff;
 }
 
 .trail_tooltip_done .ant-btn.ant-btn-primary {
-  background:  #ffffff;
-  color:  #fb542b;
-  border: 1px solid  #fb542b !important;
+  background: #ffffff;
+  color: #fb542b;
+  border: 1px solid #fb542b !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
 }
 
 .trail_tooltip_done .ant-btn.ant-btn-primary:hover {
-  background:  #fb542b;
-  border: 1px solid  #fb542b !important;
-  color:  #ffffff;
+  background: #fb542b;
+  border: 1px solid #fb542b !important;
+  color: #ffffff;
 }
 
 .trail_tooltip .ant-popover-inner-content {
@@ -359,7 +360,7 @@ button:focus {
 .trail_tooltip .popover {
   border: 1px solid rgba(0, 0, 0, 0.2);
   z-index: 999999999;
-  background:  #ffffff;
+  background: #ffffff;
   top: -10px !important;
   width: 300px !important;
 }
@@ -438,21 +439,21 @@ button:focus {
 #my-extension-defaultroot .video-wrap .title {
   font-size: 40px;
   text-align: center;
-  color:  #ffffff;
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
 #my-extension-defaultroot .video-wrap .contentTitle {
   font-size: 30px;
   text-align: center;
-  color:  #ffffff;
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
 #my-extension-defaultroot .video-wrap .description {
   font-size: 25px;
   text-align: center;
-  color:  #ffffff;
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
@@ -463,12 +464,12 @@ button:focus {
 
 .bottom-links a {
   font-size: 30px !important;
-  color:  #ffffff !important;
+  color: #ffffff !important;
   margin: 0 5px !important;
 }
 
 .bottom-links a:hover {
-  color:  #ffffff !important;
+  color: #ffffff !important;
 }
 
 .trail_sidepanel_overlay {
@@ -492,7 +493,7 @@ button:focus {
   content: "";
   bottom: 1px;
   border-width: 0.5rem 0.5rem 0;
-  border-top-color:  #ffffff;
+  border-top-color: #ffffff;
 }
 
 .trail_tooltip .popover .arrow::after,
@@ -522,7 +523,7 @@ button:focus {
 
 .trail_tooltip_done .popover {
   z-index: 2147483647;
-  background:  #ffffff !important;
+  background: #ffffff !important;
   border-radius: 5px;
 }
 
@@ -561,7 +562,7 @@ button:focus {
   left: 50%;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  border-top: 8px solid  #ffffff;
+  border-top: 8px solid #ffffff;
 }
 
 .trail_tooltip_done .popover-body div {
@@ -636,7 +637,7 @@ html #site-wrap {
 }
 
 .tr_wrapper .tr_button:hover {
-  background:  #ff7958;
+  background: #ff7958;
 }
 
 * {
@@ -646,22 +647,22 @@ html #site-wrap {
 }
 
 #my-extension-root .wrap .blob:hover .svg_btn2 {
-  fill:  #ffffff;
-  stroke:  #ffffff;
+  fill: #ffffff;
+  stroke: #ffffff;
 }
 
 #my-extension-root .wrap .blob:hover .svg_btn {
-  fill:  #ffffff !important;
-  stroke:  #fb542b;
+  fill: #ffffff !important;
+  stroke: #fb542b;
 }
 
 #my-extension-root .wrap .blob:hover #Ellipse_101 {
-  fill:  #fb542b;
+  fill: #fb542b;
 }
 
 #my-extension-root .wrap .blob:hover span {
-  background:  #fb542b;
-  color:  #ffffff;
+  background: #fb542b;
+  color: #ffffff;
 }
 
 .wrap.open .menu img {
@@ -669,7 +670,7 @@ html #site-wrap {
 }
 
 .trail_tooltip .ant-form-item-control .ant-input {
-  background:  #ffffff;
+  background: #ffffff;
   box-shadow: none;
 }
 
@@ -693,7 +694,7 @@ html #site-wrap {
 .trailMain textarea {
   border: 1px solid #dddddd !important;
   box-shadow: none !important;
-  background:  #ffffff !important;
+  background: #ffffff !important;
   color: #9b9b9b !important;
   font-size: 14px !important;
   font-style: normal !important;
@@ -710,14 +711,14 @@ html #site-wrap {
 .trailMain input[type="password"]:focus,
 .trailMain textarea:focus,
 #my-extension-defaultroot *:focus {
-  border: 1px solid  #fb542b !important;
+  border: 1px solid #fb542b !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
 }
 
 .tr_wrapper .bottom_links a:hover {
-  background:  #ff7958;
+  background: #ff7958;
 }
 
 .trail_tooltip .popover-body button {
@@ -1988,14 +1989,14 @@ button {
 
 .tr_wrapper .ant-avatar {
   margin-bottom: 15px;
-  border: 2px solid  #fb542b;
+  border: 2px solid #fb542b;
 }
 
 .tr_wrapper .tr_title {
   font-size: 24px;
   line-height: 30px;
   font-weight: 700;
-  color:  #fb542b;
+  color: #fb542b;
   margin-bottom: 10px;
 }
 
@@ -2003,7 +2004,7 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: normal;
-  color:  #333333;
+  color: #333333;
   margin-bottom: 20px;
 }
 
@@ -2015,11 +2016,11 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: 400;
-  color:  #fb542b;
+  color: #fb542b;
 }
 
 .tr_wrapper .tr_link.gray {
-  color:  #333333;
+  color: #333333;
 }
 
 .tr_wrapper .back {
@@ -2103,7 +2104,7 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: 700;
-  color:  #fb542b;
+  color: #fb542b;
   text-transform: uppercase;
   margin-bottom: 15px;
 }
@@ -2123,9 +2124,9 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: 500;
-  color:  #ffffff;
+  color: #ffffff;
   border: none;
-  background:  #fb542b;
+  background: #fb542b;
   padding: 0 22px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -2137,9 +2138,9 @@ button {
   font-size: 14px;
   line-height: 22px;
   font-weight: 500;
-  background:  #ffffff;
-  border: 1px solid  #fb542b;
-  color:  #fb542b;
+  background: #ffffff;
+  border: 1px solid #fb542b;
+  color: #fb542b;
   padding: 0 20px;
   border-radius: 5px;
   -webkit-border-radius: 5px;
@@ -2148,8 +2149,8 @@ button {
 }
 
 .tr_wrapper .tr_button1:hover {
-  background:  #fb542b;
-  color:  #ffffff;
+  background: #fb542b;
+  color: #ffffff;
 }
 
 .tr_wrapper .tr_button1.capitalize {
@@ -2158,7 +2159,7 @@ button {
 
 .tr_wrapper .bottom_links {
   height: 63px;
-  background:  #fb542b;
+  background: #fb542b;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2179,7 +2180,7 @@ button {
   font-size: 16px;
   line-height: 22px;
   font-weight: 500;
-  color:  #ffffff;
+  color: #ffffff;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -2252,9 +2253,9 @@ button:focus {
 #my-extension-defaultroot .ant-btn.ant-btn-primary,
 .trail_tooltip .ant-btn.ant-btn-primary,
 #my-extension-defaultroot .optionBtn button.ant-btn {
-  background:  #fb542b !important;
-  color:  #ffffff;
-  border: 1px solid  #fb542b !important;
+  background: #fb542b !important;
+  color: #ffffff;
+  border: 1px solid #fb542b !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
@@ -2281,15 +2282,15 @@ button:focus {
 .trail_tooltip .ant-btn.ant-btn-primary:hover,
 .trail_tooltip_done .ant-btn.ant-btn-primary:hover,
 #my-extension-defaultroot .optionBtn button.ant-btn:hover {
-  background:  #ffffff !important;
-  border: 1px solid  #fb542b !important;
-  color:  #fb542b !important;
+  background: #ffffff !important;
+  border: 1px solid #fb542b !important;
+  color: #fb542b !important;
 }
 
 .trail_tooltip_done .ant-btn.ant-btn-primary {
-  background:  #fb542b !important;
-  color:  #ffffff;
-  border: 1px solid  #fb542b !important;
+  background: #fb542b !important;
+  color: #ffffff;
+  border: 1px solid #fb542b !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
@@ -2313,7 +2314,7 @@ button:focus {
 
 .trail_tooltip .popover {
   z-index: 9999999999;
-  background:  #ffffff;
+  background: #ffffff;
   width: 300px !important;
   max-width: 300px !important;
   height: 297px !important;
@@ -2403,21 +2404,21 @@ button:focus {
 #my-extension-defaultroot .video-wrap_tooltip .title {
   font-size: 40px;
   text-align: center;
-  color:  #ffffff;
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
 #my-extension-defaultroot .video-wrap_tooltip .contentTitle {
   font-size: 30px;
   text-align: center;
-  color:  #ffffff;
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
 #my-extension-defaultroot .video-wrap_tooltip .description {
   font-size: 25px;
   text-align: center;
-  color:  #ffffff;
+  color: #ffffff;
   margin-bottom: 30px;
 }
 
@@ -2442,12 +2443,12 @@ button:focus {
 
 .bottom-links a {
   font-size: 30px !important;
-  color:  #ffffff !important;
+  color: #ffffff !important;
   margin: 0 5px !important;
 }
 
 .bottom-links a:hover {
-  color:  #ffffff !important;
+  color: #ffffff !important;
 }
 
 .trail_tooltip .popover-body {
@@ -2468,7 +2469,7 @@ button:focus {
   content: "";
   bottom: 1px;
   border-width: 0.5rem 0.5rem 0;
-  border-top-color:  #ffffff;
+  border-top-color: #ffffff;
 }
 
 .trail_tooltip .popover .arrow::after,
@@ -2499,7 +2500,7 @@ button:focus {
 
 .trail_tooltip_done .popover {
   z-index: 9999999999;
-  background:  #ffffff !important;
+  background: #ffffff !important;
   border-radius: 5px;
   padding: 0 !important;
   display: initial !important;
@@ -2516,7 +2517,7 @@ button:focus {
   font-weight: 700 !important;
   font-family: "Lato", sans-serif !important;
   margin: 0px !important;
-  color:  #333333 !important;
+  color: #333333 !important;
   width: 100%;
   text-align: center;
   box-sizing: border-box;
@@ -2537,11 +2538,11 @@ button:focus {
   font-family: "Lato", sans-serif !important;
   font-size: 14px !important;
   line-height: 20px !important;
-  color:  #333333 !important;
+  color: #333333 !important;
 }
 
 .trail_tooltip_done .popover-body a:hover {
-  color:  #333333 !important;
+  color: #333333 !important;
 }
 
 .trail_tooltip_done .arrow_down {
@@ -2552,7 +2553,7 @@ button:focus {
   left: 50%;
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
-  border-top: 8px solid  #ffffff;
+  border-top: 8px solid #ffffff;
 }
 
 .trail_tooltip_done .popover-body div {
@@ -2571,7 +2572,7 @@ button:focus {
   height: 28px !important;
   min-width: 82px !important;
   margin-left: 10px !important;
-  background:  #ffffff !important;
+  background: #ffffff !important;
   border-radius: 3px !important;
   -webkit-border-radius: 3px !important;
   line-height: 28px;
@@ -2579,8 +2580,8 @@ button:focus {
 }
 
 .trail_tooltip_done .popover-body button:hover {
-  background:  #ffffff !important;
-  color:  #fb542b !important;
+  background: #ffffff !important;
+  color: #fb542b !important;
 }
 
 .trail_tooltip_done .btn-wrap {
@@ -2665,7 +2666,7 @@ html #site-wrap {
 }
 
 .tr_wrapper .tr_button:hover {
-  background:  #ff7958;
+  background: #ff7958;
 }
 
 * {
@@ -2675,26 +2676,26 @@ html #site-wrap {
 }
 
 #my-extension-root .wrap .blob:hover .svg_btn2 {
-  fill:  #ffffff;
-  stroke:  #ffffff;
+  fill: #ffffff;
+  stroke: #ffffff;
 }
 
 #my-extension-root .wrap .blob:hover .svg_btn {
-  fill:  #ffffff !important;
-  stroke:  #fb542b;
+  fill: #ffffff !important;
+  stroke: #fb542b;
 }
 
 #my-extension-root .wrap .blob:hover #Ellipse_101 {
-  fill:  #fb542b;
+  fill: #fb542b;
 }
 
 #my-extension-root .wrap .blob:hover span {
-  background:  #fb542b;
-  color:  #ffffff;
+  background: #fb542b;
+  color: #ffffff;
 }
 
 .trail_tooltip .ant-form-item-control .ant-input {
-  background:  #ffffff;
+  background: #ffffff;
   box-shadow: none;
 }
 
@@ -2720,7 +2721,7 @@ html #site-wrap {
 .ck-input {
   border: 1px solid #dddddd !important;
   box-shadow: none !important;
-  background:  #ffffff !important;
+  background: #ffffff !important;
   color: #000 !important;
   font-size: 14px !important;
   font-style: normal !important;
@@ -2759,7 +2760,7 @@ html #site-wrap {
 .trailMain input[type="password"]:focus,
 .trailMain textarea:focus,
 #my-extension-defaultroot *:focus {
-  border: 1px solid  #fb542b !important;
+  border: 1px solid #fb542b !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
@@ -2767,7 +2768,7 @@ html #site-wrap {
 }
 
 .tr_wrapper .bottom_links a:hover {
-  background:  #ff7958;
+  background: #ff7958;
 }
 
 .trail_tooltip .popover-body button,
@@ -3201,7 +3202,7 @@ textarea.ant-input {
   padding: 0;
   width: 100%;
   height: 100%;
-  background:  #ffffff;
+  background: #ffffff;
   box-shadow: none;
 }
 
@@ -3428,7 +3429,7 @@ textarea.ant-input {
   align-items: center;
   justify-content: center;
   padding: 15px;
-  background:  #333333;
+  background: #333333;
 }
 
 .tr_audioplayer-playing.tr_audioplayer-playpause a:before,
@@ -3612,23 +3613,25 @@ textarea.ant-input {
 }
 
 .trlt_setting_btn {
-  color:  #fb542b;
+  color: #fb542b;
   font-size: 14px;
   font-family: "Lato", sans-serif !important;
 }
 
 .trlt_setting_btn:hover {
-  color:  #333333;
+  color: #333333;
 }
 
 .trlt_setting {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  /* justify-content: center;
+  align-items: center; */
+  margin-top: 10px;
 }
 
 .trlt_setting span {
-  color:  #333333;
+  color: var(--white);
   font-size: 14px;
   font-family: "Lato", sans-serif !important;
   padding: 0 10px 0 0;
@@ -3780,7 +3783,7 @@ textarea.ant-input {
 
 .tr_select_type .tr_select {
   margin-bottom: 5px;
-  color:  #333333;
+  color: #333333;
   font-size: 14px;
   font-family: "Lato", sans-serif !important;
 }
@@ -3835,7 +3838,7 @@ textarea.ant-input {
 .preview-title {
   text-align: center;
   margin: 10px 0;
-  color:  #333333;
+  color: #333333;
   font-size: 14px;
   font-family: "Lato", sans-serif !important;
 }
@@ -3855,7 +3858,7 @@ textarea.ant-input {
 
 .trail_tooltip_done .popover-body div[class*="tr_audioplayer-"],
 .trail_tooltip_done .popover-body div.volume {
-  color:  #ffffff !important;
+  color: #ffffff !important;
   font-family: "Lato", sans-serif !important;
 }
 
@@ -3988,7 +3991,7 @@ textarea.ant-input {
   left: 15px;
   max-width: 300px;
   z-index: 99;
-  color:  #ffffff !important;
+  color: #ffffff !important;
   width: auto;
   text-align: left;
 }
@@ -4096,7 +4099,7 @@ textarea.ant-input {
 }
 
 .ck.ck-content.ck-editor__editable.ck-rounded-corners.ck-editor__editable_inline.ck-focused {
-  border-color:  #fb542b;
+  border-color: #fb542b;
   outline: none;
 }
 
@@ -4330,7 +4333,7 @@ span.ck.ck-toolbar__separator {
 #my-extension-defaultroot .sidepopup.open .trial_spinner .ellipse {
   width: 100%;
   height: 100%;
-  background-color:  #fb542b;
+  background-color: #fb542b;
   border-radius: 50%;
   -webkit-animation: ellipse-animation 2.4s cubic-bezier(0, -0.26, 0.32, 1.22)
     0s infinite !important;
@@ -5147,7 +5150,7 @@ button.ant-btn.trial_button_close.ant-btn-link i {
   font-weight: 700 !important;
   font-family: "Lato", sans-serif !important;
   margin: 0px !important;
-  color:  #333333 !important;
+  color: #333333 !important;
   width: 100%;
   text-align: center;
   box-sizing: border-box;
@@ -5165,11 +5168,11 @@ button.ant-btn.trial_button_close.ant-btn-link i {
   font-family: "Lato", sans-serif !important;
   font-size: 14px !important;
   line-height: 20px !important;
-  color:  #333333 !important;
+  color: #333333 !important;
 }
 
 .trail_preview_modal .trail_modal_content a:hover {
-  color:  #333333 !important;
+  color: #333333 !important;
 }
 
 .trail_preview_modal .modal-content {
@@ -5243,7 +5246,7 @@ button.ck-button:not(.s-btn):hover {
   color: 999;
 }
 .tr_input:focus {
-  border-color:  #fb542b !important;
+  border-color: #fb542b !important;
   box-shadow: none !important;
   outline: none !important;
 }
@@ -5265,7 +5268,7 @@ button.ck-button:not(.s-btn):hover {
   line-height: 20px;
 }
 .tr_new_trail_create_modal .tr_tab.tr_active {
-  color:  #fb542b !important;
+  color: #fb542b !important;
   text-decoration: underline;
 }
 .tr_new_trail_create_form .tr_input {
@@ -5466,4 +5469,27 @@ ul.tr_notification_bx.tr_list {
 }
 .trial_modal_show .modal-dialog .modal-content .modal-header {
   border-radius: 10px !important;
+}
+
+#extension-div::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  /* background-color: #f5f5f5; */
+  background-color: transparent;
+  width: 0;
+}
+
+#extension-div::-webkit-scrollbar {
+  width: 8px;
+  /* background-color: #f5f5f5; */
+  background-color: transparent;
+  width: 0;
+}
+
+#extension-div::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  /* background-color: #555; */
+  background-color: transparent;
+  width: 0;
 }
