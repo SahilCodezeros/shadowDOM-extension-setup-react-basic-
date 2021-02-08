@@ -25,7 +25,7 @@ class TrailSetting extends Component {
     $(document).ready(() => {
       const modalDiv = document
         .getElementById("extension-div")
-        .shadowRoot.querySelector(".trail_create_modal");
+        .shadowRoot.querySelector(".trail_setting_modal");
       if (modalDiv) {
         if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
           modalDiv.parentNode.parentNode.parentNode.setAttribute(
@@ -41,7 +41,7 @@ class TrailSetting extends Component {
         centered={true}
         toggle={this.hideModal}
         isOpen={this.props.show}
-        className="tr_modal trail_create_modal"
+        className="tr_modal trail_create_modal trail_setting_modal"
         container={document.getElementById("extension-div").shadowRoot}
       >
         <ModalHeader className="tr_modal_trail_modal_header">

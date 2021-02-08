@@ -1473,6 +1473,7 @@ class DefaultButton extends React.PureComponent {
       draggable: true,
       dragPosition: { x: 0, y: 0 },
       dynamicPopupButton: true,
+      trailName: "",
     };
 
     this.onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
@@ -1687,7 +1688,12 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      // console.log("default button changes", changes);
+      console.log("changes", changes);
+      if (changes.trail_name) {
+        // Set state
+        this.setState({ trailName: changes.trail_name.newValue });
+      }
+
       if (changes.isDraggable) {
         // Set is draggable state
         this.setState({ isDraggable: changes.isDraggable.newValue });
@@ -1818,10 +1824,35 @@ class DefaultButton extends React.PureComponent {
           removeTrailitLogo();
         }
       }
+
+      // console.log("changes", changes);
+
+      // if (
+      //   changes.tourType &&
+      //   (changes.tourType.newValue === "audio" ||
+      //     changes.tourType.newValue === "video" ||
+      //     changes.tourType.newValue === "Make Edit")
+      // ) {
+      //   const sidepopup = document
+      //     .getElementById("extension-div")
+      //     .shadowRoot.querySelector(".sidepopup");
+      //   console.log("sidepopup", sidepopup);
+      //   if (sidepopup) {
+      //     // Add white background
+      //     sidepopup.style.background = "#ffffff";
+      //   }
+      // } else {
+      //   const sidepopup = document
+      //     .getElementById("extension-div")
+      //     .shadowRoot.querySelector(".sidepopup");
+      //   if (sidepopup) {
+      //     // Add white background
+      //     sidepopup.style.background = "transparent";
+      //   }
+      // }
     });
 
     chrome.storage.local.get(["isPreview", "isDraggable"], (items) => {
-      // console.log("items.isDraggable", items.isDraggable);
       if (items.isPreview) {
         this.setState({ dynamicPopupButton: false });
       }
@@ -1830,7 +1861,6 @@ class DefaultButton extends React.PureComponent {
         // Set draggable state
         this.setState({
           isDraggable: items.isDraggable,
-          dragPosition: { x: 0, y: 0 },
         });
       }
     });
@@ -2180,13 +2210,19 @@ class DefaultButton extends React.PureComponent {
         "loading",
         "MobileTargetNotFound",
         "isDraggable",
+        "trail_name",
       ],
       async function (items) {
+        console.log("items", items);
+        if (items.trail_name) {
+          obj.trail_name = items.trail_name;
+        }
+
         if (items.followData) {
           obj.followingData = items.followData;
         }
 
-        if (items.isDraggable) {
+        if (items.isDraggable !== undefined && items.isDraggable !== null) {
           obj.isDraggable = items.isDraggable;
         }
 
@@ -2290,6 +2326,7 @@ class DefaultButton extends React.PureComponent {
           saveSort: items.saveSort ? items.saveSort : false,
           loading: obj.loading ? obj.loading : false,
           isDraggable: obj.isDraggable ? obj.isDraggable : false,
+          trailName: obj.trail_name ? obj.trail_name : "",
           // publishButtonShow: localStorageCount && +localStorageCount !== trailListCount
         });
 
@@ -2617,6 +2654,9 @@ class DefaultButton extends React.PureComponent {
    * on change input value
    */
   onChangeToInput = (e) => {
+    e.stopPropagation();
+
+    // Set state
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -3380,16 +3420,13 @@ class DefaultButton extends React.PureComponent {
       web_url,
       overlay,
       follow,
-      publishLoader,
       fileName,
       fileLoading,
       createModalOpen,
-      loading,
       stepType,
       onDone,
-      draggable,
       isDraggable,
-      dragPosition,
+      trailName,
     } = this.state;
 
     const localStorageCount = localStorage.getItem(
@@ -3426,9 +3463,13 @@ class DefaultButton extends React.PureComponent {
         tourType === "Make Edit"
       ) {
         // Add white background
-        sidepopup.style.background = "#ffffff";
-      } else {
-        // Add white background
+        sidepopup.style.background = "white";
+      } else if (
+        tourType === "modal" ||
+        tourType === "tooltip" ||
+        tourType === "preview"
+      ) {
+        // Add transparent background
         sidepopup.style.background = "transparent";
       }
     }
@@ -3493,16 +3534,16 @@ class DefaultButton extends React.PureComponent {
     // console.log('currentTourType', currentTourType);
     // console.log('tourType', tourType);
 
-    if (!draggable) {
-      // console.log('hiii');
-      const menuButton = document
-        .getElementById("extension-div")
-        .shadowRoot.getElementById("my-extension-defaultroot");
+    // if (!draggable) {
+    //   // console.log('hiii');
+    //   const menuButton = document
+    //     .getElementById("extension-div")
+    //     .shadowRoot.getElementById("my-extension-defaultroot");
 
-      if (menuButton) {
-        // menuButton.style.transform = 'translate(0px, 0px)';
-      }
-    }
+    //   if (menuButton) {
+    //     // menuButton.style.transform = 'translate(0px, 0px)';
+    //   }
+    // }
 
     // if ((currentTourType === 'preview' && (currentTourType !== 'video' && currentTourType !== 'audio')) &&
     // 	(tourType !== 'Make Edit' && tourType !== 'video' && tourType !== 'audio')
@@ -3586,14 +3627,16 @@ class DefaultButton extends React.PureComponent {
             {tourType === "audio" || tourType === "video" ? (
               <h4 className="title my-4">Upload Media</h4>
             ) : (
-              <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
+              // <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
+              <h4 className="title my-4">{trailName}</h4>
             )}
             <div className="pl-4 trail_video_frm">
               {tourStatus !== "preview" && tourType === "video" && (
                 <input
                   type="text"
                   name="title"
-                  onChange={this.onChangeToInput}
+                  // onChange={this.onChangeToInput}
+                  onKeyDown={this.onChangeToInput}
                   placeholder="Enter Video title"
                   className="ant-input mb-2"
                   autoComplete="off"
@@ -3604,7 +3647,8 @@ class DefaultButton extends React.PureComponent {
                   type="text"
                   name="web_url"
                   value={fileName}
-                  onChange={this.onChangeToInput}
+                  // onChange={this.onChangeToInput}
+                  onKeyDown={this.onChangeToInput}
                   placeholder="Add Video URL"
                   className="ant-input mb-2"
                   autoComplete="off"
@@ -3674,7 +3718,8 @@ class DefaultButton extends React.PureComponent {
                   name="title"
                   placeholder="Enter Audio Title"
                   className="ant-input mb-2"
-                  onChange={this.onChangeToInput}
+                  // onChange={this.onChangeToInput}
+                  onKeyDown={this.onChangeToInput}
                   autoComplete="off"
                 />
               )}
@@ -3683,7 +3728,8 @@ class DefaultButton extends React.PureComponent {
                   type="text"
                   name="web_url"
                   value={fileName}
-                  onChange={this.onChangeToInput}
+                  onKeyDown={this.onChangeToInput}
+                  // onChange={this.onChangeToInput}
                   placeholder="Add Audio URL"
                   className="ant-input mb-2"
                   autoComplete="off"
@@ -3953,7 +3999,7 @@ class DefaultButton extends React.PureComponent {
       </div>
     );
 
-    if (isDraggable) {
+    if (isDraggable && tourType !== "Make Edit") {
       componentData = (
         <Draggable
           disabled={!isDraggable}

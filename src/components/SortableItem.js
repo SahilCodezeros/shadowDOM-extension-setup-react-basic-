@@ -37,8 +37,13 @@ const onDescriptionHandler = (e) => {
  * Draggable list handle
  */
 const DragHandle = sortableHandle(() => (
-  <span className="drag_icon">
-    <img src={require("../images/move.png")} alt="drag icon" width="25px" />
+  <span className="drag_icon trailit_draggable_icon">
+    <img
+      className="trail_draggable_icon_pic"
+      src={require("../images/move.png")}
+      alt="drag icon"
+      width="25px"
+    />
   </span>
 ));
 
@@ -342,7 +347,7 @@ class SortableItem extends React.Component {
           </div> */}
           </div>
         )}
-        {subStepStatus && tourType == "Make Edit" && (
+        {subStepStatus && tourType === "Make Edit" && (
           <div className="trailitAddSubStep">
             <button
               type="button"

@@ -356,6 +356,7 @@ export const main1Css = `
     .d-flex-1 h4 {
         margin: 0 0 0px 0;
         color: #fff;
+        font-size: 13px;
     }
 `;
 
@@ -363,7 +364,8 @@ export const main2Css = `
     .d-flex-2 p {
         margin: 0 0 0px 0;
         color: #fff;
-        line-height: 20px;
+        // line-height: 20px;
+        font-size: 14px;
     }
 
     .d-flex-3 {

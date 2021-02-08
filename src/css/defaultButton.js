@@ -3,7 +3,8 @@ export const defaultButtonCss1 = `
         // box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
         // -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
         // -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
-        background: transparent;
+        // background: transparent;
+        background: white;
         width: 340px;
         height: calc(100% - 80px);
         padding: 0 25px;
@@ -71,7 +72,8 @@ export const defaultButtonCss1 = `
     }
     
     #my-extension-defaultroot .title {
-        font-size: 22px;
+        // font-size: 22px;
+        font-size: 20px;
         font-weight: bold;
         line-height: 24px;
         color: #fb542b;
