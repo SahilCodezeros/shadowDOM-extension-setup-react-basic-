@@ -4,7 +4,7 @@ export const defaultButtonCss1 = `
         // -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
         // -moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.16);
         // background: transparent;
-        background: white;
+        // background: white;
         width: 340px;
         height: calc(100% - 80px);
         padding: 0 25px;
@@ -643,6 +643,14 @@ export const defaultButtonCss3 = `
     
     button {
         margin-bottom: 0 !important;
+    }
+
+    #my-extension-defaultroot .white_background {
+        background: white;
+    }
+
+    #my-extension-defaultroot .transparent_background {
+        background: transparent;
     }
 `;
 

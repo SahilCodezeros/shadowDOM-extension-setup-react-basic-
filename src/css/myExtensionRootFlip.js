@@ -726,7 +726,8 @@ export const myExtensionRootFlipCss2 = `
 
 export const myExtensionRootFlipCss3 = `
     .trail_continue_btn {
-        position: absolute !important;
+        // position: absolute !important;
+        position: fixed !important;
         right: 0;
         bottom: -10px;
         box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 4px, rgba(0, 0, 0, 0.28) 0px 4px 8px !important;
@@ -1552,11 +1553,11 @@ export const myExtensionRootFlipCss5 = `
 //         height: 430px;
 //         float: right;
 //     }
-    
+
 //     #my-extension-root button:focus {
 //         outline: none;
 //     }
-    
+
 //     #my-extension-root .wrap .blob {
 //         cursor: pointer;
 //         border: none;
@@ -1568,7 +1569,7 @@ export const myExtensionRootFlipCss5 = `
 //         width: 100%;
 //         height: 40px;
 //     }
-    
+
 //     #my-extension-root .wrap.open .blob {
 //         display: block;
 //         box-shadow: none;
@@ -1653,11 +1654,11 @@ export const myExtensionRootFlipCss5 = `
 //         cursor: pointer;
 //         padding: 0;
 //     }
-    
+
 //     #my-extension-root .menu img, #my-extension-defaultroot button.menu img {
 //         /* margin-top: 4px; */
 //         width: 30px;
-//         margin: 0;  
+//         margin: 0;
 //         height: 30px;
 //         vertical-align: middle;
 //         background: transparent!important;
@@ -1668,21 +1669,21 @@ export const myExtensionRootFlipCss5 = `
 //         fill: #ffffff;
 //         stroke: #ffffff;
 //     }
-    
+
 //     #my-extension-root .wrap .blob:hover .svg_btn {
 //         fill: #ffffff !important;
 //         stroke: #fb542b;
 //     }
-    
+
 //     #my-extension-root .wrap .blob:hover #Ellipse_101 {
 //         fill: #fb542b;
 //     }
-    
+
 //     #my-extension-root .wrap .blob:hover span {
 //         background: #fb542b;
 //         color: #ffffff;
 //     }
-    
+
 //     #my-extension-root .menu img.trail_plus {
 //         width: 24px;
 //         height: 24px;
@@ -1701,57 +1702,57 @@ export const myExtensionRootFlipCss5 = `
 //         transform:  scale(1);
 //     }
 
-//     .wrap button:nth-child(1) {    
+//     .wrap button:nth-child(1) {
 //         transition-delay: 50ms;
 //     }
 
-//     .wrap.open button:nth-child(1) {    
+//     .wrap.open button:nth-child(1) {
 //         transition-delay: 150ms;
 //     }
-//     .wrap button:nth-child(2) {    
+//     .wrap button:nth-child(2) {
 //         transition-delay: 100ms;
 //     }
 
-//     .wrap.open button:nth-child(2) {    
+//     .wrap.open button:nth-child(2) {
 //         transition-delay: 100ms;
 //     }
 
-//     .wrap button:nth-child(3) {    
+//     .wrap button:nth-child(3) {
 //         transition-delay: 150ms;
 //     }
-//     .wrap.open button:nth-child(3) {    
+//     .wrap.open button:nth-child(3) {
 //         transition-delay: 50ms;
 //     }
 
-//     .wrap button:nth-child(5) {    
+//     .wrap button:nth-child(5) {
 //         transition-delay: 200ms;
 //     }
 
-//     .wrap.open button:nth-child(5) {    
+//     .wrap.open button:nth-child(5) {
 //         transition-delay: 50ms;
 //     }
 
-//     .wrap button:nth-child(6) {    
+//     .wrap button:nth-child(6) {
 //         transition-delay: 150ms;
 //     }
 
-//     .wrap.open button:nth-child(6) {    
+//     .wrap.open button:nth-child(6) {
 //         transition-delay: 100ms;
 //     }
 
-//     .wrap button:nth-child(7) {    
+//     .wrap button:nth-child(7) {
 //         transition-delay: 100ms;
 //     }
-    
-//     .wrap.open button:nth-child(7) {    
+
+//     .wrap.open button:nth-child(7) {
 //         transition-delay: 150ms;
 //     }
 
-//     .wrap button:nth-child(8) {    
+//     .wrap button:nth-child(8) {
 //         transition-delay: 50ms;
 //     }
 
-//     .wrap.open button:nth-child(8) {    
+//     .wrap.open button:nth-child(8) {
 //         transition-delay: 200ms;
 //     }
 
@@ -1779,7 +1780,7 @@ export const myExtensionRootFlipCss5 = `
 //     }
 
 //     .wrap .menu img {
-//         -webkit-transform: rotate(0); 
+//         -webkit-transform: rotate(0);
 //         transform: rotate(0);
 //         -webkit-transition: -webkit-transform 150ms cubic-bezier(.4,0,1,1);
 //         transition: transform 150ms cubic-bezier(.4,0,1,1);

@@ -37,7 +37,9 @@ class AudioTour extends React.PureComponent {
         self.setState({
           profileImage: items.isPreview
             ? items.authorData.profileImage
-            : items.userData.profileImage,
+            : items.userData.profileImage
+            ? items.userData.profileImage
+            : "",
           audioLoad: true,
           audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
           tourStep: this.props.tourStep,
@@ -281,7 +283,6 @@ class AudioTour extends React.PureComponent {
       //toggle between playing and pausing on button click
       playBtn.addEventListener("click", () => {
         console.log("on play button click");
-        console.log("audio", audio);
         if (audio.paused) {
           playBtn.classList.add("tr_audioplayer-playing");
           chrome.storage.local.get(["AutoPlayMediaToggle"], (items) => {

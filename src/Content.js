@@ -452,6 +452,7 @@ class Main extends React.Component {
   async getCurrUserDataCommon(items) {
     const user_id = items.userData._id;
     let res,
+      continueFlag,
       trail_id = items.trail_id;
 
     try {
@@ -479,6 +480,10 @@ class Main extends React.Component {
       result.response.result.length > 0
     ) {
       allTrails = result.response.result.map((el) => {
+        if (el.flag === "continue") {
+          continueFlag = true;
+        }
+
         return {
           userId: user_id,
           trail_data_id: el.trail_data_id,
@@ -525,6 +530,7 @@ class Main extends React.Component {
       trail_web_user_tour: allTrails,
       tourStep: items.tourStep ? items.tourStep : "",
       trail_id,
+      closeContinue: continueFlag,
     });
   }
 
@@ -1004,15 +1010,33 @@ class Main extends React.Component {
       modalCreateNewTrailModal,
     } = this.state;
 
-    if (document.URL.includes("https://docs.google.com")) {
-      const tooltipButton = document
-        .getElementById("extension-div")
-        .shadowRoot.querySelector(".create_tooltip_button");
+    // if (document.URL.includes("https://docs.google.com")) {
+    //   const tooltipButton = document
+    //     .getElementById("extension-div")
+    //     .shadowRoot.querySelector(".create_tooltip_button");
 
-      if (tooltipButton) {
-        tooltipButton.style.visibility = "hidden";
-      }
-    }
+    //   if (tooltipButton) {
+    //     tooltipButton.style.visibility = "hidden";
+    //   }
+    // }
+
+    // if (document.URL.includes("https://twitter.com")) {
+    //   const videoButton = document
+    //     .getElementById("extension-div")
+    //     .shadowRoot.querySelector(".create_video_button");
+
+    //   if (videoButton) {
+    //     videoButton.style.visibility = "hidden";
+    //   }
+
+    //   const audioButton = document
+    //     .getElementById("extension-div")
+    //     .shadowRoot.querySelector(".create_audio_button");
+
+    //   if (audioButton) {
+    //     audioButton.style.visibility = "hidden";
+    //   }
+    // }
 
     return (
       <>
@@ -1116,6 +1140,7 @@ class Main extends React.Component {
                 className="blob create_tooltip_button"
                 onClick={(e) => this.openMenu("tooltip")}
                 data-title="Tooltip"
+                disabled={document.URL.includes("https://docs.google.com")}
               >
                 <svg
                   width="40"
@@ -1149,31 +1174,32 @@ class Main extends React.Component {
 									</g>
 								</svg>
 							</button> */}
-              {!document.URL.includes("https://twitter.com") && (
-                <button
-                  class="blob"
-                  onClick={(e) => this.onMediaTourSelect("video")}
-                  data-title="Video"
+              {/* {!document.URL.includes("https://twitter.com") && ( */}
+              <button
+                className="blob create_video_button"
+                onClick={(e) => this.onMediaTourSelect("video")}
+                data-title="Video"
+                disabled={document.URL.includes("https://twitter.com")}
+              >
+                <svg
+                  width="41"
+                  height="29"
+                  viewBox="0 0 41 29"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  <svg
-                    width="41"
-                    height="29"
-                    viewBox="0 0 41 29"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M18.8779 6.55304H14.8779V12.553H8.87793V16.553H14.8779V22.553H18.8779V16.553H24.8779V12.553H18.8779V6.55304Z"
-                      fill="white"
-                    />
-                    <path
-                      d="M32.8789 4.55298C32.8789 2.34698 31.0849 0.552979 28.8789 0.552979H4.87891C2.67291 0.552979 0.878906 2.34698 0.878906 4.55298V24.553C0.878906 26.759 2.67291 28.553 4.87891 28.553H28.8789C31.0849 28.553 32.8789 26.759 32.8789 24.553V17.887L40.8789 24.553V4.55298L32.8789 11.219V4.55298ZM28.8809 24.553H4.87891V4.55298H28.8789V14.553L28.8809 24.553Z"
-                      fill="white"
-                    />
-                  </svg>
-                  {/* <span>Video</span> */}
-                </button>
-              )}
+                  <path
+                    d="M18.8779 6.55304H14.8779V12.553H8.87793V16.553H14.8779V22.553H18.8779V16.553H24.8779V12.553H18.8779V6.55304Z"
+                    fill="white"
+                  />
+                  <path
+                    d="M32.8789 4.55298C32.8789 2.34698 31.0849 0.552979 28.8789 0.552979H4.87891C2.67291 0.552979 0.878906 2.34698 0.878906 4.55298V24.553C0.878906 26.759 2.67291 28.553 4.87891 28.553H28.8789C31.0849 28.553 32.8789 26.759 32.8789 24.553V17.887L40.8789 24.553V4.55298L32.8789 11.219V4.55298ZM28.8809 24.553H4.87891V4.55298H28.8789V14.553L28.8809 24.553Z"
+                    fill="white"
+                  />
+                </svg>
+                {/* <span>Video</span> */}
+              </button>
+              {/* )} */}
 
               <button className="menu" onClick={(e) => this.openMenu("")}>
                 <img
@@ -1182,10 +1208,10 @@ class Main extends React.Component {
                   src={require(`./images/trailit_X_button_new.png`)}
                 />
               </button>
-              {!document.URL.includes("https://twitter.com") && (
-                <React.Fragment>
-                  {/* Create Video */}
-                  {/* <button className="blob" onClick={(e) => this.openMenu('video')} data-title="Create Video">
+              {/* {!document.URL.includes("https://twitter.com") && ( */}
+              <React.Fragment>
+                {/* Create Video */}
+                {/* <button className="blob" onClick={(e) => this.openMenu('video')} data-title="Create Video">
 											<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
 												<g id="Group_472" data-name="Group 472" transform="translate(-1820 -597)">
 													<circle id="Ellipse_101" data-name="Ellipse 70" cx="24" cy="24" r="24" transform="translate(1820 597)" fill="#fff" />
@@ -1198,85 +1224,86 @@ class Main extends React.Component {
 												</g>
 											</svg>
 										</button> */}
-                  <button
-                    className="blob"
-                    onClick={(e) => this.onMediaTourSelect("audio")}
-                    data-title="Audio"
+                <button
+                  className="blob create_audio_button"
+                  onClick={(e) => this.onMediaTourSelect("audio")}
+                  data-title="Audio"
+                  disabled={document.URL.includes("https://twitter.com")}
+                >
+                  <svg
+                    className="audio_svg"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="48"
+                    height="48"
+                    viewBox="0 0 48 48"
                   >
-                    <svg
-                      className="audio_svg"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="48"
-                      height="48"
-                      viewBox="0 0 48 48"
+                    <g
+                      id="Group_471"
+                      data-name="Group 471"
+                      transform="translate(11717 4613)"
                     >
+                      <circle
+                        id="Ellipse_101"
+                        data-name="Ellipse 101"
+                        cx="24"
+                        cy="24"
+                        r="24"
+                        transform="translate(-11717 -4613)"
+                        fill="#fff"
+                      />
                       <g
-                        id="Group_471"
-                        data-name="Group 471"
-                        transform="translate(11717 4613)"
+                        id="audio-interface-speaker-symbol"
+                        transform="translate(-11707 -4671.857)"
                       >
-                        <circle
-                          id="Ellipse_101"
-                          data-name="Ellipse 101"
-                          cx="24"
-                          cy="24"
-                          r="24"
-                          transform="translate(-11717 -4613)"
-                          fill="#fff"
-                        />
                         <g
-                          id="audio-interface-speaker-symbol"
-                          transform="translate(-11707 -4671.857)"
+                          id="Group_282"
+                          data-name="Group 282"
+                          transform="translate(0 72.857)"
                         >
-                          <g
-                            id="Group_282"
-                            data-name="Group 282"
-                            transform="translate(0 72.857)"
-                          >
-                            <path
-                              stroke-width="0"
-                              id="Path_111"
-                              data-name="Path 111"
-                              d="M3.9,86.838l9.831,5.992V72.857L3.9,78.849H1.3A1.3,1.3,0,0,0,0,80.181v5.327A1.3,1.3,0,0,0,1.3,86.84H3.9ZM1.248,80.1H3.9l8.586-4.746v14.98L3.9,85.486H1.248Z"
-                              transform="translate(0 -72.857)"
-                              fill="#ffffff"
-                              className="svg_btn"
-                            />
-                            <path
-                              stroke-width="0"
-                              id="Path_112"
-                              data-name="Path 112"
-                              d="M349.714,171.382v1.387a7.074,7.074,0,0,0,0-12.483v1.387s2.5,1.059,2.5,4.855S349.714,171.382,349.714,171.382Z"
-                              transform="translate(-334.734 -156.541)"
-                              fill="#ffffff"
-                              className="svg_btn"
-                            />
-                            <path
-                              stroke-width="0"
-                              id="Path_113"
-                              data-name="Path 113"
-                              d="M524.571,117.829v1.648s3.745-1.8,3.745-8.738S524.571,102,524.571,102v1.62s2.5,1.378,2.5,7.118S524.571,117.829,524.571,117.829Z"
-                              transform="translate(-502.101 -100.752)"
-                              className="svg_btn"
-                              fill="#ffffff"
-                            />
-                            <path
-                              stroke-width="0"
-                              id="Path_114"
-                              data-name="Path 114"
-                              d="M437.143,144.543v1.58s3.745-2.06,3.745-7.49-3.745-7.49-3.745-7.49v1.528s2.5,1.624,2.5,5.962S437.143,144.543,437.143,144.543Z"
-                              transform="translate(-418.418 -128.647)"
-                              className="svg_btn"
-                              fill="#ffffff"
-                            />
-                          </g>
+                          <path
+                            stroke-width="0"
+                            id="Path_111"
+                            data-name="Path 111"
+                            d="M3.9,86.838l9.831,5.992V72.857L3.9,78.849H1.3A1.3,1.3,0,0,0,0,80.181v5.327A1.3,1.3,0,0,0,1.3,86.84H3.9ZM1.248,80.1H3.9l8.586-4.746v14.98L3.9,85.486H1.248Z"
+                            transform="translate(0 -72.857)"
+                            fill="#ffffff"
+                            className="svg_btn"
+                          />
+                          <path
+                            stroke-width="0"
+                            id="Path_112"
+                            data-name="Path 112"
+                            d="M349.714,171.382v1.387a7.074,7.074,0,0,0,0-12.483v1.387s2.5,1.059,2.5,4.855S349.714,171.382,349.714,171.382Z"
+                            transform="translate(-334.734 -156.541)"
+                            fill="#ffffff"
+                            className="svg_btn"
+                          />
+                          <path
+                            stroke-width="0"
+                            id="Path_113"
+                            data-name="Path 113"
+                            d="M524.571,117.829v1.648s3.745-1.8,3.745-8.738S524.571,102,524.571,102v1.62s2.5,1.378,2.5,7.118S524.571,117.829,524.571,117.829Z"
+                            transform="translate(-502.101 -100.752)"
+                            className="svg_btn"
+                            fill="#ffffff"
+                          />
+                          <path
+                            stroke-width="0"
+                            id="Path_114"
+                            data-name="Path 114"
+                            d="M437.143,144.543v1.58s3.745-2.06,3.745-7.49-3.745-7.49-3.745-7.49v1.528s2.5,1.624,2.5,5.962S437.143,144.543,437.143,144.543Z"
+                            transform="translate(-418.418 -128.647)"
+                            className="svg_btn"
+                            fill="#ffffff"
+                          />
                         </g>
                       </g>
-                    </svg>
-                    {/* <span>Create Audio</span> */}
-                  </button>
-                </React.Fragment>
-              )}
+                    </g>
+                  </svg>
+                  {/* <span>Create Audio</span> */}
+                </button>
+              </React.Fragment>
+              {/* )} */}
               {resizeScreen() && (
                 <button
                   className="blob"
@@ -1284,6 +1311,7 @@ class Main extends React.Component {
                   data-title="Make Edit Trail"
                 >
                   <svg
+                    className="edit_trail_svg"
                     xmlns="http://www.w3.org/2000/svg"
                     width="48"
                     height="48"
@@ -1545,6 +1573,7 @@ class DefaultButton extends React.PureComponent {
   async getCurrUserDataCommon(items) {
     const user_id = items.userData._id;
     let res,
+      continueFlag,
       trail_id = items.trail_id;
 
     try {
@@ -1571,6 +1600,10 @@ class DefaultButton extends React.PureComponent {
       result.response.result.length > 0
     ) {
       allTrails = result.response.result.map((el) => {
+        if (el.flag === "continue") {
+          continueFlag = true;
+        }
+
         return {
           userId: user_id,
           trail_data_id: el.trail_data_id,
@@ -1634,6 +1667,7 @@ class DefaultButton extends React.PureComponent {
             trail_web_user_tour: allTrails,
             tourStep: items.tourStep ? items.tourStep : "",
             trail_id,
+            closeContinue: continueFlag,
           });
         }
       }
@@ -1688,7 +1722,6 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      console.log("changes", changes);
       if (changes.trail_name) {
         // Set state
         this.setState({ trailName: changes.trail_name.newValue });
@@ -2090,7 +2123,7 @@ class DefaultButton extends React.PureComponent {
                 leftPosition
               );
 
-              window.addEventListener("resize", () => {
+              const updateOverlay = () => {
                 if (
                   root1 === "block" &&
                   getClass === "" &&
@@ -2115,7 +2148,18 @@ class DefaultButton extends React.PureComponent {
                     leftPosition
                   );
                 }
+              };
+
+              window.addEventListener("resize", () => {
+                // Update overlay
+                updateOverlay();
               });
+
+              // document.onchange = () => {
+              //   console.log("hiiiiiiiii");
+              //   // Update overlay
+              //   updateOverlay();
+              // };
 
               // $(".trail_overlay").append(`
               // 	<svg height="100%" width="100%">
@@ -2213,7 +2257,6 @@ class DefaultButton extends React.PureComponent {
         "trail_name",
       ],
       async function (items) {
-        console.log("items", items);
         if (items.trail_name) {
           obj.trail_name = items.trail_name;
         }
@@ -2563,11 +2606,6 @@ class DefaultButton extends React.PureComponent {
 
     // Call init button position function
     initButtonPosition();
-
-    console.log(
-      "this.state.trailList[this.state.tourStep - 1]",
-      this.state.trailList[this.state.tourStep - 1]
-    );
 
     try {
       const trail = this.state.trailList[this.state.tourStep - 1];
@@ -3071,9 +3109,9 @@ class DefaultButton extends React.PureComponent {
     );
     const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
-    if (close === undefined) {
-      chrome.storage.local.set({ closeContinue: false });
-    }
+    // if (close === undefined) {
+    //   chrome.storage.local.set({ closeContinue: false });
+    // }
 
     // Call init button position function
     initButtonPosition();
@@ -3305,10 +3343,10 @@ class DefaultButton extends React.PureComponent {
     } else {
       chrome.storage.local.get(["isPreview"], (items) => {
         if (!items.isPreview) {
+          // Show continue button
           chrome.storage.local.set({ closeContinue: true });
         }
       });
-      // Show continue button
 
       // Call back arrow click handler function
       await this.onBackArrowClickHandler(e, "close");
@@ -3453,26 +3491,27 @@ class DefaultButton extends React.PureComponent {
       openSidebar = true;
     }
 
-    const sidepopup = document
-      .getElementById("extension-div")
-      .shadowRoot.querySelector(".sidepopup");
-    if (sidepopup) {
-      if (
-        tourType === "audio" ||
-        tourType === "video" ||
-        tourType === "Make Edit"
-      ) {
-        // Add white background
-        sidepopup.style.background = "white";
-      } else if (
-        tourType === "modal" ||
-        tourType === "tooltip" ||
-        tourType === "preview"
-      ) {
-        // Add transparent background
-        sidepopup.style.background = "transparent";
-      }
-    }
+    // const sidepopup = document
+    //   .getElementById("extension-div")
+    //   .shadowRoot.querySelector(".sidepopup");
+    // if (sidepopup) {
+    //   if (
+    //     tourType === "audio" ||
+    //     tourType === "video" ||
+    //     tourType === "Make Edit"
+    //   ) {
+    //     // Add white background
+    //     sidepopup.style.background = "white";
+    //   } else if (
+    //     tourType === "modal" ||
+    //     tourType === "tooltip" ||
+    //     tourType === "preview"
+    //   ) {
+    //     console.log("sidepopup", sidepopup);
+    //     // Add transparent background
+    //     sidepopup.style.background = "transparent";
+    //   }
+    // }
 
     if (!openSidebar && flipped && defaultComp) {
       const flipId = document
@@ -3635,8 +3674,8 @@ class DefaultButton extends React.PureComponent {
                 <input
                   type="text"
                   name="title"
-                  // onChange={this.onChangeToInput}
-                  onKeyDown={this.onChangeToInput}
+                  onChange={this.onChangeToInput}
+                  onKeyDown={(e) => e.stopPropagation()}
                   placeholder="Enter Video title"
                   className="ant-input mb-2"
                   autoComplete="off"
@@ -3647,8 +3686,8 @@ class DefaultButton extends React.PureComponent {
                   type="text"
                   name="web_url"
                   value={fileName}
-                  // onChange={this.onChangeToInput}
-                  onKeyDown={this.onChangeToInput}
+                  onChange={this.onChangeToInput}
+                  onKeyDown={(e) => e.stopPropagation()}
                   placeholder="Add Video URL"
                   className="ant-input mb-2"
                   autoComplete="off"
@@ -3718,8 +3757,8 @@ class DefaultButton extends React.PureComponent {
                   name="title"
                   placeholder="Enter Audio Title"
                   className="ant-input mb-2"
-                  // onChange={this.onChangeToInput}
-                  onKeyDown={this.onChangeToInput}
+                  onChange={this.onChangeToInput}
+                  onKeyDown={(e) => e.stopPropagation()}
                   autoComplete="off"
                 />
               )}
@@ -3728,8 +3767,8 @@ class DefaultButton extends React.PureComponent {
                   type="text"
                   name="web_url"
                   value={fileName}
-                  onKeyDown={this.onChangeToInput}
-                  // onChange={this.onChangeToInput}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  onChange={this.onChangeToInput}
                   placeholder="Add Audio URL"
                   className="ant-input mb-2"
                   autoComplete="off"
@@ -3970,6 +4009,12 @@ class DefaultButton extends React.PureComponent {
           <div
             className={`sidepopup ${
               openSidebar ? "open trail_builder_side_panel_open" : ""
+            } ${
+              tourType === "audio" ||
+              tourType === "video" ||
+              tourType === "Make Edit"
+                ? "white_background"
+                : "transparent_background"
             }`}
           >
             <div className="space"></div>
@@ -3999,7 +4044,12 @@ class DefaultButton extends React.PureComponent {
       </div>
     );
 
-    if (isDraggable && tourType !== "Make Edit") {
+    if (
+      isDraggable &&
+      tourType !== "Make Edit" &&
+      currentTourType !== "audio" &&
+      currentTourType !== "video"
+    ) {
       componentData = (
         <Draggable
           disabled={!isDraggable}
@@ -4128,6 +4178,12 @@ class DefaultButton extends React.PureComponent {
                 <div
                   className={`sidepopup ${
                     openSidebar ? "open trail_builder_side_panel_open" : ""
+                  } ${
+                    tourType === "audio" ||
+                    tourType === "video" ||
+                    tourType === "Make Edit"
+                      ? "white_background"
+                      : "transparent_background"
                   }`}
                 >
                   <div className="space"></div>

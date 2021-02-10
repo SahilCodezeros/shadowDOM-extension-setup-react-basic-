@@ -152,7 +152,7 @@ class SortableItem extends React.Component {
         {tourType !== "Make Edit" ? (
           <div
             key={i}
-            onMouseLeave={this.onMouseLeave}
+            // onMouseLeave={this.onMouseLeave}
             className={`info_bbx ${tourStep === i + 1 ? "active" : ""} ${
               this.state.showMenu ? "z-index-2" : ""
             }`}

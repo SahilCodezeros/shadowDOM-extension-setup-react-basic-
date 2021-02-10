@@ -29,7 +29,7 @@ export const main1Css = `
         border-radius: 50%;
     }
 
-    #my-extension-root .wrap .blob:hover {
+    #my-extension-root .wrap .blob:hover:not([disabled]) {
         // background: linear-gradient(321.4deg, #D02176 15.15%, #faaed3 84.05%) !important;
         background: linear-gradient(135deg, rgba(253,215,86,1) 0%, rgba(218,28,92,1) 70%);
     }
@@ -51,8 +51,7 @@ export const main1Css = `
     #my-extension-root .my-extension,
     #my-extension-root .wrap.open {
         width: 100%;
-        height: 100%;
-        // position: relative;
+        // height: 100%;
         position: absolute;
         text-align: right;
     }
@@ -81,7 +80,8 @@ export const main1Css = `
         height: 24px !important;
     }
 
-    #my-extension-root .wrap .blob .audio_svg {
+    #my-extension-root .wrap .blob .audio_svg,
+    #my-extension-root .wrap .blob .edit_trail_svg {
         width: 50px !important;
         height: 50px !important;
     }
@@ -121,7 +121,7 @@ export const main1Css = `
         right: 80px !important;
     }
 
-    #my-extension-root .wrap .blob:hover:after {
+    #my-extension-root .wrap .blob:not([disabled]):hover:after {
         opacity: 1;
         pointer-events: visible;
     }
@@ -346,6 +346,7 @@ export const main1Css = `
 
     .d-flex {
         display: flex;
+        line-height: 1.5;
         justify-content: space-between;
     }
 
@@ -422,5 +423,10 @@ export const main2Css = `
     .trail_settings span {
         font-size: 14px;
         font-family: "Lato", sans-serif !important;
+    }
+
+    #my-extension-root .wrap.open .blob[disabled] {
+        background: #808080;
+        cursor: not-allowed !important;
     }
 `;

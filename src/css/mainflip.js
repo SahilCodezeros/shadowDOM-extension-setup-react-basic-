@@ -25,6 +25,10 @@ export const mainFlipCss = `
         transform-origin: 50% 50% -189px;
         transition: all 0.6s ease-in-out;
     }
+
+    .trail_card.trail_flipped .my-extension{
+        position: relative !important;
+    }
     
     .trail_card.trail_flipped .trail_card__face--back {
         transform: rotateY(0deg);

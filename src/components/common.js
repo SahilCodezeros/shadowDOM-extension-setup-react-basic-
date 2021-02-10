@@ -216,7 +216,9 @@ export const commonTooltipFormFunction = (
                         <Input 
                             type="text"
                             autoComplete="off" 
-                            onKeyDown={onChangeToInput} 
+                            // onKeyDown={onChangeToInput} 
+                            onChange={onChangeToInput}
+                            onKeyDown={(e) => e.stopPropagation()}
                             placeholder={`Enter ${trailStatus} Title`} 
                         />
                     </Form.Item>
@@ -235,7 +237,9 @@ export const commonTooltipFormFunction = (
                         name="web_url" 
                         value={fileName} 
                         disabled={ true }
-                        onKeyDown={onChangeToInput} 
+                        // onKeyDown={onChangeToInput} 
+                        onChange={onChangeToInput}
+                        onKeyDown={(e) => e.stopPropagation()}
                         placeholder={`Add ${trailStatus} URL`} 
                         className="ant-input mb-2" 
                     />

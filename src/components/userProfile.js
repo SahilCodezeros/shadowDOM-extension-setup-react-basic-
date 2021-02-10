@@ -104,7 +104,9 @@ class UserProfile extends React.Component {
         //   .catch();
 
         this.setState({
-          profileImage: items.userData.profileImage,
+          profileImage: items.userData.profileImage
+            ? items.userData.profileImage
+            : "",
           privateKey: items.keypair,
           userName: items.userData.userName,
           firstName: items.userData.firstName ? items.userData.firstName : null,
