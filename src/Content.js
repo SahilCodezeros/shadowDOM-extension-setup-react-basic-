@@ -136,7 +136,7 @@ class Main extends React.Component {
         "showSetting",
       ],
       async (items) => {
-        // console.log("items", items);
+        // 
         let closeContinue = false;
         if (
           items.closeContinue &&
@@ -151,7 +151,7 @@ class Main extends React.Component {
           currentUserId: items.userData._id,
         });
         socket.on("connect", () => {
-          console.info("Client is connected");
+          
         });
 
         socket.emit("userId", items.userData._id);
@@ -173,12 +173,12 @@ class Main extends React.Component {
         }
 
         chrome.storage.onChanged.addListener(async (changes) => {
-          // console.log("changes1", changes);
+          // 
           // if (changes.authorData && changes.authorData.userName.newValue) {
           //   let { data } = await getUserData(
           //     changes.authorData.newValue.userName
           //   );
-          //   console.log("data", data);
+          //   
 
           //   chrome.storage.local.set({
           //     authorData: data.response.result.userData,
@@ -232,7 +232,7 @@ class Main extends React.Component {
                   // Call common get user data function
                   await this.getCurrUserDataCommon(items);
                 } catch (err) {
-                  console.log(err);
+                  
                 }
               }
             );
@@ -278,7 +278,7 @@ class Main extends React.Component {
             // 	previewUserId = items.previewUserId
             // }
           } catch (err) {
-            console.log(err);
+            
           }
 
           const params = new URLSearchParams(url.search.substring(1));
@@ -379,7 +379,7 @@ class Main extends React.Component {
 
             trail_web_user_tour: items.trail_web_user_tour,
           };
-          console.log({ items });
+          
           if (items.isPreview) {
             // Call get current user data common function
             await this.getCurrUserDataCommon(data);
@@ -454,13 +454,13 @@ class Main extends React.Component {
     chrome.runtime.onMessage.addListener(this.onHandleSubscription);
 
     // 	(msg) => {
-    // 	console.log("msg", msg.subject);
+    // 	
     // 	if(msg.subject === 'DOMObj') {
     // 		chrome.storage.local.get(["userData"], async function (items) {
     // 			socket.emit('userId', items.userData._id)
     // 		})
     // 		socket.on('followerList', data => {
-    // 			console.log('followerListdata', data);
+    // 			
     // 			let follower = data.map(result => {
 
     // 			})
@@ -482,7 +482,7 @@ class Main extends React.Component {
       res = await getUserOneTrail(user_id, trail_id, screen);
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {
-      console.log("err", err);
+      
     }
 
     // if (items.trail_web_user_tour && items.trail_web_user_tour.length > 0) {
@@ -641,7 +641,7 @@ class Main extends React.Component {
             trail_id: items.trail_id,
             trail_web_user_tour: items.trail_web_user_tour,
           };
-          console.log({ items1: items });
+          
 
           if (items.isPreview) {
             // Call get current user data common function
@@ -715,7 +715,7 @@ class Main extends React.Component {
           });
         }
       } catch (err) {
-        console.log(err);
+        
       }
     });
   }
@@ -925,20 +925,12 @@ class Main extends React.Component {
                 // Set loading state to false
                 chrome.storage.local.set({ loading: "true" });
 
-                // chrome.tabs.getCurrent(function (tab) {
-                //   //Your code below...
-                //   var tabUrl = encodeURIComponent(tab.url);
-                //   var tabTitle = encodeURIComponent(tab.title);
-                //   var myNewUrl = "https://www.mipanga.com/Content/Submit?url=" + tabUrl + "&title=" + tabTitle;
+                // document.location.href = tour.url;
 
-                //   //Update the url here.
-                //   chrome.tabs.update(tab.id, {url: myNewUrl});
-                // });
-
-                document.location.href = tour.url;
-                // chrome.tabs.getCurrent(function (tab) {
-                //   chrome.tabs.update(tab.id, { url: tour.url });
-                // });
+                chrome.runtime.sendMessage("", {
+                  type: "openInTab",
+                  url: tour.url,
+                });
               } else if (
                 !tour.url &&
                 trail_web_user_tour[0].url !== document.URL &&
@@ -947,13 +939,15 @@ class Main extends React.Component {
                 // Set loading state to false
                 chrome.storage.local.set({ loading: "true" });
 
-                document.location.href = trail_web_user_tour[0].url;
-                // chrome.tabs.getCurrent(function (tab) {
-                // 	chrome.tabs.update(tab.id, { url: trail_web_user_tour[0].url });
-                // });
+                // document.location.href = trail_web_user_tour[0].url;
+
+                chrome.runtime.sendMessage("", {
+                  type: "openInTab",
+                  url: trail_web_user_tour[0].url,
+                });
 
                 // } else if(tour.url && tour.url !== document.URL && closeContinue===undefined) {
-                // 	console.log('url 3333');
+                // 	
 
                 // 	// Set loading state to false
                 // 	chrome.storage.local.set({ loading: 'true' });
@@ -1875,7 +1869,7 @@ class DefaultButton extends React.PureComponent {
       });
     }
     if (msg.message === "continue_preview") {
-      console.log({ payload: msg.payload });
+      
       // Call common get user data function
       await this.getCurrUserDataCommon({
         userData: msg.payload.userData,
@@ -1903,7 +1897,7 @@ class DefaultButton extends React.PureComponent {
         loggedInData: msg.payload.loggedInData,
       });
       chrome.storage.local.get(["trail_id", "userData"], (items) => {
-        console.log({ items });
+        
         chrome.storage.local.set({
           isPreviewSingleTrail: true,
           webUrl: msg.payload.url,
@@ -1942,7 +1936,7 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      // console.log("changes2", changes);
+      // 
       if (changes.tourType && changes.tourType.newValue === "") {
         // Set side bar state
         this.setState({ openSidebar: false, open: false });
@@ -2019,13 +2013,13 @@ class DefaultButton extends React.PureComponent {
       //   changes.currentTourType &&
       //   changes.currentTourType.newValue === "preview"
       // ) {
-      //   console.log("draggable is false 1");
+      //   
       //   // Set draggable state
       //   this.setState({ isDraggable: false });
       // } else {
       //   chrome.storage.local.get(["isDraggable"], (items) => {
       //     if (items.isDraggable !== undefined && items.isDraggable !== null) {
-      //       console.log("items.isDraggable 1", items.isDraggable);
+      //       
       //       // Set draggable state
       //       this.setState({ isDraggable: items.isDraggable });
       //     }
@@ -2041,13 +2035,13 @@ class DefaultButton extends React.PureComponent {
       //     changes.currentTourType.newValue === "video" ||
       //     changes.currentTourType.newValue === "audio")
       // ) {
-      //   console.log("draggable is false");
+      //   
       //   // Set draggable state
       //   this.setState({ isDraggable: false, dragPosition: { x: 0, y: 0 } });
       // } else {
       //   chrome.storage.local.get(["isDraggable"], (items) => {
       //     if (items.isDraggable !== undefined && items.isDraggable !== null) {
-      //       console.log("items.isDraggable", items.isDraggable);
+      //       
       //       // Set draggable state
       //       this.setState({
       //         isDraggable: items.isDraggable,
@@ -2093,7 +2087,7 @@ class DefaultButton extends React.PureComponent {
         }
       }
 
-      // console.log("changes", changes);
+      // 
 
       // if (
       //   changes.tourType &&
@@ -2104,7 +2098,7 @@ class DefaultButton extends React.PureComponent {
       //   const sidepopup = document
       //     .getElementById("extension-div")
       //     .shadowRoot.querySelector(".sidepopup");
-      //   console.log("sidepopup", sidepopup);
+      //   
       //   if (sidepopup) {
       //     // Add white background
       //     sidepopup.style.background = "#ffffff";
@@ -2402,7 +2396,7 @@ class DefaultButton extends React.PureComponent {
               });
 
               // document.onchange = () => {
-              //   console.log("hiiiiiiiii");
+              //   
               //   // Update overlay
               //   updateOverlay();
               // };
@@ -2620,7 +2614,7 @@ class DefaultButton extends React.PureComponent {
         });
 
         // this.setState({...this.state, obj}, () => {
-        // 	console.log("this.steete", this.state);
+        // 	
         // });
       }.bind(this)
     );
@@ -2925,7 +2919,7 @@ class DefaultButton extends React.PureComponent {
       // Call remove overlay function
       removeOverlay();
     } catch (err) {
-      console.log(err);
+      
     }
 
     chrome.storage.local.set({
@@ -3054,7 +3048,7 @@ class DefaultButton extends React.PureComponent {
       })
       .catch((err) => {
         this.setState({ fileLoading: false });
-        console.log("Error fetching profile " + err);
+        
       });
   };
 
@@ -3197,7 +3191,7 @@ class DefaultButton extends React.PureComponent {
       );
     } catch (err) {
       this.setState({ publishLoader: false });
-      console.log("from publish trails", err);
+      
     }
   };
 
@@ -3295,7 +3289,7 @@ class DefaultButton extends React.PureComponent {
         this.setState({ follow: true });
       })
       .catch((err) => {
-        console.log(err);
+        
       });
   };
 
@@ -3319,7 +3313,7 @@ class DefaultButton extends React.PureComponent {
         this.setState({ follow: false });
       })
       .catch((err) => {
-        console.log(err);
+        
       });
   };
 
@@ -3449,7 +3443,7 @@ class DefaultButton extends React.PureComponent {
                     // Call update trail api to add flag into table
                     await updateTrailFlag(data);
                   } catch (err) {
-                    console.log(err);
+                    
                   }
                 }
 
@@ -3695,7 +3689,7 @@ class DefaultButton extends React.PureComponent {
         }, 5000);
       })
       .catch((err) => {
-        console.log("err", err);
+        
 
         this.setState({ setError: err.message });
 
@@ -3721,10 +3715,10 @@ class DefaultButton extends React.PureComponent {
     const position = document
       .getElementById("extension-div")
       .shadowRoot.getElementById("my-extension-defaultroot");
-    // console.log('position', position.getBoundingClientRect());
-    // console.log('position.offsetTop', position.offsetTop);
-    // console.log('position.offsetLeft', position.offsetLeft);
-    // console.log('getComputedStyle', getComputedStyle(position));
+    // 
+    // 
+    // 
+    // 
   }
 
   render() {
@@ -3772,8 +3766,8 @@ class DefaultButton extends React.PureComponent {
     //   openSidebar = true;
     // }
 
-    // console.log("tourType", tourType);
-    // console.log("openSidebar", openSidebar);
+    // 
+    // 
 
     // const sidepopup = document
     //   .getElementById("extension-div")
@@ -3791,7 +3785,7 @@ class DefaultButton extends React.PureComponent {
     //     tourType === "tooltip" ||
     //     tourType === "preview"
     //   ) {
-    //     console.log("sidepopup", sidepopup);
+    //     
     //     // Add transparent background
     //     sidepopup.style.background = "transparent";
     //   }
@@ -3834,7 +3828,7 @@ class DefaultButton extends React.PureComponent {
         const modal = document
           .getElementById("extension-div")
           .shadowRoot.querySelector(".trial_create_modal_main .modal");
-        // console.log("modal", modal);
+        // 
 
         if (modal && resizeScreen()) {
           modal.style.height = "75%";
@@ -3863,11 +3857,11 @@ class DefaultButton extends React.PureComponent {
       // this.addTrailitLogo();
     }
 
-    // console.log('currentTourType', currentTourType);
-    // console.log('tourType', tourType);
+    // 
+    // 
 
     // if (!draggable) {
-    //   // console.log('hiii');
+    //   // 
     //   const menuButton = document
     //     .getElementById("extension-div")
     //     .shadowRoot.getElementById("my-extension-defaultroot");
@@ -4349,13 +4343,13 @@ class DefaultButton extends React.PureComponent {
         <Draggable
           disabled={!isDraggable}
           // onStart={ (data) => {
-          // 	// console.log('drag start data', data);
+          // 	// 
           // } }
           // onDrag={ (data) => {
-          // 	// console.log('drag data', data);
+          // 	// 
           // } }
           // onStop={(data) => {
-          // 	console.log('drag stop data', data);
+          // 	
 
           // 	this.dragStop(data);
           // 	// this.setState({ dragPosition: { x: data.x, y: data.y } });

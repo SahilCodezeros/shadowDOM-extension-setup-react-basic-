@@ -1,11 +1,11 @@
 // Called when the user clicks on the browser action
 /* global chrome */
 function onCaptured(imageUri) {
-  console.log(imageUri);
+  
 }
 
 function onError(error) {
-  console.log(`Error: ${error}`);
+  
 }
 
 if (typeof chrome.app.isInstalled !== "undefined") {
@@ -25,8 +25,8 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
   // function modifyDOM() {
   //    //You can play with your DOM here or check URL against your regex
-  //    console.log('Tab script:');
-  //    console.log(document.body);
+  //    
+  //    
   //    return document.body.innerHTML;
   // }
 
@@ -35,28 +35,28 @@ if (typeof chrome.app.isInstalled !== "undefined") {
   //       let activeTab = tabs.find(r => r.url == request.options.url);
   //       chrome.tabs.update(activeTab.id, {active: true});
   //       chrome.tabs.sendMessage(activeTab.id, {target: 'app', type: 'setMessage', body: 'How are you'}, function(ee) {
-  //          console.log("eeeeeeeeeeeeeeeeeeeeeeee", ee, chrome.runtime.lastError);
+  //          
   //       });
 
   //       chrome.tabs.executeScript({
   //          code: '(' + modifyDOM + ')();' //argument here is a string but function.toString() returns function's code
   //       }, (results) => {
   //          //Here we have just the innerHTML and not DOM structure
-  //          console.log('Popup script:')
-  //          console.log(results[0]);
+  //          
+  //          
   //       });
 
   //       chrome.tabs.update(activeTab.id, {url: activeTab.url}, function() {
-  //          console.log("chrome.runtime.lastError", chrome.runtime.lastError)
+  //          
   //       });
 
   //       chrome.tabs.executeScript(null, {
   //          file: '/static/js/content.js'
   //       }, function(ddd) {
-  //          console.log("ddd", ddd);
+  //          
   //          // If you try and inject into an extensions page or the webstore/NTP you'll get an error
   //          if (chrome.runtime.lastError) {
-  //                console.log('There was an error injecting script : \n' + chrome.runtime.lastError.message);
+  //                
 
   //          }
   //       });
@@ -67,7 +67,7 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
   // chrome.windows.onFocusChanged.addListener(function(window) {
   //    chrome.tabs.query({active: false, currentWindow:true},function(tabs) {
-  //       console.log("tabs", tabs);
+  //       
   //       var activeTab = tabs[5];
   //       chrome.tabs.update(activeTab.id, {active: true})
   //       // chrome.tabs.sendMessage(activeTab.id, {tabs}, {"message": "clicked_browser_action"});
@@ -75,7 +75,13 @@ if (typeof chrome.app.isInstalled !== "undefined") {
   // });
 }
 
-chrome.runtime.onMessage.addListener((message, sender) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "openInTab") {
+    chrome.tabs.update(sender.tab.id, {
+      url: message.url,
+    });
+  }
+
   if (message.type === "notification") {
     chrome.notifications.create("", message.options);
   }
@@ -161,7 +167,7 @@ chrome.runtime.onMessageExternal.addListener(function (
           { active: true, currentWindow: true },
           function (tabs) {
             var activeTab = tabs[0];
-            console.log("active", activeTab.id, tabs);
+            
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_all",
               payload: { ...request, url: tabs[0].url },
@@ -169,13 +175,13 @@ chrome.runtime.onMessageExternal.addListener(function (
           }
         );
       }
-      console.log({ request });
+      
       if (request.action === "CONTINUE_PREVIEW") {
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
             var activeTab = tabs[0];
-            console.log("active", activeTab.id, tabs);
+            
             chrome.tabs.sendMessage(activeTab.id, {
               message: "continue_preview",
               payload: { ...request, url: tabs[0].url },
@@ -189,7 +195,7 @@ chrome.runtime.onMessageExternal.addListener(function (
           { active: true, currentWindow: true },
           function (tabs) {
             var activeTab = tabs[0];
-            console.log("active", activeTab.id, tabs);
+            
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_single",
               payload: { ...request, url: tabs[0].url },
