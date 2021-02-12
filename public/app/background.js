@@ -148,7 +148,7 @@ chrome.runtime.onMessageExternal.addListener(function (
 ) {
   switch (request.type) {
     case "STATUS":
-      if (request.user_id) {
+      if (request.message === "init") {
         sendResponse({ isLoggedIn: true });
       } else {
         sendResponse({ isLoggedIn: false });
@@ -163,7 +163,35 @@ chrome.runtime.onMessageExternal.addListener(function (
             var activeTab = tabs[0];
             console.log("active", activeTab.id, tabs);
             chrome.tabs.sendMessage(activeTab.id, {
-              message: "web_request",
+              message: "preview_all",
+              payload: { ...request, url: tabs[0].url },
+            });
+          }
+        );
+      }
+      console.log({ request });
+      if (request.action === "CONTINUE_PREVIEW") {
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            var activeTab = tabs[0];
+            console.log("active", activeTab.id, tabs);
+            chrome.tabs.sendMessage(activeTab.id, {
+              message: "continue_preview",
+              payload: { ...request, url: tabs[0].url },
+            });
+          }
+        );
+      }
+
+      if (request.action === "PREVIEW_SINGLE_TRAIL") {
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            var activeTab = tabs[0];
+            console.log("active", activeTab.id, tabs);
+            chrome.tabs.sendMessage(activeTab.id, {
+              message: "preview_single",
               payload: { ...request, url: tabs[0].url },
             });
           }

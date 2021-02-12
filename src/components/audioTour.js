@@ -30,8 +30,8 @@ class AudioTour extends React.PureComponent {
   }
 
   componentDidMount() {
-    console.log("did mount");
-    console.log("this.props", this.props);
+    // console.log("did mount");
+    // console.log("this.props", this.props);
     let self = this;
     chrome.storage.local.get(
       ["userData", "isPreview", "authorData"],
@@ -140,12 +140,12 @@ class AudioTour extends React.PureComponent {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("did updated");
+    // console.log("did updated");
     if (
       this.props.tourStep !== prevProps.tourStep &&
       this.props.data[this.props.tourStep - 1].type === this.state.type
     ) {
-      console.log("audio url");
+      // console.log("audio url");
       this.setState({
         audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
       });
@@ -211,7 +211,7 @@ class AudioTour extends React.PureComponent {
 
       //credit for song: Adrian kreativaweb@gmail.com
       audio.addEventListener("loadeddata", () => {
-        console.log("audio loaded", playAudio);
+        // console.log("audio loaded", playAudio);
         if (!playAudio) {
           playAudio = true;
 
@@ -293,7 +293,7 @@ class AudioTour extends React.PureComponent {
 
       //toggle between playing and pausing on button click
       playBtn.addEventListener("click", () => {
-        console.log("on play button click");
+        // console.log("on play button click");
         if (audio.paused) {
           playBtn.classList.add("tr_audioplayer-playing");
           chrome.storage.local.get(["AutoPlayMediaToggle"], (items) => {

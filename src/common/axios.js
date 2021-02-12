@@ -177,3 +177,9 @@ export const getUserData = async (data) => {
     `${process.env.REACT_APP_MS4_URL}profileData/getProfileData/${data}`
   );
 };
+
+export const getSingleTrailData = async (trail_id, trail_data_id) => {
+  return await axios.get(
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getSingleStepData/${trail_id}/${trail_data_id}`
+  );
+};
