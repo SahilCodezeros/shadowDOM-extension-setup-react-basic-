@@ -1,245 +1,261 @@
-import React from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { Form, Input } from 'antd';
-import Icon from '@ant-design/icons';
-import $ from 'jquery';
+import React from "react";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Form, Input } from "antd";
+import Icon from "@ant-design/icons";
+import $ from "jquery";
 
 import {
-    commonTypeSelectonButton,
-    commonInitialRenderFunction,
-    commonTooltipFormFunction,
-    handleFileChange,
-    commonFileUploadFunction
-} from '../common';
+  commonTypeSelectonButton,
+  commonInitialRenderFunction,
+  commonTooltipFormFunction,
+  handleFileChange,
+  commonFileUploadFunction,
+} from "../common";
 
 let modalOpen;
 
 class CreateModalComponent extends React.PureComponent {
-    constructor(props) {
-        super(props)
+  constructor(props) {
+    super(props);
 
-        this.state = {
-            title: '',
-            description: '',
-            web_url: '',
-            trailStatus: 'text',
-            fileName: '',
-            fileLoading: false,
-            showPreview: false
-        };
-	};
-    
-    componentDidMount() {
-        // window.scrollTo(0, 0);
-        const scrollTop = $(window).scrollTop();
-        $("html, body").animate({ scrollTop: scrollTop });
+    this.state = {
+      title: "",
+      description: "",
+      web_url: "",
+      trailStatus: "text",
+      fileName: "",
+      fileLoading: false,
+      showPreview: false,
+    };
+  }
 
-        // Set trail status state
-        this.setState({ trailStatus: this.props.stepType });
+  componentDidMount() {
+    // window.scrollTo(0, 0);
+    const scrollTop = $(window).scrollTop();
+    $("html, body").animate({ scrollTop: scrollTop });
+
+    // Set trail status state
+    this.setState({ trailStatus: this.props.stepType });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.stepType !== this.props.stepType) {
+      // Set trail status state
+      this.setState({ trailStatus: this.props.stepType });
+    }
+  }
+
+  onChangeToInput = (e) => {
+    e.stopPropagation();
+
+    // this.setState({ [e.target.name]: e.target.value });
+    this.setState({ title: e.target.value });
+  };
+
+  onTitleChangeHandler = (e) => {
+    e.stopPropagation();
+
+    this.setState({ title: e.target.value });
+  };
+
+  onDescriptionChangeHandler = (value) => {
+    this.setState({ description: value });
+  };
+
+  onAddStep = (values) => {
+    let obj;
+    const { trailStatus, title, web_url, description } = this.state;
+
+    if (trailStatus === "text") {
+      // this.props.form.validateFields((err, values) => {
+      //     if (err || values.title === '' || (!description || description === '')) {
+      //         return;
+      //     }
+
+      obj = {
+        url: document.URL,
+        type: "modal",
+        mediaType: "modal",
+        title: values.title,
+        description,
+      };
+      // });
+    } else {
+      if (this.state.title === "" && this.state.web_url === "") {
+        return;
+      }
+
+      obj = {
+        url: document.URL,
+        type: "modal",
+        mediaType: trailStatus,
+        title,
+        web_url,
+      };
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.stepType !== this.props.stepType) {
-            // Set trail status state
-            this.setState({ trailStatus: this.props.stepType });
-        }
-    }
+    this.props.onSave(obj);
+    this.toggle();
+  };
 
-    onChangeToInput = (e) => {
-        e.stopPropagation();
+  toggle = () => {
+    this.setState({
+      title: "",
+      description: "",
+      web_url: "",
+      fileName: "",
+      trailStatus: "text",
+    });
 
-        // this.setState({ [e.target.name]: e.target.value });
-        this.setState({ title: e.target.value });
-    };
+    this.props.toggle(false);
+  };
 
-    onTitleChangeHandler = (e) => {
-        e.stopPropagation();
+  onSelectOption = (status) => {
+    this.setState({ trailStatus: status });
+  };
 
-        this.setState({ title: e.target.value });
-    };
-        
-    onDescriptionChangeHandler = (value) => {
-        this.setState({ description: value });
-    };
-    
-    onAddStep = (values) => {
-        let obj;
-        const { trailStatus, title, web_url, description } = this.state;
-        
-        if (trailStatus === 'text') {
-            // this.props.form.validateFields((err, values) => {
-            //     if (err || values.title === '' || (!description || description === '')) {
-            //         return;
-            //     }
-                
-                obj = {
-                    url: document.URL,
-                    type: 'modal',
-                    mediaType: 'modal',
-                    title: values.title,
-                    description
-                };                
-            // });
-        } else {
-            if (this.state.title === '' && this.state.web_url === '') {
-                return;
-            }
-            
-            obj = {
-                url: document.URL,
-                type: 'modal',
-                mediaType: trailStatus,
-                title,
-                web_url
-            };
-        }
+  uploadFile = (file) => {
+    this.setState({ fileLoading: true });
 
-        this.props.onSave(obj)
-        this.toggle();
-    };
-    
-    toggle = () => {
+    commonFileUploadFunction(file)
+      .then((response) => {
+        return response;
+      })
+      .then((res) => {
+        return res.data;
+      })
+      .then((data) => {
         this.setState({
-            title: '',
-            description: '',
-            web_url: '',
-            fileName: '',
-            trailStatus: 'text'
+          showPreview: true,
+          fileLoading: false,
+          fileName: file.name,
+          web_url: data.response.result.fileUrl,
         });
-        
-        this.props.toggle(false);
-    };
+      })
+      .catch((err) => {
+        this.setState({ fileLoading: false });
+        console.log("Error fetching profile " + err);
+      });
+  };
 
-    onSelectOption = (status) => {
-        this.setState({ trailStatus: status });
-    };
+  handleChange = (e) => {
+    const { trailStatus } = this.state;
 
-    uploadFile = (file) => {
-        this.setState({ fileLoading: true });
+    // Call common hadler file change function in common file
+    handleFileChange(e, trailStatus, this.uploadFile);
+  };
 
-        commonFileUploadFunction(file)
-			.then(response => {
-				return response;
-			})
-			.then(res => {
-				return res.data;
-			})
-			.then(data => {
-				this.setState({ 
-                    showPreview: true, 
-                    fileLoading: false, 
-                    fileName: file.name, 
-                    web_url: data.response.result.fileUrl
-                });
-			})
-			.catch(err => {
-				this.setState({ fileLoading: false });
-				console.log('Error fetching profile ' + err);
-			});
-    };
+  selectedTooltipForm = (mediaType) => {
+    const { trailStatus, title, fileName, fileLoading } = this.state;
 
-    handleChange = (e) => {
-        const { trailStatus } = this.state;
+    // Common tooltip form function imported from common file
+    return commonTooltipFormFunction(
+      trailStatus,
+      title,
+      fileName,
+      fileLoading,
+      this.toggle,
+      this.onAddStep,
+      this.onChangeToInput,
+      this.handleChange,
+      mediaType
+    );
+  };
 
-        // Call common hadler file change function in common file
-        handleFileChange(e, trailStatus, this.uploadFile);
-    };
+  onButtonCloseHandler = async (e) => {
+    // Call parent component function to close tooltip preview
+    await this.props.closeButtonHandler(e);
+  };
 
-    selectedTooltipForm = (mediaType) => {
-        const { trailStatus, title, fileName, fileLoading } = this.state;
+  render() {
+    modalOpen = this.props.open;
+    const { title, description, fileName, fileLoading } = this.state;
+    let tourType = "modal";
 
-        // Common tooltip form function imported from common file
-        return commonTooltipFormFunction(
-            trailStatus,
-            title,
-            fileName,
-            fileLoading,
-            this.toggle,
-            this.onAddStep,
-            this.onChangeToInput,
-            this.handleChange,
-            mediaType
-        );
-    };
-    
-    onButtonCloseHandler = async (e) => {
-        // Call parent component function to close tooltip preview
-        await this.props.closeButtonHandler(e);
-    };
-    
-    render() {        
-        modalOpen = this.props.open;
-        const { title, description, fileName, fileLoading } = this.state;
-        let tourType = 'modal';
+    let tooltipForm = commonInitialRenderFunction(
+      this.state.trailStatus,
+      title,
+      description,
+      this.onTitleChangeHandler,
+      this.onDescriptionChangeHandler,
+      this.toggle,
+      this.onAddStep,
+      this.selectedTooltipForm
+    );
 
-        
-        let tooltipForm = commonInitialRenderFunction(
-            this.state.trailStatus,
-            title,
-            description, 
-            this.onTitleChangeHandler, 
-            this.onDescriptionChangeHandler,
-            this.toggle,
-            this.onAddStep,
-            this.selectedTooltipForm
-        );
-            
-        const { trailStatus } = this.state;
-        
-        if (document.getElementById('extension-div').shadowRoot.getElementById('my-extension-root-flip').style.display === "none") {
-            modalOpen = false;
-        } else if(document.getElementById('extension-div').shadowRoot.getElementById('my-extension-root-flip').style.display === "block") {
-            modalOpen = true;
-        }
+    const { trailStatus } = this.state;
 
-        $(document).ready(() => {
-            const modalDiv = document.getElementById('extension-div').shadowRoot.querySelector('.trail_create_modal');
-            if (modalDiv) {
-                if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
-                    modalDiv.parentNode.parentNode.parentNode.setAttribute('class', 'trial_modal_show trial_create_modal_main');
-                }
-            } 
-        });   
-
-        let headerTitle = '';
-
-        if (trailStatus === 'video') {
-            headerTitle = 'Video';
-
-        } else if (trailStatus === 'audio') {
-            headerTitle = 'Audio';
-        }
-
-        
-        return(
-            <React.Fragment>
-                <Modal 
-                    centered={ true }
-                    isOpen={ modalOpen } 
-                    toggle={ this.onButtonCloseHandler } 
-                    className="tr_modal trail_create_modal" 
-                    container={ document.getElementById('extension-div').shadowRoot.querySelector('.modal-open') }
-                >
-                    <ModalHeader 
-                        toggle={ this.toggle }
-                        className="tr_modal_trail_modal_header" 
-                    >
-                        Create { headerTitle } Modal
-                    </ModalHeader>
-                    <ModalBody>
-                        { commonTypeSelectonButton(
-                            trailStatus, 
-                            this.onSelectOption, 
-                            tooltipForm, 
-                            fileName,
-                            fileLoading,
-                            tourType
-                        ) }
-                    </ModalBody>
-                </Modal>
-            </React.Fragment>
-        )
+    if (
+      document
+        .getElementById("extension-div")
+        .shadowRoot.getElementById("my-extension-root-flip").style.display ===
+      "none"
+    ) {
+      modalOpen = false;
+    } else if (
+      document
+        .getElementById("extension-div")
+        .shadowRoot.getElementById("my-extension-root-flip").style.display ===
+      "block"
+    ) {
+      modalOpen = true;
     }
+
+    $(document).ready(() => {
+      const modalDiv = document
+        .getElementById("extension-div")
+        .shadowRoot.querySelector(".trail_create_modal");
+      if (modalDiv) {
+        if (!modalDiv.parentNode.parentNode.parentNode.getAttribute("class")) {
+          modalDiv.parentNode.parentNode.parentNode.setAttribute(
+            "class",
+            "trial_modal_show trial_create_modal_main"
+          );
+        }
+      }
+    });
+
+    let headerTitle = "";
+
+    if (trailStatus === "video") {
+      headerTitle = "Video";
+    } else if (trailStatus === "audio") {
+      headerTitle = "Audio";
+    }
+
+    return (
+      <React.Fragment>
+        <Modal
+          centered={true}
+          isOpen={modalOpen}
+          toggle={this.onButtonCloseHandler}
+          className={`tr_modal trail_create_modal ${
+            this.props.screenSize() && "responsive_modal"
+          }`}
+          container={document
+            .getElementById("extension-div")
+            .shadowRoot.querySelector(".modal-open")}
+        >
+          <ModalHeader
+            toggle={this.toggle}
+            className="tr_modal_trail_modal_header"
+          >
+            Create {headerTitle} Modal
+          </ModalHeader>
+          <ModalBody>
+            {commonTypeSelectonButton(
+              trailStatus,
+              this.onSelectOption,
+              tooltipForm,
+              fileName,
+              fileLoading,
+              tourType
+            )}
+          </ModalBody>
+        </Modal>
+      </React.Fragment>
+    );
+  }
 }
 
 export default CreateModalComponent;

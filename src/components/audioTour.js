@@ -30,6 +30,8 @@ class AudioTour extends React.PureComponent {
   }
 
   componentDidMount() {
+    console.log("did mount");
+    console.log("this.props", this.props);
     let self = this;
     chrome.storage.local.get(
       ["userData", "isPreview", "authorData"],
@@ -138,10 +140,12 @@ class AudioTour extends React.PureComponent {
   };
 
   componentDidUpdate(prevProps, prevState) {
+    console.log("did updated");
     if (
       this.props.tourStep !== prevProps.tourStep &&
       this.props.data[this.props.tourStep - 1].type === this.state.type
     ) {
+      console.log("audio url");
       this.setState({
         audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
       });
@@ -203,49 +207,56 @@ class AudioTour extends React.PureComponent {
         dragElement(audioWrapTooltip);
       }
 
+      let playAudio = false;
+
       //credit for song: Adrian kreativaweb@gmail.com
       audio.addEventListener("loadeddata", () => {
-        if (
-          this.props.data[this.props.tourStep - 1].url === document.URL &&
-          document
-            .getElementById("extension-div")
-            .shadowRoot.querySelector(".audio_wrap_tooltip")
-        ) {
-          chrome.storage.local.get(["AutoPlayMediaToggle"], (items) => {
-            if (
-              items.AutoPlayMediaToggle === undefined ||
-              items.AutoPlayMediaToggle
-            ) {
-              let audioPromise = audio.play();
-              if (audioPromise !== undefined) {
-                audioPromise
-                  .then((res) => {
-                    playBtn.classList.add("tr_audioplayer-playing");
+        console.log("audio loaded", playAudio);
+        if (!playAudio) {
+          playAudio = true;
 
-                    //check audio percentage and update time accordingly
-                    const progressBar = tr_audioplayer.querySelector(
-                      ".tr_audioplayer-bar-played"
-                    );
-                    timeInterval = setInterval(() => {
-                      progressBar.style.width =
-                        (audio.currentTime / audio.duration) * 100 + "%";
-                      tr_audioplayer.querySelector(
-                        ".tr_audioplayer-time-current"
-                      ).textContent = getTimeCodeFromNum(audio.currentTime);
-                    }, 500);
+          if (
+            this.props.data[this.props.tourStep - 1].url === document.URL &&
+            document
+              .getElementById("extension-div")
+              .shadowRoot.querySelector(".audio_wrap_tooltip")
+          ) {
+            chrome.storage.local.get(["AutoPlayMediaToggle"], (items) => {
+              if (
+                items.AutoPlayMediaToggle === undefined ||
+                items.AutoPlayMediaToggle
+              ) {
+                let audioPromise = audio.play();
+                if (audioPromise !== undefined) {
+                  audioPromise
+                    .then((res) => {
+                      playBtn.classList.add("tr_audioplayer-playing");
 
-                    audio.volume = 0.75;
-                  })
-                  .catch((err) => console.log("err", err));
+                      //check audio percentage and update time accordingly
+                      const progressBar = tr_audioplayer.querySelector(
+                        ".tr_audioplayer-bar-played"
+                      );
+                      timeInterval = setInterval(() => {
+                        progressBar.style.width =
+                          (audio.currentTime / audio.duration) * 100 + "%";
+                        tr_audioplayer.querySelector(
+                          ".tr_audioplayer-time-current"
+                        ).textContent = getTimeCodeFromNum(audio.currentTime);
+                      }, 500);
+
+                      audio.volume = 0.75;
+                    })
+                    .catch((err) => console.log("err", err));
+                }
               }
-            }
-          });
+            });
+          }
+          tr_audioplayer.querySelector(
+            ".tr_audioplayer-time-duration"
+          ).textContent = isNaN(audio.duration)
+            ? 0.0
+            : getTimeCodeFromNum(audio.duration);
         }
-        tr_audioplayer.querySelector(
-          ".tr_audioplayer-time-duration"
-        ).textContent = isNaN(audio.duration)
-          ? 0.0
-          : getTimeCodeFromNum(audio.duration);
       });
 
       //Audio ended event

@@ -429,4 +429,8 @@ export const main2Css = `
         background: #808080;
         cursor: not-allowed !important;
     }
+
+    .responsive_modal {
+        max-width: 95vw;
+    }
 `;

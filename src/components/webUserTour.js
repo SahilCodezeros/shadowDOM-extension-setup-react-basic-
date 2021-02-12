@@ -519,7 +519,7 @@ class WebUserTour extends React.Component {
                         : "" || (mediaTypeStatus && mediaTypeStatus === "audio")
                         ? "tr_audio_only"
                         : ""
-                    }`}
+                    } ${resizeScreen() && 'mobile_preview_popover'}`}
                     placement="top"
                     isOpen={tourSteps[`step${res.step}`]}
                   >

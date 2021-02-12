@@ -51,7 +51,7 @@ export const myExtensionRootFlipCss1 = `
         overflow: hidden;
         outline: 0 !important;
         max-width: 500px !important;
-        min-width: 500px !important;
+        // min-width: 500px !important;
         transform: translate(-50%, -50%) !important;
         width: 100% !important;
         padding: 0 !important;
@@ -645,6 +645,11 @@ export const myExtensionRootFlipCss2 = `
         width: 460px !important;
         max-width: 460px !important;
         background: transparent !important;
+    }
+
+    .mobile_preview_popover .popover {
+        width: 400px !important;
+        max-width: 400px !important;
     }
 
     .trail_tooltip .bs-popover-auto[x-placement^="bottom"],

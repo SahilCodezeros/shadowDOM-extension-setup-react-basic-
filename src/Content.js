@@ -133,9 +133,18 @@ class Main extends React.Component {
         "showSetting",
       ],
       async (items) => {
+        console.log("items", items);
+        let closeContinue = false;
+        if (
+          items.closeContinue &&
+          items.trail_web_user_tour &&
+          items.trail_web_user_tour.length > 0
+        ) {
+          closeContinue = true;
+        }
+
         this.setState({
-          closeContinue:
-            items.closeContinue === undefined ? false : items.closeContinue,
+          closeContinue: closeContinue,
           currentUserId: items.userData._id,
         });
         socket.on("connect", () => {
@@ -161,7 +170,7 @@ class Main extends React.Component {
         }
 
         chrome.storage.onChanged.addListener(async (changes) => {
-          // console.log("changes", changes);
+          console.log("changes1", changes);
           // if (changes.authorData && changes.authorData.userName.newValue) {
           //   let { data } = await getUserData(
           //     changes.authorData.newValue.userName
@@ -452,7 +461,7 @@ class Main extends React.Component {
   async getCurrUserDataCommon(items) {
     const user_id = items.userData._id;
     let res,
-      continueFlag,
+      continueFlag = false,
       trail_id = items.trail_id;
 
     try {
@@ -1502,6 +1511,7 @@ class DefaultButton extends React.PureComponent {
       dragPosition: { x: 0, y: 0 },
       dynamicPopupButton: true,
       trailName: "",
+      openSidebar: false,
     };
 
     this.onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
@@ -1573,7 +1583,7 @@ class DefaultButton extends React.PureComponent {
   async getCurrUserDataCommon(items) {
     const user_id = items.userData._id;
     let res,
-      continueFlag,
+      continueFlag = false,
       trail_id = items.trail_id;
 
     try {
@@ -1722,6 +1732,21 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
+      console.log("changes2", changes);
+      if (changes.tourType && changes.tourType.newValue === "") {
+        // Set side bar state
+        this.setState({ openSidebar: false, open: false });
+      }
+
+      if (
+        changes.tourType &&
+        (changes.tourType.newValue === "video" ||
+          changes.tourType.newValue === "audio")
+      ) {
+        // Set side bar state
+        this.setState({ openSidebar: true, open: true });
+      }
+
       if (changes.trail_name) {
         // Set state
         this.setState({ trailName: changes.trail_name.newValue });
@@ -1841,7 +1866,7 @@ class DefaultButton extends React.PureComponent {
           changes.tourType.newValue === "audio" ||
           changes.tourType.newValue === "video" ||
           changes.tourType.newValue === "modal") &&
-        changes.tourType &&
+        changes.currentTourType &&
         changes.currentTourType.newValue === "preview"
       ) {
         // this.setLoadingState(false);
@@ -2011,9 +2036,17 @@ class DefaultButton extends React.PureComponent {
               }
             } else {
               if (items.tourType === "tooltip") {
-                this.setState({ tourType: items.tourType, open: false });
+                this.setState({
+                  tourType: items.tourType,
+                  open: false,
+                  openSidebar: false,
+                });
               } else if (items.tourType === "Make Edit") {
-                this.setState({ tourType: items.tourType, open: true });
+                this.setState({
+                  tourType: items.tourType,
+                  open: true,
+                  openSidebar: true,
+                });
               } else {
                 this.setState({ tourType: items.tourType });
               }
@@ -2300,14 +2333,14 @@ class DefaultButton extends React.PureComponent {
           items.currentTourType === "tooltip" ||
           items.tourType === "tooltip"
         ) {
-          this.setState({ open: false });
+          this.setState({ open: false, openSidebar: false });
         }
 
         if (
           items.currentTourType === "Make Edit" ||
           items.tourType === "Make Edit"
         ) {
-          this.setState({ open: true });
+          this.setState({ open: true, openSidebar: true });
         }
 
         if (
@@ -2685,7 +2718,10 @@ class DefaultButton extends React.PureComponent {
   };
 
   openPopup = () => {
-    this.setState({ open: !this.state.open });
+    this.setState({
+      open: !this.state.open,
+      openSidebar: !this.state.openSidebar,
+    });
   };
 
   /**
@@ -3188,6 +3224,7 @@ class DefaultButton extends React.PureComponent {
                   tourStep: "",
                   overlay: false,
                   loading: false,
+                  open: false,
                   draggable: false,
                 });
                 this.props.onChangeTourType("");
@@ -3223,6 +3260,12 @@ class DefaultButton extends React.PureComponent {
 
               this.props.mainToggle();
               this.props.onChangeTourType("");
+              chrome.storage.local.set({
+                tourType: "",
+                currentTourType: "",
+                tourStep: "",
+                stepType: "",
+              });
               this.setState({
                 web_url: "",
                 tourType: "",
@@ -3234,12 +3277,6 @@ class DefaultButton extends React.PureComponent {
                 stepType: "",
                 open: false,
                 draggable: false,
-              });
-              chrome.storage.local.set({
-                tourType: "",
-                currentTourType: "",
-                tourStep: "",
-                stepType: "",
               });
             }
 
@@ -3259,6 +3296,11 @@ class DefaultButton extends React.PureComponent {
             await removeThisElements();
             this.props.mainToggle();
             this.props.onChangeTourType("");
+            chrome.storage.local.set({
+              tourType: "",
+              currentTourType: "",
+              tourStep: "",
+            });
             this.setState({
               web_url: "",
               tourType: "",
@@ -3266,12 +3308,8 @@ class DefaultButton extends React.PureComponent {
               tourStep: "",
               overlay: false,
               loading: false,
+              open: false,
               draggable: false,
-            });
-            chrome.storage.local.set({
-              tourType: "",
-              currentTourType: "",
-              tourStep: "",
             });
 
             if (this.state.onDone) {
@@ -3465,6 +3503,7 @@ class DefaultButton extends React.PureComponent {
       onDone,
       isDraggable,
       trailName,
+      openSidebar,
     } = this.state;
 
     const localStorageCount = localStorage.getItem(
@@ -3485,11 +3524,14 @@ class DefaultButton extends React.PureComponent {
       // }
     }
 
-    let openSidebar = open;
+    // let openSidebar = open;
 
-    if (tourType === "audio" || tourType === "video") {
-      openSidebar = true;
-    }
+    // if (tourType === "audio" || tourType === "video") {
+    //   openSidebar = true;
+    // }
+
+    console.log("tourType", tourType);
+    console.log("openSidebar", openSidebar);
 
     // const sidepopup = document
     //   .getElementById("extension-div")
@@ -3545,6 +3587,15 @@ class DefaultButton extends React.PureComponent {
             "class",
             "trial_modal_show trial_create_modal_main"
           );
+        }
+
+        const modal = document
+          .getElementById("extension-div")
+          .shadowRoot.querySelector(".trial_create_modal_main .modal");
+        console.log("modal", modal);
+
+        if (modal && resizeScreen()) {
+          modal.style.height = "75%";
         }
       }
 
@@ -3624,6 +3675,7 @@ class DefaultButton extends React.PureComponent {
                 disabled={onDone}
                 className="trail_builder-back-button"
                 onClick={this.onBackArrowClickHandler}
+                onTouchEnd={this.onBackArrowClickHandler}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -3928,6 +3980,7 @@ class DefaultButton extends React.PureComponent {
             <CreateModalComponent
               stepType={stepType}
               open={createModalOpen}
+              screenSize={resizeScreen}
               toggle={this.onToggleCreateModal}
               closeButtonHandler={this.onBackArrowClickHandler}
               onSave={this.onSaveTrail}
@@ -4097,6 +4150,7 @@ class DefaultButton extends React.PureComponent {
                   <CreateModalComponent
                     stepType={stepType}
                     open={createModalOpen}
+                    screenSize={resizeScreen}
                     toggle={this.onToggleCreateModal}
                     closeButtonHandler={this.onBackArrowClickHandler}
                     onSave={this.onSaveTrail}
@@ -4205,7 +4259,11 @@ class DefaultButton extends React.PureComponent {
                   <div className="space"></div>
                 </div>
                 {this.state.dynamicPopupButton && (
-                  <button className="menu pop" onClick={this.openPopup}>
+                  <button
+                    onTouchEnd={this.openPopup}
+                    className="menu pop"
+                    onClick={this.openPopup}
+                  >
                     <img
                       alt=""
                       src={require("./images/trailit_X_button_new.png")}
