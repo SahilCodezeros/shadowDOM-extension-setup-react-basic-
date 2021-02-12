@@ -1,12 +1,8 @@
 // Called when the user clicks on the browser action
 /* global chrome */
-function onCaptured(imageUri) {
-  
-}
+function onCaptured(imageUri) {}
 
-function onError(error) {
-  
-}
+function onError(error) {}
 
 if (typeof chrome.app.isInstalled !== "undefined") {
   chrome.browserAction.onClicked.addListener(function (tab) {
@@ -25,8 +21,8 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
   // function modifyDOM() {
   //    //You can play with your DOM here or check URL against your regex
-  //    
-  //    
+  //
+  //
   //    return document.body.innerHTML;
   // }
 
@@ -35,28 +31,28 @@ if (typeof chrome.app.isInstalled !== "undefined") {
   //       let activeTab = tabs.find(r => r.url == request.options.url);
   //       chrome.tabs.update(activeTab.id, {active: true});
   //       chrome.tabs.sendMessage(activeTab.id, {target: 'app', type: 'setMessage', body: 'How are you'}, function(ee) {
-  //          
+  //
   //       });
 
   //       chrome.tabs.executeScript({
   //          code: '(' + modifyDOM + ')();' //argument here is a string but function.toString() returns function's code
   //       }, (results) => {
   //          //Here we have just the innerHTML and not DOM structure
-  //          
-  //          
+  //
+  //
   //       });
 
   //       chrome.tabs.update(activeTab.id, {url: activeTab.url}, function() {
-  //          
+  //
   //       });
 
   //       chrome.tabs.executeScript(null, {
   //          file: '/static/js/content.js'
   //       }, function(ddd) {
-  //          
+  //
   //          // If you try and inject into an extensions page or the webstore/NTP you'll get an error
   //          if (chrome.runtime.lastError) {
-  //                
+  //
 
   //          }
   //       });
@@ -67,7 +63,7 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
   // chrome.windows.onFocusChanged.addListener(function(window) {
   //    chrome.tabs.query({active: false, currentWindow:true},function(tabs) {
-  //       
+  //
   //       var activeTab = tabs[5];
   //       chrome.tabs.update(activeTab.id, {active: true})
   //       // chrome.tabs.sendMessage(activeTab.id, {tabs}, {"message": "clicked_browser_action"});
@@ -77,8 +73,12 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "openInTab") {
-    chrome.tabs.update(sender.tab.id, {
-      url: message.url,
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      var activeTab = tabs[0];
+
+      chrome.tabs.update(activeTab.id, {
+        url: message.url,
+      });
     });
   }
 
@@ -167,7 +167,7 @@ chrome.runtime.onMessageExternal.addListener(function (
           { active: true, currentWindow: true },
           function (tabs) {
             var activeTab = tabs[0];
-            
+
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_all",
               payload: { ...request, url: tabs[0].url },
@@ -175,13 +175,13 @@ chrome.runtime.onMessageExternal.addListener(function (
           }
         );
       }
-      
+
       if (request.action === "CONTINUE_PREVIEW") {
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
             var activeTab = tabs[0];
-            
+
             chrome.tabs.sendMessage(activeTab.id, {
               message: "continue_preview",
               payload: { ...request, url: tabs[0].url },
@@ -195,7 +195,7 @@ chrome.runtime.onMessageExternal.addListener(function (
           { active: true, currentWindow: true },
           function (tabs) {
             var activeTab = tabs[0];
-            
+
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_single",
               payload: { ...request, url: tabs[0].url },

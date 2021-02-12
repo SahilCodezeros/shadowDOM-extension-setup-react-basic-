@@ -136,7 +136,7 @@ class Main extends React.Component {
         "showSetting",
       ],
       async (items) => {
-        // 
+        //
         let closeContinue = false;
         if (
           items.closeContinue &&
@@ -150,9 +150,7 @@ class Main extends React.Component {
           closeContinue: closeContinue,
           currentUserId: items.userData._id,
         });
-        socket.on("connect", () => {
-          
-        });
+        socket.on("connect", () => {});
 
         socket.emit("userId", items.userData._id);
 
@@ -173,12 +171,12 @@ class Main extends React.Component {
         }
 
         chrome.storage.onChanged.addListener(async (changes) => {
-          // 
+          //
           // if (changes.authorData && changes.authorData.userName.newValue) {
           //   let { data } = await getUserData(
           //     changes.authorData.newValue.userName
           //   );
-          //   
+          //
 
           //   chrome.storage.local.set({
           //     authorData: data.response.result.userData,
@@ -231,9 +229,7 @@ class Main extends React.Component {
                 try {
                   // Call common get user data function
                   await this.getCurrUserDataCommon(items);
-                } catch (err) {
-                  
-                }
+                } catch (err) {}
               }
             );
           }
@@ -277,9 +273,7 @@ class Main extends React.Component {
             // } else {
             // 	previewUserId = items.previewUserId
             // }
-          } catch (err) {
-            
-          }
+          } catch (err) {}
 
           const params = new URLSearchParams(url.search.substring(1));
           previewUserId = params.get("user_id");
@@ -379,7 +373,7 @@ class Main extends React.Component {
 
             trail_web_user_tour: items.trail_web_user_tour,
           };
-          
+
           if (items.isPreview) {
             // Call get current user data common function
             await this.getCurrUserDataCommon(data);
@@ -454,13 +448,13 @@ class Main extends React.Component {
     chrome.runtime.onMessage.addListener(this.onHandleSubscription);
 
     // 	(msg) => {
-    // 	
+    //
     // 	if(msg.subject === 'DOMObj') {
     // 		chrome.storage.local.get(["userData"], async function (items) {
     // 			socket.emit('userId', items.userData._id)
     // 		})
     // 		socket.on('followerList', data => {
-    // 			
+    //
     // 			let follower = data.map(result => {
 
     // 			})
@@ -481,9 +475,7 @@ class Main extends React.Component {
       let screen = resizeScreen() ? "mobile" : "web";
       res = await getUserOneTrail(user_id, trail_id, screen);
       trailWebUserTour = items.trail_web_user_tour;
-    } catch (err) {
-      
-    }
+    } catch (err) {}
 
     // if (items.trail_web_user_tour && items.trail_web_user_tour.length > 0) {
     // 	items.trail_web_user_tour.forEach(el => {
@@ -641,7 +633,6 @@ class Main extends React.Component {
             trail_id: items.trail_id,
             trail_web_user_tour: items.trail_web_user_tour,
           };
-          
 
           if (items.isPreview) {
             // Call get current user data common function
@@ -714,9 +705,7 @@ class Main extends React.Component {
             badgeText: `${res.data.response.result.length}`,
           });
         }
-      } catch (err) {
-        
-      }
+      } catch (err) {}
     });
   }
 
@@ -938,16 +927,15 @@ class Main extends React.Component {
               ) {
                 // Set loading state to false
                 chrome.storage.local.set({ loading: "true" });
-
-                // document.location.href = trail_web_user_tour[0].url;
-
                 chrome.runtime.sendMessage("", {
                   type: "openInTab",
                   url: trail_web_user_tour[0].url,
                 });
 
+                // document.location.href = trail_web_user_tour[0].url;
+
                 // } else if(tour.url && tour.url !== document.URL && closeContinue===undefined) {
-                // 	
+                //
 
                 // 	// Set loading state to false
                 // 	chrome.storage.local.set({ loading: 'true' });
@@ -1869,7 +1857,6 @@ class DefaultButton extends React.PureComponent {
       });
     }
     if (msg.message === "continue_preview") {
-      
       // Call common get user data function
       await this.getCurrUserDataCommon({
         userData: msg.payload.userData,
@@ -1897,7 +1884,6 @@ class DefaultButton extends React.PureComponent {
         loggedInData: msg.payload.loggedInData,
       });
       chrome.storage.local.get(["trail_id", "userData"], (items) => {
-        
         chrome.storage.local.set({
           isPreviewSingleTrail: true,
           webUrl: msg.payload.url,
@@ -1936,7 +1922,7 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      // 
+      //
       if (changes.tourType && changes.tourType.newValue === "") {
         // Set side bar state
         this.setState({ openSidebar: false, open: false });
@@ -2013,13 +1999,13 @@ class DefaultButton extends React.PureComponent {
       //   changes.currentTourType &&
       //   changes.currentTourType.newValue === "preview"
       // ) {
-      //   
+      //
       //   // Set draggable state
       //   this.setState({ isDraggable: false });
       // } else {
       //   chrome.storage.local.get(["isDraggable"], (items) => {
       //     if (items.isDraggable !== undefined && items.isDraggable !== null) {
-      //       
+      //
       //       // Set draggable state
       //       this.setState({ isDraggable: items.isDraggable });
       //     }
@@ -2035,13 +2021,13 @@ class DefaultButton extends React.PureComponent {
       //     changes.currentTourType.newValue === "video" ||
       //     changes.currentTourType.newValue === "audio")
       // ) {
-      //   
+      //
       //   // Set draggable state
       //   this.setState({ isDraggable: false, dragPosition: { x: 0, y: 0 } });
       // } else {
       //   chrome.storage.local.get(["isDraggable"], (items) => {
       //     if (items.isDraggable !== undefined && items.isDraggable !== null) {
-      //       
+      //
       //       // Set draggable state
       //       this.setState({
       //         isDraggable: items.isDraggable,
@@ -2087,7 +2073,7 @@ class DefaultButton extends React.PureComponent {
         }
       }
 
-      // 
+      //
 
       // if (
       //   changes.tourType &&
@@ -2098,7 +2084,7 @@ class DefaultButton extends React.PureComponent {
       //   const sidepopup = document
       //     .getElementById("extension-div")
       //     .shadowRoot.querySelector(".sidepopup");
-      //   
+      //
       //   if (sidepopup) {
       //     // Add white background
       //     sidepopup.style.background = "#ffffff";
@@ -2396,7 +2382,7 @@ class DefaultButton extends React.PureComponent {
               });
 
               // document.onchange = () => {
-              //   
+              //
               //   // Update overlay
               //   updateOverlay();
               // };
@@ -2614,7 +2600,7 @@ class DefaultButton extends React.PureComponent {
         });
 
         // this.setState({...this.state, obj}, () => {
-        // 	
+        //
         // });
       }.bind(this)
     );
@@ -2918,9 +2904,7 @@ class DefaultButton extends React.PureComponent {
 
       // Call remove overlay function
       removeOverlay();
-    } catch (err) {
-      
-    }
+    } catch (err) {}
 
     chrome.storage.local.set({
       tourType: "",
@@ -3048,7 +3032,6 @@ class DefaultButton extends React.PureComponent {
       })
       .catch((err) => {
         this.setState({ fileLoading: false });
-        
       });
   };
 
@@ -3191,7 +3174,6 @@ class DefaultButton extends React.PureComponent {
       );
     } catch (err) {
       this.setState({ publishLoader: false });
-      
     }
   };
 
@@ -3288,9 +3270,7 @@ class DefaultButton extends React.PureComponent {
         });
         this.setState({ follow: true });
       })
-      .catch((err) => {
-        
-      });
+      .catch((err) => {});
   };
 
   unFollowTrail = (e) => {
@@ -3312,9 +3292,7 @@ class DefaultButton extends React.PureComponent {
         chrome.storage.local.set({ followData: {} });
         this.setState({ follow: false });
       })
-      .catch((err) => {
-        
-      });
+      .catch((err) => {});
   };
 
   // Send notification to follower when publish button clicked
@@ -3442,9 +3420,7 @@ class DefaultButton extends React.PureComponent {
 
                     // Call update trail api to add flag into table
                     await updateTrailFlag(data);
-                  } catch (err) {
-                    
-                  }
+                  } catch (err) {}
                 }
 
                 // Remove elements
@@ -3689,8 +3665,6 @@ class DefaultButton extends React.PureComponent {
         }, 5000);
       })
       .catch((err) => {
-        
-
         this.setState({ setError: err.message });
 
         setTimeout(() => {
@@ -3715,10 +3689,10 @@ class DefaultButton extends React.PureComponent {
     const position = document
       .getElementById("extension-div")
       .shadowRoot.getElementById("my-extension-defaultroot");
-    // 
-    // 
-    // 
-    // 
+    //
+    //
+    //
+    //
   }
 
   render() {
@@ -3766,8 +3740,8 @@ class DefaultButton extends React.PureComponent {
     //   openSidebar = true;
     // }
 
-    // 
-    // 
+    //
+    //
 
     // const sidepopup = document
     //   .getElementById("extension-div")
@@ -3785,7 +3759,7 @@ class DefaultButton extends React.PureComponent {
     //     tourType === "tooltip" ||
     //     tourType === "preview"
     //   ) {
-    //     
+    //
     //     // Add transparent background
     //     sidepopup.style.background = "transparent";
     //   }
@@ -3828,7 +3802,7 @@ class DefaultButton extends React.PureComponent {
         const modal = document
           .getElementById("extension-div")
           .shadowRoot.querySelector(".trial_create_modal_main .modal");
-        // 
+        //
 
         if (modal && resizeScreen()) {
           modal.style.height = "75%";
@@ -3857,11 +3831,11 @@ class DefaultButton extends React.PureComponent {
       // this.addTrailitLogo();
     }
 
-    // 
-    // 
+    //
+    //
 
     // if (!draggable) {
-    //   // 
+    //   //
     //   const menuButton = document
     //     .getElementById("extension-div")
     //     .shadowRoot.getElementById("my-extension-defaultroot");
@@ -4343,13 +4317,13 @@ class DefaultButton extends React.PureComponent {
         <Draggable
           disabled={!isDraggable}
           // onStart={ (data) => {
-          // 	// 
+          // 	//
           // } }
           // onDrag={ (data) => {
-          // 	// 
+          // 	//
           // } }
           // onStop={(data) => {
-          // 	
+          //
 
           // 	this.dragStop(data);
           // 	// this.setState({ dragPosition: { x: data.x, y: data.y } });
