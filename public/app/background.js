@@ -148,7 +148,7 @@ chrome.runtime.onMessageExternal.addListener(function (
 ) {
   switch (request.type) {
     case "STATUS":
-      if (request.user_id) {
+      if (request.message === "init") {
         sendResponse({ isLoggedIn: true });
       } else {
         sendResponse({ isLoggedIn: false });
