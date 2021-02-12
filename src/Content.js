@@ -641,7 +641,6 @@ class Main extends React.Component {
             trail_id: items.trail_id,
             trail_web_user_tour: items.trail_web_user_tour,
           };
-          console.log({ items1: items });
 
           if (items.isPreview) {
             // Call get current user data common function
