@@ -2,9 +2,10 @@ import React from "react";
 import _ from "lodash";
 
 import { socket } from "../common/socket";
-import { handleFileUpload } from "../common/audAndVidCommon";
-import { wallet, getAddress } from "../common/celo";
 import { getBalance } from "../code/getBalance";
+import { getFollowTrails } from "../common/axios";
+import { wallet, getAddress } from "../common/celo";
+import { handleFileUpload } from "../common/audAndVidCommon";
 import SettingsComponent from "../components/settingsComponents";
 
 // import BgImage from "../images/trailit_bx_img.png";
@@ -220,15 +221,35 @@ class UserProfile extends React.Component {
     chrome.storage.local.get(
       ["auth_Tokan", "userData", "reload"],
       async function (items) {
-        const result = await getUserSingleTrail(items.userData._id);
+        if (listTitle === "Followed") {
+          // Get follow data of user from database
+          const followData = await getFollowTrails(items.userData._id);
+          const followedTrails = followData.data;
+          console.log("followedTrails", followedTrails.response.result);
+          if (
+            followedTrails &&
+            followedTrails.response &&
+            followedTrails.response.statusCode === "200"
+          ) {
+            this.setState({
+              myTrilsListData: followedTrails.response.result,
+              isLoading: false,
+            });
+          }
+        } else {
+          const result = await getUserSingleTrail(items.userData._id);
 
-        if (result.status == 200) {
-          this.setState({ myTrilsListData: result.data.response });
+          if (result.status == 200) {
+            this.setState({
+              myTrilsListData: result.data.response,
+              isLoading: false,
+            });
+          }
         }
       }.bind(this)
     );
 
-    this.setState({ listTitle });
+    this.setState({ listTitle, isLoading: true });
   };
 
   onChangeTrailEdit = (editTrail) => {
@@ -350,10 +371,10 @@ class UserProfile extends React.Component {
     } = this.state;
 
     let list = [];
-    if (listTitle == "My Trails") {
+    if (listTitle === "My Trails") {
       list = myTrilsListData;
-    } else if (listTitle == "Followed") {
-      list = notificationData;
+    } else if (listTitle === "Followed") {
+      list = myTrilsListData;
     }
 
     return (

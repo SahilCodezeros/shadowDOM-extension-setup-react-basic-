@@ -26,7 +26,11 @@ export const mainFlipCss = `
         transition: all 0.6s ease-in-out;
     }
 
-    .trail_card.trail_flipped .my-extension{
+    // .trail_card.trail_flipped .my-extension {
+    //     position: relative !important;
+    // }
+
+    .closeContinue {
         position: relative !important;
     }
     

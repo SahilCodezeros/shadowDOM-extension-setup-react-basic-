@@ -273,6 +273,11 @@ class UserProfileList extends Component {
                                   src={
                                     profileImage == ""
                                       ? require("../../images/user.png")
+                                      : this.props.title === "Followed"
+                                      ? res.userData &&
+                                        res.userData.profileImage
+                                        ? res.userData.profileImage
+                                        : require("../../images/user.png")
                                       : profileImage
                                   }
                                 />
