@@ -48,10 +48,11 @@ export const getFollowTrails = async (userId) => {
   //   data
   // );
 
-  return await axios.get(`${process.env.REACT_APP_MS4_URL}userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20&loggedInId=${userId}`);
+  return await axios.get(
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20&loggedInId=${userId}`
+  );
   // userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20&loggedInId=6008389da0d1567ee8224390
 };
-
 
 // Unfollow trail
 export const unFollowTrailOfUser = async (data) => {
@@ -185,5 +186,12 @@ export const getUserData = async (data) => {
 export const getSingleTrailData = async (trail_id, trail_data_id) => {
   return await axios.get(
     `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getSingleStepData/${trail_id}/${trail_data_id}`
+  );
+};
+
+// Get user data
+export const getUser = async (userId) => {
+  return await axios.get(
+    `${process.env.REACT_APP_MS1_URL}user/getOneUser/${userId}`
   );
 };

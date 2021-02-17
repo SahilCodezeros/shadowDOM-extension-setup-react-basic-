@@ -118,7 +118,7 @@ class Login extends React.Component {
   render() {
     return (
       <div className="trailMain">
-        <div className="login_tr_wrapper">
+        <div className="auth_tr_wrapper">
           <div className="trailit_userPanal trailit_Big">
             <div className="trailit_userPanalRightBox">
               <div className="trailit_userPanalHeaderBox login_header">
@@ -167,8 +167,12 @@ class Login extends React.Component {
                         className="form-input"
                         rules={[
                           {
+                            type: "email",
+                            message: "Please enter valid email!",
+                          },
+                          {
                             required: true,
-                            message: "Please enter your email!",
+                            message: "Please enter email!",
                           },
                         ]}
                       >
@@ -181,9 +185,9 @@ class Login extends React.Component {
                         className="form-input"
                         rules={[
                           {
-                            min: 3,
+                            // min: 3,
                             required: true,
-                            message: "Please input your password!",
+                            message: "Please enter password!",
                           },
                         ]}
                       >

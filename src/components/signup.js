@@ -128,7 +128,7 @@ class Signup extends React.Component {
               },
               {
                 required: true,
-                message: 'Please enter your email!',
+                message: 'Please enter email!',
               }]}
             >
               {/* {getFieldDecorator('email', {
@@ -153,14 +153,14 @@ class Signup extends React.Component {
               name="password"
               rules={[{
                 required: true,
-                message: 'Please input your password!',
+                message: 'Please enter password!',
               }]}
             >
               {/* {getFieldDecorator('password', {
                 rules: [
                   {
                     required: true,
-                    message: 'Please input your password!',
+                    message: 'Please enter password!',
                   }
                 ],
               })(

@@ -34,11 +34,13 @@ class AudioTour extends React.PureComponent {
     // console.log("this.props", this.props);
     let self = this;
     chrome.storage.local.get(
-      ["userData", "isPreview", "authorData"],
+      ["userData", "isPreview", "authorData", "followedTrailUserData"],
       (items) => {
         self.setState({
           profileImage: items.isPreview
             ? items.authorData.profileImage
+            : items.followedTrailUserData
+            ? items.followedTrailUserData.profileImage
             : items.userData.profileImage
             ? items.userData.profileImage
             : "",
