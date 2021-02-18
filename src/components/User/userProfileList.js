@@ -140,11 +140,18 @@ class UserProfileList extends Component {
       };
     });
 
+    let followedTrailUserData = null;
+
+    if (res.userData) {
+      followedTrailUserData = { ...res.userData };
+    }
+
     chrome.storage.local.set(
       {
         trail_id: res.trail_id,
         trail_name: res.trail_name,
         trail_web_user_tour: undefined,
+        followedTrailUserData,
       },
       (items) => console.log("trail_web_user_tourtrail_web_user_tour", items)
     );
@@ -198,110 +205,121 @@ class UserProfileList extends Component {
         <div className="trailit_18600 trailit_mb3">{this.props.title}</div>
         <div className="trailit_scrollBoxs">
           <div className="trailit_Row">
-            {isLoading && <div className="trailit_noData">Loading...</div>}
+            {/* {isLoading && <div className="trailit_noData">Loading...</div>} */}
             {list.length === 0 && !isLoading && (
               <div className="trailit_noData">Data Not Available</div>
             )}
-            {list.map((res) => {
-              let styles = "";
-              let stlStatus = false;
+            {!isLoading &&
+              list.length > 0 &&
+              list.map((res) => {
+                let styles = "";
+                let stlStatus = false;
 
-              if (
-                res.cover_image_url != null &&
-                res.cover_image_url != "null" &&
-                res.cover_image_url != "" &&
-                res.cover_image_url != undefined
-              ) {
-                stlStatus = true;
-                styles = {
-                  background: `url(${res.cover_image_url}) no-repeat scroll center center / cover`,
-                };
-              }
+                if (
+                  res.cover_image_url != null &&
+                  res.cover_image_url != "null" &&
+                  res.cover_image_url != "" &&
+                  res.cover_image_url != undefined
+                ) {
+                  stlStatus = true;
+                  styles = {
+                    background: `url(${res.cover_image_url}) no-repeat scroll center center / cover`,
+                  };
+                }
 
-              return (
-                <div className="trailit_col6">
-                  <div
-                    className="trailit_bx"
-                    onClick={(e) => this.onBoxClick(e, res)}
-                    onMouseLeave={this.onMouseLeave}
-                  >
-                    <div className="img">
-                      <span
-                        className="img_bg"
-                        style={stlStatus ? styles : this.styleBgImg}
-                      >
-                        <div className="trailit_img_content">
-                          <div className="trailit_top">
-                            <div className="trailit_dotsMenu">
-                              <button
-                                type="button"
-                                onClick={this.handleClickMenu}
-                                className="trailit_dotsButton"
-                              >
-                                <img
-                                  width="16px"
-                                  src={require("../../images/dots.svg")}
-                                  alt="dots"
-                                />
-                              </button>
-                              {this.state.showMenu && (
-                                <div className="trailit_dotsMenuList">
-                                  <button
-                                    type="button"
-                                    onClick={(e) => this.onPublishLink(e, res)}
-                                  >
-                                    Share
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={(e) => this.onClickToEdit(e, res)}
-                                  >
-                                    Edit
-                                  </button>
-                                  <button type="button">Publish</button>
-                                  <button type="button">Delete</button>
+                return (
+                  <div className="trailit_col6">
+                    <div
+                      className="trailit_bx"
+                      onClick={(e) => this.onBoxClick(e, res)}
+                      onMouseLeave={this.onMouseLeave}
+                    >
+                      <div className="img">
+                        <span
+                          className="img_bg"
+                          style={stlStatus ? styles : this.styleBgImg}
+                        >
+                          <div className="trailit_img_content">
+                            <div className="trailit_top">
+                              <div className="trailit_dotsMenu">
+                                <button
+                                  type="button"
+                                  onClick={this.handleClickMenu}
+                                  className="trailit_dotsButton"
+                                >
+                                  <img
+                                    width="16px"
+                                    src={require("../../images/dots.svg")}
+                                    alt="dots"
+                                  />
+                                </button>
+                                {this.state.showMenu && (
+                                  <div className="trailit_dotsMenuList">
+                                    <button
+                                      type="button"
+                                      onClick={(e) =>
+                                        this.onPublishLink(e, res)
+                                      }
+                                    >
+                                      Share
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={(e) =>
+                                        this.onClickToEdit(e, res)
+                                      }
+                                    >
+                                      Edit
+                                    </button>
+                                    <button type="button">Publish</button>
+                                    <button type="button">Delete</button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="trailit_bottom">
+                              <div className="trailit_bottom_content d-flex justify-content-between">
+                                <div className="trailit_10_500_roboto trailit_text_white align-items-center d-flex">
+                                  <img
+                                    alt="twitter"
+                                    className="trialit_user"
+                                    src={
+                                      profileImage == ""
+                                        ? require("../../images/user.png")
+                                        : this.props.title === "Followed"
+                                        ? res.userData &&
+                                          res.userData.profileImage
+                                          ? res.userData.profileImage
+                                          : require("../../images/user.png")
+                                        : profileImage
+                                    }
+                                  />
+                                  <span className="trailit_ml2 trailit_ellipsis_40">
+                                    {res.trail_name}
+                                  </span>
                                 </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="trailit_bottom">
-                            <div className="trailit_bottom_content d-flex justify-content-between">
-                              <div className="trailit_10_500_roboto trailit_text_white align-items-center d-flex">
-                                <img
-                                  alt="twitter"
-                                  className="trialit_user"
-                                  src={
-                                    profileImage == ""
-                                      ? require("../../images/user.png")
-                                      : profileImage
-                                  }
-                                />
-                                <span className="trailit_ml2 trailit_ellipsis_40">
-                                  {res.trail_name}
-                                </span>
-                              </div>
-                              <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
-                                <img
-                                  alt="twitter"
-                                  width="11px"
-                                  src={require("../../images/trailit_coin.png")}
-                                />
-                                <span className="trailit_ml2">94</span>
+                                <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
+                                  <img
+                                    alt="twitter"
+                                    width="11px"
+                                    src={require("../../images/trailit_coin.png")}
+                                  />
+                                  <span className="trailit_ml2">94</span>
+                                </div>
                               </div>
                             </div>
                           </div>
+                        </span>
+                      </div>
+                      <div className="trailit_bx_title">
+                        <div className="trailit_10_500 trailit_ellips_2line">
+                          {res.trail_description}
                         </div>
-                      </span>
-                    </div>
-                    <div className="trailit_bx_title">
-                      <div className="trailit_10_500 trailit_ellips_2line">
-                        {res.trail_description}
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
       </div>

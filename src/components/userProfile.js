@@ -2,9 +2,10 @@ import React from "react";
 import _ from "lodash";
 
 import { socket } from "../common/socket";
-import { handleFileUpload } from "../common/audAndVidCommon";
-import { wallet, getAddress } from "../common/celo";
 import { getBalance } from "../code/getBalance";
+import { getFollowTrails } from "../common/axios";
+import { wallet, getAddress } from "../common/celo";
+import { handleFileUpload } from "../common/audAndVidCommon";
 import SettingsComponent from "../components/settingsComponents";
 
 // import BgImage from "../images/trailit_bx_img.png";
@@ -14,6 +15,7 @@ import {
   getAllUser,
   getAllCategory,
   UpdateProfilePicture,
+  getUser,
 } from "../common/axios";
 import {
   UserProfileEdit,
@@ -37,6 +39,7 @@ class UserProfile extends React.Component {
       firstName: "",
       lastName: "",
       isPreview: false,
+      isPreviewSingleTrail: false,
       reload: false,
       response: false,
       balance: "0.00",
@@ -92,7 +95,14 @@ class UserProfile extends React.Component {
     );
     this.setState({ isLoading: true });
     chrome.storage.local.get(
-      ["auth_Tokan", "userData", "reload", "keypair", "isPreview"],
+      [
+        "auth_Tokan",
+        "userData",
+        "reload",
+        "keypair",
+        "isPreview",
+        "isPreviewSingleTrail",
+      ],
       async function (items) {
         // // Get NEAR balance of user
         this.getNearAccountBalance();
@@ -103,36 +113,44 @@ class UserProfile extends React.Component {
         //   })
         //   .catch();
 
+        let userData = { ...items.userData };
+
+        // Get user data
+        const { data, status } = await getUser(userData._id);
+
+        if (status === 200 && data.data && data.data.response) {
+          userData = { ...data.data.response };
+        }
+
         this.setState({
-          profileImage: items.userData.profileImage
-            ? items.userData.profileImage
-            : "",
+          profileImage: userData.profileImage ? userData.profileImage : "",
           privateKey: items.keypair,
-          userName: items.userData.userName,
-          firstName: items.userData.firstName ? items.userData.firstName : null,
-          lastName: items.userData.lastName ? items.userData.lastName : null,
+          userName: userData.userName,
+          firstName: userData.firstName ? userData.firstName : null,
+          lastName: userData.lastName ? userData.lastName : null,
           isPreview: items.isPreview,
+          isPreviewSingleTrail: items.isPreviewSingleTrail,
           // nearBalance: balance
         });
 
         let followerLength;
-        socket.emit("userId", items.userData._id);
+        socket.emit("userId", userData._id);
         socket.on("followerList", (data) => {
           followerLength = data.length;
           this.setState({
-            email: items.userData.email,
+            email: userData.email,
             balance: balance,
             address,
             followerLength,
           });
         });
 
-        const data = {
-          user_id: items.userData._id,
-          flag: "unread",
-        };
+        // const data = {
+        //   user_id: userData._id,
+        //   flag: "unread",
+        // };
 
-        const result = await getUserSingleTrail(items.userData._id);
+        const result = await getUserSingleTrail(userData._id);
 
         if (result.status == 200) {
           this.setState({
@@ -178,7 +196,7 @@ class UserProfile extends React.Component {
         // });
 
         this.setState({
-          email: items.userData.email,
+          email: userData.email,
           balance: balance,
           address,
         });
@@ -220,15 +238,39 @@ class UserProfile extends React.Component {
     chrome.storage.local.get(
       ["auth_Tokan", "userData", "reload"],
       async function (items) {
-        const result = await getUserSingleTrail(items.userData._id);
+        if (listTitle === "Followed") {
+          // Get follow data of user from database
+          const followData = await getFollowTrails(items.userData._id);
+          const followedTrails = followData.data;
+          if (
+            followedTrails &&
+            followedTrails.response &&
+            followedTrails.response.statusCode === "200"
+          ) {
+            this.setState({
+              myTrilsListData: followedTrails.response.result,
+              isLoading: false,
+            });
+          } else {
+            this.setState({
+              myTrilsListData: [],
+              isLoading: false,
+            });
+          }
+        } else {
+          const result = await getUserSingleTrail(items.userData._id);
 
-        if (result.status == 200) {
-          this.setState({ myTrilsListData: result.data.response });
+          if (result.status == 200) {
+            this.setState({
+              myTrilsListData: result.data.response,
+              isLoading: false,
+            });
+          }
         }
       }.bind(this)
     );
 
-    this.setState({ listTitle });
+    this.setState({ listTitle, isLoading: true });
   };
 
   onChangeTrailEdit = (editTrail) => {
@@ -347,13 +389,14 @@ class UserProfile extends React.Component {
       profileImage,
       slideBalance,
       nearBalance,
+      isPreviewSingleTrail,
     } = this.state;
 
     let list = [];
-    if (listTitle == "My Trails") {
+    if (listTitle === "My Trails") {
       list = myTrilsListData;
-    } else if (listTitle == "Followed") {
-      list = notificationData;
+    } else if (listTitle === "Followed") {
+      list = myTrilsListData;
     }
 
     return (
@@ -469,28 +512,32 @@ class UserProfile extends React.Component {
               addRaw={addRaw}
               onEdit={this.onChangeTrailEdit}
               getRow={this.getEditData}
-              isLoading={false}
+              isLoading={isLoading}
             />
             <div className="trailit_userPanalFooterBox">
-              {listTitle == "My Trails" && (
-                <button
-                  type="button"
-                  className="trailit_btnPink"
-                  onClick={(e) => this.onClickToList("Followed")}
-                >
-                  Followed
-                </button>
+              {!isPreview && !isPreviewSingleTrail && (
+                <>
+                  {listTitle === "My Trails" && (
+                    <button
+                      type="button"
+                      className="trailit_btnPink"
+                      onClick={(e) => this.onClickToList("Followed")}
+                    >
+                      Followed
+                    </button>
+                  )}
+                  {listTitle === "Followed" && (
+                    <button
+                      type="button"
+                      className="trailit_btnPink"
+                      onClick={(e) => this.onClickToList("My Trails")}
+                    >
+                      My Trails
+                    </button>
+                  )}
+                </>
               )}
-              {listTitle == "Followed" && (
-                <button
-                  type="button"
-                  className="trailit_btnPink"
-                  onClick={(e) => this.onClickToList("My Trails")}
-                >
-                  My Trails
-                </button>
-              )}
-              {!isPreview && (
+              {!isPreview && !isPreviewSingleTrail && (
                 <button
                   type="button"
                   className="trailit_btnPink"
