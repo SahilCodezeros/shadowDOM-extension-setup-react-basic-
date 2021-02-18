@@ -3031,6 +3031,7 @@ class DefaultButton extends React.PureComponent {
 
             this.props.onChangeTourType("");
             this.props.mainToggle();
+          
             if (items.isGuest) {
               window.location.href = items.webUrl + "#signin-to-continue";
             } else {
@@ -3039,6 +3040,7 @@ class DefaultButton extends React.PureComponent {
 
             chrome.storage.local.set({
               isPreview: false,
+              isGuest: false,
               isPreviewSingleTrail: false,
               continueTourStepId: "",
               tourType: "",
@@ -3047,6 +3049,7 @@ class DefaultButton extends React.PureComponent {
               trail_data_id: "",
               guest_id: "",
               trail_web_user_tour: [],
+              noStepsToWatch: "",
               userData: { ...items.old_user_data },
             });
           }
