@@ -52,6 +52,7 @@ import {
   unFollowTrailOfUser,
   getUserData,
   getSingleTrailData,
+  getTrailPublic,
 } from "./common/axios";
 
 import { main1Css, main2Css } from "./css/main";
@@ -72,6 +73,7 @@ import {
 } from "./css/defaultButton";
 
 import "./Content.css";
+import { get } from "./AppUtill";
 import { resolve } from "promise";
 
 /*global chrome*/
@@ -136,6 +138,7 @@ class Main extends React.Component {
         "authorData",
         "showSetting",
         "followedTrailUserData",
+        "noStepsToWatch",
       ],
       async (items) => {
         let closeContinue = false;
@@ -228,6 +231,8 @@ class Main extends React.Component {
                 "saveSort",
                 "tourStep",
                 "followedTrailUserData",
+                "noStepsToWatch",
+                "isPreview",
               ],
               async (items) => {
                 try {
@@ -391,6 +396,8 @@ class Main extends React.Component {
               trail_id: items.trail_id,
               userData: { ...items.followedTrailUserData },
               trail_web_user_tour: items.trail_web_user_tour,
+              noStepsToWatch: items.noStepsToWatch,
+              isPreview: items.isPreview,
             };
 
             await this.getCurrUserDataCommon(data);
@@ -401,6 +408,8 @@ class Main extends React.Component {
               tourStep: items.tourStep,
               userData: { ...items.authorData },
               trail_web_user_tour: items.trail_web_user_tour,
+              noStepsToWatch: items.noStepsToWatch,
+              isPreview: items.isPreview,
             };
 
             if (items.isPreview) {
@@ -500,10 +509,18 @@ class Main extends React.Component {
       continueFlag = false,
       trail_id = items.trail_id;
 
+    const loggedInUserId = get(["loggedInData", "_id"], items);
+
     try {
       // Get user's trails from database
       let screen = resizeScreen() ? "mobile" : "web";
-      res = await getUserOneTrail(user_id, trail_id, screen);
+
+      if (items.isPreview && !loggedInUserId) {
+        res = await getTrailPublic(user_id, trail_id, items.noStepsToWatch);
+      } else {
+        res = await getUserOneTrail(user_id, trail_id, screen);
+      }
+
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {
       console.log("err", err);
@@ -519,12 +536,20 @@ class Main extends React.Component {
 
     const result = res.data;
 
+    const handleSteps = (result) => {
+      if (get(["response", "result", "steps"], result)) {
+        return result.response.result.steps;
+      } else {
+        return result.response.result || [];
+      }
+    };
+
     if (
       result.response &&
       result.response.statusCode !== 404 &&
-      result.response.result.length > 0
+      handleSteps(result).length > 0
     ) {
-      allTrails = result.response.result.map((el) => {
+      allTrails = handleSteps(result).map((el) => {
         if (el.flag === "continue") {
           continueFlag = true;
         }
@@ -664,6 +689,7 @@ class Main extends React.Component {
           "authorData",
           "isPreviewSingleTrail",
           "trail_data_id",
+          "noStepsToWatch",
           "followedTrailUserData",
         ],
         async (items) => {
@@ -675,6 +701,8 @@ class Main extends React.Component {
               tourStep: items.tourStep,
               userData: { ...items.followedTrailUserData },
               trail_web_user_tour: items.trail_web_user_tour,
+              noStepsToWatch: items.noStepsToWatch,
+              isPreview: items.isPreview,
             };
 
             return await this.getCurrUserDataCommon(data);
@@ -686,6 +714,8 @@ class Main extends React.Component {
             tourStep: items.tourStep,
             userData: { ...items.authorData },
             trail_web_user_tour: items.trail_web_user_tour,
+            noStepsToWatch: items.noStepsToWatch,
+            isPreview: items.isPreview,
           };
 
           if (items.isPreview) {
@@ -1722,7 +1752,13 @@ class DefaultButton extends React.PureComponent {
 
       if (data.response && data.response.statusCode === "200") {
         chrome.storage.local.get(
-          ["userData", "trail_id", "trail_web_user_tour"],
+          [
+            "userData",
+            "trail_id",
+            "trail_web_user_tour",
+            "noStepsToWatch",
+            "isPreview",
+          ],
           async (items) => {
             // Call common get user data function
             await this.getCurrUserDataCommon(items);
@@ -1804,11 +1840,17 @@ class DefaultButton extends React.PureComponent {
     let res,
       continueFlag = false,
       trail_id = items.trail_id;
+    const loggedInUserId = get(["loggedInData", "_id"], items);
 
     try {
       // Get user's trails from database
       let screen = resizeScreen() ? "mobile" : "web";
-      res = await getUserOneTrail(user_id, trail_id, screen);
+
+      if (items.isPreview && !loggedInUserId) {
+        res = await getTrailPublic(user_id, trail_id, items.noStepsToWatch);
+      } else {
+        res = await getUserOneTrail(user_id, trail_id, screen);
+      }
 
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {
@@ -1822,15 +1864,22 @@ class DefaultButton extends React.PureComponent {
     // 		}
     // 	});
     // }
+    const handleSteps = (result) => {
+      if (get(["response", "result", "steps"], result)) {
+        return result.response.result.steps;
+      } else {
+        return result.response.result || [];
+      }
+    };
 
     const result = res.data;
 
     if (
       result.response &&
       result.response.statusCode !== 404 &&
-      result.response.result.length > 0
+      handleSteps(result).length > 0
     ) {
-      allTrails = result.response.result.map((el) => {
+      allTrails = handleSteps(result).map((el) => {
         if (el.flag === "continue") {
           continueFlag = true;
         }
@@ -1888,11 +1937,13 @@ class DefaultButton extends React.PureComponent {
             trail_id,
             old_trail_id: storage.trail_id,
             isPreview: false,
+            isGuest: false,
             continueTourStepId: "",
             old_user_data: { ...storage.userData },
             webUrl: "",
             userData: { ...items.loggedInData },
             authorData: { ...items.userData },
+            noStepsToWatch: items.noStepsToWatch,
           });
         } else {
           chrome.storage.local.set({
@@ -1907,57 +1958,78 @@ class DefaultButton extends React.PureComponent {
   }
 
   async handlePreviewFromWeb(msg) {
-    if (msg.message === "preview_all") {
-      // Call common get user data function
-      await this.getCurrUserDataCommon({
-        userData: msg.payload.userData,
-        trail_id: msg.payload.trail_id,
-        trail_web_user_tour: [],
-        loggedInData: msg.payload.loggedInData,
-      });
-      chrome.storage.local.get(["trail_id"], (items) => {
-        chrome.storage.local.set({
-          isPreview: true,
-          closeContinue: false,
-          webUrl: msg.payload.url,
-          old_trail_id: items.trail_id,
+    console.log("hiiiiiii from handle preview from web", msg);
+    if (get(["payload", "loggedInData", "_id"], msg)) {
+      if (msg.message === "preview_all") {
+        // Call common get user data function
+        await this.getCurrUserDataCommon({
+          userData: msg.payload.userData,
+          trail_id: msg.payload.trail_id,
+          trail_web_user_tour: [],
+          loggedInData: msg.payload.loggedInData,
         });
-      });
-    }
-    if (msg.message === "continue_preview") {
-      // Call common get user data function
-      await this.getCurrUserDataCommon({
-        userData: msg.payload.userData,
-        trail_id: msg.payload.trail_id,
-        trail_web_user_tour: [],
-        loggedInData: msg.payload.loggedInData,
-      });
-      chrome.storage.local.get(["trail_id"], (items) => {
-        chrome.storage.local.set({
-          isPreview: true,
-          closeContinue: false,
-          continueTourStepId: msg.payload.tourStep,
-          webUrl: msg.payload.url,
-          old_trail_id: items.trail_id,
+        chrome.storage.local.get(["trail_id"], (items) => {
+          chrome.storage.local.set({
+            isPreview: true,
+            closeContinue: false,
+            webUrl: msg.payload.url,
+            old_trail_id: items.trail_id,
+          });
         });
-      });
-    }
-    if (msg.message === "preview_single") {
-      // Call common get user data function
+      }
+      if (msg.message === "continue_preview") {
+        // Call common get user data function
+        await this.getCurrUserDataCommon({
+          userData: msg.payload.userData,
+          trail_id: msg.payload.trail_id,
+          trail_web_user_tour: [],
+          loggedInData: msg.payload.loggedInData,
+        });
+        chrome.storage.local.get(["trail_id"], (items) => {
+          chrome.storage.local.set({
+            isPreview: true,
+            closeContinue: false,
+            continueTourStepId: msg.payload.tourStep,
+            webUrl: msg.payload.url,
+            old_trail_id: items.trail_id,
+          });
+        });
+      }
+      if (msg.message === "preview_single") {
+        // Call common get user data function
 
-      await this.getSingleTrail({
+        await this.getSingleTrail({
+          userData: msg.payload.userData,
+          trail_id: msg.payload.trail_id,
+          trail_data_id: msg.payload.trail_data_id,
+          loggedInData: msg.payload.loggedInData,
+        });
+        chrome.storage.local.get(["trail_id", "userData"], (items) => {
+          chrome.storage.local.set({
+            isPreviewSingleTrail: true,
+            webUrl: msg.payload.url,
+            old_trail_id: items.trail_id,
+          });
+        });
+      }
+    } else {
+      await this.getCurrUserDataCommon({
         userData: msg.payload.userData,
         trail_id: msg.payload.trail_id,
-        trail_data_id: msg.payload.trail_data_id,
+        trail_web_user_tour: [],
         loggedInData: msg.payload.loggedInData,
+        noStepsToWatch: msg.payload.noStepsToWatch,
+        isPreview: true,
       });
-      chrome.storage.local.get(["trail_id", "userData"], (items) => {
+      chrome.storage.local.get(["trail_id"], (items) => {
         chrome.storage.local.set({
-          isPreviewSingleTrail: true,
+          isPreview: true,
+          closeContinue: false,
           webUrl: msg.payload.url,
           old_trail_id: items.trail_id,
+          isGuest: true,
         });
-      });
+      }); 
     }
   }
 
@@ -2019,7 +2091,7 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      // console.log("changes", changes);
+      //
       //
       if (changes.tourType && changes.tourType.newValue === "") {
         // Set side bar state
@@ -2032,7 +2104,7 @@ class DefaultButton extends React.PureComponent {
           changes.tourType.newValue === "audio" ||
           changes.tourType.newValue === "Make Edit")
       ) {
-        // console.log("res 1");
+        //
         // Set side bar state
         this.setState({ openSidebar: true, open: true });
       }
@@ -2315,7 +2387,7 @@ class DefaultButton extends React.PureComponent {
           "closeContinue",
         ],
         function (items) {
-          // console.log("it", items);
+          //
           if (
             items.tourType !== undefined &&
             this.state.tourType !== items.tourType
@@ -2340,7 +2412,7 @@ class DefaultButton extends React.PureComponent {
             //       openSidebar: false,
             //     });
             //   } else if (items.tourType === "Make Edit") {
-            //     console.log("res 2");
+            //
             //     this.setState({
             //       tourType: items.tourType,
             //       // open: true,
@@ -2635,7 +2707,7 @@ class DefaultButton extends React.PureComponent {
           this.setState({ open: false, openSidebar: false });
         }
 
-        // console.log("items", items);
+        //
 
         if (
           items.currentTourType === "Make Edit" ||
@@ -2643,7 +2715,7 @@ class DefaultButton extends React.PureComponent {
           items.tourType === "video" ||
           items.tourType === "audio"
         ) {
-          // console.log("res 3");
+          //
           // this.setState({ open: true, openSidebar: true });
         }
 
@@ -2933,7 +3005,7 @@ class DefaultButton extends React.PureComponent {
     //       "followedTrailUserData",
     //     ],
     //     function (items) {
-    //       console.log("items", items);
+    //
     //       userId = items.userData._id;
     //       isPreview = items.isPreview;
     //       isPreviewSingleTrail = items.isPreviewSingleTrail;
@@ -2971,6 +3043,7 @@ class DefaultButton extends React.PureComponent {
           "trail_web_user_tour",
           "isPreviewSingleTrail",
           "followedTrailUserData",
+          "isGuest",
         ],
         async (items) => {
           // Update trail flag if user not viewing followed trail preview
@@ -3009,10 +3082,16 @@ class DefaultButton extends React.PureComponent {
 
             this.props.onChangeTourType("");
             this.props.mainToggle();
-            window.location.href = items.webUrl;
+
+            if (items.isGuest) {
+              window.location.href = items.webUrl + "#signin-to-continue";
+            } else {
+              window.location.href = items.webUrl.split("#")[0];
+            }
 
             chrome.storage.local.set({
               isPreview: false,
+              isGuest: false,
               isPreviewSingleTrail: false,
               continueTourStepId: "",
               tourType: "",
@@ -3021,6 +3100,7 @@ class DefaultButton extends React.PureComponent {
               trail_data_id: "",
               guest_id: "",
               trail_web_user_tour: [],
+              noStepsToWatch: "",
               userData: { ...items.old_user_data },
             });
           }
@@ -3076,7 +3156,7 @@ class DefaultButton extends React.PureComponent {
   };
 
   openPopup = () => {
-    // console.log("in open popup");
+    //
     this.setState({
       open: !this.state.open,
       openSidebar: !this.state.openSidebar,
@@ -3475,6 +3555,7 @@ class DefaultButton extends React.PureComponent {
         "old_trail_id",
         "old_user_data",
         "isPreviewSingleTrail",
+        "isGuest",
       ],
       async (items) => {
         const trail = this.state.trailList[this.state.tourStep - 1];
@@ -3495,10 +3576,17 @@ class DefaultButton extends React.PureComponent {
 
           this.props.onChangeTourType("");
           this.props.mainToggle();
-          window.location.href = items.webUrl;
+
+          if (items.isGuest) {
+            let url = items.webUrl + "#signin-to-continue";
+            window.location.href = url;
+          } else {
+            window.location.href = items.webUrl.split("#")[0];
+          }
 
           chrome.storage.local.set({
             isPreview: false,
+            isGuest: false,
             isPreviewSingleTrail: false,
             tourType: "",
             currentTourType: "",
@@ -3507,6 +3595,8 @@ class DefaultButton extends React.PureComponent {
             trail_data_id: "",
             guest_id: "",
             trail_web_user_tour: [],
+            noStepsToWatch: "",
+
             userData: { ...items.old_user_data },
           });
         }
@@ -3634,7 +3724,7 @@ class DefaultButton extends React.PureComponent {
             } else {
               // Remove elements
               await removeThisElements();
-              // console.log("hiiiii");
+              //
 
               this.props.mainToggle();
               this.props.onChangeTourType("");

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { get } from "../AppUtill";
 
 // Upload media files
 export const uploadMediaFile = async (formData) => {
@@ -121,6 +122,12 @@ export const getUserOneTrail = async (user_id, trail_id, screen) => {
   );
 };
 
+export const getTrailPublic = async (user_id, trail_id, steps) => {
+  return await axios.get(
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getLimitedStepsData/${trail_id}/${steps}`
+  );
+};
+
 // Get trail_id of user
 export const getUserSingleTrail = async (user_id) => {
   return await axios.get(
@@ -169,7 +176,6 @@ export const deleteTrail = async (trailId) => {
 
 // Update trail track
 export const updateTrailTrack = async (data) => {
-  console.log("data", data);
   return await axios.post(
     `${process.env.REACT_APP_MS4_URL}userTourDataDetail/addUpdateTrailTrack`,
     data
