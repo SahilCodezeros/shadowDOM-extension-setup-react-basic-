@@ -203,6 +203,19 @@ chrome.runtime.onMessageExternal.addListener(function (
           }
         );
       }
+      if (request.action === "PREVIEW_WITHOUT_LOGIN") {
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            var activeTab = tabs[0];
+
+            chrome.tabs.sendMessage(activeTab.id, {
+              message: "preview_without_login",
+              payload: { ...request, url: tabs[0].url },
+            });
+          }
+        );
+      }
       break;
 
     default:

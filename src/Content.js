@@ -1958,61 +1958,54 @@ class DefaultButton extends React.PureComponent {
   }
 
   async handlePreviewFromWeb(msg) {
-    console.log("hiiiiiii from handle preview from web", msg);
-    if (get(["payload", "loggedInData", "_id"], msg)) {
-      if (msg.message === "preview_all") {
-        // Call common get user data function
-        await this.getCurrUserDataCommon({
-          userData: msg.payload.userData,
-          trail_id: msg.payload.trail_id,
-          trail_web_user_tour: [],
-          loggedInData: msg.payload.loggedInData,
+    if (msg.message === "preview_all") {
+      // Call common get user data function
+      await this.getCurrUserDataCommon({
+        userData: msg.payload.userData,
+        trail_id: msg.payload.trail_id,
+        trail_web_user_tour: [],
+        loggedInData: msg.payload.loggedInData,
+      });
+      chrome.storage.local.get(["trail_id"], (items) => {
+        chrome.storage.local.set({
+          isPreview: true,
+          closeContinue: false,
+          webUrl: msg.payload.url,
+          old_trail_id: items.trail_id,
         });
-        chrome.storage.local.get(["trail_id"], (items) => {
-          chrome.storage.local.set({
-            isPreview: true,
-            closeContinue: false,
-            webUrl: msg.payload.url,
-            old_trail_id: items.trail_id,
-          });
+      });
+    } else if (msg.message === "continue_preview") {
+      // Call common get user data function
+      await this.getCurrUserDataCommon({
+        userData: msg.payload.userData,
+        trail_id: msg.payload.trail_id,
+        trail_web_user_tour: [],
+        loggedInData: msg.payload.loggedInData,
+      });
+      chrome.storage.local.get(["trail_id"], (items) => {
+        chrome.storage.local.set({
+          isPreview: true,
+          closeContinue: false,
+          continueTourStepId: msg.payload.tourStep,
+          webUrl: msg.payload.url,
+          old_trail_id: items.trail_id,
         });
-      }
-      if (msg.message === "continue_preview") {
-        // Call common get user data function
-        await this.getCurrUserDataCommon({
-          userData: msg.payload.userData,
-          trail_id: msg.payload.trail_id,
-          trail_web_user_tour: [],
-          loggedInData: msg.payload.loggedInData,
+      });
+    } else if (msg.message === "preview_single") {
+      await this.getSingleTrail({
+        userData: msg.payload.userData,
+        trail_id: msg.payload.trail_id,
+        trail_data_id: msg.payload.trail_data_id,
+        loggedInData: msg.payload.loggedInData,
+      });
+      chrome.storage.local.get(["trail_id", "userData"], (items) => {
+        chrome.storage.local.set({
+          isPreviewSingleTrail: true,
+          webUrl: msg.payload.url,
+          old_trail_id: items.trail_id,
         });
-        chrome.storage.local.get(["trail_id"], (items) => {
-          chrome.storage.local.set({
-            isPreview: true,
-            closeContinue: false,
-            continueTourStepId: msg.payload.tourStep,
-            webUrl: msg.payload.url,
-            old_trail_id: items.trail_id,
-          });
-        });
-      }
-      if (msg.message === "preview_single") {
-        // Call common get user data function
-
-        await this.getSingleTrail({
-          userData: msg.payload.userData,
-          trail_id: msg.payload.trail_id,
-          trail_data_id: msg.payload.trail_data_id,
-          loggedInData: msg.payload.loggedInData,
-        });
-        chrome.storage.local.get(["trail_id", "userData"], (items) => {
-          chrome.storage.local.set({
-            isPreviewSingleTrail: true,
-            webUrl: msg.payload.url,
-            old_trail_id: items.trail_id,
-          });
-        });
-      }
-    } else {
+      });
+    } else if (msg.message === "preview_without_login") {
       await this.getCurrUserDataCommon({
         userData: msg.payload.userData,
         trail_id: msg.payload.trail_id,
@@ -2029,7 +2022,7 @@ class DefaultButton extends React.PureComponent {
           old_trail_id: items.trail_id,
           isGuest: true,
         });
-      }); 
+      });
     }
   }
 
