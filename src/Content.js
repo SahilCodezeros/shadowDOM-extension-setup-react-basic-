@@ -495,7 +495,7 @@ class Main extends React.Component {
     try {
       // Get user's trails from database
       let screen = resizeScreen() ? "mobile" : "web";
-      console.log({ items });
+      
 
       if (items.isPreview && !loggedInUserId) {
         res = await getTrailPublic(user_id, trail_id, items.noStepsToWatch);
@@ -1949,7 +1949,7 @@ class DefaultButton extends React.PureComponent {
         });
       });
     } else if (msg.message === "preview_single") {
-      console.log("single");
+      
 
       await this.getSingleTrail({
         userData: msg.payload.userData,
