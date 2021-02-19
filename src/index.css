@@ -45,14 +45,14 @@ body {
   font-size: 12px;
 }
 
-.auth_tr_wrapper .ant-form-item-control .ant-form-item-explain {
+/* .auth_tr_wrapper  */
+.ant-form-item-control .ant-form-item-explain {
   /* color: #ff4d4f; */
   font-size: 12px;
 }
 
-.auth_tr_wrapper
-  .ant-form-item-control
-  .ant-form-item-explain.ant-form-item-explain-error {
+/* .auth_tr_wrapper */
+.ant-form-item-control .ant-form-item-explain.ant-form-item-explain-error {
   color: #ff4d4f;
   font-size: 12px;
 }
@@ -5732,5 +5732,10 @@ button:not(:disabled) {
 }
 
 .mb-1 {
-  margin-top: 15px;
+  margin-top: 10px;
+}
+
+.trailit_userPanalLeftBox .trailButtonsWrapper {
+  display: flex;
+  justify-content: space-between;
 }

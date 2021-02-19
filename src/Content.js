@@ -111,6 +111,7 @@ class Main extends React.Component {
       followerList: [],
       closeContinue: false,
       showSetting: false,
+      followedTrailUserData: null,
       confirmationModal: {
         show: false,
         tourType: "",
@@ -137,9 +138,8 @@ class Main extends React.Component {
         "followedTrailUserData",
       ],
       async (items) => {
-        console.log("items 1", items);
-
         let closeContinue = false;
+
         if (
           items.closeContinue &&
           items.trail_web_user_tour &&
@@ -151,6 +151,7 @@ class Main extends React.Component {
         this.setState({
           closeContinue: closeContinue,
           currentUserId: items.userData._id,
+          followedTrailUserData: items.followedTrailUserData,
         });
         socket.on("connect", () => {});
 
@@ -226,12 +227,26 @@ class Main extends React.Component {
                 "notification",
                 "saveSort",
                 "tourStep",
+                "followedTrailUserData",
               ],
               async (items) => {
                 try {
+                  let data = { ...items };
+                  if (items.followedTrailUserData) {
+                    data = {
+                      ...items,
+                      trail_id: items.trail_id,
+                      tourStep: items.tourStep,
+                      userData: { ...items.followedTrailUserData },
+                      trail_web_user_tour: items.trail_web_user_tour,
+                    };
+                  }
+
                   // Call common get user data function
-                  await this.getCurrUserDataCommon(items);
-                } catch (err) {}
+                  await this.getCurrUserDataCommon(data);
+                } catch (err) {
+                  console.log("err", err);
+                }
               }
             );
           }
@@ -372,8 +387,9 @@ class Main extends React.Component {
           // For viewing followed trail data
           if (items.followedTrailUserData) {
             const data = {
-              userData: { ...items.followedTrailUserData },
+              tourStep: items.tourStep,
               trail_id: items.trail_id,
+              userData: { ...items.followedTrailUserData },
               trail_web_user_tour: items.trail_web_user_tour,
             };
 
@@ -381,9 +397,9 @@ class Main extends React.Component {
           } else {
             // For viewing preview trails from web-app or own trails
             const data = {
-              userData: { ...items.authorData },
               trail_id: items.trail_id,
-
+              tourStep: items.tourStep,
+              userData: { ...items.authorData },
               trail_web_user_tour: items.trail_web_user_tour,
             };
 
@@ -489,7 +505,9 @@ class Main extends React.Component {
       let screen = resizeScreen() ? "mobile" : "web";
       res = await getUserOneTrail(user_id, trail_id, screen);
       trailWebUserTour = items.trail_web_user_tour;
-    } catch (err) {}
+    } catch (err) {
+      console.log("err", err);
+    }
 
     // if (items.trail_web_user_tour && items.trail_web_user_tour.length > 0) {
     // 	items.trail_web_user_tour.forEach(el => {
@@ -552,7 +570,12 @@ class Main extends React.Component {
     trailWebUserTour = allTrails;
     obj.trailList = allTrails;
 
-    this.setState({ trail_web_user_tour: trailWebUserTour });
+    this.setState({
+      trail_web_user_tour: trailWebUserTour,
+      followedTrailUserData: items.followedTrailUserData
+        ? items.followedTrailUserData
+        : null,
+    });
     chrome.storage.local.set({
       trail_web_user_tour: allTrails,
       tourStep: items.tourStep ? items.tourStep : "",
@@ -635,6 +658,7 @@ class Main extends React.Component {
         [
           "userData",
           "trail_id",
+          "tourStep",
           "trail_web_user_tour",
           "isPreview",
           "authorData",
@@ -646,20 +670,21 @@ class Main extends React.Component {
           // For viewing followed trail data
           if (items.followedTrailUserData) {
             const data = {
-              userData: { ...items.followedTrailUserData },
+              ...items,
               trail_id: items.trail_id,
+              tourStep: items.tourStep,
+              userData: { ...items.followedTrailUserData },
               trail_web_user_tour: items.trail_web_user_tour,
             };
 
             return await this.getCurrUserDataCommon(data);
           }
 
-          console.log("helloooooooooooooooooooooooooo");
-
           // For viewing preview trail data from web-app or own trails
           const data = {
-            userData: { ...items.authorData },
             trail_id: items.trail_id,
+            tourStep: items.tourStep,
+            userData: { ...items.authorData },
             trail_web_user_tour: items.trail_web_user_tour,
           };
 
@@ -1134,6 +1159,7 @@ class Main extends React.Component {
       closeContinue,
       modalSubscription,
       confirmationModal,
+      followedTrailUserData,
       modalCreateNewTrailModal,
     } = this.state;
 
@@ -1267,7 +1293,10 @@ class Main extends React.Component {
                 className="blob create_tooltip_button"
                 onClick={(e) => this.openMenu("tooltip")}
                 data-title="Tooltip"
-                disabled={document.URL.includes("https://docs.google.com")}
+                disabled={
+                  document.URL.includes("https://docs.google.com") ||
+                  followedTrailUserData
+                }
               >
                 <svg
                   width="40"
@@ -1306,7 +1335,10 @@ class Main extends React.Component {
                 className="blob create_video_button"
                 onClick={(e) => this.onMediaTourSelect("video")}
                 data-title="Video"
-                disabled={document.URL.includes("https://twitter.com")}
+                disabled={
+                  document.URL.includes("https://twitter.com") ||
+                  followedTrailUserData
+                }
               >
                 <svg
                   width="41"
@@ -1355,7 +1387,10 @@ class Main extends React.Component {
                   className="blob create_audio_button"
                   onClick={(e) => this.onMediaTourSelect("audio")}
                   data-title="Audio"
-                  disabled={document.URL.includes("https://twitter.com")}
+                  disabled={
+                    document.URL.includes("https://twitter.com") ||
+                    followedTrailUserData
+                  }
                 >
                   <svg
                     className="audio_svg"
@@ -1434,8 +1469,9 @@ class Main extends React.Component {
               {resizeScreen() && (
                 <button
                   className="blob"
-                  onClick={(e) => this.openMenu("Make Edit")}
                   data-title="Make Edit"
+                  onClick={(e) => this.openMenu("Make Edit")}
+                  disabled={followedTrailUserData}
                 >
                   <svg
                     className="edit_trail_svg"
@@ -1503,8 +1539,9 @@ class Main extends React.Component {
 							</button> */}
               <button
                 className="blob"
-                onClick={(e) => this.openMenu("Make Edit")}
                 data-title="Edit"
+                onClick={(e) => this.openMenu("Make Edit")}
+                disabled={followedTrailUserData}
               >
                 <svg
                   width="40"
@@ -1774,7 +1811,9 @@ class DefaultButton extends React.PureComponent {
       res = await getUserOneTrail(user_id, trail_id, screen);
 
       trailWebUserTour = items.trail_web_user_tour;
-    } catch (err) {}
+    } catch (err) {
+      console.log("err", err);
+    }
 
     // if (items.trail_web_user_tour && items.trail_web_user_tour.length > 0) {
     // 	items.trail_web_user_tour.forEach(el => {
@@ -1948,7 +1987,7 @@ class DefaultButton extends React.PureComponent {
     }
 
     // Remove beforeunload event listener
-    window.addEventListener("beforeunload", this.cleanupStorage);
+    window.removeEventListener("beforeunload", this.cleanupStorage);
   };
 
   componentDidMount() {
@@ -2550,8 +2589,6 @@ class DefaultButton extends React.PureComponent {
         "trail_name",
       ],
       async function (items) {
-        console.log("items 2", items);
-
         if (items.trail_name) {
           obj.trail_name = items.trail_name;
         }
@@ -2923,9 +2960,6 @@ class DefaultButton extends React.PureComponent {
 
     try {
       const trail = this.state.trailList[this.state.tourStep - 1];
-
-      console.log("followedTrailUserData", followedTrailUserData);
-
       chrome.storage.local.get(
         [
           "webUrl",
@@ -2939,8 +2973,6 @@ class DefaultButton extends React.PureComponent {
           "followedTrailUserData",
         ],
         async (items) => {
-          console.log("items", items);
-
           // Update trail flag if user not viewing followed trail preview
           if (!items.followedTrailUserData) {
             const data = {
@@ -3005,9 +3037,6 @@ class DefaultButton extends React.PureComponent {
           // }
         }
       );
-
-      console.log("isPreview", isPreview);
-      console.log("isPreviewSingleTrail", isPreviewSingleTrail);
 
       // // Update step data when guest visit trail
       // if (isPreview || isPreviewSingleTrail) {
@@ -3880,20 +3909,17 @@ class DefaultButton extends React.PureComponent {
       // 	window.location.href = trailList[tourStep - 1].url;
       // }
     }
-    // console.log("tourTYpe", tourType);
-    // console.log("openSidebar", openSidebar);
-    // console.log("state", this.state);
 
-    let openPopup = openSidebar;
+    // let openPopup = openSidebar;
 
-    if (
-      openSidebar &&
-      (tourType === "audio" || tourType === "video" || tourType === "Make Edit")
-    ) {
-      openPopup = true;
-    } else {
-      openPopup = false;
-    }
+    // if (
+    //   openSidebar &&
+    //   (tourType === "audio" || tourType === "video" || tourType === "Make Edit")
+    // ) {
+    //   openPopup = true;
+    // } else {
+    //   openPopup = false;
+    // }
     // console.log("openPopup", openPopup);
 
     //

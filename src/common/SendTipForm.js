@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import { Form, Input, Button } from "antd";
 
 class SendTipForm extends Component {
@@ -6,21 +6,21 @@ class SendTipForm extends Component {
     super();
     this.state = {
       toAddress: "",
-      amount: ""
+      amount: "",
     };
   }
 
   onChangeInput = (e) => {
     e.stopPropagation();
-    
+
     this.setState({ [e.target.name]: e.target.value });
   };
 
   onCancelButtonClick = (e) => {
     // Set state to init value
     this.setState({
-      toAddress: '',
-      amount: ''
+      toAddress: "",
+      amount: "",
     });
 
     // Call on cancel function
@@ -31,25 +31,33 @@ class SendTipForm extends Component {
     const { toAddress, amount } = this.state;
     const { isLoading, sendLoader } = this.props;
 
-    return(
+    return (
       <div>
-        { isLoading && (
+        {isLoading && (
           <div className="trailit_loaderBox">
             <div class="trial_spinner">
-              <img class="ring1" src={require(`../images/loding1.png`)} alt="loader" />
-              <img class="ring2" src={require(`../images/loding2.png`)} alt="loader" />
+              <img
+                class="ring1"
+                src={require(`../images/loding1.png`)}
+                alt="loader"
+              />
+              <img
+                class="ring2"
+                src={require(`../images/loding2.png`)}
+                alt="loader"
+              />
             </div>
           </div>
         )}
         {/* <div className="tr_description">
           <p>Microtipping enabled through Celo Blockchain cUSD</p>
         </div> */}
-        <Form 
-          onFinish={ () => this.props.sendTip(toAddress, amount) }
-          initialValues={ {
+        <Form
+          onFinish={() => this.props.sendTip(toAddress, amount)}
+          initialValues={{
             toAddress,
-            amount
-        } }
+            amount,
+          }}
         >
           <Form.Item
             className="mb-2"
@@ -63,7 +71,7 @@ class SendTipForm extends Component {
           >
             <Input
               type="text"
-              placeholder="Enter your to address"
+              placeholder="Enter address"
               autoComplete="off"
               onKeyDown={this.onChangeInput}
             />
@@ -78,36 +86,38 @@ class SendTipForm extends Component {
             ]}
           >
             <Input
-              type="text"              
-              placeholder="Enter your amount"
+              type="text"
+              placeholder="Enter amount"
               autoComplete="off"
               onKeyDown={this.onChangeInput}
             />
           </Form.Item>
           <div className="trailButtonsWrapper">
-            <Button 
+            <button
               type="primary"
-              disabled={ sendLoader }
-              onClick={ this.onCancelButtonClick }
+              disabled={sendLoader}
+              className="trailit_btnGray"
+              onClick={this.onCancelButtonClick}
               // className="ant-btn ant-btn-primary trail_add_step_btn"
             >
               Cancel
-            </Button>
+            </button>
 
-            <Button
+            <button
               type="primary"
-              htmlType="submit"          
-              className="ant-btn ant-btn-primary trail_add_step_btn"
+              htmlType="submit"
+              className="trailit_btnPink"
+              // className="ant-btn ant-btn-primary trail_add_step_btn"
               // onClick={ (e) => this.props.sendTip(toAddress, amount) }
-              disabled={ sendLoader }
+              disabled={sendLoader}
             >
               Send Tip
               {/* {sendLoader ? "Sending..." : "Send Tip"} */}
-            </Button>
+            </button>
           </div>
-        </Form>        
+        </Form>
         {/* <form> */}
-          {/* <div className="d-block">
+        {/* <div className="d-block">
             <input
               type="text"
               className="trailit_inputIntro trailit_mb3"
@@ -117,8 +127,8 @@ class SendTipForm extends Component {
               value={toAddress }
             />
           </div> */}
-          
-          {/* <div className="d-block">
+
+        {/* <div className="d-block">
             <input
               type="text"
               className="trailit_inputIntro trailit_mb3"
@@ -129,7 +139,7 @@ class SendTipForm extends Component {
             />
           </div> */}
 
-          {/* <div className="trailit_userPanalFooterBox">
+        {/* <div className="trailit_userPanalFooterBox">
             <button 
               type="button" 
               className="ant-btn ant-btn-primary trail_add_step_btn"
@@ -149,7 +159,7 @@ class SendTipForm extends Component {
         {/* </form> */}
       </div>
     );
-  };
-};
+  }
+}
 
 export default SendTipForm;

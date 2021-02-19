@@ -263,6 +263,7 @@ class WebUserTour extends React.Component {
       let original = document.querySelector(unqTarget);
       let bounding = original.getBoundingClientRect();
       let offset = $(unqTarget).offset();
+
       let leftPosition = offset.left;
       let topPosition = offset.top;
 
@@ -519,7 +520,7 @@ class WebUserTour extends React.Component {
                         : "" || (mediaTypeStatus && mediaTypeStatus === "audio")
                         ? "tr_audio_only"
                         : ""
-                    } ${resizeScreen() && 'mobile_preview_popover'}`}
+                    } ${resizeScreen() && "mobile_preview_popover"}`}
                     placement="top"
                     isOpen={tourSteps[`step${res.step}`]}
                   >
