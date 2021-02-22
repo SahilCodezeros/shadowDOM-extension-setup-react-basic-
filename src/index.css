@@ -721,7 +721,9 @@ html #site-wrap {
 .trail_tooltip input[type="text"]:focus,
 .trail_tooltip input[type="password"]:focus,
 .trail_tooltip textarea:focus,
-.trailMain textarea:focus,
+/* .trailMain textarea:focus,
+.trailMain input[type="text"]:focus,
+.trailMain input[type="file"]:focus, */
 #my-extension-defaultroot *:focus {
   border: 1px solid #fb542b !important;
   box-shadow: none !important;
@@ -2786,7 +2788,9 @@ html #site-wrap {
 .trail_tooltip input[type="password"].ant-input:focus,
 .trail_tooltip textarea.ant-input:focus,
 .trail_create_modal input[type="text"]:focus,
-.trailMain textarea:focus,
+/* .trailMain textarea:focus,
+.trailMain input[type="text"]:focus,
+.trailMain input[type="file"]:focus, */
 #my-extension-defaultroot *:focus {
   border: 1px solid #fb542b !important;
   box-shadow: none !important;

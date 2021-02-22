@@ -1181,6 +1181,20 @@ class Main extends React.Component {
     // this.setState({ showSetting: false });
   }
 
+  disableTooltipTourButton = () => {
+    if (document.URL === "https://www.reddit.com/") return true;
+    if (document.URL.includes("https://twitter.com")) return true;
+    if (document.URL.includes("https://docs.google.com")) return true;
+
+    return false;
+  };
+
+  disableMediaTourButton = () => {
+    if (document.URL.includes("https://twitter.com")) return true;
+
+    return false;
+  };
+
   render() {
     const {
       menuOpen,
@@ -1235,6 +1249,7 @@ class Main extends React.Component {
           {confirmationModal.show && (
             <CreateTourConfirmationModal
               data={confirmationModal}
+              // textType="text"
               onModalClose={this.confirmationModalClose}
               onTourSelect={this.onTourTypeSelect}
             />
@@ -1324,8 +1339,7 @@ class Main extends React.Component {
                 onClick={(e) => this.openMenu("tooltip")}
                 data-title="Tooltip"
                 disabled={
-                  document.URL.includes("https://docs.google.com") ||
-                  followedTrailUserData
+                  this.disableTooltipTourButton() || followedTrailUserData
                 }
               >
                 <svg
@@ -1366,8 +1380,7 @@ class Main extends React.Component {
                 onClick={(e) => this.onMediaTourSelect("video")}
                 data-title="Video"
                 disabled={
-                  document.URL.includes("https://twitter.com") ||
-                  followedTrailUserData
+                  this.disableMediaTourButton() || followedTrailUserData
                 }
               >
                 <svg
@@ -1418,8 +1431,7 @@ class Main extends React.Component {
                   onClick={(e) => this.onMediaTourSelect("audio")}
                   data-title="Audio"
                   disabled={
-                    document.URL.includes("https://twitter.com") ||
-                    followedTrailUserData
+                    this.disableMediaTourButton() || followedTrailUserData
                   }
                 >
                   <svg

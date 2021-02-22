@@ -9,7 +9,7 @@ class CreateTourConfirmationModal extends Component {
   }
 
   render() {
-    const { data, onModalClose, onTourSelect } = this.props;
+    const { data, onModalClose, onTourSelect, textType } = this.props;
     const { show, tourType } = data;
 
     $(() => {
@@ -46,6 +46,13 @@ class CreateTourConfirmationModal extends Component {
         <ModalBody>
           <p className="trailit_DeleteText">Please select tour type</p>
           <div className="trailButtonsWrapper">
+            {/* <button
+              type="button"
+              className="ant-btn ant-btn-primary trail_add_step_btn"
+              onClick={(e) => onTourSelect(textType, `${textType} Modal`)}
+            >
+              {textType} Modal
+            </button> */}
             <button
               type="button"
               className="ant-btn ant-btn-primary trail_add_step_btn"
