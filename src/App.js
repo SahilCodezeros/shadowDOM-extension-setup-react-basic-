@@ -39,12 +39,17 @@ class App extends React.Component {
   componentDidMount() {
     $("#my-extension-root-flip").remove();
     chrome.storage.local.get(
-      ["auth_Tokan", "userData"],
+      ["auth_Tokan", "userData", "isAuth"],
       function (items) {
         if (items.userData) {
           this.onClickToRedirect("userProfile");
+
+          if (items.isAuth) {
+            chrome.runtime.sendMessage({ userLoggedIn: true });
+          }
         } else {
           this.onClickToRedirect("login");
+          chrome.runtime.sendMessage({ userLoggedIn: false });
         }
       }.bind(this)
     );

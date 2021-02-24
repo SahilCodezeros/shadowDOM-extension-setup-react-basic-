@@ -678,6 +678,12 @@ class Main extends React.Component {
   }
 
   onHandleSubscription = async (msObj) => {
+    if (msObj.message === "urlChanged") {
+      if (!this.state.menuOpen) {
+        this.setState({ menuOpen: true });
+      }
+    }
+
     if (msObj.subject === "DOMInfo") {
       chrome.storage.local.get(
         [
@@ -1182,6 +1188,7 @@ class Main extends React.Component {
   }
 
   disableTooltipTourButton = () => {
+    if (document.URL === "https://imgur.com/") return true;
     if (document.URL === "https://www.reddit.com/") return true;
     if (document.URL.includes("https://twitter.com")) return true;
     if (document.URL.includes("https://docs.google.com")) return true;
@@ -1206,6 +1213,8 @@ class Main extends React.Component {
       followedTrailUserData,
       modalCreateNewTrailModal,
     } = this.state;
+
+    console.log("menuOpen", menuOpen);
 
     // if (document.URL.includes("https://docs.google.com")) {
     //   const tooltipButton = document
@@ -1710,6 +1719,8 @@ class DefaultButton extends React.PureComponent {
       trailName: "",
       openSidebar: false,
     };
+
+    this.previewModalRef = React.createRef();
 
     this.onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
   }
@@ -3839,6 +3850,10 @@ class DefaultButton extends React.PureComponent {
     // , document.querySelector('body'));
   };
 
+  onNextClick = () => {
+    console.log("this.previewModalRef", this.previewModalRef);
+  };
+
   onCloseTooltipHandle = async (e) => {
     // Call init button position function
     initButtonPosition();
@@ -4533,6 +4548,8 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <PreviewModalComponent
+                  ref={this.previewModalRef}
+                  onNextClick={this.onNextClick}
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4999,6 +5016,19 @@ app.style.display = "none";
 // });
 // appd.style.display = 'none';
 
+// chrome.runtime.onMessage.addListener((msObj) => {
+//   console.log("hiiiiii");
+//   if (msObj.subject === "isAuthInfo") {
+//     chrome.storage.local.get(["userData", "isAuth"], async (items) => {
+//       console.log("items", items);
+//       chrome.runtime.sendMessage("", {
+//         type: "isAuthInfo",
+//         isAuth: items.isAuth,
+//       });
+//     });
+//   }
+// });
+
 chrome.runtime.onMessage.addListener((msgObj) => {
   if (msgObj.status === "logout") {
     app.style.display = "none";
@@ -5007,7 +5037,8 @@ chrome.runtime.onMessage.addListener((msgObj) => {
     if (
       msgObj.subject !== "DOMObj" &&
       msgObj !== "chrome_modal" &&
-      msgObj.subject !== "CreateTrail"
+      msgObj.subject !== "CreateTrail" &&
+      msgObj.message !== "urlChanged"
     ) {
       setTimeout(() => {
         // to handle open tab in entire tab
@@ -5015,6 +5046,7 @@ chrome.runtime.onMessage.addListener((msgObj) => {
           // if(items.openButton === 'CreateTrail') {
           // 	appd.style.display = 'block';
           // } else {
+          console.log(app.style);
           if (app.style.display === "none") {
             // this.props.toggle();
             app.style.display = "block";

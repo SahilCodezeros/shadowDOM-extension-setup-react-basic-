@@ -1347,23 +1347,24 @@ body.trailit_EditTrailShow .trailMain {
 }
 
 .trailit_userPanalHeaderBox .trailit_userIMG {
-  width: 66px;
-  height: 66px;
+  /* width: 66px;
+  height: 66px; */
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  /* display: inline-table; */
-  display: inline-block;
+  display: inline-table;
 }
 .trailit_userPanalHeaderBox .trailit_userIMG:hover .trailitUploadICon {
   opacity: 1;
 }
 .trailit_userPanalHeaderBox .trailit_userIMG img {
-  /* width: 100%;
-  height: 100%;
-  max-height: 66px; */
+  /* width: 100%; */
   width: inherit;
+  height: 100%;
+  max-height: 70px;
 }
 .trailit_userPanalHeaderBox .trailit_userIMG input {
   position: absolute;

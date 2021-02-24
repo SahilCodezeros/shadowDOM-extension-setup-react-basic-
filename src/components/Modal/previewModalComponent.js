@@ -124,6 +124,8 @@ class PreviewModalComponent extends React.PureComponent {
   onClickToManagePopoverButton = async (event, data, step, tourSide) => {
     let { tourStep } = this.props;
 
+    this.props.onNextClick();
+
     await this.toggle();
 
     // console.log("this.props.data[step - 1]ccccc", this.props.data[step - 1])
@@ -284,7 +286,9 @@ class PreviewModalComponent extends React.PureComponent {
           isOpen={open}
           centered={true}
           toggle={this.onButtonCloseHandler}
-          container={document.getElementById("extension-div").shadowRoot}
+          container={document
+            .getElementById("extension-div")
+            .shadowRoot.querySelector(".modal-open")}
           className={`tr_modal trail_preview_modal trail_tooltip_done ${
             this.props.data[tourStep - 1].mediaType &&
             this.props.data[tourStep - 1].mediaType === "text"

@@ -71,6 +71,20 @@ if (typeof chrome.app.isInstalled !== "undefined") {
   // });
 }
 
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  // read changeInfo data and do something with it
+  // like send the new url to contentscripts.js
+  if (changeInfo.url) {
+    chrome.tabs.sendMessage(tabId, {
+      message: "urlChanged",
+      url: changeInfo.url,
+    });
+  }
+
+  console.log("tab changed", tab);
+  console.log("changeInfo", changeInfo);
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "openInTab") {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -156,6 +170,29 @@ chrome.runtime.onMessageExternal.addListener(function (
     case "STATUS":
       if (request.message === "init") {
         sendResponse({ isLoggedIn: true });
+        // setTimeout(() => {
+        //   chrome.tabs.query(
+        //     {
+        //       active: true,
+        //       lastFocusedWindow: true,
+        //     },
+        //     (tabs) => {
+        //       console.log("tabs", tabs);
+        //       if (tabs.length > 0) {
+        //         console.log("in tabs");
+        //         // ...and send a request for the isAuth info...
+        //         chrome.tabs.sendMessage(tabs[0].id, {
+        //           from: "popup",
+        //           subject: "isAuthInfo",
+        //         });
+        //         // sendResponse({ isLoggedIn: false });
+        //       } else {
+        //         console.log("in else");
+        //         sendResponse({ isLoggedIn: false });
+        //       }
+        //     }
+        //   );
+        // }, request.timeout);
       } else {
         sendResponse({ isLoggedIn: false });
       }

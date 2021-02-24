@@ -421,6 +421,7 @@ export const main2Css = `
     }
 
     .trail_settings span {
+        color: #000000;
         font-size: 14px;
         font-family: "Lato", sans-serif !important;
     }
