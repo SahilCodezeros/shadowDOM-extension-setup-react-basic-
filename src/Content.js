@@ -45,6 +45,7 @@ import {
   getFollowTrails,
   updateTrailFlag,
   getUserOneTrail,
+  getFollowedOneTrail,
   UpdateTrailData,
   updateTrailTrack,
   updateNotification,
@@ -177,6 +178,7 @@ class Main extends React.Component {
         }
 
         chrome.storage.onChanged.addListener(async (changes) => {
+          console.log("change1", changes);
           //
           // if (changes.authorData && changes.authorData.userName.newValue) {
           //   let { data } = await getUserData(
@@ -235,6 +237,7 @@ class Main extends React.Component {
                 "isPreview",
               ],
               async (items) => {
+                console.log("line 240");
                 try {
                   let data = { ...items };
                   if (items.followedTrailUserData) {
@@ -392,15 +395,17 @@ class Main extends React.Component {
           // For viewing followed trail data
           if (items.followedTrailUserData) {
             const data = {
-              tourStep: items.tourStep,
+              ...items,
               trail_id: items.trail_id,
-              userData: { ...items.followedTrailUserData },
-              trail_web_user_tour: items.trail_web_user_tour,
-              noStepsToWatch: items.noStepsToWatch,
+              tourStep: items.tourStep,
+              authorData: { ...items.followedTrailUserData },
               isPreview: items.isPreview,
+              noStepsToWatch: items.noStepsToWatch,
             };
 
-            await this.getCurrUserDataCommon(data);
+            console.log("line 406");
+
+            await this.getCurrUserFollowedTrailData(data);
           } else {
             // For viewing preview trails from web-app or own trails
             const data = {
@@ -419,6 +424,7 @@ class Main extends React.Component {
               data.trail_data_id = items.trail_data_id;
               await this.getSingleTrail(data);
             } else {
+              console.log("line 428");
               // Call get current user data common function
               await this.getCurrUserDataCommon(items);
             }
@@ -501,6 +507,88 @@ class Main extends React.Component {
     // 		this.onToggleSubscription(true);
     // 	}
     // });
+  }
+
+  async getCurrUserFollowedTrailData(items) {
+    try {
+      const trail_id = items.trail_id,
+        author_id = items.authorData._id,
+        loggedInUserId = get(["loggedInData", "_id"], items);
+
+      let continueFlag = false,
+        step;
+
+      // Call get followed one trail function
+      const { data, status } = await getFollowedOneTrail(
+        trail_id,
+        author_id,
+        loggedInUserId
+      );
+
+      const handleSteps = (result) => {
+        if (get(["response", "result", "steps"], result)) {
+          return result.response.result.steps;
+        } else {
+          return result.response.result || [];
+        }
+      };
+
+      if (
+        data.response &&
+        data.response.statusCode !== 404 &&
+        handleSteps(data).length > 0
+      ) {
+        let index = get(["steps"], data.response.result, []).findIndex(
+          (step) =>
+            !get(["visitedSteps"], data.response.result, "")
+              .split(",")
+              .map((i) => i, Number)
+              .includes(step)
+        );
+
+        step = index + 1;
+
+        if (step > 1) {
+          continueFlag = true;
+          data.response.result.steps[index].flag = "continue";
+        }
+
+        console.log("data.response.result.steps", data.response.result.steps);
+
+        // console.log("step", step);
+
+        trailWebUserTour = data.response.result.steps;
+        obj.trailList = [...data.response.result.steps];
+        allTrails = [...data.response.result.steps];
+      } else {
+        trailWebUserTour = [];
+        allTrails = [];
+      }
+
+      console.log({
+        step,
+        tourStep: items.tourStep,
+        allTrails,
+        trail_id,
+        continueFlag,
+      });
+
+      this.setState({
+        trail_web_user_tour: trailWebUserTour,
+        followedTrailUserData: items.followedTrailUserData
+          ? items.followedTrailUserData
+          : null,
+      });
+
+      chrome.storage.local.set({
+        trail_id,
+        tourStep: step,
+        trail_web_user_tour: allTrails,
+        closeContinue: continueFlag,
+      });
+    } catch (err) {
+      console.log("err", err);
+    }
   }
 
   async getCurrUserDataCommon(items) {
@@ -704,14 +792,12 @@ class Main extends React.Component {
             const data = {
               ...items,
               trail_id: items.trail_id,
-              tourStep: items.tourStep,
-              userData: { ...items.followedTrailUserData },
-              trail_web_user_tour: items.trail_web_user_tour,
-              noStepsToWatch: items.noStepsToWatch,
+              authorData: { ...items.followedTrailUserData },
               isPreview: items.isPreview,
+              noStepsToWatch: items.noStepsToWatch,
             };
 
-            return await this.getCurrUserDataCommon(data);
+            return await this.getCurrUserFollowedTrailData(data);
           }
 
           // For viewing preview trail data from web-app or own trails
@@ -731,6 +817,7 @@ class Main extends React.Component {
             data.trail_data_id = items.trail_data_id;
             await this.getSingleTrail(data);
           } else {
+            console.log("line 821");
             // Call get current user data common function
             await this.getCurrUserDataCommon(items);
           }
@@ -1213,8 +1300,6 @@ class Main extends React.Component {
       followedTrailUserData,
       modalCreateNewTrailModal,
     } = this.state;
-
-    console.log("menuOpen", menuOpen);
 
     // if (document.URL.includes("https://docs.google.com")) {
     //   const tooltipButton = document
@@ -1718,6 +1803,7 @@ class DefaultButton extends React.PureComponent {
       dynamicPopupButton: true,
       trailName: "",
       openSidebar: false,
+      currentTrailsTab: "My Trails",
     };
 
     this.previewModalRef = React.createRef();
@@ -1783,6 +1869,8 @@ class DefaultButton extends React.PureComponent {
             "isPreview",
           ],
           async (items) => {
+            console.log("line 1873");
+
             // Call common get user data function
             await this.getCurrUserDataCommon(items);
           }
@@ -2107,6 +2195,12 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
+      console.log("change2", changes);
+      if (changes.currentTrailsTab && changes.currentTrailsTab.newValue) {
+        // Set current trail tab state
+        this.setState({ currentTrailsTab: changes.currentTrailsTab.newValue });
+      }
+
       //
       //
       if (changes.tourType && changes.tourType.newValue === "") {
@@ -2675,8 +2769,13 @@ class DefaultButton extends React.PureComponent {
         "MobileTargetNotFound",
         "isDraggable",
         "trail_name",
+        "currentTrailsTab",
       ],
       async function (items) {
+        if (items.currentTrailsTab) {
+          obj.currentTrailsTab = items.currentTrailsTab;
+        }
+
         if (items.trail_name) {
           obj.trail_name = items.trail_name;
         }
@@ -2795,6 +2894,9 @@ class DefaultButton extends React.PureComponent {
           loading: obj.loading ? obj.loading : false,
           isDraggable: obj.isDraggable ? obj.isDraggable : false,
           trailName: obj.trail_name ? obj.trail_name : "",
+          currentTrailsTab: obj.currentTrailsTab
+            ? obj.currentTrailsTab
+            : "My Trails",
           // publishButtonShow: localStorageCount && +localStorageCount !== trailListCount
         });
 
@@ -4000,7 +4102,13 @@ class DefaultButton extends React.PureComponent {
       isDraggable,
       trailName,
       openSidebar,
+      currentTrailsTab,
     } = this.state;
+
+    console.log("tourType", tourType);
+    console.log("tourStep", tourStep);
+    console.log("currentTourType", currentTourType);
+    console.log("currentTrailsTab", currentTrailsTab);
 
     const localStorageCount = localStorage.getItem(
       process.env.REACT_APP_LOCALSTORAGE
@@ -5046,7 +5154,6 @@ chrome.runtime.onMessage.addListener((msgObj) => {
           // if(items.openButton === 'CreateTrail') {
           // 	appd.style.display = 'block';
           // } else {
-          console.log(app.style);
           if (app.style.display === "none") {
             // this.props.toggle();
             app.style.display = "block";

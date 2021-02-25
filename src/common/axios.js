@@ -118,7 +118,22 @@ export const getTrailId = async (user_id) => {
 // Get trail_id of user
 export const getUserOneTrail = async (user_id, trail_id, screen) => {
   return await axios.get(
-    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trails_data_tours/${user_id}/${trail_id}/${screen}`
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trails_data_tours/${trail_id}/${screen}`
+  );
+  // return await axios.get(
+  //   `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trails_data_tours/${user_id}/${trail_id}/${screen}`
+  // );
+};
+
+// Get followed trail data of user
+export const getFollowedOneTrail = async (trail_id, author_id, loggedin_id) => {
+  return await axios.post(
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getTrailDataTourByTrailID`,
+    {
+      trail_id: trail_id,
+      user_id: author_id,
+      loggedin_id: loggedin_id,
+    }
   );
 };
 

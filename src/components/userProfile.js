@@ -54,7 +54,7 @@ class UserProfile extends React.Component {
       showMenu: false,
       getOneEditRow: {},
       addRaw: {},
-      listTitle: "My Trails",
+      listTitle: "Loading...",
       editTrail: false,
       categoryList: [],
       isLoading: false,
@@ -88,6 +88,32 @@ class UserProfile extends React.Component {
     // });
   }
 
+  // Get user's followed trail data
+  userFollowedTrailData = async (userData) => {
+    try {
+      // Get follow data of user from database
+      const followData = await getFollowTrails(userData._id);
+      const followedTrails = followData.data;
+      if (
+        followedTrails &&
+        followedTrails.response &&
+        followedTrails.response.statusCode === "200"
+      ) {
+        this.setState({
+          myTrilsListData: followedTrails.response.result,
+          isLoading: false,
+        });
+      } else {
+        this.setState({
+          myTrilsListData: [],
+          isLoading: false,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   async componentDidMount() {
     let balance = await wallet.balance();
     let address = await getAddress(
@@ -102,8 +128,10 @@ class UserProfile extends React.Component {
         "keypair",
         "isPreview",
         "isPreviewSingleTrail",
+        "currentTrailsTab",
       ],
       async function (items) {
+        console.log("items", items);
         // // Get NEAR balance of user
         this.getNearAccountBalance();
         // getBalance()
@@ -130,6 +158,9 @@ class UserProfile extends React.Component {
           lastName: userData.lastName ? userData.lastName : null,
           isPreview: items.isPreview,
           isPreviewSingleTrail: items.isPreviewSingleTrail,
+          listTitle: items.currentTrailsTab
+            ? items.currentTrailsTab
+            : "My Trails",
           // nearBalance: balance
         });
 
@@ -150,17 +181,22 @@ class UserProfile extends React.Component {
         //   flag: "unread",
         // };
 
-        const result = await getUserSingleTrail(userData._id);
+        if (items.currentTrailsTab && items.currentTrailsTab === "Followed") {
+          // Call user followed trail data function
+          await this.userFollowedTrailData(items.userData);
+        } else {
+          const result = await getUserSingleTrail(userData._id);
 
-        if (result.status == 200) {
-          this.setState({
-            myTrilsListData: result.data.response,
-            getOneEditRow: {},
-            addRaw: {},
-          });
+          if (result.status == 200) {
+            this.setState({
+              myTrilsListData: result.data.response,
+              getOneEditRow: {},
+              addRaw: {},
+            });
+          }
+
+          this.setState({ isLoading: false });
         }
-
-        this.setState({ isLoading: false });
 
         // getAllNotification(data).then(async (res) => {
         //   const data = res.data.response;
@@ -239,24 +275,8 @@ class UserProfile extends React.Component {
       ["auth_Tokan", "userData", "reload"],
       async function (items) {
         if (listTitle === "Followed") {
-          // Get follow data of user from database
-          const followData = await getFollowTrails(items.userData._id);
-          const followedTrails = followData.data;
-          if (
-            followedTrails &&
-            followedTrails.response &&
-            followedTrails.response.statusCode === "200"
-          ) {
-            this.setState({
-              myTrilsListData: followedTrails.response.result,
-              isLoading: false,
-            });
-          } else {
-            this.setState({
-              myTrilsListData: [],
-              isLoading: false,
-            });
-          }
+          // Call user followed trail data function
+          await this.userFollowedTrailData(items.userData);
         } else {
           const result = await getUserSingleTrail(items.userData._id);
 
@@ -270,6 +290,7 @@ class UserProfile extends React.Component {
       }.bind(this)
     );
 
+    chrome.storage.local.set({ currentTrailsTab: listTitle });
     this.setState({ listTitle, isLoading: true });
   };
 
@@ -533,6 +554,11 @@ class UserProfile extends React.Component {
                       onClick={(e) => this.onClickToList("My Trails")}
                     >
                       My Trails
+                    </button>
+                  )}
+                  {listTitle === "Loading..." && (
+                    <button disabled type="button" className="trailit_btnPink">
+                      {listTitle}
                     </button>
                   )}
                 </>
