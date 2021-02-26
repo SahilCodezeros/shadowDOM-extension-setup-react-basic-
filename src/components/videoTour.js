@@ -12,6 +12,7 @@ import {
   addTrailitLogo,
   removeTrailitLogo,
 } from "../common/trailitLogoInPreview";
+import ContinueTourConfirmation from "./Modal/ContinueTourConfirmation";
 
 let draggie, dragEle;
 const chrome = window.chrome;
@@ -25,6 +26,24 @@ class VideoTour extends React.PureComponent {
       webUrl: "",
     };
   }
+
+  handleWithoutLogin = (event, tourSide, type, currentStep) => {
+    chrome.storage.local.get(["isGuest"], (items) => {
+      if (currentStep % 3 === 0 && tourSide === "next" && items.isGuest) {
+        this.props.videoToggle();
+      } else {
+        this.onClickToManagePopoverButton(event, tourSide);
+      }
+    });
+  };
+
+  continueTrailWithoutLogin = (event, tourSide) => {
+    this.onClickToManagePopoverButton(event, tourSide);
+    this.props.videoToggle();
+  };
+  toSignInWithoutLogin = () => {
+    this.props.toggle()
+  };
 
   elementDragging = () => {
     dragEle = document
@@ -162,8 +181,10 @@ class VideoTour extends React.PureComponent {
    * @data tooltip data
    * @step tooltip current step
    */
-  onClickToManagePopoverButton = async (event, step, tourSide) => {
+  onClickToManagePopoverButton = async (event, tourSide) => {
     let { tourStep } = this.props;
+    let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
+  
 
     if ($("body")) {
       $("body").removeClass("trail_fullscreen");
@@ -323,6 +344,14 @@ class VideoTour extends React.PureComponent {
 
     return (
       <>
+       {this.props.videoRef && (
+          <ContinueTourConfirmation
+            open={this.props.videoRef}
+            toggle={this.props.videoToggle}
+            continueTrail={this.continueTrailWithoutLogin}
+            toSignIn={this.toSignInWithoutLogin}
+          />
+        )}
         <style>{videoTourCss1}</style>
         <div
           className={[
@@ -394,7 +423,7 @@ class VideoTour extends React.PureComponent {
                     disabled={this.props.onDone}
                     className="ant-btn ant-btn-primary ex_mr_10"
                     onClick={(e) =>
-                      this.onClickToManagePopoverButton(e, tourStep - 1, "prev")
+                      this.onClickToManagePopoverButton(e, "prev")
                     }
                   >
                     Previous
@@ -407,7 +436,15 @@ class VideoTour extends React.PureComponent {
                     disabled={this.props.onDone}
                     className="ant-btn ant-btn-primary ex_mr_10"
                     onClick={(e) =>
-                      this.onClickToManagePopoverButton(e, tourStep + 1, "next")
+                     {
+                      
+                    
+                      this.handleWithoutLogin(
+                        e,
+                        "next",
+                        this.props.data[this.props.tourStep - 1].type,
+                        this.props.tourStep
+                      )}
                     }
                   >
                     Next

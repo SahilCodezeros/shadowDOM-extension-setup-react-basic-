@@ -286,7 +286,7 @@ class Main extends React.Component {
 
           // Get trails of preview user from database
           let screen = resizeScreen() ? "mobile" : "web";
-          const res = await getUserOneTrail(previewUserId, trailId, screen);
+          const res = await getUserOneTrail( trailId, screen);
           const result = res.data;
 
           if (
@@ -491,17 +491,15 @@ class Main extends React.Component {
       trail_id = items.trail_id;
 
     const loggedInUserId = get(["loggedInData", "_id"], items);
+    console.log({loggedInUserId});
 
     try {
       // Get user's trails from database
       let screen = resizeScreen() ? "mobile" : "web";
-      
 
-      if (items.isPreview && !loggedInUserId) {
-        res = await getTrailPublic(user_id, trail_id, items.noStepsToWatch);
-      } else {
-        res = await getUserOneTrail(user_id, trail_id, screen);
-      }
+     
+        res = await getUserOneTrail( trail_id, screen);
+      
 
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {}
@@ -1612,6 +1610,7 @@ let tourUrl;
 class DefaultButton extends React.PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
       open: false,
       trailList: [],
@@ -1656,6 +1655,10 @@ class DefaultButton extends React.PureComponent {
       dynamicPopupButton: true,
       trailName: "",
       openSidebar: false,
+      previewModalRef: false,
+      audioRef: false,
+      videoRef: false,
+      tooltipRef: false,
     };
 
     this.onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
@@ -1801,15 +1804,15 @@ class DefaultButton extends React.PureComponent {
       trail_id = items.trail_id;
     const loggedInUserId = get(["loggedInData", "_id"], items);
 
+    console.log({ loggedInUserId });
+
     try {
       // Get user's trails from database
       let screen = resizeScreen() ? "mobile" : "web";
 
-      if (items.isPreview && !loggedInUserId) {
-        res = await getTrailPublic(user_id, trail_id, items.noStepsToWatch);
-      } else {
-        res = await getUserOneTrail(user_id, trail_id, screen);
-      }
+    
+        res = await getUserOneTrail( trail_id, screen);
+      
 
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {}
@@ -1915,6 +1918,7 @@ class DefaultButton extends React.PureComponent {
   }
 
   async handlePreviewFromWeb(msg) {
+    console.log({ msg });
     if (msg.message === "preview_all") {
       // Call common get user data function
       await this.getCurrUserDataCommon({
@@ -1949,8 +1953,6 @@ class DefaultButton extends React.PureComponent {
         });
       });
     } else if (msg.message === "preview_single") {
-      
-
       await this.getSingleTrail({
         userData: msg.payload.userData,
         trail_id: msg.payload.trail_id,
@@ -3325,7 +3327,6 @@ class DefaultButton extends React.PureComponent {
           // Get all trail from database
           let screen = resizeScreen() ? "mobile" : "web";
           const allDataRes = await getUserOneTrail(
-            this.state.currUserId,
             items.trail_id,
             screen
           );
@@ -4433,6 +4434,12 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <WebUserTour
+                  tooltipRef={this.state.tooltipRef}
+                  tooltipToggle={() =>
+                    this.setState({
+                      tooltipRef: !this.state.tooltipRef,
+                    })
+                  }
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4452,6 +4459,12 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <VideoTour
+                  videoRef={this.state.videoRef}
+                  videoToggle={() =>
+                    this.setState({
+                      videoRef: !this.state.videoRef,
+                    })
+                  }
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4468,6 +4481,12 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <AudioTour
+                  audioRef={this.state.audioRef}
+                  audioToggle={() =>
+                    this.setState({
+                      audioRef: !this.state.audioRef,
+                    })
+                  }
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4484,6 +4503,12 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <PreviewModalComponent
+                  previewModalRef={this.state.previewModalRef}
+                  previewModalToggle={() =>
+                    this.setState({
+                      previewModalRef: !this.state.previewModalRef,
+                    })
+                  }
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4603,6 +4628,12 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <WebUserTour
+                        tooltipRef={this.state.tooltipRef}
+                        tooltipToggle={() =>
+                          this.setState({
+                            tooltipRef: !this.state.tooltipRef,
+                          })
+                        }
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -4622,6 +4653,12 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <VideoTour
+                        audioRef={this.state.audioRef}
+                        audioToggle={() =>
+                          this.setState({
+                            audioRef: !this.state.audioRef,
+                          })
+                        }
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -4638,6 +4675,12 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <AudioTour
+                        videoRef={this.state.videoRef}
+                        videoToggle={() =>
+                          this.setState({
+                            videoRef: !this.state.videoRef,
+                          })
+                        }
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -4654,6 +4697,12 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <PreviewModalComponent
+                        previewModalRef={this.state.previewModalRef}
+                        previewModalToggle={() =>
+                          this.setState({
+                            previewModalRef: !this.state.previewModalRef,
+                          })
+                        }
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -4949,8 +4998,21 @@ app.style.display = "none";
 // 	}
 // });
 // appd.style.display = 'none';
+chrome.runtime.onConnect.addListener((port) => {
+  port.onMessage.addListener( (msgObj, sender, sendResponse) => {
+    if (msgObj.message === "check_login_status") {
+       chrome.storage.local.get(["isAuth"],  (items) => {
+        if (items.isAuth) {
+           port.postMessage({ response: true });
+        } else {
+           port.postMessage({ response: false });
+        }
+      });
+    }
+  });
+});
 
-chrome.runtime.onMessage.addListener((msgObj) => {
+chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
   if (msgObj.status === "logout") {
     app.style.display = "none";
     // appd.style.display = 'none';

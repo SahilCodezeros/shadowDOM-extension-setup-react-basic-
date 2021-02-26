@@ -19,6 +19,7 @@ import {
   addTrailitLogo,
   removeTrailitLogo,
 } from "../common/trailitLogoInPreview";
+import ContinueTourConfirmation from "./Modal/ContinueTourConfirmation";
 
 const chrome = window.chrome;
 
@@ -67,6 +68,24 @@ class WebUserTour extends React.Component {
       curentTour: {},
     };
   }
+
+  handleWithoutLogin = (event, tourSide, type, currentStep) => {
+    chrome.storage.local.get(["isGuest"], (items) => {
+      if (currentStep % 3 === 0 && tourSide === "next" && items.isGuest) {
+        this.props.tooltipToggle();
+      } else {
+        this.onClickToManagePopoverButton(event, tourSide);
+      }
+    });
+  };
+
+  continueTrailWithoutLogin = (event, tourSide) => {
+    this.onClickToManagePopoverButton(event, tourSide);
+    this.props.tooltipToggle();
+  };
+  toSignInWithoutLogin = () => {
+    this.props.toggle();
+  };
 
   componentDidMount() {
     let { tourStep } = this.state;
@@ -347,8 +366,10 @@ class WebUserTour extends React.Component {
    * @data tooltip data
    * @step tooltip current step
    */
-  onClickToManagePopoverButton = async (event, data, step, tourSide) => {
-    // Call remove overlay function
+  onClickToManagePopoverButton = async (event, tourSide) => {
+    let step =
+      tourSide === "prev" ? this.props.tourStep - 1 : this.props.tourStep + 1;
+
     removeOverlay();
 
     // document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay').remove();
@@ -393,6 +414,8 @@ class WebUserTour extends React.Component {
         this.getWebUserTour(event, this.props.data[step - 1], step);
       }, 2000);
     }
+
+    // Call remove overlay function
   };
 
   onClickToDoneTour = (data, step) => {
@@ -484,6 +507,14 @@ class WebUserTour extends React.Component {
 
     return (
       <div>
+        {this.props.tooltipRef && (
+          <ContinueTourConfirmation
+            open={this.props.tooltipRef}
+            toggle={this.props.tooltipToggle}
+            continueTrail={this.continueTrailWithoutLogin}
+            toSignIn={this.toSignInWithoutLogin}
+          />
+        )}
         {uniqueTargetStatus &&
           this.props.data[tourStep - 1].url === document.URL && (
             <React.Fragment>
@@ -519,7 +550,7 @@ class WebUserTour extends React.Component {
                         : "" || (mediaTypeStatus && mediaTypeStatus === "audio")
                         ? "tr_audio_only"
                         : ""
-                    } ${resizeScreen() && 'mobile_preview_popover'}`}
+                    } ${resizeScreen() && "mobile_preview_popover"}`}
                     placement="top"
                     isOpen={tourSteps[`step${res.step}`]}
                   >
@@ -565,12 +596,7 @@ class WebUserTour extends React.Component {
                           type="link"
                           className="prev"
                           onClick={(e) =>
-                            this.onClickToManagePopoverButton(
-                              e,
-                              res,
-                              tourStep - 1,
-                              "prev"
-                            )
+                            this.onClickToManagePopoverButton(e, "prev")
                           }
                         >
                           <LeftOutlined type="left" />
@@ -581,14 +607,21 @@ class WebUserTour extends React.Component {
                           disabled={this.props.onDone}
                           type="link"
                           className="next"
-                          onClick={(e) =>
-                            this.onClickToManagePopoverButton(
+                          onClick={(e) => {
+                            // this.onClickToManagePopoverButton(
+                            //   e,
+                            //   res,
+                            //   this.props.tourStep + 1,
+                            //   "next"
+                            // );
+
+                            this.handleWithoutLogin(
                               e,
-                              res,
-                              tourStep + 1,
-                              "next"
-                            )
-                          }
+                              "next",
+                              this.props.data[this.props.tourStep - 1].type,
+                              this.props.tourStep
+                            );
+                          }}
                         >
                           <RightOutlined type="right" />
                         </Button>

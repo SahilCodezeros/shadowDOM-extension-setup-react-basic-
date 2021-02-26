@@ -11,6 +11,7 @@ import {
   addTrailitLogo,
   removeTrailitLogo,
 } from "../common/trailitLogoInPreview";
+import ContinueTourConfirmation from "./Modal/ContinueTourConfirmation";
 
 const chrome = window.chrome;
 let timeInterval;
@@ -28,6 +29,24 @@ class AudioTour extends React.PureComponent {
       profileImage: "",
     };
   }
+
+  handleWithoutLogin = (event, tourSide, type, currentStep) => {
+    chrome.storage.local.get(["isGuest"], (items) => {
+      if (currentStep % 3 === 0 && tourSide === "next" && items.isGuest) {
+        this.props.audioToggle();
+      } else {
+        this.onClickToManagePopoverButton(event, tourSide);
+      }
+    });
+  };
+
+  continueTrailWithoutLogin = (event, tourSide) => {
+    this.onClickToManagePopoverButton(event, tourSide);
+    this.props.audioToggle();
+  };
+  toSignInWithoutLogin = () => {
+    this.props.toggle()
+  };
 
   componentDidMount() {
     // console.log("did mount");
@@ -119,8 +138,13 @@ class AudioTour extends React.PureComponent {
    * @data tooltip data
    * @step tooltip current step
    */
-  onClickToManagePopoverButton = async (event, step, tourSide) => {
+  onClickToManagePopoverButton = async (event, tourSide) => {
+
     let { tourStep } = this.props;
+    let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
+
+   
+   
     if (this.props.data[step - 1].url === document.URL) {
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
@@ -375,6 +399,14 @@ class AudioTour extends React.PureComponent {
     return (
       // className={`trail_tooltip_done ${tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"}`}
       <div>
+         {this.props.audioRef && (
+          <ContinueTourConfirmation
+            open={this.props.audioRef}
+            toggle={this.props.audioToggle}
+            continueTrail={this.continueTrailWithoutLogin}
+            toSignIn={this.toSignInWithoutLogin}
+          />
+        )}
         <style>{audioTourCss1}</style>
         <div className="audio_wrap_tooltip">
           <div className="audio_wrap_tooltip_innr">
@@ -453,12 +485,16 @@ class AudioTour extends React.PureComponent {
                     disabled={this.props.onDone}
                     className="ant-btn ant-btn-primary"
                     onClick={(e) => {
+
+                      console.log({current: this.props.data[this.props.tourStep]});
                       audio.pause();
                       clearInterval(timeInterval);
-                      this.onClickToManagePopoverButton(
+                     
+                      this.handleWithoutLogin(
                         e,
-                        tourStep + 1,
-                        "next"
+                        "next",
+                        this.props.data[this.props.tourStep - 1].type,
+                        this.props.tourStep
                       );
                     }}
                   >

@@ -116,15 +116,15 @@ export const getTrailId = async (user_id) => {
 };
 
 // Get trail_id of user
-export const getUserOneTrail = async (user_id, trail_id, screen) => {
+export const getUserOneTrail = async ( trail_id, screen) => {
   return await axios.get(
-    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trails_data_tours/${user_id}/${trail_id}/${screen}`
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trails_data_tours/${trail_id}/${screen}`
   );
 };
 
 export const getTrailPublic = async (user_id, trail_id, steps) => {
   return await axios.get(
-    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getLimitedStepsData/${trail_id}/${steps}`
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getLimitedStepsData/${trail_id}`
   );
 };
 

@@ -759,7 +759,7 @@ export const deleteModalCss = `
         border-radius: 10px !important;	
     }
 
-    .trail_create_modal .modal-header {
+    .trail_create_modal .modal-header, .trail_continue_modal .modal-header  {
         padding: 10px 20px !important;
         background: #fff !important;
         border: none;

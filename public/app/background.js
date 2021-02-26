@@ -155,10 +155,23 @@ chrome.runtime.onMessageExternal.addListener(function (
   switch (request.type) {
     case "STATUS":
       if (request.message === "init") {
-        sendResponse({ isLoggedIn: true });
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            const port = chrome.tabs.connect(tabs[0].id);
+            port.postMessage({
+              message: "check_login_status",
+            });
+
+            port.onMessage.addListener((response) => {
+              sendResponse(response);
+            });
+          }
+        );
       } else {
-        sendResponse({ isLoggedIn: false });
+        sendResponse(false);
       }
+
       break;
 
     case "WEB_REQUEST":
@@ -202,6 +215,21 @@ chrome.runtime.onMessageExternal.addListener(function (
             });
           }
         );
+        //   chrome.tabs.query(
+        //     { active: true, currentWindow: true },
+        //     function (tabs) {
+        //       var activeTab = tabs[0];
+
+        //
+        //       chrome.tabs.sendMessage(activeTab.id, {
+        //         message: "check_login_status",
+        //         callback: sendResponse,
+        //       });
+        //     }
+        //   );
+        // } else {
+        //   sendResponse(false);
+        // }
       }
       if (request.action === "PREVIEW_WITHOUT_LOGIN") {
         chrome.tabs.query(

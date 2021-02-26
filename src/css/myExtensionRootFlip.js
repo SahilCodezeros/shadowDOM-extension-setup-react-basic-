@@ -137,7 +137,7 @@ export const myExtensionRootFlipCss1 = `
         border-radius: 10px !important;	
     }
 
-    .trail_create_modal .modal-header {
+    .trail_create_modal .modal-header, .trail_continue_modal .modal-header {
         padding: 10px 20px !important;
         background: #fff !important;
         border: none;
@@ -411,6 +411,19 @@ export const myExtensionRootFlipCss2 = `
         border: 1px solid #fb542b !important;
         color: #fb542b !important;
     }
+    .tr_modal .ant-btn.outlined-btn {
+        color: #fb542b !important;
+        border: 1px solid #fb542b !important;
+        background: #fff !important;
+        height: 28px;
+        border-radius: 3px;
+
+    }
+    .tr_modal .ant-btn.outlined-btn:hover {
+        color: #fff !important;
+        background: #fb542b !important;
+    }
+
 
     .trail_continue_btn,
     .tr_modal .ant-btn.ant-btn-primary,
