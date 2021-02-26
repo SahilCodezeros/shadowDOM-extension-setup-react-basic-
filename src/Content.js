@@ -557,16 +557,16 @@ class Main extends React.Component {
         handleSteps(data).length > 0
       ) {
         //checking if visited step is last then start from other non visited step
-        let check =
-          get(["steps"], data.response.result, [])[
-            get(["steps"], data.response.result, []).length - 1
-          ].trail_data_id ===
-          Number(
-            get(["visitedSteps"], data.response.result, "").split(",")[
-              get(["visitedSteps"], data.response.result, "").split(",")
-                .length - 1
-            ]
-          );
+        // let check =
+        //   get(["steps"], data.response.result, [])[
+        //     get(["steps"], data.response.result, []).length - 1
+        //   ].trail_data_id ===
+        //   Number(
+        //     get(["visitedSteps"], data.response.result, "").split(",")[
+        //       get(["visitedSteps"], data.response.result, "").split(",")
+        //         .length - 1
+        //     ]
+        //   );
 
         let index = get(["steps"], data.response.result, []).findIndex(
           (step) =>
@@ -608,8 +608,6 @@ class Main extends React.Component {
             get(["steps"], data.response.result, []).length ===
             get(["visitedSteps"], data.response.result, "").split(",").length
           );
-
-        console.log("continueButton", continueButton);
 
         allTrails = handleSteps(data).map((el, i) => {
           let flag = el.flag === "continue" ? "" : el.flag;
@@ -675,7 +673,7 @@ class Main extends React.Component {
 
       chrome.storage.local.set({
         trail_id,
-        tourStep: step,
+        tourStep: tourStep,
         trail_web_user_tour: allTrails,
         closeContinue: continueFlag,
       });
@@ -2289,6 +2287,7 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
+      console.log("changes2", changes);
       if (changes.currentTrailsTab && changes.currentTrailsTab.newValue) {
         // Set current trail tab state
         this.setState({ currentTrailsTab: changes.currentTrailsTab.newValue });
@@ -4121,7 +4120,11 @@ class DefaultButton extends React.PureComponent {
       chrome.storage.local.get(
         ["isPreview", "isPreviewSingleTrail", "followedTrailUserData"],
         (items) => {
-          if (!items.isPreview && !items.isPreviewSingleTrail) {
+          if (
+            !items.isPreview &&
+            !items.isPreviewSingleTrail &&
+            !items.followedTrailUserData
+          ) {
             chrome.storage.local.set({ closeContinue: true });
           }
         }
