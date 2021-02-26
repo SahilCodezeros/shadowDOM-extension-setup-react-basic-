@@ -36,7 +36,10 @@ class App extends React.Component {
     };
   }
 
+ 
+
   componentDidMount() {
+
     $("#my-extension-root-flip").remove();
     chrome.storage.local.get(
       ["auth_Tokan", "userData", "isAuth"],

@@ -178,7 +178,7 @@ class Main extends React.Component {
         }
 
         chrome.storage.onChanged.addListener(async (changes) => {
-          console.log("change1", changes);
+          // console.log("change1", changes);
           //
           // if (changes.authorData && changes.authorData.userName.newValue) {
           //   let { data } = await getUserData(
@@ -323,7 +323,7 @@ class Main extends React.Component {
 
           // Get trails of preview user from database
           let screen = resizeScreen() ? "mobile" : "web";
-          const res = await getUserOneTrail(previewUserId, trailId, screen);
+          const res = await getUserOneTrail(trailId, screen);
           const result = res.data;
 
           if (
@@ -688,17 +688,11 @@ class Main extends React.Component {
       continueFlag = false,
       trail_id = items.trail_id;
 
-    const loggedInUserId = get(["loggedInData", "_id"], items);
-
     try {
       // Get user's trails from database
       let screen = resizeScreen() ? "mobile" : "web";
 
-      if (items.isPreview && !loggedInUserId) {
-        res = await getTrailPublic(user_id, trail_id, items.noStepsToWatch);
-      } else {
-        res = await getUserOneTrail(user_id, trail_id, screen);
-      }
+      res = await getUserOneTrail(trail_id, screen);
 
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {
@@ -793,7 +787,6 @@ class Main extends React.Component {
     try {
       res = await getSingleTrailData(data.trail_id, data.trail_data_id);
     } catch (err) {}
-
     if (
       res.data &&
       res.data.response &&
@@ -1104,47 +1097,27 @@ class Main extends React.Component {
             if (trail_web_user_tour && trail_web_user_tour.length > 0) {
               this.setState({ trail_web_user_tour: items.trail_web_user_tour });
               let tour = {};
-              // console.log({
-              //   hello: items.isPreview,
-              //   hello1: items.continueTourStepId,
-              // });
+
               trail_web_user_tour.forEach((el, i) => {
-                if (
-                  el.flag === "continue" ||
-                  (items.isPreview && items.continueTourStepId)
-                ) {
+                if (el.flag === "continue" && !items.isPreview) {
                   tour = {
                     tourStep: i + 1,
                     currentTourType: el.type,
                     tourType: el.tourType,
                     url: el.url,
                   };
-
-                  if (items.isPreview && items.continueTourStepId) {
-                    tour.tourStep = items.continueTourStepId + 1;
-                  }
+                }
+                if (items.isPreview && items.continueTourStepId) {
+                  tour = {
+                    tourStep: items.continueTourStepId + 1,
+                    currentTourType:
+                      trail_web_user_tour[items.continueTourStepId].type,
+                    tourType:
+                      trail_web_user_tour[items.continueTourStepId].tourType,
+                    url: trail_web_user_tour[items.continueTourStepId].url,
+                  };
                 }
               });
-
-              // if (trail_web_user_tour[0].url !== document.URL) {
-              // 	chrome.storage.local.set({
-              // 		openButton: 'CreateTrail',
-              // 		tourStep: tour.tourStep ? tour.tourStep : 1,
-              // 		currentTourType: tour.currentTourType ? tour.currentTourType : trail_web_user_tour[0].type,
-              // 		tourType: tour.tourType ? tour.tourType : 'preview'
-              // 	});
-
-              // 	window.location.href = trail_web_user_tour[0].url;
-              // } else {
-              // 	chrome.storage.local.set({
-              // 		openButton: 'CreateTrail',
-              // 		tourStep: tour,
-              // 		currentTourType: trail_web_user_tour[0].type,
-              // 		tourType: 'preview'
-              // 	});
-
-              // 	// window.location.href = trail_web_user_tour[0].url;
-              // }
 
               if (tour.url) {
                 if (closeContinue !== undefined) {
@@ -1175,6 +1148,8 @@ class Main extends React.Component {
                 tourType: tour.tourType ? tour.tourType : "preview",
               });
 
+              console.log("tour", tour);
+
               if (
                 tour.url &&
                 tour.url !== document.URL &&
@@ -1182,9 +1157,6 @@ class Main extends React.Component {
               ) {
                 // Set loading state to false
                 chrome.storage.local.set({ loading: "true" });
-
-                // document.location.href = tour.url;
-
                 chrome.runtime.sendMessage("", {
                   type: "openInTab",
                   url: tour.url,
@@ -1200,19 +1172,6 @@ class Main extends React.Component {
                   type: "openInTab",
                   url: trail_web_user_tour[0].url,
                 });
-
-                // document.location.href = trail_web_user_tour[0].url;
-
-                // } else if(tour.url && tour.url !== document.URL && closeContinue===undefined) {
-                //
-
-                // 	// Set loading state to false
-                // 	chrome.storage.local.set({ loading: 'true' });
-
-                // 	document.location.href = tour.url;
-                // 	// chrome.tabs.getCurrent(function (tab) {
-                // 	// 	chrome.tabs.update(tab.id, { url: tour.url });
-                // 	// });
               } else if (
                 !tour.url &&
                 trail_web_user_tour[0].url === document.URL &&
@@ -1368,7 +1327,7 @@ class Main extends React.Component {
 
   disableTooltipTourButton = () => {
     if (document.URL === "https://imgur.com/") return true;
-    if (document.URL === "https://www.reddit.com/") return true;
+    if (document.URL.includes("https://www.reddit.com")) return true;
     if (document.URL.includes("https://twitter.com")) return true;
     if (document.URL.includes("https://docs.google.com")) return true;
 
@@ -1851,6 +1810,7 @@ let tourUrl;
 class DefaultButton extends React.PureComponent {
   constructor(props) {
     super(props);
+
     this.state = {
       open: false,
       trailList: [],
@@ -1896,6 +1856,10 @@ class DefaultButton extends React.PureComponent {
       trailName: "",
       openSidebar: false,
       currentTrailsTab: "My Trails",
+      previewModalRef: false,
+      audioRef: false,
+      videoRef: false,
+      tooltipRef: false,
     };
 
     this.previewModalRef = React.createRef();
@@ -2043,17 +2007,12 @@ class DefaultButton extends React.PureComponent {
     let res,
       continueFlag = false,
       trail_id = items.trail_id;
-    const loggedInUserId = get(["loggedInData", "_id"], items);
 
     try {
       // Get user's trails from database
       let screen = resizeScreen() ? "mobile" : "web";
 
-      if (items.isPreview && !loggedInUserId) {
-        res = await getTrailPublic(user_id, trail_id, items.noStepsToWatch);
-      } else {
-        res = await getUserOneTrail(user_id, trail_id, screen);
-      }
+      res = await getUserOneTrail(trail_id, screen);
 
       trailWebUserTour = items.trail_web_user_tour;
     } catch (err) {
@@ -2204,6 +2163,7 @@ class DefaultButton extends React.PureComponent {
       chrome.storage.local.get(["trail_id", "userData"], (items) => {
         chrome.storage.local.set({
           isPreviewSingleTrail: true,
+          isPreview: false,
           webUrl: msg.payload.url,
           old_trail_id: items.trail_id,
         });
@@ -3621,11 +3581,7 @@ class DefaultButton extends React.PureComponent {
         async function (items) {
           // Get all trail from database
           let screen = resizeScreen() ? "mobile" : "web";
-          const allDataRes = await getUserOneTrail(
-            this.state.currUserId,
-            items.trail_id,
-            screen
-          );
+          const allDataRes = await getUserOneTrail(items.trail_id, screen);
           const newDataArray = allDataRes.data.response.result.map((el) => {
             return {
               userId: this.state.currUserId,
@@ -4752,6 +4708,12 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <WebUserTour
+                  tooltipRef={this.state.tooltipRef}
+                  tooltipToggle={() =>
+                    this.setState({
+                      tooltipRef: !this.state.tooltipRef,
+                    })
+                  }
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4771,6 +4733,12 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <VideoTour
+                  videoRef={this.state.videoRef}
+                  videoToggle={() =>
+                    this.setState({
+                      videoRef: !this.state.videoRef,
+                    })
+                  }
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4787,6 +4755,12 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <AudioTour
+                  audioRef={this.state.audioRef}
+                  audioToggle={() =>
+                    this.setState({
+                      audioRef: !this.state.audioRef,
+                    })
+                  }
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4805,6 +4779,12 @@ class DefaultButton extends React.PureComponent {
                 <PreviewModalComponent
                   ref={this.previewModalRef}
                   onNextClick={this.onNextClick}
+                  previewModalRef={this.state.previewModalRef}
+                  previewModalToggle={() =>
+                    this.setState({
+                      previewModalRef: !this.state.previewModalRef,
+                    })
+                  }
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4924,6 +4904,12 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <WebUserTour
+                        tooltipRef={this.state.tooltipRef}
+                        tooltipToggle={() =>
+                          this.setState({
+                            tooltipRef: !this.state.tooltipRef,
+                          })
+                        }
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -4943,6 +4929,12 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <VideoTour
+                        audioRef={this.state.audioRef}
+                        audioToggle={() =>
+                          this.setState({
+                            audioRef: !this.state.audioRef,
+                          })
+                        }
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -4959,6 +4951,12 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <AudioTour
+                        videoRef={this.state.videoRef}
+                        videoToggle={() =>
+                          this.setState({
+                            videoRef: !this.state.videoRef,
+                          })
+                        }
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -4975,6 +4973,12 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <PreviewModalComponent
+                        previewModalRef={this.state.previewModalRef}
+                        previewModalToggle={() =>
+                          this.setState({
+                            previewModalRef: !this.state.previewModalRef,
+                          })
+                        }
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -5270,21 +5274,21 @@ app.style.display = "none";
 // 	}
 // });
 // appd.style.display = 'none';
+chrome.runtime.onConnect.addListener((port) => {
+  port.onMessage.addListener((msgObj, sender, sendResponse) => {
+    if (msgObj.message === "check_login_status") {
+      chrome.storage.local.get(["isAuth"], (items) => {
+        if (items.isAuth) {
+          port.postMessage({ response: true });
+        } else {
+          port.postMessage({ response: false });
+        }
+      });
+    }
+  });
+});
 
-// chrome.runtime.onMessage.addListener((msObj) => {
-//   console.log("hiiiiii");
-//   if (msObj.subject === "isAuthInfo") {
-//     chrome.storage.local.get(["userData", "isAuth"], async (items) => {
-//       console.log("items", items);
-//       chrome.runtime.sendMessage("", {
-//         type: "isAuthInfo",
-//         isAuth: items.isAuth,
-//       });
-//     });
-//   }
-// });
-
-chrome.runtime.onMessage.addListener((msgObj) => {
+chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
   if (msgObj.status === "logout") {
     app.style.display = "none";
     // appd.style.display = 'none';

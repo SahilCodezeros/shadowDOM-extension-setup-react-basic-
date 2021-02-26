@@ -10,9 +10,10 @@ import {
   addTrailitLogo,
   removeTrailitLogo,
 } from "../../common/trailitLogoInPreview";
+import ContinueTourConfirmation from "./ContinueTourConfirmation";
 
 const chrome = window.chrome;
-class PreviewModalComponent extends React.PureComponent {
+class PreviewModalComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,6 +23,24 @@ class PreviewModalComponent extends React.PureComponent {
       autoPlay: true,
     };
   }
+
+  handleWithoutLogin = (event, tourSide, type, currentStep) => {
+    chrome.storage.local.get(["isGuest"], (items) => {
+      if (currentStep % 3 === 0 && tourSide === "next" && items.isGuest) {
+        this.props.previewModalToggle();
+      } else {
+        this.onClickToManagePopoverButton(event, tourSide);
+      }
+    });
+  };
+
+  continueTrailWithoutLogin = (event, tourSide) => {
+    this.onClickToManagePopoverButton(event, tourSide);
+    this.props.previewModalToggle();
+  };
+  toSignInWithoutLogin = () => {
+    this.props.toggle();
+  };
 
   async componentDidMount() {
     const scrollTop = $(window).scrollTop();
@@ -121,8 +140,9 @@ class PreviewModalComponent extends React.PureComponent {
    * @data tooltip data
    * @step tooltip current step
    */
-  onClickToManagePopoverButton = async (event, data, step, tourSide) => {
+  onClickToManagePopoverButton = async (event, tourSide) => {
     let { tourStep } = this.props;
+    let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
 
     this.props.onNextClick();
 
@@ -281,7 +301,15 @@ class PreviewModalComponent extends React.PureComponent {
     }
 
     return (
-      <React.Fragment>
+      <div>
+        {this.props.previewModalRef && (
+          <ContinueTourConfirmation
+            open={this.props.previewModalRef}
+            toggle={this.props.previewModalToggle}
+            continueTrail={this.continueTrailWithoutLogin}
+            toSignIn={this.toSignInWithoutLogin}
+          />
+        )}
         <Modal
           isOpen={open}
           centered={true}
@@ -353,14 +381,17 @@ class PreviewModalComponent extends React.PureComponent {
                   type="link"
                   disabled={this.props.onDone}
                   className="next"
-                  onClick={(e) =>
-                    this.onClickToManagePopoverButton(
-                      e,
-                      this.props.data[tourStep - 1],
-                      tourStep + 1,
-                      "next"
-                    )
-                  }
+                  onClick={(e) => {
+                    console.log("previewModal Next");
+
+                    this.handleWithoutLogin &&
+                      this.handleWithoutLogin(
+                        e,
+                        "next",
+                        this.props.data[this.props.tourStep - 1].type,
+                        this.props.tourStep
+                      );
+                  }}
                 >
                   <RightOutlined type="right" />
                 </Button>
@@ -383,7 +414,7 @@ class PreviewModalComponent extends React.PureComponent {
             </div>
           </ModalBody>
         </Modal>
-      </React.Fragment>
+      </div>
     );
   }
 }

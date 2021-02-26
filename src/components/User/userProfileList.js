@@ -281,16 +281,16 @@ class UserProfileList extends Component {
                               <div className="trailit_bottom_content d-flex justify-content-between">
                                 <div className="trailit_10_500_roboto trailit_text_white align-items-center d-flex">
                                   <img
-                                    alt="twitter"
+                                    alt="user_image"
                                     className="trialit_user"
                                     src={
-                                      profileImage == ""
-                                        ? require("../../images/user.png")
-                                        : this.props.title === "Followed"
+                                      this.props.title === "Followed"
                                         ? res.userData &&
-                                          res.userData.profileImage
-                                          ? res.userData.profileImage
-                                          : require("../../images/user.png")
+                                          res.userData.profileImage === ""
+                                          ? require("../../images/user.png")
+                                          : res.userData.profileImage
+                                        : profileImage == ""
+                                        ? require("../../images/user.png")
                                         : profileImage
                                     }
                                   />
@@ -300,7 +300,7 @@ class UserProfileList extends Component {
                                 </div>
                                 <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
                                   <img
-                                    alt="twitter"
+                                    alt="trailit_coin"
                                     width="11px"
                                     src={require("../../images/trailit_coin.png")}
                                   />
