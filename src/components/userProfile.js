@@ -131,7 +131,6 @@ class UserProfile extends React.Component {
         "currentTrailsTab",
       ],
       async function (items) {
-        console.log("items", items);
         // // Get NEAR balance of user
         this.getNearAccountBalance();
         // getBalance()

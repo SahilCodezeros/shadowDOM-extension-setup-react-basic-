@@ -98,7 +98,10 @@ class SortableItem extends React.Component {
   // };
 
   render() {
-    let { i, result, tourStep, tourType } = this.props;
+    let { i, result, tourStep, tourType, currentTrailsTab } = this.props;
+
+    console.log("result", result);
+    console.log("currentTrailsTab", currentTrailsTab);
 
     const { MobileTargetNotFound } = this.state;
     let subStep = result.unique_target_one != "" ? true : false;
@@ -153,7 +156,13 @@ class SortableItem extends React.Component {
           <div
             key={i}
             // onMouseLeave={this.onMouseLeave}
-            className={`info_bbx ${tourStep === i + 1 ? "active" : ""} ${
+            className={`${
+              currentTrailsTab === "Followed"
+                ? result.visited
+                  ? "info_bbx_gradient"
+                  : "info_bbx_grey"
+                : "info_bbx_gradient"
+            } ${tourStep === i + 1 ? "active" : ""} ${
               this.state.showMenu ? "z-index-2" : ""
             }`}
           >

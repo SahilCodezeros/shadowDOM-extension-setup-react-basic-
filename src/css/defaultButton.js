@@ -548,8 +548,11 @@ export const defaultButtonCss2 = `
         justify-content: space-between;
     }
 
-    .trailitStepBox.active {
-        border: 1px solid #000;
+    .trailitStepBox.active,
+    .info_bbx.active,
+    // .info_bbx_gradient.active,
+    // .info_bbx_grey.active {
+        border: 1px solid black;
     }
 
     .trailitStepBox.trailitSubStepBox .trailitStepTitle {

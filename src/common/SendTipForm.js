@@ -96,7 +96,11 @@ class SendTipForm extends Component {
             <button
               type="primary"
               disabled={sendLoader}
-              className="trailit_btnGray"
+              className={`${
+                this.props.modal
+                  ? "ant-btn ant-btn-primary trail_add_step_btn"
+                  : "trailit_btnGray"
+              }`}
               onClick={this.onCancelButtonClick}
               // className="ant-btn ant-btn-primary trail_add_step_btn"
             >
@@ -106,7 +110,11 @@ class SendTipForm extends Component {
             <button
               type="primary"
               htmlType="submit"
-              className="trailit_btnPink"
+              className={`${
+                this.props.modal
+                  ? "ant-btn ant-btn-primary trail_add_step_btn"
+                  : "trailit_btnPink"
+              }`}
               // className="ant-btn ant-btn-primary trail_add_step_btn"
               // onClick={ (e) => this.props.sendTip(toAddress, amount) }
               disabled={sendLoader}

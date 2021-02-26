@@ -5355,7 +5355,8 @@ ul.tr_notification_bx.tr_list {
   display: flex;
   justify-content: space-between;
 }
-.trailitStepBox.active {
+.trailitStepBox.active,
+.info_bbx.active {
   border: 1px solid var(--color-black);
 }
 .trailitStepTitle {

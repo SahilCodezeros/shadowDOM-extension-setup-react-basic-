@@ -335,15 +335,6 @@ export const main1Css = `
         transition: transform 150ms cubic-bezier(.4,0,1,1);
     }
 
-    .info_bbx {
-        background: linear-gradient(208.4deg, #9085f3 15.15%, #ef7e81 84.05%);
-        width: 100%;
-        height: 45px;
-        border-radius: 7px;
-        padding: 10px;
-        margin: 0px 0px 10px 5px !important;
-    }
-
     .d-flex {
         display: flex;
         line-height: 1.5;
@@ -362,6 +353,24 @@ export const main1Css = `
 `;
 
 export const main2Css = `
+    .info_bbx_gradient {
+        background: linear-gradient(208.4deg, #9085f3 15.15%, #ef7e81 84.05%);
+        width: 100%;
+        height: 45px;
+        border-radius: 7px;
+        padding: 10px;
+        margin: 0px 0px 10px 5px !important;
+    }
+
+    .info_bbx_grey {
+        background: #808080;
+        width: 100%;
+        height: 45px;
+        border-radius: 7px;
+        padding: 10px;
+        margin: 0px 0px 10px 5px !important;
+    }
+
     .d-flex-2 p {
         margin: 0 0 0px 0;
         color: #fff;
