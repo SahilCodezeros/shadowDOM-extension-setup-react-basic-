@@ -253,6 +253,10 @@ class PreviewModalComponent extends React.Component {
     const { tourStep, tourSide, play } = this.props;
     const { title, description } = this.props.data[tourStep - 1];
     let preview = null;
+    console.log(
+      "render in preview modal component",
+      this.props.data[tourStep - 1].mediaType
+    );
 
     if (
       this.props.data[tourStep - 1].mediaType &&
@@ -364,14 +368,7 @@ class PreviewModalComponent extends React.Component {
                   type="link"
                   disabled={this.props.onDone}
                   className="prev"
-                  onClick={(e) =>
-                    this.onClickToManagePopoverButton(
-                      e,
-                      this.props.data[tourStep - 1],
-                      tourStep - 1,
-                      "prev"
-                    )
-                  }
+                  onClick={(e) => this.onClickToManagePopoverButton(e, "prev")}
                 >
                   <LeftOutlined type="left" />
                 </Button>
@@ -382,8 +379,6 @@ class PreviewModalComponent extends React.Component {
                   disabled={this.props.onDone}
                   className="next"
                   onClick={(e) => {
-                    console.log("previewModal Next");
-
                     this.handleWithoutLogin &&
                       this.handleWithoutLogin(
                         e,

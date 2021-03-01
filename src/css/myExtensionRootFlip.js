@@ -1102,7 +1102,7 @@ export const myExtensionRootFlipCss3 = `
         width: 1rem;
         margin-left: -0.5rem;
         content: "";
-        border-bottom: 1px solid #f7f7f7;
+        // border-bottom: 1px solid #f7f7f7;
     }
     
     .bs-popover-left,

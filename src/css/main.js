@@ -337,7 +337,7 @@ export const main1Css = `
 
     .d-flex {
         display: flex;
-        line-height: 1.5;
+        line-height: 1.2;
         justify-content: space-between;
     }
 

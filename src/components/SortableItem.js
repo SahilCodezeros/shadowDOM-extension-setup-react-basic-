@@ -100,9 +100,6 @@ class SortableItem extends React.Component {
   render() {
     let { i, result, tourStep, tourType, currentTrailsTab } = this.props;
 
-    console.log("result", result);
-    console.log("currentTrailsTab", currentTrailsTab);
-
     const { MobileTargetNotFound } = this.state;
     let subStep = result.unique_target_one != "" ? true : false;
     let subStepStatus = false;

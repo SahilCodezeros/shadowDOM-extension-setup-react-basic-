@@ -63,6 +63,7 @@ class UserProfile extends React.Component {
       privateKey: "",
       nearBalance: 0,
       showSetting: false,
+      isDisabled: false,
     };
   }
 
@@ -129,6 +130,8 @@ class UserProfile extends React.Component {
         "isPreview",
         "isPreviewSingleTrail",
         "currentTrailsTab",
+        "tourType",
+        "currentTourType",
       ],
       async function (items) {
         // // Get NEAR balance of user
@@ -149,6 +152,16 @@ class UserProfile extends React.Component {
           userData = { ...data.data.response };
         }
 
+        let disabledButton = false;
+        if (
+          items.currentTourType &&
+          items.currentTourType !== "" &&
+          items.tourType &&
+          items.tourType === "preview"
+        ) {
+          disabledButton = true;
+        }
+
         this.setState({
           profileImage: userData.profileImage ? userData.profileImage : "",
           privateKey: items.keypair,
@@ -157,6 +170,7 @@ class UserProfile extends React.Component {
           lastName: userData.lastName ? userData.lastName : null,
           isPreview: items.isPreview,
           isPreviewSingleTrail: items.isPreviewSingleTrail,
+          isDisabled: disabledButton,
           listTitle: items.currentTrailsTab
             ? items.currentTrailsTab
             : "My Trails",
@@ -188,7 +202,7 @@ class UserProfile extends React.Component {
 
           if (result.status == 200) {
             this.setState({
-              myTrilsListData: result.data.response,
+              myTrilsListData: result.data.response ? result.data.response : [],
               getOneEditRow: {},
               addRaw: {},
             });
@@ -267,7 +281,31 @@ class UserProfile extends React.Component {
     if (document.querySelector("#my-extension-root-flip")) {
       document.querySelector("#my-extension-root-flip").style.display = "none";
     }
+
+    chrome.storage.onChanged.addListener(this.handlerStorageChanges);
   }
+
+  handlerStorageChanges = (changes) => {
+    if (
+      changes.tourType &&
+      changes.tourType.newValue === "preview" &&
+      changes.currentTourType &&
+      changes.currentTourType.newValue !== ""
+    ) {
+      // Set isDisabled state
+      this.setState({ isDisabled: true });
+    }
+
+    if (
+      changes.tourType &&
+      changes.tourType.newValue === "" &&
+      changes.currentTourType &&
+      changes.currentTourType.newValue === ""
+    ) {
+      // Set isDisabled state
+      this.setState({ isDisabled: false });
+    }
+  };
 
   onClickToList = (listTitle) => {
     chrome.storage.local.get(
@@ -281,7 +319,7 @@ class UserProfile extends React.Component {
 
           if (result.status == 200) {
             this.setState({
-              myTrilsListData: result.data.response,
+              myTrilsListData: result.data.response ? result.data.response : [],
               isLoading: false,
             });
           }
@@ -409,6 +447,7 @@ class UserProfile extends React.Component {
       profileImage,
       slideBalance,
       nearBalance,
+      isDisabled,
       isPreviewSingleTrail,
     } = this.state;
 
@@ -540,7 +579,10 @@ class UserProfile extends React.Component {
                   {listTitle === "My Trails" && (
                     <button
                       type="button"
-                      className="trailit_btnPink"
+                      disabled={isDisabled}
+                      className={`${
+                        isDisabled ? "trailit_btnGray" : "trailit_btnPink"
+                      }`}
                       onClick={(e) => this.onClickToList("Followed")}
                     >
                       Followed
@@ -549,6 +591,7 @@ class UserProfile extends React.Component {
                   {listTitle === "Followed" && (
                     <button
                       type="button"
+                      // disabled={isDisabled}
                       className="trailit_btnPink"
                       onClick={(e) => this.onClickToList("My Trails")}
                     >

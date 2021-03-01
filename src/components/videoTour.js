@@ -42,7 +42,7 @@ class VideoTour extends React.PureComponent {
     this.props.videoToggle();
   };
   toSignInWithoutLogin = () => {
-    this.props.toggle()
+    this.props.toggle();
   };
 
   elementDragging = () => {
@@ -184,7 +184,6 @@ class VideoTour extends React.PureComponent {
   onClickToManagePopoverButton = async (event, tourSide) => {
     let { tourStep } = this.props;
     let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
-  
 
     if ($("body")) {
       $("body").removeClass("trail_fullscreen");
@@ -344,7 +343,7 @@ class VideoTour extends React.PureComponent {
 
     return (
       <>
-       {this.props.videoRef && (
+        {this.props.videoRef && (
           <ContinueTourConfirmation
             open={this.props.videoRef}
             toggle={this.props.videoToggle}
@@ -435,17 +434,14 @@ class VideoTour extends React.PureComponent {
                   <button
                     disabled={this.props.onDone}
                     className="ant-btn ant-btn-primary ex_mr_10"
-                    onClick={(e) =>
-                     {
-                      
-                    
+                    onClick={(e) => {
                       this.handleWithoutLogin(
                         e,
                         "next",
                         this.props.data[this.props.tourStep - 1].type,
                         this.props.tourStep
-                      )}
-                    }
+                      );
+                    }}
                   >
                     Next
                   </button>

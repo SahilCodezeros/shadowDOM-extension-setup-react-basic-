@@ -1,58 +1,58 @@
 import React from "react";
 import { Form, Input, Button } from "antd";
-import { CloudUploadOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined } from "@ant-design/icons";
 
-import TextEditor from '../common/textEditor';
-import { handleFileUpload } from '../common/audAndVidCommon';
+import TextEditor from "../common/textEditor";
+import { handleFileUpload } from "../common/audAndVidCommon";
 
 export function collectionHas(a, b) {
-    //helper function (see below)
-    for (var i = 0, len = a.length; i < len; i++) {
-        if (a[i] == b) return true;
-    }
-    return false;
+  //helper function (see below)
+  for (var i = 0, len = a.length; i < len; i++) {
+    if (a[i] == b) return true;
+  }
+  return false;
 }
 
 export function findParentBySelector(elm, selector) {
-    var all = document.querySelectorAll(selector);
-    var cur = elm.parentNode;
-    while (cur && !collectionHas(all, cur)) {
-        //keep going up until you find a match
-        cur = cur.parentNode; //go up
-    }
-    return cur; //will return null if not found
+  var all = document.querySelectorAll(selector);
+  var cur = elm.parentNode;
+  while (cur && !collectionHas(all, cur)) {
+    //keep going up until you find a match
+    cur = cur.parentNode; //go up
+  }
+  return cur; //will return null if not found
 }
 
 export function queryParentElement(el, selector) {
-    el = el;
-    let isIDSelector = selector.indexOf("#") === 0;
+  el = el;
+  let isIDSelector = selector.indexOf("#") === 0;
 
-    if (selector.indexOf(".") === 0 || selector.indexOf("#") === 0) {
-        selector = selector.slice(1);
-    }
+  if (selector.indexOf(".") === 0 || selector.indexOf("#") === 0) {
+    selector = selector.slice(1);
+  }
 
-    while (el) {
-        if (isIDSelector) {
-            if (el.id === selector) {
-                return el;
-            }
-        } else if (el.classList.contains(selector)) {
-            return el;
-        }
-        el = el.parentElement;
+  while (el) {
+    if (isIDSelector) {
+      if (el.id === selector) {
+        return el;
+      }
+    } else if (el.classList.contains(selector)) {
+      return el;
     }
-    return null;
+    el = el.parentElement;
+  }
+  return null;
 }
 
 export function urlStingCheck(url, array) {
-    let status = false;
-    array.map((res) => {
-        if (url.includes(res) && !url.includes("/#/")) {
-            status = true;
-        }
-    });
+  let status = false;
+  array.map((res) => {
+    if (url.includes(res) && !url.includes("/#/")) {
+      status = true;
+    }
+  });
 
-    return status;
+  return status;
 }
 
 // export function getScrollParent(node) {
@@ -68,70 +68,67 @@ export function urlStingCheck(url, array) {
 //   }
 
 export const getScrollParent = (node) => {
-    const regex = /(auto|scroll)/;
-    const parents = (_node, ps) => {
-        if (_node.parentNode === null) {
-            return ps;
-        }
-        return parents(_node.parentNode, ps.concat([_node]));
-    };
-    
-    const style = (_node, prop) =>
-        getComputedStyle(_node, null).getPropertyValue(prop);
-    const overflow = (_node) =>
-        style(_node, "overflow") +
-        style(_node, "overflow-y") +
-        style(_node, "overflow-x");
-    const scroll = (_node) => regex.test(overflow(_node));
+  const regex = /(auto|scroll)/;
+  const parents = (_node, ps) => {
+    if (_node.parentNode === null) {
+      return ps;
+    }
+    return parents(_node.parentNode, ps.concat([_node]));
+  };
 
-    /* eslint-disable consistent-return */
-    const scrollParent = (_node) => {
-        if (!(_node instanceof HTMLElement || _node instanceof SVGElement)) {
-            return;
-        }
+  const style = (_node, prop) =>
+    getComputedStyle(_node, null).getPropertyValue(prop);
+  const overflow = (_node) =>
+    style(_node, "overflow") +
+    style(_node, "overflow-y") +
+    style(_node, "overflow-x");
+  const scroll = (_node) => regex.test(overflow(_node));
 
-        const ps = parents(_node.parentNode, []);
+  /* eslint-disable consistent-return */
+  const scrollParent = (_node) => {
+    if (!(_node instanceof HTMLElement || _node instanceof SVGElement)) {
+      return;
+    }
 
-        for (let i = 0; i < ps.length; i += 1) {
-            if (scroll(ps[i])) {
-                return ps[i];
-            }
-        }
+    const ps = parents(_node.parentNode, []);
 
-        return document.scrollingElement || document.documentElement;
-    };
+    for (let i = 0; i < ps.length; i += 1) {
+      if (scroll(ps[i])) {
+        return ps[i];
+      }
+    }
 
-    return scrollParent(node);
-    /* eslint-enable consistent-return */
+    return document.scrollingElement || document.documentElement;
+  };
+
+  return scrollParent(node);
+  /* eslint-enable consistent-return */
 };
 
 // Common file upload function
 export const commonFileUploadFunction = (file) => {
-    return handleFileUpload(file);
+  return handleFileUpload(file);
 };
 
 // Handler file change function
 export const handleFileChange = (e, trailStatus, uploadFile) => {
-    const file = e.target.files[0];
-    const fileType = file.type.split('/');
-    e.target.value = null;
+  const file = e.target.files[0];
+  const fileType = file.type.split("/");
+  e.target.value = null;
 
-    if (trailStatus === 'audio' && fileType[1] === 'mp4') {
-
-        // Upload file function
-        uploadFile(file);
-    } else if (trailStatus !== fileType[0]) {
-        // Return alert
-        return alert(`Please upload ${trailStatus} file!`);
-    } else if (trailStatus === 'video' && fileType[1] === 'x-matroska') {
-
-        // Return alert
-        return alert('MKV format suport coming soon.');
-    } else {
-
-        // Upload file function
-        uploadFile(file);
-    }
+  if (trailStatus === "audio" && fileType[1] === "mp4") {
+    // Upload file function
+    uploadFile(file);
+  } else if (trailStatus !== fileType[0]) {
+    // Return alert
+    return alert(`Please upload ${trailStatus} file!`);
+  } else if (trailStatus === "video" && fileType[1] === "x-matroska") {
+    // Return alert
+    return alert("MKV format suport coming soon.");
+  } else {
+    // Upload file function
+    uploadFile(file);
+  }
 };
 
 // On cancel click handler function
@@ -142,23 +139,23 @@ export const handleFileChange = (e, trailStatus, uploadFile) => {
 
 // Tooltip form selection function
 export const commonTooltipFormFunction = (
-    trailStatus, 
-    title, 
-    fileName, 
-    fileLoading, 
-    onClickToVisiblePopover, 
-    onClickToSubmit, 
-    onChangeToInput, 
-    handleChange,
-    media
+  trailStatus,
+  title,
+  fileName,
+  fileLoading,
+  onClickToVisiblePopover,
+  onClickToSubmit,
+  onChangeToInput,
+  handleChange,
+  media
 ) => {
-    const buttons = (
-        <div className="trailButtonsWrapper">
-            <Button type="primary" onClick={onClickToVisiblePopover}>
-                Cancel
-            </Button>
+  const buttons = (
+    <div className="trailButtonsWrapper">
+      <Button type="primary" onClick={onClickToVisiblePopover}>
+        Cancel
+      </Button>
 
-            {/* { 
+      {/* { 
                 (
                     trailStatus === 'audio' || 
                     trailStatus === 'video' || 
@@ -170,60 +167,58 @@ export const commonTooltipFormFunction = (
                         </Button>
             } */}
 
-            <Button
-                // value="ADD"
-                type="primary"
-                htmlType="submit"
-                disabled={ fileLoading }
-                // onClick={ onClickToSubmit }
-                className="ant-btn ant-btn-primary trail_add_step_btn"
-            >
-                ADD STEP
-            </Button>
-        </div>
-    );
+      <Button
+        // value="ADD"
+        type="primary"
+        htmlType="submit"
+        disabled={fileLoading}
+        // onClick={ onClickToSubmit }
+        className="ant-btn ant-btn-primary trail_add_step_btn"
+      >
+        ADD STEP
+      </Button>
+    </div>
+  );
 
-    let mediaType = '';
+  let mediaType = "";
 
-    if (media === 'video') {
-        mediaType = 'video/*, .mkv, .mov'
+  if (media === "video") {
+    mediaType = "video/*, .mkv, .mov";
+  } else if (media === "audio") {
+    mediaType = "audio/*";
+  } else if (media === "image") {
+    mediaType = "image/*";
+  }
 
-    } else if (media === 'audio') {
-        mediaType = 'audio/*';
+  return (
+    <div>
+      <div className="pl-4 trail_video_frm">
+        <Form
+          onFinish={onClickToSubmit}
+          initialValues={{
+            title,
+          }}
+        >
+          <Form.Item
+            name="title"
+            rules={[
+              {
+                required: true,
+                message: "Please enter title!",
+              },
+            ]}
+          >
+            <Input
+              type="text"
+              autoComplete="off"
+              // onKeyDown={onChangeToInput}
+              onChange={onChangeToInput}
+              onKeyDown={(e) => e.stopPropagation()}
+              placeholder={`Enter ${trailStatus} Title`}
+            />
+          </Form.Item>
 
-    } else if (media === 'image') {
-        mediaType = 'image/*';
-    }
- 
-    return (
-        <div>
-            <div className="pl-4 trail_video_frm">
-                <Form
-                    onFinish={ onClickToSubmit }
-                    initialValues={ {
-                        title
-                    } }
-                >
-                    <Form.Item
-                        name="title"
-                        rules={[
-                            {
-                                required: true,
-                                message: "Please enter title!",
-                            },
-                        ]}
-                    >
-                        <Input 
-                            type="text"
-                            autoComplete="off" 
-                            // onKeyDown={onChangeToInput} 
-                            onChange={onChangeToInput}
-                            onKeyDown={(e) => e.stopPropagation()}
-                            placeholder={`Enter ${trailStatus} Title`} 
-                        />
-                    </Form.Item>
-
-                    {/* <input 
+          {/* <input 
                         type="text" 
                         name="title" 
                         value={title} 
@@ -232,198 +227,208 @@ export const commonTooltipFormFunction = (
                         onKeyDown={onChangeToInput} 
                         autoComplete="off" 
                     /> */}
-                    <input 
-                        type="text" 
-                        name="web_url" 
-                        value={fileName} 
-                        disabled={ true }
-                        // onKeyDown={onChangeToInput} 
-                        onChange={onChangeToInput}
-                        onKeyDown={(e) => e.stopPropagation()}
-                        placeholder={`Add ${trailStatus} URL`} 
-                        className="ant-input mb-2" 
+          <input
+            type="text"
+            name="web_url"
+            value={fileName}
+            disabled={true}
+            // onKeyDown={onChangeToInput}
+            onChange={onChangeToInput}
+            onKeyDown={(e) => e.stopPropagation()}
+            placeholder={`Add ${trailStatus} URL`}
+            className="ant-input mb-2"
+          />
+
+          <div className="upload_bx">
+            <div className="ant-upload">
+              <p className="ant-upload-drag-icon">
+                {fileLoading && (
+                  <div class="trial_spinner">
+                    <img
+                      class="ring1"
+                      src={require(`../images/loding1.png`)}
+                      alt="ring1"
                     />
-
-                    <div className="upload_bx">
-                        <div className="ant-upload">    
-                            <p className="ant-upload-drag-icon">
-                                {fileLoading && <div class="trial_spinner">
-                                    <img class="ring1" src={require(`../images/loding1.png`)} alt="ring1" />
-                                    <img class="ring2" src={require(`../images/loding2.png`)} alt="ring2" />
-                                </div>}
-                                {!fileLoading && <CloudUploadOutlined />}
-
-                            </p>
-                            <p className="ant-upload-text">{ fileLoading ? 'Uploading' : 'Upload' } {trailStatus}</p>
-                        </div>
-                        <input 
-                            type="file" 
-                            name="media" 
-                            style={{ padding: 0 }} 
-                            onChange={ handleChange } 
-                            accept={ mediaType } 
-                        />
-                    </div>
-
-                    {buttons}
-                </Form>
+                    <img
+                      class="ring2"
+                      src={require(`../images/loding2.png`)}
+                      alt="ring2"
+                    />
+                  </div>
+                )}
+                {!fileLoading && <CloudUploadOutlined />}
+              </p>
+              <p className="ant-upload-text">
+                {fileLoading ? "Uploading" : "Upload"} {trailStatus}
+              </p>
             </div>
-        </div>
-    );
+            <input
+              type="file"
+              name="media"
+              style={{ padding: 0 }}
+              onChange={handleChange}
+              accept={mediaType}
+            />
+          </div>
+
+          {buttons}
+        </Form>
+      </div>
+    </div>
+  );
 };
 
 // Common initial render function
 export const commonInitialRenderFunction = (
-    trailStatus, 
-    title,
-    description,
-    onTitleChangeHandler, 
-    onDescriptionChangeHandler, 
-    onClickToVisiblePopover, 
-    onClickToSubmit, 
-    selectedTooltipForm
+  trailStatus,
+  title,
+  description,
+  onTitleChangeHandler,
+  onDescriptionChangeHandler,
+  onClickToVisiblePopover,
+  onClickToSubmit,
+  selectedTooltipForm
 ) => {
-    let tooltipForm = null;
-    
-    // Select form according button clicked
-    if (trailStatus === "text") {
-        tooltipForm = (
-            <Form
-                onFinish={ onClickToSubmit }
-                initialValues={ {
-                    title,
-                    description
-                } }
-            >
-                <Form.Item
-                    name="title"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please enter title!",
-                        },
-                    ]}
-                >
-                    <Input
-                        type="text"
-                        // onChange={ onTitleChangeHandler }
-                        onKeyDown={ onTitleChangeHandler }
-                        placeholder="Enter Title"
-                        autoComplete="off"
-                    />
-                </Form.Item>
-                <Form.Item
-                    name="description"
-                    rules={[{ required: true, message: "Please Enter description!" }]}
-                >
-                    <TextEditor 
-                        onChange={ onDescriptionChangeHandler }
-                    />
-                </Form.Item>
-                <Form.Item className="m-0">
-                    <div className="trailButtonsWrapper">
-                        <Button type="primary" onClick={ onClickToVisiblePopover }>
-                            Cancel
-                        </Button>
+  let tooltipForm = null;
 
-                        {/* { title !== '' && description !== '' &&
+  // Select form according button clicked
+  if (trailStatus === "text") {
+    tooltipForm = (
+      <Form
+        onFinish={onClickToSubmit}
+        initialValues={{
+          title,
+          description,
+        }}
+      >
+        <Form.Item
+          name="title"
+          rules={[
+            {
+              required: true,
+              message: "Please enter title!",
+            },
+          ]}
+        >
+          <Input
+            type="text"
+            // // onChange={ onTitleChangeHandler }
+            // onKeyDown={ onTitleChangeHandler }
+            onChange={onTitleChangeHandler}
+            onKeyDown={(e) => e.stopPropagation()}
+            placeholder="Enter Title"
+            autoComplete="off"
+          />
+        </Form.Item>
+        <Form.Item
+          name="description"
+          rules={[{ required: true, message: "Please Enter description!" }]}
+        >
+          <TextEditor onChange={onDescriptionChangeHandler} />
+        </Form.Item>
+        <Form.Item className="m-0">
+          <div className="trailButtonsWrapper">
+            <Button type="primary" onClick={onClickToVisiblePopover}>
+              Cancel
+            </Button>
+
+            {/* { title !== '' && description !== '' &&
                             <Button type="primary">
                                 Preview
                             </Button>
                          } */}
 
-                        <Button type="primary" htmlType="submit">
-                            Add Step
-                        </Button>
-                    </div>
-                </Form.Item>
-            </Form>
-        );
+            <Button type="primary" htmlType="submit">
+              Add Step
+            </Button>
+          </div>
+        </Form.Item>
+      </Form>
+    );
+  } else if (trailStatus === "audio") {
+    tooltipForm = selectedTooltipForm(trailStatus);
+  } else if (trailStatus === "video") {
+    tooltipForm = selectedTooltipForm(trailStatus);
+  } else if (trailStatus === "image") {
+    tooltipForm = selectedTooltipForm(trailStatus);
+  }
 
-    } else if (trailStatus === "audio") {
-        tooltipForm = selectedTooltipForm(trailStatus);
-
-    } else if (trailStatus === "video") {
-        tooltipForm = selectedTooltipForm(trailStatus);
-
-    } else if (trailStatus === "image") {
-        tooltipForm = selectedTooltipForm(trailStatus);
-    }
-    
-    return tooltipForm;
+  return tooltipForm;
 };
 
 // Selecting text, audio, video and image function
 export const commonTypeSelectonButton = (
-    trailStatus,
-    onSelectOption,
-    tooltipForm,
-    fileName,
-    fileLoading,
-    tourType
+  trailStatus,
+  onSelectOption,
+  tooltipForm,
+  fileName,
+  fileLoading,
+  tourType
 ) => {
-
-    let buttons;
-    if (tourType !== 'modal') {
-        buttons = (
-            <div className="tr_icon_grp">
-                <button
-                    className={trailStatus === "text" ? "tr_active" : ""}
-                    onClick={() => onSelectOption("text")}
-                    // disabled={ (trailStatus !== 'text' && fileName !== '') || fileLoading }
-                >
-                    <img alt="Text_tooltip" src={require(`../images/text.png`)} />
-                </button>
-                {!document.URL.includes("https://twitter.com") && (
-                    <React.Fragment>
-                        <button
-                            id="audio_tooltip"
-                            className={trailStatus === "audio" ? "tr_active" : ""}
-                            onClick={() => onSelectOption("audio")}
-                            // disabled={ (trailStatus !== 'audio' && fileName !== '') || fileLoading }
-                        >
-                            <img alt="audio_tooltip" src={require(`../images/audio.png`)} />
-                        </button>
-                        <button
-                            id="video_tooltip"
-                            className={trailStatus === "video" ? "tr_active" : ""}
-                            onClick={() => onSelectOption("video")}
-                            // disabled={ (trailStatus !== 'video' && fileName !== '') || fileLoading }
-                        >
-                            <img alt="video_tooltip" src={require(`../images/video.png`)} />
-                        </button>
-                    </React.Fragment>
-                )}
-                <button
-                    id="picture_tooltip"
-                    className={trailStatus === "image" ? "tr_active" : ""}
-                    onClick={() => onSelectOption("image")}
-                    // disabled={ (trailStatus !== 'image' && fileName !== '') || fileLoading }
-                >
-                    <img alt="image_tooltip" src={require(`../images/photo.png`)} />
-                </button>
-            </div>
-        );
-    }
-    
-    return (
-        <div className="tr_select_type">
-            { buttons }
-        
-            { tooltipForm }
-        </div>
+  let buttons;
+  if (tourType !== "modal") {
+    buttons = (
+      <div className="tr_icon_grp">
+        <button
+          className={trailStatus === "text" ? "tr_active" : ""}
+          onClick={() => onSelectOption("text")}
+          // disabled={ (trailStatus !== 'text' && fileName !== '') || fileLoading }
+        >
+          <img alt="Text_tooltip" src={require(`../images/text.png`)} />
+        </button>
+        {!document.URL.includes("https://twitter.com") && (
+          <React.Fragment>
+            <button
+              id="audio_tooltip"
+              className={trailStatus === "audio" ? "tr_active" : ""}
+              onClick={() => onSelectOption("audio")}
+              // disabled={ (trailStatus !== 'audio' && fileName !== '') || fileLoading }
+            >
+              <img alt="audio_tooltip" src={require(`../images/audio.png`)} />
+            </button>
+            <button
+              id="video_tooltip"
+              className={trailStatus === "video" ? "tr_active" : ""}
+              onClick={() => onSelectOption("video")}
+              // disabled={ (trailStatus !== 'video' && fileName !== '') || fileLoading }
+            >
+              <img alt="video_tooltip" src={require(`../images/video.png`)} />
+            </button>
+          </React.Fragment>
+        )}
+        <button
+          id="picture_tooltip"
+          className={trailStatus === "image" ? "tr_active" : ""}
+          onClick={() => onSelectOption("image")}
+          // disabled={ (trailStatus !== 'image' && fileName !== '') || fileLoading }
+        >
+          <img alt="image_tooltip" src={require(`../images/photo.png`)} />
+        </button>
+      </div>
     );
+  }
+
+  return (
+    <div className="tr_select_type">
+      {buttons}
+
+      {tooltipForm}
+    </div>
+  );
 };
 
 export const getUrlVars = () => {
-    let vars = [], hash;
-    let hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+  let vars = [],
+    hash;
+  let hashes = window.location.href
+    .slice(window.location.href.indexOf("?") + 1)
+    .split("&");
 
-    for (let i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split('=');
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-    };
+  for (let i = 0; i < hashes.length; i++) {
+    hash = hashes[i].split("=");
+    vars.push(hash[0]);
+    vars[hash[0]] = hash[1];
+  }
 
-    return vars;
-}
+  return vars;
+};

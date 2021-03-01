@@ -1148,7 +1148,7 @@ class Main extends React.Component {
                 tourType: tour.tourType ? tour.tourType : "preview",
               });
 
-              console.log("tour", tour);
+              // console.log("tour", tour);
 
               if (
                 tour.url &&
@@ -2247,7 +2247,7 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      console.log("changes2", changes);
+      // console.log("changes2", changes);
       if (changes.currentTrailsTab && changes.currentTrailsTab.newValue) {
         // Set current trail tab state
         this.setState({ currentTrailsTab: changes.currentTrailsTab.newValue });
@@ -3228,9 +3228,11 @@ class DefaultButton extends React.PureComponent {
               trail_data_id: trail.trail_data_id,
               flag: "",
             };
+            console.log("in update");
 
             // Call update trail api to add flag into table
             await updateTrailFlag(data);
+            console.log("update over");
           }
 
           if (items.previewUserId !== "" || items.previewUserId !== undefined) {
@@ -3295,6 +3297,27 @@ class DefaultButton extends React.PureComponent {
             //   currentTourType: "",
             // });
           }
+
+          console.log("after update");
+
+          chrome.storage.local.set({
+            tourType: "",
+            currentTourType: "",
+            tourStep: "",
+          });
+
+          this.setState({
+            web_url: "",
+            tourType: "",
+            currentTourType: "",
+            tourStep: "",
+            overlay: false,
+            loading: false,
+            draggable: false,
+          });
+
+          this.props.onChangeTourType("");
+          this.props.mainToggle();
         }
       );
 
@@ -3308,31 +3331,34 @@ class DefaultButton extends React.PureComponent {
       $(".trail_web_user_tour").parents().css("z-index", "");
       $(`.trail_tour_ToolTipExtend`).remove();
       $(".trail_tooltip_done").remove();
-      $(".trail_web_user_tour").removeAttr("trail_web_user_tour");
+      // $(".trail_web_user_tour").removeAttr("trail_web_user_tour");
+      $(".trail_web_user_tour").removeClass();
       $(`traiil_stop${this.state.tourStep}`).removeAttr(
         `traiil_stop${this.state.tourStep}`
       );
 
       // Call remove overlay function
       removeOverlay();
-    } catch (err) {}
+    } catch (err) {
+      chrome.storage.local.set({
+        tourType: "",
+        currentTourType: "",
+        tourStep: "",
+      });
 
-    chrome.storage.local.set({
-      tourType: "",
-      currentTourType: "",
-      tourStep: "",
-    });
-    this.setState({
-      web_url: "",
-      tourType: "",
-      currentTourType: "",
-      tourStep: "",
-      overlay: false,
-      loading: false,
-      draggable: false,
-    });
-    this.props.onChangeTourType("");
-    this.props.mainToggle();
+      this.setState({
+        web_url: "",
+        tourType: "",
+        currentTourType: "",
+        tourStep: "",
+        overlay: false,
+        loading: false,
+        draggable: false,
+      });
+
+      this.props.onChangeTourType("");
+      this.props.mainToggle();
+    }
   };
 
   openPopup = () => {
@@ -3840,7 +3866,8 @@ class DefaultButton extends React.PureComponent {
       $(".trail_web_user_tour").parents().css("z-index", "");
       $(`.trail_tour_ToolTipExtend`).remove();
       $(".trail_tooltip_done").remove();
-      $(".trail_web_user_tour").removeAttr("trail_web_user_tour");
+      $(".trail_web_user_tour").removeClass();
+      // $(".trail_web_user_tour").removeAttr("trail_web_user_tour");
       $(`traiil_stop${this.state.tourStep}`).removeAttr(
         `traiil_stop${this.state.tourStep}`
       );
@@ -4184,6 +4211,20 @@ class DefaultButton extends React.PureComponent {
     //
   }
 
+  audioToggler = () => {
+    // Set state
+    this.setState({
+      audioRef: !this.state.audioRef,
+    });
+  };
+
+  videoToggler = () => {
+    // Set state
+    this.setState({
+      videoRef: !this.state.videoRef,
+    });
+  };
+
   render() {
     let {
       open,
@@ -4207,7 +4248,7 @@ class DefaultButton extends React.PureComponent {
     } = this.state;
 
     // console.log("tourType", tourType);
-    console.log("tourStep", tourStep);
+    // console.log("tourStep", tourStep);
     // console.log("currentTourType", currentTourType);
     // console.log("currentTrailsTab", currentTrailsTab);
 
@@ -4734,11 +4775,7 @@ class DefaultButton extends React.PureComponent {
               tourUrl && (
                 <VideoTour
                   videoRef={this.state.videoRef}
-                  videoToggle={() =>
-                    this.setState({
-                      videoRef: !this.state.videoRef,
-                    })
-                  }
+                  videoToggle={this.videoToggler}
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4756,11 +4793,7 @@ class DefaultButton extends React.PureComponent {
               tourUrl && (
                 <AudioTour
                   audioRef={this.state.audioRef}
-                  audioToggle={() =>
-                    this.setState({
-                      audioRef: !this.state.audioRef,
-                    })
-                  }
+                  audioToggle={this.audioToggler}
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4929,12 +4962,8 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <VideoTour
-                        audioRef={this.state.audioRef}
-                        audioToggle={() =>
-                          this.setState({
-                            audioRef: !this.state.audioRef,
-                          })
-                        }
+                        videoRef={this.state.videoRef}
+                        videoToggle={this.videoToggler}
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -4951,12 +4980,8 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <AudioTour
-                        videoRef={this.state.videoRef}
-                        videoToggle={() =>
-                          this.setState({
-                            videoRef: !this.state.videoRef,
-                          })
-                        }
+                        audioRef={this.state.audioRef}
+                        audioToggle={this.audioToggler}
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}

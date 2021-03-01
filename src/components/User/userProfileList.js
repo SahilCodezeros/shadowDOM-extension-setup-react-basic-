@@ -79,7 +79,11 @@ class UserProfileList extends Component {
     if (result.status == 200) {
       if (result.data.response.statusCode == 200) {
         let trailList = result.data.response.result;
-        if (result.data.response.result.length > 0) {
+        if (
+          result.data.response &&
+          result.data.response.result &&
+          result.data.response.result.length > 0
+        ) {
           const trailId = res.trail_id;
           const URL = trailList[0].url;
           let qryString = URL.split("?").length > 1 ? "&" : "?";
@@ -206,10 +210,11 @@ class UserProfileList extends Component {
         <div className="trailit_scrollBoxs">
           <div className="trailit_Row">
             {/* {isLoading && <div className="trailit_noData">Loading...</div>} */}
-            {list.length === 0 && !isLoading && (
+            {list && list.length === 0 && !isLoading && (
               <div className="trailit_noData">Data Not Available</div>
             )}
             {!isLoading &&
+              list &&
               list.length > 0 &&
               list.map((res) => {
                 let styles = "";
@@ -286,9 +291,9 @@ class UserProfileList extends Component {
                                     src={
                                       this.props.title === "Followed"
                                         ? res.userData &&
-                                          res.userData.profileImage === ""
-                                          ? require("../../images/user.png")
-                                          : res.userData.profileImage
+                                          res.userData.profileImage !== ""
+                                          ? res.userData.profileImage
+                                          : require("../../images/user.png")
                                         : profileImage == ""
                                         ? require("../../images/user.png")
                                         : profileImage

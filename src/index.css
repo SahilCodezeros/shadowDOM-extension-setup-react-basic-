@@ -322,7 +322,6 @@ button:focus {
   margin-right: 15px;
 }
 
-
 .trail_tooltip .ant-btn.ant-btn-primary,
 #my-extension-defaultroot .optionBtn button.ant-btn {
   background: #ffffff;
@@ -1013,7 +1012,7 @@ html #site-wrap {
   width: 1rem;
   margin-left: -0.5rem;
   content: "";
-  border-bottom: 1px solid #f7f7f7;
+  /* border-bottom: 1px solid #f7f7f7; */
 }
 
 .bs-popover-left,
@@ -1749,7 +1748,8 @@ body.trailit_EditTrailShow .trailit_userPanalLeftBox {
 
 .trailit_inputTitle {
   font-weight: bold !important;
-  font-size: 18px !important;
+  /* font-size: 18px !important; */
+  font-size: 16px !important;
   line-height: 28px !important;
   color: #000000 !important;
   background: #ffffff !important;
@@ -5698,6 +5698,10 @@ hr.trailit_dark {
 [type="submit"]:not(:disabled),
 button:not(:disabled) {
   cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }
 
 .pl-3,

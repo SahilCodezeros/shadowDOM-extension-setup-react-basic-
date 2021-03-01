@@ -44,12 +44,12 @@ class AudioTour extends React.PureComponent {
     this.onClickToManagePopoverButton(event, tourSide);
     this.props.audioToggle();
   };
+
   toSignInWithoutLogin = () => {
-    this.props.toggle()
+    this.props.toggle();
   };
 
   componentDidMount() {
-    // console.log("did mount");
     // console.log("this.props", this.props);
     let self = this;
     chrome.storage.local.get(
@@ -139,12 +139,9 @@ class AudioTour extends React.PureComponent {
    * @step tooltip current step
    */
   onClickToManagePopoverButton = async (event, tourSide) => {
-
     let { tourStep } = this.props;
     let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
 
-   
-   
     if (this.props.data[step - 1].url === document.URL) {
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
@@ -220,7 +217,7 @@ class AudioTour extends React.PureComponent {
     // audio.src = this.props.data[this.props.tourStep - 1].web_url;
     // audio.src = this.state.audioUrl;
 
-    if (this.state.audioLoad) {
+    if (this.state.audioLoad && this.state.audioUrl) {
       audio = this.state.audioUrl;
       audio.autoplay = true;
       const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
@@ -237,7 +234,6 @@ class AudioTour extends React.PureComponent {
 
       //credit for song: Adrian kreativaweb@gmail.com
       audio.addEventListener("loadeddata", () => {
-        // console.log("audio loaded", playAudio);
         if (!playAudio) {
           playAudio = true;
 
@@ -399,7 +395,7 @@ class AudioTour extends React.PureComponent {
     return (
       // className={`trail_tooltip_done ${tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"}`}
       <div>
-         {this.props.audioRef && (
+        {this.props.audioRef && (
           <ContinueTourConfirmation
             open={this.props.audioRef}
             toggle={this.props.audioToggle}
@@ -468,11 +464,7 @@ class AudioTour extends React.PureComponent {
                     onClick={(e) => {
                       audio.pause();
                       clearInterval(timeInterval);
-                      this.onClickToManagePopoverButton(
-                        e,
-                        tourStep - 1,
-                        "prev"
-                      );
+                      this.onClickToManagePopoverButton(e, "prev");
                     }}
                   >
                     Previous
@@ -485,11 +477,12 @@ class AudioTour extends React.PureComponent {
                     disabled={this.props.onDone}
                     className="ant-btn ant-btn-primary"
                     onClick={(e) => {
-
-                      console.log({current: this.props.data[this.props.tourStep]});
+                      console.log({
+                        current: this.props.data[this.props.tourStep],
+                      });
                       audio.pause();
                       clearInterval(timeInterval);
-                     
+
                       this.handleWithoutLogin(
                         e,
                         "next",
