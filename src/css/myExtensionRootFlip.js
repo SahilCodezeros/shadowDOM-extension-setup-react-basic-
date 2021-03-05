@@ -847,6 +847,7 @@ export const myExtensionRootFlipCss3 = `
     }
 
     .trail_tooltip_done .popover-header {
+        user-select: none;
         background: none !important;
         border-bottom: none !important;
         padding: 12px 15px 0 !important;
@@ -878,6 +879,10 @@ export const myExtensionRootFlipCss3 = `
         line-height: 20px !important;
         display: inline-block !important;
         font-family: "Lato", sans-serif !important;
+    }
+
+    .trail_tooltip_done .popover-body {
+        user-select: none;
     }
 
     .trail_tooltip_done.tr_audio_only [x-placement="top"] .bottom.popover-header,
@@ -1159,6 +1164,7 @@ export const myExtensionRootFlipCss4 = `
         width: 100%;
         text-align: center;
         box-sizing: border-box;
+        user-select: none;
     }
 
     .trail_preview_modal .trail_modal_content {

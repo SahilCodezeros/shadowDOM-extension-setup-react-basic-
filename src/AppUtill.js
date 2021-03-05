@@ -66,7 +66,7 @@ export const getTrailUrl = (data, currentUserId, stepNumber = 1) => {
     const trailId = data[0].trail_id;
     const URL = data[0].url;
     let qryString = URL.split("?").length > 1 ? "&" : "?";
-    return `http://go.trialit.co/live/${URL}${qryString}trailUserId=${currentUserId}&trailId=${trailId}&trailPreview=true&tourStep=${stepNumber}`;
+    return `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currentUserId}&trailId=${trailId}&trailPreview=true&tourStep=${stepNumber}`;
   }
 };
 
@@ -84,7 +84,6 @@ function getRadianAngle(degreeValue) {
 }
 
 export default async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
-  
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");

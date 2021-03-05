@@ -550,9 +550,9 @@ export const defaultButtonCss2 = `
 
     .trailitStepBox.active,
     .info_bbx.active,
-    // .info_bbx_gradient.active,
-    // .info_bbx_grey.active {
-        border: 1px solid black;
+    .info_bbx_gradient.active,
+    .info_bbx_grey.active {
+        border: 2px solid #f04d26;
     }
 
     .trailitStepBox.trailitSubStepBox .trailitStepTitle {
@@ -654,7 +654,7 @@ export const defaultButtonCss3 = `
 
     #my-extension-defaultroot .transparent_background {
         background: transparent;
-    }
+    }    
 `;
 
 export const deleteModalCss = `
@@ -835,6 +835,4 @@ export const deleteModalCss = `
     button:focus {
         outline: none !important;
     }
-
-    //
 `;

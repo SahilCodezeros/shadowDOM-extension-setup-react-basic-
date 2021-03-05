@@ -87,7 +87,7 @@ class UserProfileList extends Component {
           const trailId = res.trail_id;
           const URL = trailList[0].url;
           let qryString = URL.split("?").length > 1 ? "&" : "?";
-          const trailUrl = `http://go.trialit.co/live/${URL}${qryString}trailUserId=${res.user_id}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+          const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${res.user_id}&trailId=${trailId}&trailPreview=true&tourStep=1`;
 
           function copyStringToClipboard(str) {
             // Create new element

@@ -2,8 +2,12 @@ import React, { Component } from "react";
 import { Form, Input, Button } from "antd";
 
 class SendTipForm extends Component {
+  // Antd form reference
+  formRef = React.createRef();
+
   constructor(props) {
     super();
+
     this.state = {
       toAddress: "",
       amount: "",
@@ -17,6 +21,10 @@ class SendTipForm extends Component {
   };
 
   onCancelButtonClick = (e) => {
+    e.preventDefault();
+    // Reset form fields
+    this.formRef.current.resetFields();
+
     // Set state to init value
     this.setState({
       toAddress: "",
@@ -53,6 +61,8 @@ class SendTipForm extends Component {
           <p>Microtipping enabled through Celo Blockchain cUSD</p>
         </div> */}
         <Form
+          ref={this.formRef}
+          // onFinishFailed={(error) => console.log("error", error)}
           onFinish={() => this.props.sendTip(toAddress, amount)}
           initialValues={{
             toAddress,
@@ -95,6 +105,7 @@ class SendTipForm extends Component {
           <div className="trailButtonsWrapper">
             <button
               type="primary"
+              htmlType="button"
               disabled={sendLoader}
               className={`${
                 this.props.modal

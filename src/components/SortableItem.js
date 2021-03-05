@@ -75,7 +75,7 @@ class SortableItem extends React.Component {
     e.stopPropagation();
 
     // Set show menu state
-    this.setState({ showMenu: !this.state.showMenu });
+    this.setState({ showMenu: !this.state.showMenu }); // border: 1px solid black;
   };
 
   onMouseLeave = (e) => {
@@ -159,7 +159,7 @@ class SortableItem extends React.Component {
                   ? "info_bbx_gradient"
                   : "info_bbx_grey"
                 : "info_bbx_gradient"
-            } ${tourStep === i + 1 ? "active" : ""} ${
+            } ${tourStep === i + 1 ? "active" : "inactive"} ${
               this.state.showMenu ? "z-index-2" : ""
             }`}
           >
@@ -242,9 +242,9 @@ class SortableItem extends React.Component {
           <div
             key={i}
             onMouseLeave={this.onMouseLeave}
-            className={`trailitStepBox ${tourStep === i + 1 ? "active" : ""} ${
-              this.state.showMenu ? "z-index-2" : ""
-            }`}
+            className={`trailitStepBox ${
+              tourStep === i + 1 ? "active" : "inactive"
+            } ${this.state.showMenu ? "z-index-2" : ""}`}
           >
             {tourType !== "preview" && <DragHandle />}
             <div className="trailitStepTitle">
@@ -325,7 +325,7 @@ class SortableItem extends React.Component {
           <div
             key={i}
             className={`trailitStepBox trailitSubStepBox ${
-              tourStep === i + 1 ? "active" : ""
+              tourStep === i + 1 ? "active" : "inactive"
             } ${this.state.showMenu ? "z-index-2" : ""}`}
           >
             <DragHandle />

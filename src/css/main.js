@@ -355,7 +355,8 @@ export const main1Css = `
 export const main2Css = `
     .info_bbx_gradient {
         background: linear-gradient(208.4deg, #9085f3 15.15%, #ef7e81 84.05%);
-        width: 100%;
+        // width: 100%;
+        width: 96%;
         height: 45px;
         border-radius: 7px;
         padding: 10px;
@@ -370,6 +371,33 @@ export const main2Css = `
         padding: 10px;
         margin: 0px 0px 10px 5px !important;
     }
+
+    .info_bbx_gradient.inactive,
+    .info_bbx_grey.inactive {
+        width: 97% !important;
+    }
+
+    // .trailitStepBox.active,
+    // .info_bbx.active,
+    .info_bbx_gradient.active,
+    .info_bbx_grey.active {
+        // border: 2px solid #f04d26;
+        // border-radius: 1rem;
+        // border-width: 10px;
+        // position: relative;
+    }
+
+    // .info_bbx_gradient.active::before,
+    // .info_bbx_grey.active::before {
+    //     content: "";
+    //     position: absolute;
+    //     top: -5px;
+    //     bottom: -5px;
+    //     left: -5px;
+    //     right: -5px;
+    //     border: 6px solid #222;
+    //     border-radius: .8rem;
+    // }
 
     .d-flex-2 p {
         margin: 0 0 0px 0;

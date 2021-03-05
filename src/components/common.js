@@ -3,6 +3,7 @@ import { Form, Input, Button } from "antd";
 import { CloudUploadOutlined } from "@ant-design/icons";
 
 import TextEditor from "../common/textEditor";
+import ImageTools from "../common/imageResizer";
 import { handleFileUpload } from "../common/audAndVidCommon";
 
 export function collectionHas(a, b) {
@@ -116,6 +117,8 @@ export const handleFileChange = (e, trailStatus, uploadFile) => {
   const fileType = file.type.split("/");
   e.target.value = null;
 
+  console.log("file", file);
+
   if (trailStatus === "audio" && fileType[1] === "mp4") {
     // Upload file function
     uploadFile(file);
@@ -125,6 +128,31 @@ export const handleFileChange = (e, trailStatus, uploadFile) => {
   } else if (trailStatus === "video" && fileType[1] === "x-matroska") {
     // Return alert
     return alert("MKV format suport coming soon.");
+  } else if (trailStatus === "image" && fileType[0] === "image") {
+    const size = { width: 380, height: 214 };
+    const imageTool = new ImageTools();
+    imageTool
+      .crop(file, size)
+      .then((blob) => {
+        console.log("blob", blob);
+        const date = new Date().getTime();
+        const resizedFile = new File([blob], `trail_image_${date}`, {
+          lastModified: date,
+          type: file.type,
+        });
+
+        console.log("resizedFile", resizedFile);
+
+        // Upload file function
+        uploadFile(resizedFile);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Error while resizing image. Please uplaod again.");
+      });
+
+    // // Upload file function
+    // uploadFile(file);
   } else {
     // Upload file function
     uploadFile(file);
@@ -219,14 +247,14 @@ export const commonTooltipFormFunction = (
           </Form.Item>
 
           {/* <input 
-                        type="text" 
-                        name="title" 
-                        value={title} 
-                        placeholder={`Enter ${trailStatus} Title`} 
-                        className="ant-input mb-2" 
-                        onKeyDown={onChangeToInput} 
-                        autoComplete="off" 
-                    /> */}
+              type="text" 
+              name="title" 
+              value={title} 
+              placeholder={`Enter ${trailStatus} Title`} 
+              className="ant-input mb-2" 
+              onKeyDown={onChangeToInput} 
+              autoComplete="off" 
+          /> */}
           <input
             type="text"
             name="web_url"

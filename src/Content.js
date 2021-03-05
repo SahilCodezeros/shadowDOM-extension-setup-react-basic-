@@ -1288,7 +1288,7 @@ class Main extends React.Component {
         const trailId = trail_web_user_tour[0].trail_id;
         const URL = trail_web_user_tour[0].url;
         let qryString = URL.split("?").length > 1 ? "&" : "?";
-        const trailUrl = `http://go.trialit.co/live/${URL}${qryString}trailUserId=${currentUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+        const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currentUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
         function copyStringToClipboard(str) {
           // Create new element
           var el = document.createElement("textarea");
@@ -1421,7 +1421,7 @@ class Main extends React.Component {
             />
 
             {/* <div className={`wrap open ${menuOpen ? 'createMenu': ''}`}> */}
-            <div className={`wrap open ${!menuOpen ? "createMenu" : ""}`}>
+            <div className={`wrap open ${menuOpen ? "createMenu" : ""}`}>
               {/* Preview Button */}
               {/* <button className="blob" onClick={e => this.openMenu('preview')} data-title="Preview">
 								<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48">
@@ -2484,7 +2484,7 @@ class DefaultButton extends React.PureComponent {
     const trailId = trailList[trailList.length - 1].trail_id;
     const URL = trailList[0].url;
     let qryString = URL.split("?").length > 1 ? "&" : "?";
-    const trailUrl = `http://go.trialit.co/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+    const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
 
     function copyStringToClipboard(str) {
       // Create new element
@@ -3685,7 +3685,7 @@ class DefaultButton extends React.PureComponent {
     const trailId = trailList[trailList.length - 1].trail_id;
     const URL = trailList[0].url;
     let qryString = URL.split("?").length > 1 ? "&" : "?";
-    const trailUrl = `http://go.trialit.co/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+    const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
 
     function copyStringToClipboard(str) {
       // Create new element
@@ -4635,43 +4635,49 @@ class DefaultButton extends React.PureComponent {
                 />
               )}
             </div>
-            <form className="flow tr_side_form" id="">
-              <SortableContainer
-                onSortEnd={this.onSectionDragAndDrop}
-                useDragHandle
-              >
-                {this.state.trailList.map((result, index) => (
-                  <SortableItem
-                    key={`item-${index}`}
-                    tourType={this.state.tourType}
-                    onClick={this.onClickToGetRow}
-                    index={index}
-                    i={index}
-                    tourStep={tourStep}
-                    result={result}
-                    isDeleteModalOpen={this.state.deleteModal.show}
-                    onDeleteModalOpen={this.onDeleteModalOpen}
-                    MobileTargetNotFound={this.state.MobileTargetNotFound}
-                    currentTrailsTab={currentTrailsTab}
-                  />
-                ))}
-              </SortableContainer>
-            </form>
+            {tourType !== "audio" && tourType !== "video" && (
+              <form className="flow tr_side_form" id="">
+                <SortableContainer
+                  onSortEnd={this.onSectionDragAndDrop}
+                  useDragHandle
+                >
+                  {this.state.trailList.map((result, index) => (
+                    <SortableItem
+                      key={`item-${index}`}
+                      tourType={this.state.tourType}
+                      onClick={this.onClickToGetRow}
+                      index={index}
+                      i={index}
+                      tourStep={tourStep}
+                      result={result}
+                      isDeleteModalOpen={this.state.deleteModal.show}
+                      onDeleteModalOpen={this.onDeleteModalOpen}
+                      MobileTargetNotFound={this.state.MobileTargetNotFound}
+                      currentTrailsTab={currentTrailsTab}
+                    />
+                  ))}
+                </SortableContainer>
+              </form>
+            )}
             <div>
-              {this.state.saveSort && (
-                <div className="trailButtonsWrapper">
-                  <Button type="primary" onClick={this.saveSortedTrails}>
-                    Save
-                  </Button>
-                </div>
-              )}
-              {this.state.trailList.length > 0 && (
-                <div className="trailButtonsWrapper">
-                  <Button type="primary" onClick={this.tooltipShareBtn}>
-                    Share
-                  </Button>
-                </div>
-              )}
+              {tourType !== "audio" &&
+                tourType !== "video" &&
+                this.state.saveSort && (
+                  <div className="trailButtonsWrapper">
+                    <Button type="primary" onClick={this.saveSortedTrails}>
+                      Save
+                    </Button>
+                  </div>
+                )}
+              {tourType !== "audio" &&
+                tourType !== "video" &&
+                this.state.trailList.length > 0 && (
+                  <div className="trailButtonsWrapper">
+                    <Button type="primary" onClick={this.tooltipShareBtn}>
+                      Share
+                    </Button>
+                  </div>
+                )}
             </div>
           </div>
         </div>

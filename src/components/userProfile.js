@@ -1,10 +1,14 @@
 import React from "react";
 import _ from "lodash";
+import { Button } from "antd";
+import Cropper from "react-easy-crop";
+import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 
 import { socket } from "../common/socket";
 import { getBalance } from "../code/getBalance";
 import { getFollowTrails } from "../common/axios";
 import { wallet, getAddress } from "../common/celo";
+import getCroppedImg, { get, blobToFile } from "../AppUtill";
 import { handleFileUpload } from "../common/audAndVidCommon";
 import SettingsComponent from "../components/settingsComponents";
 
@@ -26,6 +30,7 @@ import {
 import $ from "jquery";
 
 import "../index.css";
+import { resolve } from "promise";
 
 const chrome = window.chrome;
 // let bkg = chrome.extension.getBackgroundPage();
@@ -64,6 +69,10 @@ class UserProfile extends React.Component {
       nearBalance: 0,
       showSetting: false,
       isDisabled: false,
+      profilePreview: null,
+      crop: { x: 0, y: 0 },
+      zoom: 1,
+      croppedAreaPixels: null,
     };
   }
 
@@ -116,6 +125,8 @@ class UserProfile extends React.Component {
   };
 
   async componentDidMount() {
+    // let balance = 0;
+    // let address = "";
     let balance = await wallet.balance();
     let address = await getAddress(
       "0x8920565d5Bc8cf942eD2E18df4B71b8695a22D9B"
@@ -354,10 +365,41 @@ class UserProfile extends React.Component {
     this.setState({ addRaw: data });
   };
 
+  showCroppedImage = async () => {
+    try {
+      const croppedImage = await getCroppedImg(
+        this.state.profilePreview,
+        this.state.croppedAreaPixels,
+        0
+      );
+
+      let file = blobToFile(croppedImage, "profile-picture.png");
+
+      // Call upload file function
+      await this.uploadFile(file);
+
+      // console.log("after upload successed");
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+        if (
+          tabs.length > 0 &&
+          (tabs[0].url.includes("http://169.61.16.14") ||
+            tabs[0].url.includes("http://localhost:"))
+        ) {
+          chrome.tabs.reload();
+        }
+      });
+
+      // Call on cancel handler
+      this.onCancelHandler();
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
   uploadFile = (file) => {
     this.setState({ isLoading: true });
 
-    handleFileUpload(file)
+    return handleFileUpload(file)
       .then((response) => {
         return response;
       })
@@ -369,34 +411,40 @@ class UserProfile extends React.Component {
           profileImage: data.response.result.fileUrl,
         });
 
-        chrome.storage.local.get(
-          ["auth_Tokan", "userData", "reload"],
-          async function (items) {
-            try {
-              let r = await UpdateProfilePicture({
-                email: items.userData.email,
-                profileImage: data.response.result.fileUrl,
-              });
-
-              if (r.status == 200) {
-                chrome.storage.local.set({
-                  userData: {
-                    ...items.userData,
-                    profileImage: data.response.result.fileUrl,
-                  },
+        new Promise((resolve, reject) => {
+          chrome.storage.local.get(
+            ["auth_Tokan", "userData", "reload"],
+            async function (items) {
+              try {
+                let r = await UpdateProfilePicture({
+                  email: items.userData.email,
+                  profileImage: data.response.result.fileUrl,
                 });
-              }
 
-              this.setState({
-                isLoading: false,
-              });
-            } catch (e) {
-              this.setState({
-                isLoading: false,
-              });
-            }
-          }.bind(this)
-        );
+                if (r.status == 200) {
+                  chrome.storage.local.set({
+                    userData: {
+                      ...items.userData,
+                      profileImage: data.response.result.fileUrl,
+                    },
+                  });
+                }
+
+                this.setState({
+                  isLoading: false,
+                });
+
+                resolve();
+              } catch (e) {
+                this.setState({
+                  isLoading: false,
+                });
+
+                resolve();
+              }
+            }.bind(this)
+          );
+        });
       })
       .catch((err) => {
         this.setState({ isLoading: false });
@@ -404,14 +452,33 @@ class UserProfile extends React.Component {
       });
   };
 
-  handleChange = (e) => {
+  handleImageUpload = (e) => {
+    const [file] = e.target.files;
+    if (file) {
+      // Set profile preview state
+      this.setState({ profilePreview: URL.createObjectURL(file) });
+    }
+  };
+
+  handleChange = async (e) => {
     const { tourType } = this.state;
     const file = e.target.files[0];
     const fileType = file.type.split("/");
     e.target.value = null;
 
     // Upload file function
-    this.uploadFile(file);
+    await this.uploadFile(file);
+
+    // console.log("after upload successed");
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+      if (
+        tabs.length > 0 &&
+        (tabs[0].url.includes("http://169.61.16.14") ||
+          tabs[0].url.includes("http://localhost:"))
+      ) {
+        chrome.tabs.reload();
+      }
+    });
   };
 
   onSlide = () => {
@@ -426,6 +493,27 @@ class UserProfile extends React.Component {
 
     this.setState({ slideBalance: false });
     $("body").attr("class", "");
+  };
+
+  onCropComplete = (croppedArea, croppedAreaPixels) => {
+    console.log("croppedAreaPixels", croppedAreaPixels);
+    // Set cropped area pixels
+    this.setState({ croppedAreaPixels });
+  };
+
+  setCrop = (data) => {
+    // Set crop
+    this.setState({ crop: data });
+  };
+
+  onCancelHandler = () => {
+    // Set state
+    this.setState({
+      zoom: 1,
+      crop: { x: 0, y: 0 },
+      profilePreview: null,
+      croppedAreaPixels: null,
+    });
   };
 
   render() {
@@ -449,6 +537,10 @@ class UserProfile extends React.Component {
       nearBalance,
       isDisabled,
       isPreviewSingleTrail,
+      profilePreview,
+      crop,
+      zoom,
+      croppedAreaPixels,
     } = this.state;
 
     let list = [];
@@ -487,18 +579,64 @@ class UserProfile extends React.Component {
         <div className="trailit_userPanalRightBox">
           <div className="trailit_userPanalHeaderBox">
             <div className="trailit_userIMG">
-              <img
-                src={
-                  profileImage == ""
-                    ? require("../images/user.png")
-                    : this.state.profileImage
-                }
-                alt="user"
-              />
-              <input type="file" name="media" onChange={this.handleChange} />
-              <span className="trailitUploadICon">
-                <img src={require("../images/edit.svg")} alt=".." />
-              </span>
+              <div className="trailit-image-and-input">
+                {profilePreview && (
+                  <Cropper
+                    aspect={1}
+                    crop={crop}
+                    zoom={zoom}
+                    cropShape={"round"}
+                    image={profilePreview}
+                    onCropComplete={this.onCropComplete}
+                    onCropChange={(data) => this.setState({ crop: data })}
+                    onZoomChange={(data) => this.setState({ zoom: data })}
+                  />
+                )}
+
+                <img
+                  className="trailit-user-profile-image"
+                  src={
+                    profileImage == ""
+                      ? require("../images/user.png")
+                      : profileImage
+                  }
+                  alt="user"
+                />
+
+                {!profilePreview && (
+                  <div>
+                    <input
+                      type="file"
+                      name="media"
+                      // accept="image/*"
+                      accept=".png, .jpg, .jpeg"
+                      // onChange={this.handleChange}
+                      onChange={this.handleImageUpload}
+                    />
+
+                    <span className="trailitUploadICon">
+                      <img src={require("../images/edit.svg")} alt=".." />
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {profilePreview && (
+                <div className="text-center trailit-image-button-container">
+                  <Button
+                    size="small"
+                    icon={<CloseOutlined />}
+                    onClick={this.onCancelHandler}
+                    className="trailit-close-button"
+                  />
+                  <Button
+                    size="small"
+                    icon={<CheckOutlined />}
+                    onClick={this.showCroppedImage}
+                    className="trailit-check-button"
+                  />
+                </div>
+              )}
             </div>
             <div className="trailit_userBxs">
               <div className="trailit_userName trailit_ellips">
@@ -511,8 +649,7 @@ class UserProfile extends React.Component {
                 className="trailit_userName cursor_pointer"
                 onClick={this.onSlide}
               >
-                {this.state.nearBalance}{" "}
-                <span className="trailit_userSubName"> NEAR</span>
+                {nearBalance} <span className="trailit_userSubName"> NEAR</span>
               </div>
               <div className="trailit_3Boxs">
                 <div className="trailit_3Boxs1">
