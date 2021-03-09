@@ -4225,6 +4225,20 @@ class DefaultButton extends React.PureComponent {
     });
   };
 
+  modelToggler = () => {
+    // Set state
+    this.setState({
+      previewModalRef: !this.state.previewModalRef,
+    });
+  };
+
+  webTourToggler = () => {
+    // Set state
+    this.setState({
+      tooltipRef: !this.state.tooltipRef,
+    })
+  };
+
   render() {
     let {
       open,
@@ -4756,11 +4770,7 @@ class DefaultButton extends React.PureComponent {
               tourUrl && (
                 <WebUserTour
                   tooltipRef={this.state.tooltipRef}
-                  tooltipToggle={() =>
-                    this.setState({
-                      tooltipRef: !this.state.tooltipRef,
-                    })
-                  }
+                  tooltipToggle={this.webTourToggler}
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4819,11 +4829,7 @@ class DefaultButton extends React.PureComponent {
                   ref={this.previewModalRef}
                   onNextClick={this.onNextClick}
                   previewModalRef={this.state.previewModalRef}
-                  previewModalToggle={() =>
-                    this.setState({
-                      previewModalRef: !this.state.previewModalRef,
-                    })
-                  }
+                  previewModalToggle={this.modelToggler}
                   onDone={onDone}
                   data={trailList}
                   toggle={this.onClearToggle}
@@ -4944,11 +4950,7 @@ class DefaultButton extends React.PureComponent {
                     tourUrl && (
                       <WebUserTour
                         tooltipRef={this.state.tooltipRef}
-                        tooltipToggle={() =>
-                          this.setState({
-                            tooltipRef: !this.state.tooltipRef,
-                          })
-                        }
+                        tooltipToggle={this.webTourToggler}
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}
@@ -5005,11 +5007,7 @@ class DefaultButton extends React.PureComponent {
                     tourUrl && (
                       <PreviewModalComponent
                         previewModalRef={this.state.previewModalRef}
-                        previewModalToggle={() =>
-                          this.setState({
-                            previewModalRef: !this.state.previewModalRef,
-                          })
-                        }
+                        previewModalToggle={this.modelToggler}
                         onDone={onDone}
                         data={trailList}
                         toggle={this.onClearToggle}

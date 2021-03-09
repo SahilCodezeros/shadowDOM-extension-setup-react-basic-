@@ -38,6 +38,7 @@ class PreviewModalComponent extends React.Component {
     this.onClickToManagePopoverButton(event, tourSide);
     this.props.previewModalToggle();
   };
+
   toSignInWithoutLogin = () => {
     this.props.toggle();
   };

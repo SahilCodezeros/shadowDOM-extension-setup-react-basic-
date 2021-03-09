@@ -609,13 +609,6 @@ class WebUserTour extends React.Component {
                           type="link"
                           className="next"
                           onClick={(e) => {
-                            // this.onClickToManagePopoverButton(
-                            //   e,
-                            //   res,
-                            //   this.props.tourStep + 1,
-                            //   "next"
-                            // );
-
                             this.handleWithoutLogin(
                               e,
                               "next",

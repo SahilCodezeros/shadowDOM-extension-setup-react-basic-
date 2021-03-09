@@ -207,19 +207,17 @@ class AudioTour extends React.PureComponent {
       this.cleanup();
     }
 
+    console.log("in render");
+
     // $(() => {
     const tr_audioplayer = document
       .getElementById("extension-div")
       .shadowRoot.querySelector(".tr_audioplayer");
 
-    // document.querySelector(".tr_audioplayer-time-current").textContent = this.getTimeCodeFromNum(0);
-    // audio = this.state.audioUrl;
-    // audio.src = this.props.data[this.props.tourStep - 1].web_url;
-    // audio.src = this.state.audioUrl;
-
     if (this.state.audioLoad && this.state.audioUrl) {
       audio = this.state.audioUrl;
       audio.autoplay = true;
+
       const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
       if (!this.props.previewInTooltip) {
         const audioWrapTooltip = document
@@ -315,7 +313,9 @@ class AudioTour extends React.PureComponent {
 
       //toggle between playing and pausing on button click
       playBtn.addEventListener("click", () => {
-        // console.log("on play button click");
+        console.log("on play button click");
+        console.log("audio.pause", audio.paused);
+
         if (audio.paused) {
           playBtn.classList.add("tr_audioplayer-playing");
           chrome.storage.local.get(["AutoPlayMediaToggle"], (items) => {
@@ -477,9 +477,6 @@ class AudioTour extends React.PureComponent {
                     disabled={this.props.onDone}
                     className="ant-btn ant-btn-primary"
                     onClick={(e) => {
-                      console.log({
-                        current: this.props.data[this.props.tourStep],
-                      });
                       audio.pause();
                       clearInterval(timeInterval);
 

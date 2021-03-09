@@ -41,6 +41,7 @@ class VideoTour extends React.PureComponent {
     this.onClickToManagePopoverButton(event, tourSide);
     this.props.videoToggle();
   };
+
   toSignInWithoutLogin = () => {
     this.props.toggle();
   };
