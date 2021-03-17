@@ -8,15 +8,13 @@ import { socket } from "../common/socket";
 import { getBalance } from "../code/getBalance";
 import { getFollowTrails } from "../common/axios";
 import { wallet, getAddress } from "../common/celo";
-import getCroppedImg, { get, blobToFile } from "../AppUtill";
+import getCroppedImg, { blobToFile } from "../AppUtill";
 import { handleFileUpload } from "../common/audAndVidCommon";
 import SettingsComponent from "../components/settingsComponents";
 
 // import BgImage from "../images/trailit_bx_img.png";
 import {
-  getAllNotification,
   getUserSingleTrail,
-  getAllUser,
   getAllCategory,
   UpdateProfilePicture,
   getUser,
@@ -30,7 +28,6 @@ import {
 import $ from "jquery";
 
 import "../index.css";
-import { resolve } from "promise";
 
 const chrome = window.chrome;
 // let bkg = chrome.extension.getBackgroundPage();
