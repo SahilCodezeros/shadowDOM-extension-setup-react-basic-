@@ -76,11 +76,18 @@ class UserProfile extends React.Component {
   // Get NEAR account balance
   getNearAccountBalance() {
     // Get NEAR balance of user
-    getBalance()
-      .then((res) => {
-        this.setState({ nearBalance: res });
-      })
-      .catch();
+
+    chrome.storage.local.get(["userData"], (items) => {
+      if (items.userData._id) {
+        getBalance(items.userData._id)
+          .then((res) => {
+            this.setState({ nearBalance: res });
+          })
+          .catch((err) => {
+            this.setState({ nearBalance: null });
+          });
+      }
+    });
   }
 
   // On setting button click function
@@ -642,12 +649,15 @@ class UserProfile extends React.Component {
               <div className="trailit_userSubName trailit_ellips">
                 Founder, Creator, Designer
               </div>
-              <div
-                className="trailit_userName cursor_pointer"
-                onClick={this.onSlide}
-              >
-                {nearBalance} <span className="trailit_userSubName"> NEAR</span>
-              </div>
+              {nearBalance && (
+                <div
+                  className="trailit_userName cursor_pointer"
+                  onClick={this.onSlide}
+                >
+                  {nearBalance}{" "}
+                  <span className="trailit_userSubName"> NEAR</span>
+                </div>
+              )}
               <div className="trailit_3Boxs">
                 <div className="trailit_3Boxs1">
                   <div className="trailit_userName">100k</div>

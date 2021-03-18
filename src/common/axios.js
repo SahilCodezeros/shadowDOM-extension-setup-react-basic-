@@ -174,6 +174,12 @@ export const UpdateProfilePicture = async (data) => {
   );
 };
 
+export const getNearDetails = async (id) => {
+  return await axios.get(
+    `${process.env.REACT_APP_MS1_URL}user/getNearPublicKey/${id}`
+  );
+};
+
 // Update Trail User Data
 export const UpdateTrailData = async (data) => {
   return await axios.post(

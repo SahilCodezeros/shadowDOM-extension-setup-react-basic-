@@ -4236,7 +4236,7 @@ class DefaultButton extends React.PureComponent {
     // Set state
     this.setState({
       tooltipRef: !this.state.tooltipRef,
-    })
+    });
   };
 
   render() {
@@ -5306,9 +5306,12 @@ app.style.display = "none";
 chrome.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener((msgObj, sender, sendResponse) => {
     if (msgObj.message === "check_login_status") {
-      chrome.storage.local.get(["isAuth"], (items) => {
+      chrome.storage.local.get(["isAuth", "userData"], (items) => {
         if (items.isAuth) {
-          port.postMessage({ response: true });
+          port.postMessage({
+            response: true,
+            userId: get(["userData", "_id"], items),
+          });
         } else {
           port.postMessage({ response: false });
         }
