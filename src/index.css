@@ -1575,6 +1575,13 @@ button:focus {
   color: #000000;
 }
 
+.trailit_16500 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #008000;
+  line-height: 100%;
+}
+
 .trailit_bx {
   border-radius: 10px;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
@@ -1988,16 +1995,26 @@ body.trailit_EditTrailShow .trailit_userPanalLeftBox {
 .trailit-already-exist-error {
   text-align: center;
   padding: 4px;
-  color: red;
+  color: #ff4d4f;
   font-size: medium;
 }
 .trailit_noData {
   font-family: "Montserrat", sans-serif;
   font-size: 14px;
   text-align: center;
-  line-height: 100px;
+  /* line-height: 100px; */
   color: #666;
   width: 100%;
+  margin-top: 20px;
+}
+.trailit_errorData {
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  text-align: center;
+  /* line-height: 100px; */
+  color: #ff4d4f;
+  width: 100%;
+  margin-top: 20px;
 }
 .trailit_loaderBox {
   position: absolute;
@@ -2864,6 +2881,12 @@ html #site-wrap {
 .trailMain input[type="text"]:focus,
 .trailMain input[type="password"]:focus {
   border: 1px solid #000 !important;
+  box-shadow: none !important;
+}
+
+.trailMain input[type="text"]:hover,
+.trailMain input[type="password"]:hover {
+  border-color: #000 !important;
 }
 
 .tr_wrapper .bottom_links a:hover {

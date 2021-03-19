@@ -111,7 +111,10 @@ class UserProfileEdit extends PureComponent {
   };
 
   onChangeSelect = async (e) => {
-    await this.setState({ [e.target.name]: e.target.value });
+    this.setState({ [e.target.name]: e.target.value }, () => {
+      const { errors } = isValidated(this.state);
+      this.setState({ errors });
+    });
   };
 
   onClear = () => {
@@ -250,6 +253,11 @@ class UserProfileEdit extends PureComponent {
                 </option>
               ))}
             </select>
+            {errors.trail_categor_id !== undefined && (
+              <div className="trailit-validation-error">
+                {errors.trail_categor_id}
+              </div>
+            )}
           </div>
           <label className="trailit_12700 d-block trailit_mb3">
             COVER IMAGE

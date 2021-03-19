@@ -39,21 +39,22 @@ import CreateTourConfirmationModal from "./components/Modal/CreateTourConfirmati
 import {
   getAllUser,
   deleteTrail,
+  getUserData,
   uploadTrails,
   followTrails,
   arraySorting,
+  getTrailPublic,
   getFollowTrails,
   updateTrailFlag,
   getUserOneTrail,
-  getFollowedOneTrail,
   UpdateTrailData,
   updateTrailTrack,
-  updateNotification,
-  getAllNotification,
-  unFollowTrailOfUser,
-  getUserData,
+  deleteSingleTrail,
   getSingleTrailData,
-  getTrailPublic,
+  getAllNotification,
+  updateNotification,
+  unFollowTrailOfUser,
+  getFollowedOneTrail,
 } from "./common/axios";
 
 import { main1Css, main2Css } from "./css/main";
@@ -93,6 +94,7 @@ let root1 = "none";
 let allTrails = [];
 let trailWebUserTour = [];
 let preventToggle = false;
+let autoLogoutTimeout;
 
 const resizeScreen = () => {
   return window.innerWidth <= 760;
@@ -123,6 +125,14 @@ class Main extends React.Component {
   }
 
   async componentDidMount() {
+    console.log("componentDidMount");
+
+    autoLogoutTimeout = setTimeout(() => {
+      // Call logout function
+      // this.props.onClickToLogout();
+      console.log("Auto Logout");
+    }, 10000);
+
     chrome.storage.local.get(
       [
         "trail_web_user_tour",
@@ -360,13 +370,8 @@ class Main extends React.Component {
             // 	});
             // }
 
-            const data = {
-              follower_id: items.userData._id,
-              previewUserId,
-            };
-
             // Get follow data of user from database
-            const followData = await getFollowTrails(data);
+            const followData = await getFollowTrails();
             const followRes = followData.data;
 
             if (
@@ -856,6 +861,11 @@ class Main extends React.Component {
       }
     }
 
+    if (msObj.subject === "updateTimeout") {
+      // Auto logout function
+      autoLogoutFunction();
+    }
+
     if (msObj.subject === "DOMInfo") {
       chrome.storage.local.get(
         [
@@ -1288,7 +1298,7 @@ class Main extends React.Component {
         const trailId = trail_web_user_tour[0].trail_id;
         const URL = trail_web_user_tour[0].url;
         let qryString = URL.split("?").length > 1 ? "&" : "?";
-        const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currentUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+        const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currentUserId}&trailId=${trailId}&trailPreview=true&tourStep=1&singleStepPreview=undefined&trailDataId=undefined&previewUserId=undefined&redirectUrl=undefined`;
         function copyStringToClipboard(str) {
           // Create new element
           var el = document.createElement("textarea");
@@ -1379,6 +1389,9 @@ class Main extends React.Component {
     //     audioButton.style.visibility = "hidden";
     //   }
     // }
+
+    // Auto logout function
+    autoLogoutFunction();
 
     return (
       <>
@@ -1839,9 +1852,10 @@ class DefaultButton extends React.PureComponent {
       rowData: {},
       MobileTargetNotFound: {},
       deleteModal: {
-        show: false,
-        title: null,
         id: null,
+        title: null,
+        show: false,
+        trail: false,
       },
       sendTipModal: false,
       isLoading: false,
@@ -1888,21 +1902,23 @@ class DefaultButton extends React.PureComponent {
     // Delete modal state to false
     this.setState({
       deleteModal: {
+        id: null,
         show: false,
         title: null,
-        id: null,
+        trail: false,
       },
     });
   };
 
   // Show delete modal
-  onDeleteModalOpen = (title, id) => {
+  onDeleteModalOpen = (title, id, trail) => {
     // Delete modal state to true
     this.setState({
       deleteModal: {
-        show: true,
-        title,
         id,
+        title,
+        trail,
+        show: true,
       },
     });
   };
@@ -1910,27 +1926,39 @@ class DefaultButton extends React.PureComponent {
   // On delete button click
   async onDeleteButtonClick(e) {
     try {
-      const { id } = this.state.deleteModal;
+      // Set state
+      this.setState({ onDone: true });
 
-      // Delete trail by id
-      const { data } = await deleteTrail(id);
+      const { id, trail } = this.state.deleteModal;
 
-      if (data.response && data.response.statusCode === "200") {
-        chrome.storage.local.get(
-          [
-            "userData",
-            "trail_id",
-            "trail_web_user_tour",
-            "noStepsToWatch",
-            "isPreview",
-          ],
-          async (items) => {
-            // console.log("line 1873");
+      if (trail) {
+        // Delete trail by id
+        await deleteSingleTrail(id);
 
-            // Call common get user data function
-            await this.getCurrUserDataCommon(items);
-          }
-        );
+        // Set state
+        this.setState({ onDone: false });
+      } else {
+        // Delete step by id
+        const { data } = await deleteTrail(id);
+
+        if (data.response && data.response.statusCode === "200") {
+          chrome.storage.local.get(
+            [
+              "userData",
+              "trail_id",
+              "trail_web_user_tour",
+              "noStepsToWatch",
+              "isPreview",
+            ],
+            async (items) => {
+              // Call common get user data function
+              await this.getCurrUserDataCommon(items);
+
+              // Set state
+              this.setState({ onDone: false });
+            }
+          );
+        }
       }
 
       // Call on delete modal close to hide modal
@@ -2247,7 +2275,27 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      // console.log("changes2", changes);
+      console.log("changes2", changes);
+      if (
+        changes.trailDeleteModal &&
+        changes.trailDeleteModal.newValue &&
+        changes.trailDeleteModal.newValue.value === "open"
+      ) {
+        const title = changes.trailDeleteModal.newValue.title;
+        const id = changes.trailDeleteModal.newValue.id;
+        // Call delete modal open function
+        this.onDeleteModalOpen(title, id, true);
+      }
+
+      if (
+        changes.trailDeleteModal &&
+        changes.trailDeleteModal.newValue &&
+        changes.trailDeleteModal.newValue.value === "close"
+      ) {
+        // Call delete modal close function
+        this.onDeleteModalClose();
+      }
+
       if (changes.currentTrailsTab && changes.currentTrailsTab.newValue) {
         // Set current trail tab state
         this.setState({ currentTrailsTab: changes.currentTrailsTab.newValue });
@@ -3332,7 +3380,7 @@ class DefaultButton extends React.PureComponent {
       $(`.trail_tour_ToolTipExtend`).remove();
       $(".trail_tooltip_done").remove();
       // $(".trail_web_user_tour").removeAttr("trail_web_user_tour");
-      $(".trail_web_user_tour").removeClass();
+      $(".trail_web_user_tour").removeClass("trail_web_user_tour");
       $(`traiil_stop${this.state.tourStep}`).removeAttr(
         `traiil_stop${this.state.tourStep}`
       );
@@ -3362,7 +3410,7 @@ class DefaultButton extends React.PureComponent {
   };
 
   openPopup = () => {
-    //
+    // Set state
     this.setState({
       open: !this.state.open,
       openSidebar: !this.state.openSidebar,
@@ -3866,7 +3914,7 @@ class DefaultButton extends React.PureComponent {
       $(".trail_web_user_tour").parents().css("z-index", "");
       $(`.trail_tour_ToolTipExtend`).remove();
       $(".trail_tooltip_done").remove();
-      $(".trail_web_user_tour").removeClass();
+      $(".trail_web_user_tour").removeClass("trail_web_user_tour");
       // $(".trail_web_user_tour").removeAttr("trail_web_user_tour");
       $(`traiil_stop${this.state.tourStep}`).removeAttr(
         `traiil_stop${this.state.tourStep}`
@@ -4236,7 +4284,7 @@ class DefaultButton extends React.PureComponent {
     // Set state
     this.setState({
       tooltipRef: !this.state.tooltipRef,
-    })
+    });
   };
 
   render() {
@@ -4260,6 +4308,9 @@ class DefaultButton extends React.PureComponent {
       openSidebar,
       currentTrailsTab,
     } = this.state;
+
+    // Auto logout function
+    autoLogoutFunction();
 
     // console.log("tourType", tourType);
     // console.log("tourStep", tourStep);
@@ -4730,6 +4781,7 @@ class DefaultButton extends React.PureComponent {
         {/* Delete modal */}
         {this.state.deleteModal.show && (
           <TrailDeleteModal
+            onDone={onDone}
             deleteModal={this.state.deleteModal}
             onDeleteModalClose={this.onDeleteModalClose}
             onDeleteButtonClick={this.onDeleteButtonClick}
@@ -4910,6 +4962,7 @@ class DefaultButton extends React.PureComponent {
               {/* Delete modal */}
               {this.state.deleteModal.show && (
                 <TrailDeleteModal
+                  onDone={onDone}
                   deleteModal={this.state.deleteModal}
                   onDeleteModalClose={this.onDeleteModalClose}
                   onDeleteButtonClick={this.onDeleteButtonClick}
@@ -5274,16 +5327,13 @@ class MainFlip extends React.Component {
   }
 }
 
-chrome.storage.local.get(
-  ["isAuth", "auth_Tokan", "userData"],
-  function (items) {
-    if (items.isAuth) {
-      ReactDOM.render(<MainFlip />, app);
-      // ReactDOM.render(<Main />, app);
-      // ReactDOM.render(<DefaultButton />, appd);
-    }
+chrome.storage.local.get(["isAuth", "authToken", "userData"], function (items) {
+  if (items.isAuth) {
+    ReactDOM.render(<MainFlip />, app);
+    // ReactDOM.render(<Main />, app);
+    // ReactDOM.render(<DefaultButton />, appd);
   }
-);
+});
 
 app.style.display = "none";
 
@@ -5296,7 +5346,7 @@ app.style.display = "none";
 
 // document.body.appendChild(app);
 // document.body.appendChild(appd);
-// chrome.storage.local.get(['isAuth', 'auth_Tokan', 'userData'], function (items) {
+// chrome.storage.local.get(['isAuth', 'authToken', 'userData'], function (items) {
 // 	if (items.isAuth) {
 // 		ReactDOM.render(<Main />, app);
 // 		ReactDOM.render(<DefaultButton />, appd);
@@ -5323,6 +5373,7 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
     // appd.style.display = 'none';
   } else {
     if (
+      msgObj.subject !== "updateTimeout" &&
       msgObj.subject !== "DOMObj" &&
       msgObj !== "chrome_modal" &&
       msgObj.subject !== "CreateTrail" &&
@@ -5363,3 +5414,54 @@ const toggle = () => {
 // 		appd.style.display = 'none';
 // 	}
 // }
+
+const autoLogoutFunction = () => {
+  // // Clear auto logout timeout
+  // clearTimeout(autoLogoutTimeout);
+
+  // autoLogoutTimeout = setTimeout(() => {
+  //   chrome.storage.local.get(
+  //     ["openButton", "tourType", "isAuth"],
+  //     function (items) {
+  //       console.log("items", items);
+
+  //       if (items.isAuth) {
+  //         // this.onClickToRedirect("login");
+  //         chrome.runtime.sendMessage("", { type: "logout" });
+  //         chrome.runtime.sendMessage({ badgeText: `` });
+  //         chrome.storage.local.set({
+  //           trail_web_user_tour: [],
+  //           notification: true,
+  //           closeContinue: false,
+  //         });
+  //         chrome.storage.local.clear();
+  //       }
+  //     }
+  //   );
+  // }, 1800000);
+
+  // Clear interval
+  clearInterval(autoLogoutTimeout);
+
+  // Update auto logout time in localstorage
+  window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000
+
+  autoLogoutTimeout = setInterval(() => {
+    chrome.storage.local.get(["isAuth"], function (items) {
+      const logoutTime = parseInt(
+        window.localStorage.getItem("add-on-auto-lgout-tm")
+      );
+
+      if (items.isAuth && logoutTime < Date.now()) {
+        chrome.runtime.sendMessage("", { type: "logout" });
+        chrome.runtime.sendMessage({ badgeText: `` });
+        chrome.storage.local.set({
+          trail_web_user_tour: [],
+          notification: true,
+          closeContinue: false,
+        });
+        chrome.storage.local.clear();
+      }
+    });
+  }, 5000);
+};

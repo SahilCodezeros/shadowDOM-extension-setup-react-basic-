@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "./interceptor";
 import { get } from "../AppUtill";
 
 // Upload media files
@@ -30,7 +30,7 @@ export const uploadTrails = async (trails) => {
 // Get all trails
 export const getTrails = async (userId) => {
   return await axios.get(
-    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trails_data_tour/${userId}`
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trails_data_tour`
   );
 };
 
@@ -43,14 +43,14 @@ export const followTrails = async (data) => {
 };
 
 // Get follow data of user
-export const getFollowTrails = async (userId) => {
+export const getFollowTrails = async () => {
   // return await axios.post(
   //   `${process.env.REACT_APP_MS4_URL}userTourFollow/readTrailits_follow_tour`,
   //   data
   // );
 
   return await axios.get(
-    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20&loggedInId=${userId}`
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20`
   );
   // userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20&loggedInId=6008389da0d1567ee8224390
 };
@@ -144,14 +144,14 @@ export const getTrailPublic = async (user_id, trail_id, steps) => {
 };
 
 // Get trail_id of user
-export const getUserSingleTrail = async (user_id) => {
+export const getUserSingleTrail = async () => {
   return await axios.get(
-    `${process.env.REACT_APP_MS4_URL}trailitUser/fetchusertourdata/${user_id}`
+    `${process.env.REACT_APP_MS4_URL}trailitUser/fetchusertourdata`
   );
 };
 
 // Get all category
-export const getAllCategory = async (user_id) => {
+export const getAllCategory = async () => {
   return await axios.get(
     `${process.env.REACT_APP_MS4_URL}trailitUser/getAllCategory`
   );
@@ -214,5 +214,13 @@ export const getSingleTrailData = async (trail_id, trail_data_id) => {
 export const getUser = async (userId) => {
   return await axios.get(
     `${process.env.REACT_APP_MS1_URL}user/getOneUser/${userId}`
+  );
+};
+
+// Delete trail
+export const deleteSingleTrail = async (trailId) => {
+  // https://trail.codezeros.com/trailit/api/v1/trailitUser/deleteSingleTrail/1366
+  return await axios.delete(
+    `${process.env.REACT_APP_MS4_URL}trailitUser/deleteSingleTrail/${trailId}`
   );
 };

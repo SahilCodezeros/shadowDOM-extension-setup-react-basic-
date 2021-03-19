@@ -73,9 +73,9 @@ class UserProfileList extends Component {
 
   onPublishLink = async (e, res) => {
     e.stopPropagation();
-    this.setState({ isLoadingLink: true });
+    // this.setState({ isLoadingLink: true });
     let screen = resizeScreen() ? "mobile" : "web";
-    let result = await getUserOneTrail(res.user_id, res.trail_id, screen);
+    let result = await getUserOneTrail(res.trail_id, screen);
     if (result.status == 200) {
       if (result.data.response.statusCode == 200) {
         let trailList = result.data.response.result;
@@ -98,7 +98,10 @@ class UserProfileList extends Component {
 
             // Set non-editable to avoid focus and move outside of view
             el.setAttribute("readonly", "");
-            el.style = { position: "absolute", left: "-9999px" };
+            el.style = {
+              position: "absolute",
+              left: "-9999px",
+            };
             document.body.appendChild(el);
 
             // Select text inside element
@@ -111,13 +114,15 @@ class UserProfileList extends Component {
             document.body.removeChild(el);
           }
 
-          this.setState({ isCopiedLink: true });
+          // this.setState({ isCopiedLink: true });
 
-          setTimeout(() => {
-            this.setState({ isCopiedLink: false });
-          }, 2000);
+          // setTimeout(() => {
+          //   this.setState({ isCopiedLink: false });
+          // }, 2000);
 
           copyStringToClipboard(trailUrl);
+
+          alert("Successfully copied");
         } else {
           this.setState({ isCopiedError: true });
 
@@ -127,7 +132,7 @@ class UserProfileList extends Component {
         }
       }
     }
-    this.setState({ isLoadingLink: false });
+    // this.setState({ isLoadingLink: false });
   };
 
   onBoxClick = (e, res) => {
@@ -160,11 +165,11 @@ class UserProfileList extends Component {
       (items) => console.log("trail_web_user_tourtrail_web_user_tour", items)
     );
 
-    let auth_Tokan, reload, userData;
+    let authToken, reload, userData;
     chrome.storage.local.get(
-      ["auth_Tokan", "userData", "reload", "openButton"],
+      ["authToken", "userData", "reload", "openButton"],
       function (items) {
-        // auth_Tokan = items.auth_Tokan, reload = items.reload, userData = items.userData;
+        // authToken = items.authToken, reload = items.reload, userData = items.userData;
         // chrome.storage.local.clear();
 
         if (items.openButton === undefined) {
@@ -176,6 +181,18 @@ class UserProfileList extends Component {
     window.close();
   };
 
+  deleteButtonHandler = (e, trail) => {
+    e.stopPropagation();
+
+    chrome.storage.local.set({
+      trailDeleteModal: {
+        value: "open",
+        title: trail.trail_name,
+        id: trail.trail_id,
+      },
+    });
+  };
+
   render() {
     const {
       isLoadingLink,
@@ -184,38 +201,43 @@ class UserProfileList extends Component {
       isLoading,
       list,
     } = this.state;
-    const { profileImage } = this.props;
+    const { profileImage, errorMsg } = this.props;
 
     return (
       <div className="trailit_userPanalContentInnerBox">
-        {isLoadingLink && (
+        {/* {isLoadingLink && (
           <div className="trailit_loaderBox">
             <div class="trial_spinner">
               <img class="ring1" src={require(`../../images/loding1.png`)} />
               <img class="ring2" src={require(`../../images/loding2.png`)} />
             </div>
           </div>
-        )}
-        {isCopiedLink && (
-          <div class="trailit_18600 trailit_mb3" style={{ color: "green" }}>
-            Your link successfully copied
-          </div>
+        )} */}
+        {/* {isCopiedLink && (
+          <div class="trailit_16500 trailit_mb3">Successfully copied</div>
         )}
         {isCopiedError && (
-          <div class="trailit_18600 trailit_mb3" style={{ color: "red" }}>
+          <div class="trailit_16500 trailit_mb3" style={{ color: "red" }}>
             Please add trails data
           </div>
-        )}
+        )} */}
         <div className="trailit_18600 trailit_mb3">{this.props.title}</div>
         <div className="trailit_scrollBoxs">
           <div className="trailit_Row">
             {/* {isLoading && <div className="trailit_noData">Loading...</div>} */}
-            {list && list.length === 0 && !isLoading && (
-              <div className="trailit_noData">Data Not Available</div>
+            {list &&
+              list.length === 0 &&
+              !isLoading &&
+              errorMsg.length === 0 && (
+                <div className="trailit_noData">Data Not Available</div>
+              )}
+            {errorMsg.length > 0 && !isLoading && (
+              <div className="trailit_errorData">{errorMsg}</div>
             )}
             {!isLoading &&
               list &&
               list.length > 0 &&
+              errorMsg.length === 0 &&
               list.map((res) => {
                 let styles = "";
                 let stlStatus = false;
@@ -246,41 +268,50 @@ class UserProfileList extends Component {
                         >
                           <div className="trailit_img_content">
                             <div className="trailit_top">
-                              <div className="trailit_dotsMenu">
-                                <button
-                                  type="button"
-                                  onClick={this.handleClickMenu}
-                                  className="trailit_dotsButton"
-                                >
-                                  <img
-                                    width="16px"
-                                    src={require("../../images/dots.svg")}
-                                    alt="dots"
-                                  />
-                                </button>
-                                {this.state.showMenu && (
-                                  <div className="trailit_dotsMenuList">
-                                    <button
-                                      type="button"
-                                      onClick={(e) =>
-                                        this.onPublishLink(e, res)
-                                      }
-                                    >
-                                      Share
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={(e) =>
-                                        this.onClickToEdit(e, res)
-                                      }
-                                    >
-                                      Edit
-                                    </button>
-                                    <button type="button">Publish</button>
-                                    <button type="button">Delete</button>
-                                  </div>
-                                )}
-                              </div>
+                              {this.props.title !== "Followed" && (
+                                <div className="trailit_dotsMenu">
+                                  <button
+                                    type="button"
+                                    onClick={this.handleClickMenu}
+                                    className="trailit_dotsButton"
+                                  >
+                                    <img
+                                      width="16px"
+                                      src={require("../../images/dots.svg")}
+                                      alt="dots"
+                                    />
+                                  </button>
+                                  {this.state.showMenu && (
+                                    <div className="trailit_dotsMenuList">
+                                      <button
+                                        type="button"
+                                        onClick={(e) =>
+                                          this.onPublishLink(e, res)
+                                        }
+                                      >
+                                        Share
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={(e) =>
+                                          this.onClickToEdit(e, res)
+                                        }
+                                      >
+                                        Edit
+                                      </button>
+                                      {/* <button type="button">Publish</button> */}
+                                      <button
+                                        type="button"
+                                        onClick={(e) =>
+                                          this.deleteButtonHandler(e, res)
+                                        }
+                                      >
+                                        Delete
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                             <div className="trailit_bottom">
                               <div className="trailit_bottom_content d-flex justify-content-between">

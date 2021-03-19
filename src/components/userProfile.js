@@ -32,6 +32,8 @@ import $ from "jquery";
 import "../index.css";
 import { resolve } from "promise";
 
+let autoLogoutTimeout;
+
 const chrome = window.chrome;
 // let bkg = chrome.extension.getBackgroundPage();
 
@@ -73,6 +75,7 @@ class UserProfile extends React.Component {
       crop: { x: 0, y: 0 },
       zoom: 1,
       croppedAreaPixels: null,
+      errorMsg: "",
     };
   }
 
@@ -99,10 +102,10 @@ class UserProfile extends React.Component {
   }
 
   // Get user's followed trail data
-  userFollowedTrailData = async (userData) => {
+  userFollowedTrailData = async () => {
     try {
       // Get follow data of user from database
-      const followData = await getFollowTrails(userData._id);
+      const followData = await getFollowTrails();
       const followedTrails = followData.data;
       if (
         followedTrails &&
@@ -112,19 +115,78 @@ class UserProfile extends React.Component {
         this.setState({
           myTrilsListData: followedTrails.response.result,
           isLoading: false,
+          errorMsg: "",
         });
       } else {
         this.setState({
           myTrilsListData: [],
           isLoading: false,
+          errorMsg: "",
         });
       }
     } catch (err) {
-      console.log(err);
+      console.log("err", err);
+
+      this.setState({
+        isLoading: false,
+        myTrilsListData: [],
+        errorMsg: "Error while fetching data",
+      });
     }
   };
 
+  // Get user's trails data
+  fetchUserTrailsData = async () => {
+    try {
+      const result = await getUserSingleTrail();
+
+      if (result.status == 200) {
+        this.setState({
+          myTrilsListData: result.data.response ? result.data.response : [],
+          getOneEditRow: {},
+          addRaw: {},
+        });
+      }
+
+      this.setState({ isLoading: false, errorMsg: "" });
+    } catch (err) {
+      console.log("err", err);
+      this.setState({
+        isLoading: false,
+        myTrilsListData: [],
+        errorMsg: "Error while fetching data",
+      });
+    }
+  };
+
+  updateAutologoutTime = () => {
+    chrome.runtime.sendMessage("", {
+      type: "updateTimeout",
+      status: true,
+    });
+  };
+
+  componentWillUnmount() {
+    // Remove click event listener
+    window.removeEventListener("click", this.updateAutologoutTime);
+  }
+
   async componentDidMount() {
+    // Call update auto logout time function
+    this.updateAutologoutTime();
+
+    // Add click event listener
+    window.addEventListener("click", this.updateAutologoutTime);
+
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        const tab = tabs[0];
+        if (tab.url.includes("chrome://newtab/") && tab.title === "New Tab") {
+          chrome.tabs.update({ url: "http://169.61.16.14/" });
+        }
+      }
+    });
+
     // let balance = 0;
     // let address = "";
     let balance = await wallet.balance();
@@ -134,7 +196,7 @@ class UserProfile extends React.Component {
     this.setState({ isLoading: true });
     chrome.storage.local.get(
       [
-        "auth_Tokan",
+        "authToken",
         "userData",
         "reload",
         "keypair",
@@ -207,19 +269,10 @@ class UserProfile extends React.Component {
 
         if (items.currentTrailsTab && items.currentTrailsTab === "Followed") {
           // Call user followed trail data function
-          await this.userFollowedTrailData(items.userData);
+          await this.userFollowedTrailData();
         } else {
-          const result = await getUserSingleTrail(userData._id);
-
-          if (result.status == 200) {
-            this.setState({
-              myTrilsListData: result.data.response ? result.data.response : [],
-              getOneEditRow: {},
-              addRaw: {},
-            });
-          }
-
-          this.setState({ isLoading: false });
+          // Call fetch user's trail data function
+          await this.fetchUserTrailsData();
         }
 
         // getAllNotification(data).then(async (res) => {
@@ -318,25 +371,13 @@ class UserProfile extends React.Component {
     }
   };
 
-  onClickToList = (listTitle) => {
-    chrome.storage.local.get(
-      ["auth_Tokan", "userData", "reload"],
-      async function (items) {
-        if (listTitle === "Followed") {
-          // Call user followed trail data function
-          await this.userFollowedTrailData(items.userData);
-        } else {
-          const result = await getUserSingleTrail(items.userData._id);
-
-          if (result.status == 200) {
-            this.setState({
-              myTrilsListData: result.data.response ? result.data.response : [],
-              isLoading: false,
-            });
-          }
-        }
-      }.bind(this)
-    );
+  onClickToList = async (listTitle) => {
+    if (listTitle === "Followed") {
+      // Call user followed trail data function
+      await this.userFollowedTrailData();
+    } else {
+      await this.fetchUserTrailsData();
+    }
 
     chrome.storage.local.set({ currentTrailsTab: listTitle });
     this.setState({ listTitle, isLoading: true });
@@ -413,7 +454,7 @@ class UserProfile extends React.Component {
 
         new Promise((resolve, reject) => {
           chrome.storage.local.get(
-            ["auth_Tokan", "userData", "reload"],
+            ["authToken", "userData", "reload"],
             async function (items) {
               try {
                 let r = await UpdateProfilePicture({
@@ -541,6 +582,7 @@ class UserProfile extends React.Component {
       crop,
       zoom,
       croppedAreaPixels,
+      errorMsg,
     } = this.state;
 
     let list = [];
@@ -701,14 +743,15 @@ class UserProfile extends React.Component {
           </div>
           <div className="trailit_userPanalContentBox">
             <UserProfileList
-              profileImage={profileImage}
-              title={listTitle}
               list={list}
-              getOneEditRow={getOneEditRow}
               addRaw={addRaw}
-              onEdit={this.onChangeTrailEdit}
-              getRow={this.getEditData}
+              errorMsg={errorMsg}
+              title={listTitle}
               isLoading={isLoading}
+              getRow={this.getEditData}
+              profileImage={profileImage}
+              getOneEditRow={getOneEditRow}
+              onEdit={this.onChangeTrailEdit}
             />
             <div className="trailit_userPanalFooterBox">
               {!isPreview && !isPreviewSingleTrail && (

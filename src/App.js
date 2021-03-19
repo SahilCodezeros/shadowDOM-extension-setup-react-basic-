@@ -36,13 +36,10 @@ class App extends React.Component {
     };
   }
 
- 
-
   componentDidMount() {
-
     $("#my-extension-root-flip").remove();
     chrome.storage.local.get(
-      ["auth_Tokan", "userData", "isAuth"],
+      ["authToken", "userData", "isAuth"],
       function (items) {
         if (items.userData) {
           this.onClickToRedirect("userProfile");
@@ -70,6 +67,9 @@ class App extends React.Component {
   };
 
   onClickToLogout = () => {
+    // Remove side tab if open
+    $("body").attr("class", "");
+
     this.onClickToRedirect("login");
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { status: "logout" });

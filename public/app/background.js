@@ -83,6 +83,22 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "logout") {
+    chrome.tabs.query(
+      {
+        active: true,
+        lastFocusedWindow: true,
+      },
+      (tabs) => {
+        // ...and send a request for the DOM info...
+        chrome.tabs.sendMessage(tabs[0].id, {
+          from: "content.js",
+          status: "logout",
+        });
+      }
+    );
+  }
+
   if (message.type === "openInTab") {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var activeTab = tabs[0];
@@ -95,6 +111,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.type === "notification") {
     chrome.notifications.create("", message.options);
+  }
+
+  if (message.type === "updateTimeout") {
+    chrome.tabs.query(
+      {
+        active: true,
+        lastFocusedWindow: true,
+      },
+      (tabs) => {
+        // ...and send a request for the DOM info...
+        chrome.tabs.sendMessage(tabs[0].id, {
+          from: "popup",
+          subject: "updateTimeout",
+        });
+      }
+    );
   }
 
   if (message.type === "DOMInfo") {

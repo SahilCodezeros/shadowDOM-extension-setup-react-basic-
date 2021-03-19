@@ -44,6 +44,9 @@ class userProfileAdd extends Component {
     const { trail_title } = this.state;
     const { errors, isValid } = isValidated(this.state);
 
+    console.log("errors", errors);
+    console.log("isValid", isValid);
+
     if (!isValid) {
       this.setState({ errors });
     } else {

@@ -226,7 +226,8 @@ class SortableItem extends React.Component {
                           // Show delete modal
                           this.props.onDeleteModalOpen(
                             result.title,
-                            result.trail_data_id
+                            result.trail_data_id,
+                            false
                           );
                         }}
                       >
@@ -276,7 +277,8 @@ class SortableItem extends React.Component {
                         // Show delete modal
                         this.props.onDeleteModalOpen(
                           result.title,
-                          result.trail_data_id
+                          result.trail_data_id,
+                          false
                         );
                       }}
                     >

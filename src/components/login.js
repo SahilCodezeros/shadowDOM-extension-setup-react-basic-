@@ -53,10 +53,11 @@ class Login extends React.Component {
             chrome.storage.local.set(
               {
                 isAuth: true,
-                auth_Tokan: jwt,
-                userData: user,
                 reload: true,
+                userData: user,
+                authToken: jwt,
                 keypair: keyPairGenerate(),
+                trailDeleteModal: { value: null },
               },
               function () {
                 // bkg.console.log("JWT, USER", jwt, user)
@@ -131,6 +132,9 @@ class Login extends React.Component {
                 <span className="welcome_text">Welcome to Trailit</span>
               </div>
               <div className="trailit_userPanalContentBox">
+                {this.state.errors && (
+                  <p className="tr_error">{this.state.errors}</p>
+                )}
                 <div className="pt-1">
                   <Form
                     className="row"

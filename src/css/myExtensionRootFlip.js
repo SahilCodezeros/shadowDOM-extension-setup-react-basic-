@@ -198,9 +198,9 @@ export const myExtensionRootFlipCss1 = `
         display: block !important;
     }
 
-    .trail_create_modal p {
-        margin: 0 !important;
-    }
+    // .trail_create_modal p {
+    //     margin: 0 !important;
+    // }
 
     .trail_tooltip .trailButtonsWrapper,
     .trail_create_modal .trailButtonsWrapper {
@@ -411,6 +411,7 @@ export const myExtensionRootFlipCss2 = `
         border: 1px solid #fb542b !important;
         color: #fb542b !important;
     }
+
     .tr_modal .ant-btn.outlined-btn {
         color: #fb542b !important;
         border: 1px solid #fb542b !important;
@@ -423,7 +424,6 @@ export const myExtensionRootFlipCss2 = `
         color: #fff !important;
         background: #fb542b !important;
     }
-
 
     .trail_continue_btn,
     .tr_modal .ant-btn.ant-btn-primary,
@@ -1196,6 +1196,7 @@ export const myExtensionRootFlipCss4 = `
 
     .tr_preview_video_bx {
         height: 214px;
+        background-color: #000000;
     }
 
     .preview-audio {
@@ -1211,7 +1212,8 @@ export const myExtensionRootFlipCss4 = `
     }
     
     .preview-picture {
-        width: 100%;
+        // width: 100%;
+        width: auto;
         height: 100%;
         margin-bottom: 10px;
     }
@@ -1257,7 +1259,7 @@ export const myExtensionRootFlipCss4 = `
     }
 
     .tr_video_only video {
-        object-fit: initial;
+        // object-fit: initial;
         height: 100%;
     }
 
@@ -1462,14 +1464,16 @@ export const myExtensionRootFlipCss5 = `
 
     .tr_preview_picture_bx {
         display: flex;
-        justify-content: center;
         height: 214px;
+        justify-content: center;
+        background-color: #000000;
     }
 
     .trail_tooltip_done.tr_picture_only img.preview-picture {
         margin: 0 !important;
         height: 100%;
-        width: 100%;
+        // width: 100%;
+        width: auto;
     }
 
     .tr_picture_only .trail_modal_title,
@@ -1567,6 +1571,102 @@ export const myExtensionRootFlipCss5 = `
         text-shadow: none !important;
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
+    }
+
+    .continue-modal-text {
+        // position: absolute;
+        // width: 189px;
+        height: 22px;
+        font-family: "Lato", sans-serif !important;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 22px;
+        /* identical to box height */
+        // display: flex;
+        // align-items: flex-end;
+        color: #D53884;
+        text-transform: capitalize;
+        text-align: center;
+        margin-top: -12px !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .tr_modal_trail_modal_header.confirmation_modal {
+        padding-top: 10px !important;
+        padding-right: 20px !important;
+        height: auto !important;
+    }
+
+    .modal-and-bubble-option-container {
+        display: flex;
+        justify-content: space-around;
+        vertical-align: middle;
+        height: 8rem;
+    }
+
+    .video-bubble-option,
+    .video-modal-option {
+        display: flex;
+        cursor: pointer;
+        position: relative;
+        text-align: center;
+        flex-direction: column;
+    }
+
+    .video-modal-container {
+        margin-top: 10px;
+    }
+
+    .bubble_user_svg,
+    .bubble_mic_svg {
+        position: absolute;
+        
+    }
+
+    .bubble_user_svg {
+        top: 22px;
+        left: 29px;
+        height: 54px;
+        width: 43.2px;
+    }
+
+    .bubble_mic_svg {
+        left: 31px;
+        top: 31px;
+        width: 39px;
+        height: 39px;
+    }
+
+    .modal-video-svg,
+    .modal-audio-svg {        
+        width: 39px;
+        height: 39px;
+        top: 31px;
+        position: absolute;
+    }
+
+    .modal-audio-svg {
+        left: 45px;
+    }
+
+    .modal-video-svg {        
+        left: 36px;
+    }
+
+    .confirmation-modal-span {
+        color: #828282;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 15px;
+        font-style: normal;
+        font-family: 'LATO';
+        text-transform: capitalize;
+        margin-top: 3px;
+    }    
+
+    .custom-css {
+        margin-top: 14px;
     }
 `;
 

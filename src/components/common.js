@@ -6,6 +6,8 @@ import TextEditor from "../common/textEditor";
 import ImageTools from "../common/imageResizer";
 import { handleFileUpload } from "../common/audAndVidCommon";
 
+const chrome = window.chrome;
+
 export function collectionHas(a, b) {
   //helper function (see below)
   for (var i = 0, len = a.length; i < len; i++) {

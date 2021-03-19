@@ -81,8 +81,8 @@ class SendTipForm extends Component {
           >
             <Input
               type="text"
-              placeholder="Enter address"
               autoComplete="off"
+              placeholder="Enter address"
               onKeyDown={this.onChangeInput}
             />
           </Form.Item>
@@ -97,8 +97,8 @@ class SendTipForm extends Component {
           >
             <Input
               type="text"
-              placeholder="Enter amount"
               autoComplete="off"
+              placeholder="Enter amount"
               onKeyDown={this.onChangeInput}
             />
           </Form.Item>
