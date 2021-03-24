@@ -8,15 +8,13 @@ import { socket } from "../common/socket";
 import { getBalance } from "../code/getBalance";
 import { getFollowTrails } from "../common/axios";
 import { wallet, getAddress } from "../common/celo";
-import getCroppedImg, { get, blobToFile } from "../AppUtill";
+import getCroppedImg, { blobToFile } from "../AppUtill";
 import { handleFileUpload } from "../common/audAndVidCommon";
 import SettingsComponent from "../components/settingsComponents";
 
 // import BgImage from "../images/trailit_bx_img.png";
 import {
-  getAllNotification,
   getUserSingleTrail,
-  getAllUser,
   getAllCategory,
   UpdateProfilePicture,
   getUser,
@@ -30,7 +28,6 @@ import {
 import $ from "jquery";
 
 import "../index.css";
-import { resolve } from "promise";
 
 let autoLogoutTimeout;
 
@@ -68,7 +65,7 @@ class UserProfile extends React.Component {
       profileImage: "",
       slideBalance: false,
       privateKey: "",
-      nearBalance: 0,
+      nearBalance: "",
       showSetting: false,
       isDisabled: false,
       profilePreview: null,
@@ -82,11 +79,18 @@ class UserProfile extends React.Component {
   // Get NEAR account balance
   getNearAccountBalance() {
     // Get NEAR balance of user
-    getBalance()
-      .then((res) => {
-        this.setState({ nearBalance: res });
-      })
-      .catch();
+
+    chrome.storage.local.get(["userData"], (items) => {
+      if (items.userData._id) {
+        getBalance(items.userData._id)
+          .then((res) => {
+            this.setState({ nearBalance: res });
+          })
+          .catch((err) => {
+            this.setState({ nearBalance: null });
+          });
+      }
+    });
   }
 
   // On setting button click function
@@ -688,12 +692,15 @@ class UserProfile extends React.Component {
               <div className="trailit_userSubName trailit_ellips">
                 Founder, Creator, Designer
               </div>
-              <div
-                className="trailit_userName cursor_pointer"
-                onClick={this.onSlide}
-              >
-                {nearBalance} <span className="trailit_userSubName"> NEAR</span>
-              </div>
+              {nearBalance && (
+                <div
+                  className="trailit_userName cursor_pointer"
+                  onClick={this.onSlide}
+                >
+                  {nearBalance}{" "}
+                  <span className="trailit_userSubName"> NEAR</span>
+                </div>
+              )}
               <div className="trailit_3Boxs">
                 <div className="trailit_3Boxs1">
                   <div className="trailit_userName">100k</div>

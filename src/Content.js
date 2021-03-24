@@ -37,6 +37,7 @@ import {
 } from "./common/trailitLogoInPreview";
 import CreateTourConfirmationModal from "./components/Modal/CreateTourConfirmationModal";
 import {
+  logout,
   getAllUser,
   deleteTrail,
   getUserData,
@@ -5355,9 +5356,12 @@ app.style.display = "none";
 chrome.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener((msgObj, sender, sendResponse) => {
     if (msgObj.message === "check_login_status") {
-      chrome.storage.local.get(["isAuth"], (items) => {
+      chrome.storage.local.get(["isAuth", "userData"], (items) => {
         if (items.isAuth) {
-          port.postMessage({ response: true });
+          port.postMessage({
+            response: true,
+            userId: get(["userData", "_id"], items),
+          });
         } else {
           port.postMessage({ response: false });
         }
@@ -5446,20 +5450,27 @@ const autoLogoutFunction = () => {
   window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000
 
   autoLogoutTimeout = setInterval(() => {
-    chrome.storage.local.get(["isAuth"], function (items) {
+    chrome.storage.local.get(["isAuth"], async function (items) {
       const logoutTime = parseInt(
         window.localStorage.getItem("add-on-auto-lgout-tm")
       );
 
       if (items.isAuth && logoutTime < Date.now()) {
-        chrome.runtime.sendMessage("", { type: "logout" });
-        chrome.runtime.sendMessage({ badgeText: `` });
-        chrome.storage.local.set({
-          trail_web_user_tour: [],
-          notification: true,
-          closeContinue: false,
-        });
-        chrome.storage.local.clear();
+        try {
+          // Call logout api
+          // await logout();
+
+          chrome.runtime.sendMessage("", { type: "logout" });
+          chrome.runtime.sendMessage({ badgeText: `` });
+          chrome.storage.local.set({
+            trail_web_user_tour: [],
+            notification: true,
+            closeContinue: false,
+          });
+          chrome.storage.local.clear();
+        } catch (err) {
+          console.log("err", err);
+        }
       }
     });
   }, 5000);
