@@ -39,7 +39,8 @@ export const tooltipCss1 = `
     }
 
     .trail_tooltip .popover-body {
-        padding: 15px;
+        // padding: 15px;
+        padding: 15px 15px 10px 15px;
     }
 
     .popover-inner form {

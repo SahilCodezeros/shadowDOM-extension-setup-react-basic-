@@ -44,16 +44,19 @@ class TrailSetting extends Component {
         className="tr_modal trail_create_modal trail_setting_modal"
         container={document.getElementById("extension-div").shadowRoot}
       >
-        <ModalHeader className="tr_modal_trail_modal_header">
+        <ModalHeader
+          toggle={this.hideModal}
+          className="tr_modal_trail_modal_header"
+        >
           Trail Settings
         </ModalHeader>
         <ModalBody>
           <SettingsComponent />
-          <div className="trailButtonsWrapper">
+          {/* <div className="trailButtonsWrapper">
             <Button type="primary" onClick={this.hideModal}>
               Close
             </Button>
-          </div>
+          </div> */}
         </ModalBody>
       </Modal>
     );

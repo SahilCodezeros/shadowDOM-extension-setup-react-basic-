@@ -254,10 +254,6 @@ class PreviewModalComponent extends React.Component {
     const { tourStep, tourSide, play } = this.props;
     const { title, description } = this.props.data[tourStep - 1];
     let preview = null;
-    console.log(
-      "render in preview modal component",
-      this.props.data[tourStep - 1].mediaType
-    );
 
     if (
       this.props.data[tourStep - 1].mediaType &&

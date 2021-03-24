@@ -8,11 +8,6 @@ axios.interceptors.request.use(
     // Do something before request is sent
     await new Promise((resolve, reject) => {
       chrome.storage.local.get(["authToken"], (items) => {
-        console.log("items", items);
-        console.log(
-          'config.headers.hasOwnProperty("Authorization")',
-          config.headers.hasOwnProperty("Authorization")
-        );
         if (config.headers.hasOwnProperty("Authorization")) {
           // If calling api is public api then delete Authorization property
           // Remove Authorization property from headers
@@ -22,14 +17,10 @@ axios.interceptors.request.use(
         } else {
           config.headers["Authorization"] = `Bearer ${items.authToken}`;
 
-          console.log("inner", config);
-
           resolve();
         }
       });
     });
-
-    console.log("outer", config);
 
     return config;
   },

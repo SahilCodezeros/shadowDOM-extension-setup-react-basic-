@@ -98,7 +98,7 @@ class SortableItem extends React.Component {
   // };
 
   render() {
-    let { i, result, tourStep, tourType, currentTrailsTab } = this.props;
+    let { i, result, tourStep, tourType, currentTrailsTab, index } = this.props;
 
     const { MobileTargetNotFound } = this.state;
     let subStep = result.unique_target_one != "" ? true : false;
@@ -151,7 +151,6 @@ class SortableItem extends React.Component {
       <div>
         {tourType !== "Make Edit" ? (
           <div
-            key={i}
             // onMouseLeave={this.onMouseLeave}
             className={`${
               currentTrailsTab === "Followed"
@@ -241,13 +240,12 @@ class SortableItem extends React.Component {
           </div>
         ) : (
           <div
-            key={i}
             onMouseLeave={this.onMouseLeave}
             className={`trailitStepBox ${
               tourStep === i + 1 ? "active" : "inactive"
             } ${this.state.showMenu ? "z-index-2" : ""}`}
           >
-            {tourType !== "preview" && <DragHandle />}
+            {/* {tourType !== "preview" && <DragHandle />} */}
             <div className="trailitStepTitle">
               Step {i + 1} - {result.title}
             </div>
@@ -325,12 +323,11 @@ class SortableItem extends React.Component {
 
         {subStep && (
           <div
-            key={i}
             className={`trailitStepBox trailitSubStepBox ${
               tourStep === i + 1 ? "active" : "inactive"
             } ${this.state.showMenu ? "z-index-2" : ""}`}
           >
-            <DragHandle />
+            {/* <DragHandle /> */}
             <div className="trailitStepTitle">
               Step {i + 1} - {result.title}
             </div>

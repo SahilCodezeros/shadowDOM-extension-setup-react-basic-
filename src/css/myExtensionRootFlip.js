@@ -159,16 +159,17 @@ export const myExtensionRootFlipCss1 = `
 
     .tr_modal_trail_modal_header h5 {
         margin: 0 !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         font-size: 16px !important;
-        font-weight: 400 !important;
         margin-bottom: 0 !important;
-        line-height: 1.5 !important;
-        color: #5f5d5d !important;
+        // line-height: 1.5 !important;
+        color: #D53884 !important;
+        line-height: 20px;
         text-transform: unset !important;
         text-align: left !important;
         letter-spacing: 0 !important;
-        font-family: "Lato", sans-serif !important;
+        font-family: Montserrat;
+        // font-family: "Lato", sans-serif !important;
     }
 
     .trial_modal_show .modal-dialog .modal-content .modal-body {	
@@ -273,7 +274,7 @@ export const myExtensionRootFlipCss1 = `
 
     .tr_icon_grp {
         display: flex;
-        justify-content: left;
+        justify-content: space-around;
         padding-bottom: 10px;
         position: unset;
         flex-direction: unset;
@@ -286,6 +287,7 @@ export const myExtensionRootFlipCss1 = `
     .trail_tooltip .popover-body .tr_icon_grp button.tr_active,
     .trail_create_modal .tr_icon_grp button.tr_active {
         filter: grayscale(0);
+        background: #D41E79 !important;
     }
 
     .trail_create_modal .tr_icon_grp button:hover,
@@ -298,10 +300,10 @@ export const myExtensionRootFlipCss1 = `
         cursor: default !important;
     }
 
-    .trail_tooltip .popover-body .tr_icon_grp button,
-    .trail_create_modal .tr_icon_grp button {
-        margin-right: 24px;
-    }
+    // .trail_tooltip .popover-body .tr_icon_grp button,
+    // .trail_create_modal .tr_icon_grp button {
+    //     margin-right: 24px;
+    // }
 
     .trail_create_modal .tr_icon_grp button:last-child {
         margin-right: 0;
@@ -310,9 +312,10 @@ export const myExtensionRootFlipCss1 = `
     .trail_tooltip .popover-body .tr_icon_grp button,
     .trail_create_modal .tr_icon_grp button {
         border: none;
-        background: #f2f2f2;
-        width: 50px;
-        height: 50px;
+        background: #E5E5E5;
+        // width: 50px;
+        min-width: 38px;
+        height: 38px;
         border-radius: 50%;
         margin-left: 0 !important;
         display: flex;
@@ -1577,7 +1580,7 @@ export const myExtensionRootFlipCss5 = `
         // position: absolute;
         // width: 189px;
         height: 22px;
-        font-family: "Lato", sans-serif !important;
+        font-family: Montserrat, "Lato", sans-serif !important;
         font-style: normal;
         font-weight: 600;
         font-size: 18px;
@@ -1602,11 +1605,13 @@ export const myExtensionRootFlipCss5 = `
         display: flex;
         justify-content: space-around;
         vertical-align: middle;
-        height: 8rem;
+        height: 7.5rem;
     }
 
     .video-bubble-option,
-    .video-modal-option {
+    .video-modal-option,
+    .audio-bubble-option,
+    .audio-modal-option {
         display: flex;
         cursor: pointer;
         position: relative;
@@ -1614,7 +1619,8 @@ export const myExtensionRootFlipCss5 = `
         flex-direction: column;
     }
 
-    .video-modal-container {
+    .video-modal-container,
+    .audio-modal-container {
         margin-top: 10px;
     }
 
@@ -1625,48 +1631,76 @@ export const myExtensionRootFlipCss5 = `
     }
 
     .bubble_user_svg {
-        top: 22px;
-        left: 29px;
-        height: 54px;
-        width: 43.2px;
+        top: 19px;
+        left: 23.5px;
+        // height: 54px;
+        // width: 43.2px;
     }
 
     .bubble_mic_svg {
         left: 31px;
-        top: 31px;
-        width: 39px;
-        height: 39px;
+        top: 27px;
+        // width: 39px;
+        // height: 39px;
     }
 
     .modal-video-svg,
-    .modal-audio-svg {        
-        width: 39px;
-        height: 39px;
-        top: 31px;
+    .modal-audio-svg {      
+        // width: 39px;
+        // height: 39px;
+        left: 34px;
+        top: 29.5px;
         position: absolute;
     }
 
-    .modal-audio-svg {
-        left: 45px;
-    }
+    // .modal-audio-svg {
+    //     left: 34px;
+    // }
 
-    .modal-video-svg {        
-        left: 36px;
-    }
+    // .modal-video-svg {        
+    //     left: 34px;
+    // }
 
     .confirmation-modal-span {
-        color: #828282;
+        color: #D02176;
         font-size: 12px;
         font-weight: 500;
         line-height: 15px;
         font-style: normal;
-        font-family: 'LATO';
+        font-family: Montserrat, 'LATO';
         text-transform: capitalize;
         margin-top: 3px;
     }    
 
     .custom-css {
-        margin-top: 14px;
+        margin-top: 10px;
+    }
+
+    .custom-button {
+        width: 72.27px;
+        height: 25px;
+        background-color: #D41E79;
+        border-radius: 15px;
+        border: none;
+        border: 1px solid #D41E79 !important;
+        color: #ffffff;
+        font-family: 'Montserrat';
+        text-transform: uppercase;
+        font-size: 10px;
+        line-height: 12.19px;
+    }
+
+    .custom-button:hover {
+        color: #D41E79;
+        background-color: #ffffff;
+    }
+
+    .mt-13 {
+        margin-top: 13px;
+    }
+
+    .mt-8 {
+        margin-top: 8px;
     }
 `;
 

@@ -107,6 +107,7 @@ class UserProfile extends React.Component {
       // Get follow data of user from database
       const followData = await getFollowTrails();
       const followedTrails = followData.data;
+
       if (
         followedTrails &&
         followedTrails.response &&
@@ -372,15 +373,15 @@ class UserProfile extends React.Component {
   };
 
   onClickToList = async (listTitle) => {
+    this.setState({ listTitle, isLoading: true });
+    chrome.storage.local.set({ currentTrailsTab: listTitle });
+
     if (listTitle === "Followed") {
       // Call user followed trail data function
       await this.userFollowedTrailData();
     } else {
       await this.fetchUserTrailsData();
     }
-
-    chrome.storage.local.set({ currentTrailsTab: listTitle });
-    this.setState({ listTitle, isLoading: true });
   };
 
   onChangeTrailEdit = (editTrail) => {

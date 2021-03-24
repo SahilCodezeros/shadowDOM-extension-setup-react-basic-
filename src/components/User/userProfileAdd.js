@@ -57,7 +57,7 @@ class userProfileAdd extends Component {
         ["trail_web_user_tour", "userData"],
         async function (items) {
           let obj = {
-            user_id: items.userData._id,
+            // user_id: items.userData._id,
             trail_name: trail_title,
             trail_description,
             trail_category_id: 1,

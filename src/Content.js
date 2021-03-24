@@ -82,7 +82,7 @@ import { resolve } from "promise";
 
 WebFont.load({
   google: {
-    families: ["Lato", "Raleway:400,500,700", "sans-serif"],
+    families: ["Lato", "Raleway:400,500,700", "sans-serif", "Montserrat"],
   },
   // eslint-disable-next-line no-restricted-globals
   context: frames["text-editor-frame"],
@@ -298,7 +298,7 @@ class Main extends React.Component {
 
           // Remove notification
           const data = {
-            user_id: items.userData._id,
+            // user_id: items.userData._id,
             updateValue: {
               flag: "read",
             },
@@ -962,7 +962,7 @@ class Main extends React.Component {
     chrome.storage.local.get(["userData"], async (items) => {
       // Get notification count from database
       const data = {
-        user_id: items.userData._id,
+        // user_id: items.userData._id,
         flag: "unread",
       };
 
@@ -1666,7 +1666,7 @@ class Main extends React.Component {
                 </button>
               </React.Fragment>
               {/* )} */}
-              {resizeScreen() && (
+              {/* {resizeScreen() && (
                 <button
                   className="blob"
                   data-title="Make Edit"
@@ -1722,7 +1722,7 @@ class Main extends React.Component {
                     </g>
                   </svg>
                 </button>
-              )}
+              )} */}
 
               {/* Edit Trail */}
               {/* <button className="blob" onClick={e => this.openMenu('Make Edit')} data-title="Edit Trail">
@@ -2565,7 +2565,7 @@ class DefaultButton extends React.PureComponent {
     const previewUserId = this.state.trailList[this.state.tourStep - 1].userId;
 
     const followData = {
-      follower_id: this.state.currUserId,
+      // follower_id: this.state.currUserId,
       previewUserId,
     };
 
@@ -3276,11 +3276,9 @@ class DefaultButton extends React.PureComponent {
               trail_data_id: trail.trail_data_id,
               flag: "",
             };
-            console.log("in update");
 
             // Call update trail api to add flag into table
             await updateTrailFlag(data);
-            console.log("update over");
           }
 
           if (items.previewUserId !== "" || items.previewUserId !== undefined) {
@@ -3766,7 +3764,7 @@ class DefaultButton extends React.PureComponent {
     const previewUserId = this.state.trailList[this.state.tourStep - 1].userId;
 
     const followData = {
-      follower_id: this.state.currUserId,
+      // follower_id: this.state.currUserId,
       previewUserId,
     };
 
@@ -3790,7 +3788,7 @@ class DefaultButton extends React.PureComponent {
     const previewUserId = this.state.trailList[this.state.tourStep - 1].userId;
 
     const followData = {
-      follower_id: this.state.currUserId,
+      // follower_id: this.state.currUserId,
       previewUserId,
     };
 
@@ -4409,7 +4407,6 @@ class DefaultButton extends React.PureComponent {
         const modal = document
           .getElementById("extension-div")
           .shadowRoot.querySelector(".trial_create_modal_main .modal");
-        //
 
         if (modal && resizeScreen()) {
           modal.style.height = "75%";
@@ -4704,7 +4701,8 @@ class DefaultButton extends React.PureComponent {
               <form className="flow tr_side_form" id="">
                 <SortableContainer
                   onSortEnd={this.onSectionDragAndDrop}
-                  useDragHandle
+                  // useDragHandle
+                  pressDelay={200}
                 >
                   {this.state.trailList.map((result, index) => (
                     <SortableItem
@@ -4754,7 +4752,8 @@ class DefaultButton extends React.PureComponent {
         <form className="flow tr_side_form" id="">
           <SortableContainer
             onSortEnd={this.onSectionDragAndDrop}
-            useDragHandle
+            // useDragHandle
+            pressDelay={200}
           >
             {this.state.trailList.map((result, index) => (
               <SortableItem

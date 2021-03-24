@@ -49,13 +49,17 @@ class SettingsComponents extends React.PureComponent {
           <Switch
             onChange={this.onChangeDraggableSwitch}
             checked={this.state.draggableChecked}
-            onColor="#FF7958"
-            onHandleColor="#FB542B"
+            onColor="#EF699D"
+            offColor="#BCBCBC"
+            offHandleColor="#FFFFFF"
+            onHandleColor="#D41E79"
             handleDiameter={30}
             uncheckedIcon={false}
             checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+            // boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+            // activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+            boxShadow="2px 2px 15px rgba(0, 0, 0, 0.5)"
+            activeBoxShadow="2px 2px 15px rgba(0, 0, 0, 0.5)"
             height={20}
             width={48}
           />
@@ -65,13 +69,17 @@ class SettingsComponents extends React.PureComponent {
           <Switch
             onChange={this.onChangeSwitch}
             checked={this.state.checked}
-            onColor="#FF7958"
-            onHandleColor="#FB542B"
+            onColor="#EF699D"
+            offColor="#BCBCBC"
+            offHandleColor="#FFFFFF"
+            onHandleColor="#D41E79"
             handleDiameter={30}
             uncheckedIcon={false}
             checkedIcon={false}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+            boxShadow="2px 2px 15px rgba(0, 0, 0, 0.5)"
+            activeBoxShadow="2px 2px 15px rgba(0, 0, 0, 0.5)"
+            // boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+            // activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
             height={20}
             width={48}
           />

@@ -4,6 +4,7 @@ import $ from "jquery";
 import "./index.css";
 import "antd/dist/antd.css";
 
+import { logout } from "./common/axios";
 import {
   ForgotPassword,
   Login,
@@ -66,21 +67,28 @@ class App extends React.Component {
     this.setState({ active });
   };
 
-  onClickToLogout = () => {
-    // Remove side tab if open
-    $("body").attr("class", "");
+  onClickToLogout = async () => {
+    try {
+      // Remove side tab if open
+      $("body").attr("class", "");
 
-    this.onClickToRedirect("login");
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { status: "logout" });
-    });
-    chrome.runtime.sendMessage({ badgeText: `` });
-    chrome.storage.local.set({
-      trail_web_user_tour: [],
-      notification: true,
-      closeContinue: false,
-    });
-    chrome.storage.local.clear();
+      // Call logout api
+      await logout();
+
+      this.onClickToRedirect("login");
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { status: "logout" });
+      });
+      chrome.runtime.sendMessage({ badgeText: `` });
+      chrome.storage.local.set({
+        trail_web_user_tour: [],
+        notification: true,
+        closeContinue: false,
+      });
+      chrome.storage.local.clear();
+    } catch (err) {
+      console.log("err", err);
+    }
   };
 
   render() {

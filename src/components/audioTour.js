@@ -408,6 +408,7 @@ class AudioTour extends React.PureComponent {
           <div className="audio_wrap_tooltip_innr">
             <div className="trialit_audio tr_gradient_border">
               <img
+                alt="user-img"
                 src={
                   this.state.profileImage == ""
                     ? require("../images/user.png")

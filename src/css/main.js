@@ -459,8 +459,9 @@ export const main2Css = `
 
     .trail_settings span {
         color: #000000;
-        font-size: 14px;
-        font-family: "Lato", sans-serif !important;
+        font-size: 13px;
+        font-family: 'Montserrat';
+        font-weight: 500;
     }
 
     #my-extension-root .wrap.open .blob[disabled] {
