@@ -50,7 +50,7 @@ class TrailDeleteModal extends Component {
           <div className="trailButtonsWrapper">
             <button
               type="button"
-              className="ant-btn ant-btn-primary trail_add_step_btn"
+              className="custom-button"
               onClick={onDeleteModalClose}
             >
               Cancel
@@ -58,7 +58,7 @@ class TrailDeleteModal extends Component {
             <button
               type="button"
               disabled={onDone}
-              className="ant-btn ant-btn-primary trail_add_step_btn"
+              className="custom-button"
               onClick={(e) => onDeleteButtonClick(e)}
             >
               DELETE

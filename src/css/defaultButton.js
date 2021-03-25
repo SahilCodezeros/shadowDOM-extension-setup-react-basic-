@@ -50,7 +50,8 @@ export const defaultButtonCss1 = `
     }
     
     #my-extension-defaultroot .sidepanal {
-        height: calc(100vh - 170px);
+        // height: calc(100vh - 170px);
+        height: calc(100vh - 150px);
         position: relative;
     }
     
@@ -73,18 +74,19 @@ export const defaultButtonCss1 = `
     
     #my-extension-defaultroot .title {
         // font-size: 22px;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         line-height: 24px;
-        color: #fb542b;
+        // color: #fb542b;
+        color: #000000;
         text-transform: unset;
         -webkit-text-transform: unset;
-        font-family: 'Lato', sans-serif;
+        font-family: Montserrat, 'Lato', sans-serif;
         text-align: left;
     }
     
     #my-extension-defaultroot .my-4 {
-        margin: 30px 0 10px;
+        margin: 30px 0 15px;
     }
     
     #my-extension-defaultroot .optionBtn {
@@ -93,10 +95,11 @@ export const defaultButtonCss1 = `
     
     #my-extension-defaultroot .titleBack {
         float: left;
-        color: #fb542b;
-        font-size: 17px;
-        font-weight: bold;
+        color: #D41E79;
         display: table;
+        font-size: 18px;
+        font-weight: bold;
+        font-family: Montserrat;
     }
 
     .trail_builder-back-button {
@@ -349,6 +352,11 @@ export const defaultButtonCss2 = `
         font-family: "Lato", sans-serif !important;
     }
 
+    #my-extension-defaultroot input[type="text"]:focus {
+        outline: none !important;
+        border: 1px solid #D41E79 !important;
+    }
+
     .trail_tooltip input.ant-input[type="password"]::-webkit-input-placeholder,
     .trail_tooltip input.ant-input[type="text"]::-webkit-input-placeholder,
     .trail_create_modal input.ant-input[type="text"]::-webkit-input-placeholder,
@@ -487,13 +495,17 @@ export const defaultButtonCss2 = `
     .sidepopcontent {
         height: calc(100% - 31px); 
         overflow: auto;
-        padding-right: 29px;
+        // padding-right: 29px;
     }
 
     .sidepopcontent .trailButtonsWrapper {
         display: flex;
         justify-content: space-around;
         padding-bottom: 20px;
+    }
+
+    .jc-end {
+        justify-content: flex-end !important;
     }
 
     .trail_video_frm {
@@ -531,6 +543,13 @@ export const defaultButtonCss2 = `
         transition: all 0.3s ease 0s;
         text-align: left;
     }
+
+    textarea.ant-input:focus,
+    input.ant-input[type="password"]:focus,
+    input.ant-input[type="text"]:focus {
+        outline: none !important;
+        border: 1px solid #D41E79 !important;
+    }
     
     .tr_side_form {
         display: table;
@@ -541,11 +560,12 @@ export const defaultButtonCss2 = `
     .trailitStepBox {
         box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
         border-radius: 7px;
-        background: #fff;
+        background-color: #D41E79;
         margin: 0 0 10px 5px !important;
         position: relative;
         display: flex;
         justify-content: space-between;
+        height: 67px;
     }
 
     .trailitStepBox.active,
@@ -577,13 +597,14 @@ export const defaultButtonCss2 = `
     }
 
     .trailitStepTitle {
-        font-family: "Roboto", sans-serif;
+        font-family: Montserrat, "Roboto", sans-serif;
         font-style: normal;
         font-weight: normal;
-        font-size: 14px;
+        font-size: 13px;
         margin: 25px 15px;
         line-height: 19px;
-        color: #000000;
+        // color: #000000;
+        color: #ffffff;
         display: -webkit-box !important;
         -webkit-line-clamp: 2 !important;
         -webkit-box-orient: vertical !important;
@@ -598,7 +619,7 @@ export const defaultButtonCss2 = `
         flex-direction: column;
         justify-content: space-between;
         align-items: flex-end;
-        padding: 5px 10px 10px 0;
+        padding: 10px 10px 10px 0;
     }
 
     .trailitIconRight > div {
@@ -818,7 +839,7 @@ export const deleteModalCss = `
         font-size: 18px !important;
         line-height: 29px !important;
         color: #000000 !important;
-        font-family: "Lato", sans-serif !important;
+        font-family: Montserrat, "Lato", sans-serif !important;
         padding-bottom: 40px !important;
         display: block !important;
     }

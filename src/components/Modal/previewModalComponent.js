@@ -5,6 +5,7 @@ import { CloseOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import $ from "jquery";
 
 import AudioTour from "../audioTour";
+import { resizeScreen } from "../../common/helper";
 import { stopMediaPlaying } from "../../common/stopePlayingMedia";
 import {
   addTrailitLogo,
@@ -349,7 +350,13 @@ class PreviewModalComponent extends React.Component {
               </Button>
             )}
             <div className="trail_modal_content_main">
-              <div className="trail_modal_title">{title}</div>
+              <div
+                className={`trail_modal_title ${
+                  resizeScreen() && "trail_modal_title_mobile"
+                }`}
+              >
+                {title}
+              </div>
               {
                 <span
                   className="trail_modal_content"

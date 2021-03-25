@@ -473,3 +473,31 @@ export const audioTourCss1 = `
         margin: 0 auto;
     }
 `;
+
+export const audioPlayerCss2 = `
+    .playpause-mobile {
+        width: 35px !important;
+    }
+
+    .time-current-mobile {
+        width: 30px !important;
+        left: 40px !important;
+        padding: 0 5px !important;
+    }
+
+    .time-bar-modile {
+        width: 60px !important;
+        left: 80.5px !important;
+        top: 53% !important;
+    }
+
+    .time-duration-mobile {
+        width: 30px !important;
+        padding: 0px 6px !important;
+        right: 35px !important;
+    }
+
+    .volumn-mobile {
+        width: 35px !important;
+    }
+`;

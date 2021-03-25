@@ -194,7 +194,7 @@ export const myExtensionRootFlipCss1 = `
         font-size: 18px !important;
         line-height: 29px !important;
         color: #000000 !important;
-        font-family: "Lato", sans-serif !important;
+        font-family: Montserrat, "Lato", sans-serif !important;
         padding-bottom: 40px !important;
         display: block !important;
     }
@@ -352,8 +352,8 @@ export const myExtensionRootFlipCss1 = `
     .trailMain input[type="text"]:focus,
     .trail_create_modal input[type="text"]:focus,
     .trailMain input[type="password"]:focus,
-    .trailMain textarea:focus,
-    #my-extension-defaultroot *:focus {
+    // #my-extension-defaultroot *:focus,
+    .trailMain textarea:focus {
         border: 1px solid #fb542b !important;
         box-shadow: none !important;
         -webkit-box-shadow: none !important;
@@ -1380,6 +1380,10 @@ export const myExtensionRootFlipCss4 = `
         width: 340px;
     }
 
+    .trail_modal_title_mobile {
+        width: 250px !important;
+    }
+
     .trail_tooltip .bs-popover-auto[x-placement^="top"],
     .trail_tooltip_done .bs-popover-auto[x-placement^="top"] {
       margin: 0 0 20px !important;
@@ -1701,6 +1705,60 @@ export const myExtensionRootFlipCss5 = `
 
     .mt-8 {
         margin-top: 8px;
+    }
+
+    .mt-40 {
+        margin-top: 40px
+    }
+
+    .mt-10 {
+        margin-top: 10px
+    }
+
+    .mr-5 {
+        margin-right: 5px
+    }
+
+    .pb-0 {
+        padding-bottom: 0px !important;
+    }
+
+    .share-button,
+    .add-step-button {
+        width: 108px !important;
+        height: 36px !important;
+        font-size: 13px;
+        border-radius: 50px !important;
+    }
+
+    .trailit_right_container button:focus {
+        border: none !important;
+    }
+
+    .scrollable-steps-list {
+        height: 230px;
+        overflow: auto;
+    }
+
+    .scrollable-steps-list::-webkit-scrollbar-track {
+        -webkit-box-shadow: none;
+        background-color: transparent;
+    }
+
+    .scrollable-steps-list::-webkit-scrollbar {
+        width: 7px;
+        background-color: transparent;
+    }
+
+    .scrollable-steps-list::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: none;
+        background-color: #c4c4c4;
+    }
+
+    .add-step-bt-container {
+        margin-top: 10px;
+        text-align: center;
     }
 `;
 

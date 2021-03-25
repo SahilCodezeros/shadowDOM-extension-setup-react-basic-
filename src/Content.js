@@ -4505,7 +4505,7 @@ class DefaultButton extends React.PureComponent {
                       d="M39.276,18.719a.437.437,0,0,0,.617,0,.437.437,0,0,0,0-.617l-5.428-5.428,5.428-5.428a.437.437,0,0,0-.617-.617l-5.748,5.737a.437.437,0,0,0,0,.617Z"
                       transform="translate(-33.4 -6.5)"
                       fill="#289728"
-                      stroke="#fb542b"
+                      stroke="#D41E79"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                       stroke-width="1"
@@ -4558,6 +4558,7 @@ class DefaultButton extends React.PureComponent {
                   placeholder="Add Video URL"
                   className="ant-input mb-2"
                   autoComplete="off"
+                  disabled={true}
                 />
               )}
               {tourStatus !== "preview" && tourType === "video" && (
@@ -4593,14 +4594,15 @@ class DefaultButton extends React.PureComponent {
                 </div>
               )}
               {tourStatus !== "preview" && tourType === "video" && (
-                <button
-                  disabled={fileLoading}
-                  onClick={this.onSaveTrail}
-                  value="ADD"
-                  className="ant-btn ant-btn-primary trail_add_step_btn"
-                >
-                  ADD STEP
-                </button>
+                <div className="add-step-bt-container">
+                  <button
+                    disabled={fileLoading}
+                    onClick={this.onSaveTrail}
+                    className="custom-button add-step-button trail_add_step_btn"
+                  >
+                    ADD STEP
+                  </button>
+                </div>
               )}
               {tourStatus === "preview" && tourType === "video" && (
                 <input
@@ -4639,6 +4641,7 @@ class DefaultButton extends React.PureComponent {
                   placeholder="Add Audio URL"
                   className="ant-input mb-2"
                   autoComplete="off"
+                  disabled={true}
                 />
               )}
               {tourStatus !== "preview" && tourType === "audio" && (
@@ -4672,14 +4675,15 @@ class DefaultButton extends React.PureComponent {
                 </div>
               )}
               {tourStatus !== "preview" && tourType === "audio" && (
-                <button
-                  disabled={fileLoading}
-                  onClick={this.onSaveTrail}
-                  value="ADD"
-                  className="ant-btn ant-btn-primary trail_add_step_btn"
-                >
-                  ADD STEP
-                </button>
+                <div className="add-step-bt-container">
+                  <button
+                    disabled={fileLoading}
+                    onClick={this.onSaveTrail}
+                    className="custom-button add-step-button trail_add_step_btn"
+                  >
+                    ADD STEP
+                  </button>
+                </div>
               )}
               {tourStatus === "preview" && tourType === "audio" && (
                 <input
@@ -4699,11 +4703,11 @@ class DefaultButton extends React.PureComponent {
               )}
             </div>
             {tourType !== "audio" && tourType !== "video" && (
-              <form className="flow tr_side_form" id="">
+              <form className="scrollable-steps-list" id="">
                 <SortableContainer
+                  pressDelay={200}
                   onSortEnd={this.onSectionDragAndDrop}
                   // useDragHandle
-                  pressDelay={200}
                 >
                   {this.state.trailList.map((result, index) => (
                     <SortableItem
@@ -4723,23 +4727,29 @@ class DefaultButton extends React.PureComponent {
                 </SortableContainer>
               </form>
             )}
-            <div>
+            <div className="mt-40">
               {tourType !== "audio" &&
                 tourType !== "video" &&
                 this.state.saveSort && (
                   <div className="trailButtonsWrapper">
-                    <Button type="primary" onClick={this.saveSortedTrails}>
+                    <button
+                      className="custom-button"
+                      onClick={this.saveSortedTrails}
+                    >
                       Save
-                    </Button>
+                    </button>
                   </div>
                 )}
               {tourType !== "audio" &&
                 tourType !== "video" &&
                 this.state.trailList.length > 0 && (
-                  <div className="trailButtonsWrapper">
-                    <Button type="primary" onClick={this.tooltipShareBtn}>
+                  <div className="trailButtonsWrapper jc-end pb-0">
+                    <button
+                      className="custom-button share-button"
+                      onClick={this.tooltipShareBtn}
+                    >
                       Share
-                    </Button>
+                    </button>
                   </div>
                 )}
             </div>

@@ -5,7 +5,8 @@ import { Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
 import dragElement from "../common/draggable";
-import { audioTourCss1 } from "../css/audioTour";
+import { resizeScreen } from "../common/helper";
+import { audioTourCss1, audioPlayerCss2 } from "../css/audioTour";
 import { stopMediaPlaying } from "../common/stopePlayingMedia";
 import {
   addTrailitLogo,
@@ -404,6 +405,7 @@ class AudioTour extends React.PureComponent {
           />
         )}
         <style>{audioTourCss1}</style>
+        <style>{audioPlayerCss2}</style>
         <div className="audio_wrap_tooltip">
           <div className="audio_wrap_tooltip_innr">
             <div className="trialit_audio tr_gradient_border">
@@ -416,18 +418,39 @@ class AudioTour extends React.PureComponent {
                 }
               />
               <div className="tr_audioplayer">
-                <div className="tr_audioplayer-playpause" title="Play">
+                <div
+                  className={`tr_audioplayer-playpause ${
+                    resizeScreen() && "playpause-mobile"
+                  }`}
+                  title="Play"
+                >
                   <a>Play</a>
                 </div>
-                <div className="tr_audioplayer-time tr_audioplayer-time-current">
+                <div
+                  className={`tr_audioplayer-time tr_audioplayer-time-current ${
+                    resizeScreen() && "time-current-mobile"
+                  }`}
+                >
                   00:00
                 </div>
-                <div className="tr_audioplayer-bar">
+                <div
+                  className={`tr_audioplayer-bar ${
+                    resizeScreen() && "time-bar-modile"
+                  }`}
+                >
                   <div className="tr_audioplayer-bar-loaded"></div>
                   <div className="tr_audioplayer-bar-played"></div>
                 </div>
-                <div className="tr_audioplayer-time tr_audioplayer-time-duration"></div>
-                <div className="volume-container">
+                <div
+                  className={`tr_audioplayer-time tr_audioplayer-time-duration ${
+                    resizeScreen() && "time-duration-mobile"
+                  }`}
+                ></div>
+                <div
+                  className={`volume-container ${
+                    resizeScreen() && "volumn-mobile"
+                  }`}
+                >
                   <div className="volume-button">
                     <div className="volume icono-volumeMedium"></div>
                   </div>
