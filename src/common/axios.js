@@ -168,7 +168,7 @@ export const UpdateSingleTrail = async (user_id, trail_id, data) => {
 // Update trail data
 export const UpdateProfilePicture = async (data) => {
   return await axios.post(
-    `${process.env.REACT_APP_MS1_URL}user/uploadUserProfilePic`,
+    `${process.env.REACT_APP_MS2_URL}user/uploadUserProfilePic`,
     data,
     { withCredentials: true }
   );
@@ -176,7 +176,7 @@ export const UpdateProfilePicture = async (data) => {
 
 export const getNearDetails = async (id) => {
   return await axios.get(
-    `${process.env.REACT_APP_MS1_URL}user/getNearPublicKey/${id}`
+    `${process.env.REACT_APP_MS2_URL}user/getNearPublicKey/${id}`
   );
 };
 
@@ -224,13 +224,13 @@ export const getSingleTrailData = async (trail_id, trail_data_id) => {
 // Get user data
 export const getUser = async (userId) => {
   return await axios.get(
-    `${process.env.REACT_APP_MS1_URL}user/getOneUser/${userId}`
+    `${process.env.REACT_APP_MS2_URL}user/getOneUser/${userId}`
   );
 };
 
 // Log user out
 export const logout = async () => {
-  return await axios.get(`${process.env.REACT_APP_MS1_URL}user/logout`);
+  return await axios.get(`${process.env.REACT_APP_MS2_URL}user/logout`);
 };
 
 // Delete trail

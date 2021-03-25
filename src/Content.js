@@ -5447,7 +5447,7 @@ const autoLogoutFunction = () => {
   clearInterval(autoLogoutTimeout);
 
   // Update auto logout time in localstorage
-  window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000
+  window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
 
   autoLogoutTimeout = setInterval(() => {
     chrome.storage.local.get(["isAuth"], async function (items) {
@@ -5458,7 +5458,7 @@ const autoLogoutFunction = () => {
       if (items.isAuth && logoutTime < Date.now()) {
         try {
           // Call logout api
-          // await logout();
+          await logout();
 
           chrome.runtime.sendMessage("", { type: "logout" });
           chrome.runtime.sendMessage({ badgeText: `` });
