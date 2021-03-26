@@ -8,6 +8,7 @@ import unique from "unique-selector";
 import $ from "jquery";
 
 import AudioTour from "./audioTour";
+import { resizeScreen } from "../common/helper";
 import { urlStingCheck, getScrollParent } from "./common";
 import { stopMediaPlaying } from "../common/stopePlayingMedia";
 import {
@@ -22,10 +23,6 @@ import {
 import ContinueTourConfirmation from "./Modal/ContinueTourConfirmation";
 
 const chrome = window.chrome;
-
-const resizeScreen = () => {
-  return window.innerWidth <= 760;
-};
 
 function getWindowRelativeOffset(parentWindow, elem) {
   var offset = {
@@ -567,7 +564,13 @@ class WebUserTour extends React.Component {
                     />
                     {/* </button> */}
                     <div className="trail_preview_bx">
-                      <PopoverHeader className="top">{title}</PopoverHeader>
+                      <PopoverHeader
+                        className={`top ${
+                          resizeScreen() && "tooltip_title_mobile"
+                        }`}
+                      >
+                        {title}
+                      </PopoverHeader>
                       <PopoverBody>
                         {
                           <span
@@ -576,7 +579,11 @@ class WebUserTour extends React.Component {
                         }
                         {preview}
                       </PopoverBody>
-                      <PopoverHeader className="bottom">
+                      <PopoverHeader
+                        className={`bottom ${
+                          resizeScreen() && "tooltip_title_mobile"
+                        }`}
+                      >
                         {res.title}
                       </PopoverHeader>
                     </div>

@@ -865,6 +865,10 @@ export const myExtensionRootFlipCss3 = `
         box-sizing: border-box;
     }
 
+    .tooltip_title_mobile {
+        width: 75% !important;
+    }
+
     .trail_tooltip_done .popover-body,
     .trail_tooltip_done .popover-body a {
         display: flex !important;
@@ -1381,7 +1385,8 @@ export const myExtensionRootFlipCss4 = `
     }
 
     .trail_modal_title_mobile {
-        width: 250px !important;
+        // width: 250px !important;
+        width: 75% !important;
     }
 
     .trail_tooltip .bs-popover-auto[x-placement^="top"],
@@ -1427,7 +1432,7 @@ export const myExtensionRootFlipCss4 = `
         margin-right: 10px;
     }
 
-    .trail_flip_box .sidepanal .audio_wrap_tooltip{
+    .trail_container .sidepanal .audio_wrap_tooltip{
         bottom: auto;
         top: 60vh;
         right: 80px;
@@ -1759,6 +1764,10 @@ export const myExtensionRootFlipCss5 = `
     .add-step-bt-container {
         margin-top: 10px;
         text-align: center;
+    }
+
+    .trail_flipped .my-extension.my-extension-mobile {
+        display: none;
     }
 `;
 

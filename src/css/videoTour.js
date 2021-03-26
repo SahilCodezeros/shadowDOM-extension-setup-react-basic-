@@ -5,7 +5,8 @@ export const videoTourCss1 = `
     }
 
     .video-wrap_tooltip-smallScreen {
-        top: calc(100% - 205px);
+        top: 43vh;
+        // top: calc(100% - 205px);
         left: calc(100% - 430px);
         width: 348px;
         height: 194.344px;
@@ -231,5 +232,9 @@ export const videoTourCss1 = `
 
     .ex_mr_10{
         margin-right: 10px;
+    }
+
+    .video-mobile {
+        top: 47vh !important;
     }
 `;

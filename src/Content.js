@@ -10,6 +10,7 @@ import WebFont from "webfontloader";
 import Draggable from "react-draggable";
 
 import { socket } from "./common/socket";
+import { resizeScreen } from "./common/helper";
 import Tooltip from "./components/tooltip";
 import VideoTour from "./components/videoTour";
 import AudioTour from "./components/audioTour";
@@ -96,10 +97,6 @@ let allTrails = [];
 let trailWebUserTour = [];
 let preventToggle = false;
 let autoLogoutTimeout;
-
-const resizeScreen = () => {
-  return window.innerWidth <= 760;
-};
 
 if (window.location.href.includes("https://www.and.co")) {
   document.querySelector("html").style.zoom = "100%";
@@ -1414,7 +1411,11 @@ class Main extends React.Component {
             />
           )}
 
-          <div className={`my-extension ${closeContinue && closeContinue}`}>
+          <div
+            className={`my-extension ${resizeScreen() && 'my-extension-mobile'} ${
+              closeContinue && closeContinue
+            }`}
+          >
             {closeContinue && (
               <button
                 className="trail_continue_btn"
@@ -4375,13 +4376,13 @@ class DefaultButton extends React.PureComponent {
       const flipId = document
         .getElementById("extension-div")
         .shadowRoot.getElementById("my-extension-root-flip");
-      flipId.setAttribute("class", "trail_flip_box");
+      flipId.setAttribute("class", "trail_flip_box trail_container");
     } else if (openSidebar || !flipped) {
       const trailFlipBox = document
         .getElementById("extension-div")
         .shadowRoot.querySelector(".trail_flip_box");
       if (trailFlipBox) {
-        trailFlipBox.removeAttribute("class");
+        trailFlipBox.classList.remove("trail_flip_box");
       }
     }
 

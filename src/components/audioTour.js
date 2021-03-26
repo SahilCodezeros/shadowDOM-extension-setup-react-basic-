@@ -28,6 +28,7 @@ class AudioTour extends React.PureComponent {
       doneTour: false,
       step: 0,
       profileImage: "",
+      mobileScreen: false,
     };
   }
 
@@ -48,6 +49,22 @@ class AudioTour extends React.PureComponent {
 
   toSignInWithoutLogin = () => {
     this.props.toggle();
+  };
+
+  resizeWindow = () => {
+    const { mobileScreen } = this.state;
+
+    if (resizeScreen()) {
+      if (!mobileScreen) {
+        // Set state
+        this.setState({ mobileScreen: true });
+      }
+    } else {
+      if (mobileScreen) {
+        // Set state
+        this.setState({ mobileScreen: false });
+      }
+    }
   };
 
   componentDidMount() {
@@ -132,6 +149,9 @@ class AudioTour extends React.PureComponent {
 
     // Add trailit logo
     addTrailitLogo();
+
+    // Register add event listener
+    window.addEventListener("resize", this.resizeWindow);
   }
 
   /**
@@ -194,12 +214,17 @@ class AudioTour extends React.PureComponent {
   };
 
   componentWillUnmount() {
+    console.log("unmount component");
+
     if (audio && timeInterval) {
       this.cleanup();
     }
 
     // Remove trailit log
     removeTrailitLogo();
+
+    // Remove add event listener
+    window.removeEventListener("resize", this.resizeWindow);
   }
 
   render() {
@@ -207,8 +232,6 @@ class AudioTour extends React.PureComponent {
     if (audio && timeInterval) {
       this.cleanup();
     }
-
-    console.log("in render");
 
     // $(() => {
     const tr_audioplayer = document
@@ -220,7 +243,7 @@ class AudioTour extends React.PureComponent {
       audio.autoplay = true;
 
       const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
-      if (!this.props.previewInTooltip) {
+      if (!this.props.previewInTooltip && !resizeScreen()) {
         const audioWrapTooltip = document
           .getElementById("extension-div")
           .shadowRoot.querySelector(".audio_wrap_tooltip");
@@ -406,7 +429,11 @@ class AudioTour extends React.PureComponent {
         )}
         <style>{audioTourCss1}</style>
         <style>{audioPlayerCss2}</style>
-        <div className="audio_wrap_tooltip">
+        <div
+          className={`audio_wrap_tooltip ${
+            resizeScreen() && "audio_wrap_mobile"
+          }`}
+        >
           <div className="audio_wrap_tooltip_innr">
             <div className="trialit_audio tr_gradient_border">
               <img
@@ -448,13 +475,17 @@ class AudioTour extends React.PureComponent {
                 ></div>
                 <div
                   className={`volume-container ${
-                    resizeScreen() && "volumn-mobile"
+                    resizeScreen() && "volume-mobile"
                   }`}
                 >
                   <div className="volume-button">
                     <div className="volume icono-volumeMedium"></div>
                   </div>
-                  <div className="volume-slider">
+                  <div
+                    className={`volume-slider ${
+                      resizeScreen() && "volume-slider-mobile"
+                    }`}
+                  >
                     <div className="volume-slider-root">
                       <div className="volume-percentage"></div>
                     </div>

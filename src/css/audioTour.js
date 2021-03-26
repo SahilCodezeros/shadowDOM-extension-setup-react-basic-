@@ -195,7 +195,7 @@ export const audioTourCss1 = `
     .tr_audioplayer-time.tr_audioplayer-time-duration {
         color: #ffffff !important;
         font-size: 13px !important;
-        font-family: "Lato", sans-serif !important;
+        font-family: Montserrat, "Lato", sans-serif !important;
     }
     
     .tr_audioplayer-novolume .tr_audioplayer-time-duration {
@@ -476,28 +476,60 @@ export const audioTourCss1 = `
 
 export const audioPlayerCss2 = `
     .playpause-mobile {
-        width: 35px !important;
+        // width: 35px !important;
+        // width: 2.1rem !important;
+        width: 17% !important;
     }
 
     .time-current-mobile {
-        width: 30px !important;
-        left: 40px !important;
-        padding: 0 5px !important;
+        // width: 30px !important;
+        // left: 40px !important;
+        // width: 2rem !important;
+        // padding: 0 5px !important;
+
+        width: 15% !important;
+        left: 21% !important;
     }
 
     .time-bar-modile {
-        width: 60px !important;
-        left: 80.5px !important;
+        // width: 60px !important;
+        // left: 80.5px !important;
         top: 53% !important;
+        // width: 3.9rem !important;
+        // left: 5rem !important;
+
+        width: 20% !important;
+        left: 41.5% !important;
     }
 
     .time-duration-mobile {
-        width: 30px !important;
-        padding: 0px 6px !important;
-        right: 35px !important;
+        // width: 30px !important;
+        // right: 35px !important;
+        // right: 2rem !important;
+        // width: 2.2rem !important;
+        // padding: 0px 6px !important;
+
+        width: 22% !important;
+        right: 18% !important;
     }
 
-    .volumn-mobile {
-        width: 35px !important;
+    .volume-mobile {
+        // width: 35px !important;
+        width: 18% !important;
+    }
+
+    .volume-container:hover .volume-slider-mobile {
+        width: 350% !important;
+        left: -352% !important;
+    }
+
+    .audio_wrap_mobile {
+        right: 15vw !important;
+        width: 72vw;
+        top: 65vh !important;
+    }
+
+    .trail_tooltip_done .audio_wrap_mobile {
+        width: inherit !important;
     }
 `;

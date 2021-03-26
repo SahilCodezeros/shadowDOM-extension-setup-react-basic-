@@ -102,15 +102,13 @@ class SendTipForm extends Component {
               onKeyDown={this.onChangeInput}
             />
           </Form.Item>
-          <div className="trailButtonsWrapper">
+          <div className={`trailButtonsWrapper ${this.props.modal && "mt-8"}`}>
             <button
               type="primary"
               htmlType="button"
               disabled={sendLoader}
               className={`${
-                this.props.modal
-                  ? "ant-btn ant-btn-primary trail_add_step_btn"
-                  : "trailit_btnGray"
+                this.props.modal ? "custom-button" : "trailit_btnGray"
               }`}
               onClick={this.onCancelButtonClick}
               // className="ant-btn ant-btn-primary trail_add_step_btn"
@@ -122,9 +120,7 @@ class SendTipForm extends Component {
               type="primary"
               htmlType="submit"
               className={`${
-                this.props.modal
-                  ? "ant-btn ant-btn-primary trail_add_step_btn"
-                  : "trailit_btnPink"
+                this.props.modal ? "custom-button" : "trailit_btnPink"
               }`}
               // className="ant-btn ant-btn-primary trail_add_step_btn"
               // onClick={ (e) => this.props.sendTip(toAddress, amount) }

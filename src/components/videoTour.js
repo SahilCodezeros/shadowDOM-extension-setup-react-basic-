@@ -6,6 +6,7 @@ import { Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
 import dragElement from "../common/draggable";
+import { resizeScreen } from "../common/helper";
 import { videoTourCss1 } from "../css/videoTour";
 import { stopMediaPlaying } from "../common/stopePlayingMedia";
 import {
@@ -24,6 +25,7 @@ class VideoTour extends React.PureComponent {
       loadVideo: false,
       draggable: false,
       webUrl: "",
+      mobileScreen: false,
     };
   }
 
@@ -175,7 +177,26 @@ class VideoTour extends React.PureComponent {
 
     // Add trailit logo
     addTrailitLogo();
+
+    // Register add event listener
+    window.addEventListener("resize", this.resizeWindow);
   }
+
+  resizeWindow = () => {
+    const { mobileScreen } = this.state;
+
+    if (resizeScreen()) {
+      if (!mobileScreen) {
+        // Set state
+        this.setState({ mobileScreen: true });
+      }
+    } else {
+      if (mobileScreen) {
+        // Set state
+        this.setState({ mobileScreen: false });
+      }
+    }
+  };
 
   /**
    * Manage popover web user tour button
@@ -296,6 +317,9 @@ class VideoTour extends React.PureComponent {
   componentWillUnmount() {
     // Remove trailit log
     removeTrailitLogo();
+
+    // Remove add event listener
+    window.removeEventListener("resize", this.resizeWindow);
   }
 
   // videoPlayIconChange = (e) => {
@@ -368,6 +392,7 @@ class VideoTour extends React.PureComponent {
               this.state.fullScreen
                 ? "video-wrap_tooltip-fullScreen"
                 : "video-wrap_tooltip-smallScreen",
+              resizeScreen() && "video-mobile",
             ].join(" ")}
           >
             {this.props.data.length > 0 && !this.state.fullScreen && (

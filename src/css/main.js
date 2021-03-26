@@ -356,7 +356,7 @@ export const main2Css = `
     .info_bbx_gradient {
         background: linear-gradient(208.4deg, #9085f3 15.15%, #ef7e81 84.05%);
         // width: 100%;
-        width: 96%;
+        // width: 96%;
         height: 45px;
         border-radius: 7px;
         padding: 10px;
@@ -374,7 +374,8 @@ export const main2Css = `
 
     .info_bbx_gradient.inactive,
     .info_bbx_grey.inactive {
-        width: 97% !important;
+        // width: 97% !important;
+        width: 91% !important;
     }
 
     // .trailitStepBox.active,
