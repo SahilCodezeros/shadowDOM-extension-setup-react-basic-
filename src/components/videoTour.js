@@ -446,7 +446,7 @@ class VideoTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary ex_mr_10"
+                    className="custom-button ex_mr_10"
                     onClick={(e) =>
                       this.onClickToManagePopoverButton(e, "prev")
                     }
@@ -459,7 +459,7 @@ class VideoTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary ex_mr_10"
+                    className="custom-button ex_mr_10"
                     onClick={(e) => {
                       this.handleWithoutLogin(
                         e,
@@ -477,7 +477,7 @@ class VideoTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary ex_mr_10"
+                    className="custom-button ex_mr_10"
                     onClick={() => this.onClickToDoneTour(tourStep)}
                   >
                     Done

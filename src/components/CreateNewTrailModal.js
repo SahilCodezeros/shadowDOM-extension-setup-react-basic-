@@ -144,7 +144,7 @@ class CreateNewTrailModal extends React.Component {
             {trailStatus && <CreateNewTrailTab onChange={this.onClickToTab} />}
             <div className="trailButtonsWrapper">
               <Button
-                className="ant-btn ant-btn-primary"
+                className="custom-button"
                 disabled={trail_id == null}
                 onClick={this.onClickToRunTrail}
               >

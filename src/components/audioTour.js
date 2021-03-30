@@ -515,7 +515,7 @@ class AudioTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary ex_mr_10"
+                    className="custom-button ex_mr_10"
                     onClick={(e) => {
                       audio.pause();
                       clearInterval(timeInterval);
@@ -530,7 +530,7 @@ class AudioTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary"
+                    className="custom-button"
                     onClick={(e) => {
                       audio.pause();
                       clearInterval(timeInterval);
@@ -551,7 +551,7 @@ class AudioTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary"
+                    className="custom-button"
                     onClick={() => {
                       audio.pause();
                       this.onClickToDoneTour(tourStep);

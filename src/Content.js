@@ -1412,9 +1412,9 @@ class Main extends React.Component {
           )}
 
           <div
-            className={`my-extension ${resizeScreen() && 'my-extension-mobile'} ${
-              closeContinue && closeContinue
-            }`}
+            className={`my-extension ${
+              resizeScreen() && "my-extension-mobile"
+            } ${closeContinue && closeContinue}`}
           >
             {closeContinue && (
               <button
@@ -4610,7 +4610,7 @@ class DefaultButton extends React.PureComponent {
                   type="submit"
                   onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)}
                   value="Previous"
-                  className="ant-btn ant-btn-primary"
+                  className="custom-button"
                 />
               )}
               {tourStatus === "preview" && tourType === "video" && (
@@ -4618,7 +4618,7 @@ class DefaultButton extends React.PureComponent {
                   type="submit"
                   onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)}
                   value="Next"
-                  className="ant-btn ant-btn-primary"
+                  className="custom-button"
                 />
               )}
               {tourStatus !== "preview" && tourType === "audio" && (
@@ -4691,7 +4691,7 @@ class DefaultButton extends React.PureComponent {
                   type="submit"
                   onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)}
                   value="Previous"
-                  className="ant-btn ant-btn-primary"
+                  className="custom-button"
                 />
               )}
               {tourStatus === "preview" && tourType === "audio" && (
@@ -4699,7 +4699,7 @@ class DefaultButton extends React.PureComponent {
                   type="submit"
                   onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)}
                   value="Next"
-                  className="ant-btn ant-btn-primary"
+                  className="custom-button"
                 />
               )}
             </div>
