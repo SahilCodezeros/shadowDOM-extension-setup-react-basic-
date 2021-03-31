@@ -79,6 +79,7 @@ import {
 import "./Content.css";
 import { get } from "./AppUtill";
 import { resolve } from "promise";
+import TargetNotFound from "./components/Modal/targetNotFound";
 
 /*global chrome*/
 
@@ -123,12 +124,9 @@ class Main extends React.Component {
   }
 
   async componentDidMount() {
-    console.log("componentDidMount");
-
     autoLogoutTimeout = setTimeout(() => {
       // Call logout function
       // this.props.onClickToLogout();
-      console.log("Auto Logout");
     }, 10000);
 
     chrome.storage.local.get(
@@ -186,7 +184,7 @@ class Main extends React.Component {
         }
 
         chrome.storage.onChanged.addListener(async (changes) => {
-          // console.log("change1", changes);
+          //
           //
           // if (changes.authorData && changes.authorData.userName.newValue) {
           //   let { data } = await getUserData(
@@ -246,7 +244,7 @@ class Main extends React.Component {
                 "currentTrailsTab",
               ],
               async (items) => {
-                // console.log("line 241");
+                //
                 try {
                   if (
                     items.currentTrailsTab === "Followed" &&
@@ -277,9 +275,7 @@ class Main extends React.Component {
                     // Call common get user data function
                     await this.getCurrUserDataCommon(data);
                   }
-                } catch (err) {
-                  console.log("err", err);
-                }
+                } catch (err) {}
               }
             );
           }
@@ -423,7 +419,7 @@ class Main extends React.Component {
               noStepsToWatch: items.noStepsToWatch,
             };
 
-            // console.log("line 406");
+            //
 
             await this.getCurrUserFollowedTrailData(data);
           } else {
@@ -444,7 +440,7 @@ class Main extends React.Component {
               data.trail_data_id = items.trail_data_id;
               await this.getSingleTrail(data);
             } else {
-              // console.log("line 428");
+              //
               // Call get current user data common function
               await this.getCurrUserDataCommon(items);
             }
@@ -680,9 +676,7 @@ class Main extends React.Component {
         trail_web_user_tour: allTrails,
         closeContinue: continueFlag,
       });
-    } catch (err) {
-      console.log("err", err);
-    }
+    } catch (err) {}
   }
 
   async getCurrUserDataCommon(items) {
@@ -698,9 +692,7 @@ class Main extends React.Component {
       res = await getUserOneTrail(trail_id, screen);
 
       trailWebUserTour = items.trail_web_user_tour;
-    } catch (err) {
-      console.log("err", err);
-    }
+    } catch (err) {}
 
     // if (items.trail_web_user_tour && items.trail_web_user_tour.length > 0) {
     // 	items.trail_web_user_tour.forEach(el => {
@@ -909,7 +901,7 @@ class Main extends React.Component {
             data.trail_data_id = items.trail_data_id;
             await this.getSingleTrail(data);
           } else {
-            // console.log("line 821");
+            //
             // Call get current user data common function
             await this.getCurrUserDataCommon(items);
           }
@@ -1156,7 +1148,7 @@ class Main extends React.Component {
                 tourType: tour.tourType ? tour.tourType : "preview",
               });
 
-              // console.log("tour", tour);
+              //
 
               if (
                 tour.url &&
@@ -1876,6 +1868,7 @@ class DefaultButton extends React.PureComponent {
       audioRef: false,
       videoRef: false,
       tooltipRef: false,
+      targetDataNotFound: false,
     };
 
     this.previewModalRef = React.createRef();
@@ -2045,9 +2038,7 @@ class DefaultButton extends React.PureComponent {
       res = await getUserOneTrail(trail_id, screen);
 
       trailWebUserTour = items.trail_web_user_tour;
-    } catch (err) {
-      console.log("err", err);
-    }
+    } catch (err) {}
 
     // if (items.trail_web_user_tour && items.trail_web_user_tour.length > 0) {
     // 	items.trail_web_user_tour.forEach(el => {
@@ -2277,7 +2268,6 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      console.log("changes2", changes);
       if (
         changes.trailDeleteModal &&
         changes.trailDeleteModal.newValue &&
@@ -3346,8 +3336,6 @@ class DefaultButton extends React.PureComponent {
             // });
           }
 
-          console.log("after update");
-
           chrome.storage.local.set({
             tourType: "",
             currentTourType: "",
@@ -3463,12 +3451,11 @@ class DefaultButton extends React.PureComponent {
 
       // Call update track data function
       await updateTrailTrack(trackData);
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   tourManage = (step, type, tourSide) => {
+    this.setState({ targetDataNotFound: false });
     return new Promise((resolve, reject) => {
       chrome.storage.local.get(
         [
@@ -4128,10 +4115,6 @@ class DefaultButton extends React.PureComponent {
     // , document.querySelector('body'));
   };
 
-  onNextClick = () => {
-    console.log("this.previewModalRef", this.previewModalRef);
-  };
-
   onCloseTooltipHandle = async (e) => {
     // Call init button position function
     initButtonPosition();
@@ -4167,7 +4150,11 @@ class DefaultButton extends React.PureComponent {
     }
 
     // Set onDone state
-    this.setState({ onDone: false, draggable: false });
+    this.setState({
+      onDone: false,
+      draggable: false,
+      targetDataNotFound: false,
+    });
   };
 
   setLoadingState = (query) => {
@@ -4312,10 +4299,10 @@ class DefaultButton extends React.PureComponent {
     // Auto logout function
     autoLogoutFunction();
 
-    // console.log("tourType", tourType);
-    // console.log("tourStep", tourStep);
-    // console.log("currentTourType", currentTourType);
-    // console.log("currentTrailsTab", currentTrailsTab);
+    //
+    //
+    //
+    //
 
     const localStorageCount = localStorage.getItem(
       process.env.REACT_APP_LOCALSTORAGE
@@ -4345,7 +4332,7 @@ class DefaultButton extends React.PureComponent {
     // } else {
     //   openPopup = false;
     // }
-    // console.log("openPopup", openPopup);
+    //
 
     //
     //
@@ -4824,6 +4811,10 @@ class DefaultButton extends React.PureComponent {
             />
           )}
           <div>
+            {console.log({
+              data: this.state.targetDataNotFound,
+              tourUrl,
+            })}
             {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
             {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
             {currentTourType === "tooltip" &&
@@ -4832,6 +4823,11 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <WebUserTour
+                  toogleTargetDataNotFound={() =>
+                    this.setState({
+                      targetDataNotFound: !this.state.targetDataNotFound,
+                    })
+                  }
                   tooltipRef={this.state.tooltipRef}
                   tooltipToggle={this.webTourToggler}
                   onDone={onDone}
@@ -4890,7 +4886,6 @@ class DefaultButton extends React.PureComponent {
               tourUrl && (
                 <PreviewModalComponent
                   ref={this.previewModalRef}
-                  onNextClick={this.onNextClick}
                   previewModalRef={this.state.previewModalRef}
                   previewModalToggle={this.modelToggler}
                   onDone={onDone}
@@ -4904,6 +4899,25 @@ class DefaultButton extends React.PureComponent {
                   onSendTipModalOpen={this.onSendTipModalOpen}
                 />
               )}
+
+            {((currentTourType !== "" &&
+              tourType === "preview" &&
+              tourStep !== "" &&
+              this.state.targetDataNotFound) ||
+              (tourType === "preview" && !tourUrl)) && (
+              <TargetNotFound
+                previewModalToggle={this.modelToggler}
+                onDone={onDone}
+                data={trailList}
+                toggle={this.onClearToggle}
+                tourStep={tourStep}
+                tour={this.tourManage}
+                tourSide={this.state.tourSide}
+                closeButtonHandler={this.onCloseTooltipHandle}
+                setLoadingState={this.setLoadingState}
+                onSendTipModalOpen={this.onSendTipModalOpen}
+              />
+            )}
             {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
           </div>
           <div
@@ -5013,6 +5027,11 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <WebUserTour
+                        toogleTargetDataNotFound={() =>
+                          this.setState({
+                            targetDataNotFound: !this.state.targetDataNotFound,
+                          })
+                        }
                         tooltipRef={this.state.tooltipRef}
                         tooltipToggle={this.webTourToggler}
                         onDone={onDone}
@@ -5070,6 +5089,7 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <PreviewModalComponent
+                        ref={this.previewModalRef}
                         previewModalRef={this.state.previewModalRef}
                         previewModalToggle={this.modelToggler}
                         onDone={onDone}
@@ -5083,6 +5103,26 @@ class DefaultButton extends React.PureComponent {
                         onSendTipModalOpen={this.onSendTipModalOpen}
                       />
                     )}
+
+                  {((currentTourType !== "" &&
+                    tourType === "preview" &&
+                    tourStep !== "" &&
+                    this.state.targetDataNotFound) ||
+                    (tourType === "preview" && !tourUrl)) && (
+                    <TargetNotFound
+                      previewModalToggle={this.modelToggler}
+                      onDone={onDone}
+                      data={trailList}
+                      toggle={this.onClearToggle}
+                      tourStep={tourStep}
+                      tour={this.tourManage}
+                      tourSide={this.state.tourSide}
+                      closeButtonHandler={this.onCloseTooltipHandle}
+                      setLoadingState={this.setLoadingState}
+                      onSendTipModalOpen={this.onSendTipModalOpen}
+                    />
+                  )}
+
                   {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
                 </div>
                 <div
@@ -5437,7 +5477,7 @@ const autoLogoutFunction = () => {
   //   chrome.storage.local.get(
   //     ["openButton", "tourType", "isAuth"],
   //     function (items) {
-  //       console.log("items", items);
+  //
 
   //       if (items.isAuth) {
   //         // this.onClickToRedirect("login");
@@ -5479,9 +5519,7 @@ const autoLogoutFunction = () => {
             closeContinue: false,
           });
           chrome.storage.local.clear();
-        } catch (err) {
-          console.log("err", err);
-        }
+        } catch (err) {}
       }
     });
   }, 5000);

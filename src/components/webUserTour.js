@@ -240,6 +240,8 @@ class WebUserTour extends React.Component {
     }
 
     if (document.querySelector(unqTarget) == null) {
+      
+      this.props.toogleTargetDataNotFound();
       let a = () => {
         if (resizeScreen()) {
           countN++;
@@ -268,6 +270,7 @@ class WebUserTour extends React.Component {
       function clearInt() {
         clearInterval(interval);
       }
+       
     } else {
       document.querySelector(unqTarget).classList.add("trail_web_user_tour");
 
@@ -398,6 +401,7 @@ class WebUserTour extends React.Component {
         this.props.tour(step, type, tourSide);
       }
     } else {
+      
       // Set loading true to show overlay
       this.props.setLoadingState(true);
       let type = this.props.data[step - 1].type;
