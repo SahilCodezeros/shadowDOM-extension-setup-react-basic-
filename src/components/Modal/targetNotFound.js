@@ -15,7 +15,7 @@ class TargetNotFound extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: true,
+      open: false,
     };
   }
 
@@ -39,6 +39,11 @@ class TargetNotFound extends React.Component {
   };
 
   componentDidMount() {
+
+    setTimeout(() => {
+      this.setState({ open: true });
+    }, 5000);
+
     const scrollTop = $(window).scrollTop();
     $("html, body").animate({ scrollTop: scrollTop });
 
@@ -154,7 +159,9 @@ class TargetNotFound extends React.Component {
   render() {
     const { open } = this.state;
     const { tourStep } = this.props;
-    let preview = <div className={`trail_modal_title p-0`}>Target Data not Found</div>;
+    let preview = (
+      <div className={`trail_modal_title p-0`}>Target Data not Found</div>
+    );
 
     return (
       <div>
@@ -186,9 +193,7 @@ class TargetNotFound extends React.Component {
                 <CloseOutlined type="close" />
               </Button>
             )}
-            <div className="trail_modal_content_main">
-             {preview}
-            </div>
+            <div className="trail_modal_content_main">{preview}</div>
 
             <div className="btn-wrap">
               {1 < tourStep && (
