@@ -67,6 +67,8 @@ class WebUserTour extends React.Component {
   }
 
   handleWithoutLogin = (event, tourSide, type, currentStep) => {
+    this.props.toogleTargetDataNotFound(false);
+
     chrome.storage.local.get(["isGuest"], (items) => {
       if (currentStep % 3 === 0 && tourSide === "next" && items.isGuest) {
         this.props.tooltipToggle();
@@ -241,7 +243,7 @@ class WebUserTour extends React.Component {
 
     if (document.querySelector(unqTarget) == null) {
       
-      this.props.toogleTargetDataNotFound();
+      this.props.toogleTargetDataNotFound(true);
       let a = () => {
         if (resizeScreen()) {
           countN++;
@@ -368,6 +370,8 @@ class WebUserTour extends React.Component {
    * @step tooltip current step
    */
   onClickToManagePopoverButton = async (event, tourSide) => {
+    this.props.toogleTargetDataNotFound(false);
+
     let step =
       tourSide === "prev" ? this.props.tourStep - 1 : this.props.tourStep + 1;
 
@@ -422,6 +426,7 @@ class WebUserTour extends React.Component {
 
   onClickToDoneTour = (data, step) => {
     let { tourSteps, tourStep } = this.state;
+    this.props.toogleTargetDataNotFound(false);
 
     Object.keys(tourSteps).map((r, i) => {
       tourSteps[r] = false;
@@ -450,6 +455,8 @@ class WebUserTour extends React.Component {
   };
 
   onButtonCloseHandler = async (e) => {
+    this.props.toogleTargetDataNotFound(false);
+
     let res = await this.props.closeButtonHandler(e);
 
     return res;

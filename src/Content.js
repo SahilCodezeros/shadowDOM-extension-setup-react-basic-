@@ -4823,9 +4823,9 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <WebUserTour
-                  toogleTargetDataNotFound={() =>
+                  toogleTargetDataNotFound={(value) =>
                     this.setState({
-                      targetDataNotFound: !this.state.targetDataNotFound,
+                      targetDataNotFound:value,
                     })
                   }
                   tooltipRef={this.state.tooltipRef}
@@ -5027,9 +5027,9 @@ class DefaultButton extends React.PureComponent {
                     tourStep !== "" &&
                     tourUrl && (
                       <WebUserTour
-                        toogleTargetDataNotFound={() =>
+                        toogleTargetDataNotFound={(value) =>
                           this.setState({
-                            targetDataNotFound: !this.state.targetDataNotFound,
+                            targetDataNotFound: value,
                           })
                         }
                         tooltipRef={this.state.tooltipRef}
