@@ -20,6 +20,7 @@ class TargetNotFound extends React.Component {
   }
 
   handleWithoutLogin = (event, tourSide, type, currentStep) => {
+    this.setState({ open: false });
     chrome.storage.local.get(["isGuest"], (items) => {
       if (currentStep % 3 === 0 && tourSide === "next" && items.isGuest) {
         this.props.previewModalToggle();
@@ -66,15 +67,21 @@ class TargetNotFound extends React.Component {
    * @step tooltip current step
    */
   onClickToManagePopoverButton = async (event, tourSide) => {
+    
+    this.props.toogleTargetDataNotFound(false);
+    
+
     let { tourStep } = this.props;
     let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
 
     await this.toggle();
 
     if (this.props.data[step - 1].url === document.URL) {
+      
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
     } else {
+      
       // Set loading true to show overlay
       this.props.setLoadingState(true);
 
@@ -83,11 +90,10 @@ class TargetNotFound extends React.Component {
       window.location.href = this.props.data[step - 1].url;
     }
 
-    this.setState({ open: true });
   };
 
   onClickToDoneTour = (data, step) => {
-    this.setState({ open: false });
+    this.props.toogleTargetDataNotFound(false);
     if (
       document
         .getElementById("extension-div")
@@ -104,6 +110,7 @@ class TargetNotFound extends React.Component {
   };
 
   onButtonCloseHandler = async (e) => {
+    this.props.toogleTargetDataNotFound(false);
     // Call parent component function to close tooltip preview
     if (
       document

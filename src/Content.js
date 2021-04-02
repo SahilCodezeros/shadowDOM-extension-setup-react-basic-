@@ -3455,7 +3455,8 @@ class DefaultButton extends React.PureComponent {
   };
 
   tourManage = (step, type, tourSide) => {
-    this.setState({ targetDataNotFound: false });
+    console.log({step, type, tourSide});
+   
     return new Promise((resolve, reject) => {
       chrome.storage.local.get(
         [
@@ -4823,11 +4824,7 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <WebUserTour
-                  toogleTargetDataNotFound={(value) =>
-                    this.setState({
-                      targetDataNotFound:value,
-                    })
-                  }
+                  toogleTargetDataNotFound={(value) => this.setState({targetDataNotFound:value })                  }
                   tooltipRef={this.state.tooltipRef}
                   tooltipToggle={this.webTourToggler}
                   onDone={onDone}
@@ -4900,12 +4897,16 @@ class DefaultButton extends React.PureComponent {
                 />
               )}
 
+{console.log({toggle:this.state.targetDataNotFound, tourStep,tourUrl,currentTourType,tourType  })}
+
             {((currentTourType !== "" &&
               tourType === "preview" &&
               tourStep !== "" &&
               this.state.targetDataNotFound) ||
-              (tourType === "preview" && tourStep !== "" && !tourUrl)) && (
+              (tourStep !== "" && !tourUrl)) && (
               <TargetNotFound
+              toogleTargetDataNotFound={(value) => this.setState({targetDataNotFound:value })                  }
+
                 previewModalToggle={this.modelToggler}
                 onDone={onDone}
                 data={trailList}
@@ -5021,6 +5022,7 @@ class DefaultButton extends React.PureComponent {
                 <div>
                   {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
                   {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
+                 
                   {currentTourType === "tooltip" &&
                     tourType === "preview" &&
                     !overlay &&
@@ -5108,8 +5110,10 @@ class DefaultButton extends React.PureComponent {
                     tourType === "preview" &&
                     tourStep !== "" &&
                     this.state.targetDataNotFound) ||
-                    (tourType === "preview" &&  tourStep !== "" && !tourUrl)) && (
+                    (tourStep !== "" && !tourUrl)) && (
                     <TargetNotFound
+                  toogleTargetDataNotFound={(value) => this.setState({targetDataNotFound:value })                  }
+
                       previewModalToggle={this.modelToggler}
                       onDone={onDone}
                       data={trailList}

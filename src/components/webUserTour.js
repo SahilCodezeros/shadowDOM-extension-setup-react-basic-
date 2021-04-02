@@ -89,11 +89,10 @@ class WebUserTour extends React.Component {
   componentDidMount() {
     let { tourStep } = this.state;
     this.createPopOver(tourStep);
-
-    window.addEventListener("load", this.handleLoad);
-
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     this.getWebUserTour("", this.props.data[tourStep - 1], tourStep);
+
+    window.addEventListener("load", this.handleLoad);
 
     if (
       this.props.data[tourStep - 1].mediaType &&
@@ -141,7 +140,14 @@ class WebUserTour extends React.Component {
     });
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    console.log("prev props", prevProps);
+    console.log("props", this.props);
+    if (prevProps.tourStep !== this.props.tourStep) {
+      this.createPopOver(this.props.tourStep);
+      chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
+      this.getWebUserTour("", this.props.data[this.props.tourStep - 1], this.props.tourStep);
+    }
     // Call add logo function
     this.addLogo();
   }
@@ -240,9 +246,10 @@ class WebUserTour extends React.Component {
         unqTarget = this.props.data[step - 1].unique_target_one;
       }
     }
+    console.log("target not found", document.querySelector(unqTarget));
 
     if (document.querySelector(unqTarget) == null) {
-      
+      console.log("target not found");
       this.props.toogleTargetDataNotFound(true);
       let a = () => {
         if (resizeScreen()) {
@@ -272,10 +279,7 @@ class WebUserTour extends React.Component {
       function clearInt() {
         clearInterval(interval);
       }
-       
     } else {
-      document.querySelector(unqTarget).classList.add("trail_web_user_tour");
-
       // Call Add overlay function
       addOverlay();
 
@@ -405,7 +409,6 @@ class WebUserTour extends React.Component {
         this.props.tour(step, type, tourSide);
       }
     } else {
-      
       // Set loading true to show overlay
       this.props.setLoadingState(true);
       let type = this.props.data[step - 1].type;
@@ -425,8 +428,8 @@ class WebUserTour extends React.Component {
   };
 
   onClickToDoneTour = (data, step) => {
-    let { tourSteps, tourStep } = this.state;
     this.props.toogleTargetDataNotFound(false);
+    let { tourSteps, tourStep } = this.state;
 
     Object.keys(tourSteps).map((r, i) => {
       tourSteps[r] = false;
@@ -456,7 +459,6 @@ class WebUserTour extends React.Component {
 
   onButtonCloseHandler = async (e) => {
     this.props.toogleTargetDataNotFound(false);
-
     let res = await this.props.closeButtonHandler(e);
 
     return res;
