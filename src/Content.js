@@ -4904,7 +4904,7 @@ class DefaultButton extends React.PureComponent {
               tourType === "preview" &&
               tourStep !== "" &&
               this.state.targetDataNotFound) ||
-              (tourType === "preview" && !tourUrl)) && (
+              (tourType === "preview" && tourStep !== "" && !tourUrl)) && (
               <TargetNotFound
                 previewModalToggle={this.modelToggler}
                 onDone={onDone}
@@ -5108,7 +5108,7 @@ class DefaultButton extends React.PureComponent {
                     tourType === "preview" &&
                     tourStep !== "" &&
                     this.state.targetDataNotFound) ||
-                    (tourType === "preview" && !tourUrl)) && (
+                    (tourType === "preview" &&  tourStep !== "" && !tourUrl)) && (
                     <TargetNotFound
                       previewModalToggle={this.modelToggler}
                       onDone={onDone}
