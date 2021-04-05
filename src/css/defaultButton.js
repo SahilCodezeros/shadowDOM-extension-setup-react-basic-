@@ -614,6 +614,10 @@ export const defaultButtonCss2 = `
         word-break: break-all !important;
     }
 
+    .trailitStepTitle span {
+        margin-left: 10px;
+    }
+
     .trailitIconRight {
         display: flex;
         flex-direction: column;

@@ -1,57 +1,60 @@
-import React from 'react';
-import ReactPlayer from 'react-player';
-import $ from 'jquery';
+import React from "react";
+import $ from "jquery";
 
 const chrome = window.chrome;
 
 class TooltipOverlay extends React.Component {
-    
-    constructor(props) {
-        super(props);
-        this.state = {
-            content: {}
-        }
-    }
-    
-    componentDidMount() {
-        const { data, tourStep } = this.props;
+  constructor(props) {
+    super(props);
+    this.state = {
+      content: {},
+    };
+  }
 
-        this.setState({content: data[tourStep - 1]==undefined?{}:data[tourStep - 1]})
-    }
-    
-    /**
-     * Manage popover web user tour button
-     * @data tooltip data
-     * @step tooltip current step
-    */
-    onClickToManagePopoverButton = async(event, step, tourSide) => {
-        let { tourStep } = this.props;
-        
-        if(this.props.data[step - 1].url === document.URL) {
-            let type = this.props.data[step - 1].type;
-            this.setState({content: this.props.data[step - 1]});
-            this.props.tour(step, type, tourSide)
-        } else {
-            let type = this.props.data[step - 1].type;
-            await this.props.tour(step, type, tourSide)
-            window.location.href = this.props.data[step - 1].url;
-        }
-    }
-    
-    onClickToDoneTour = (data, step) => {
-        let { tourSteps } = this.props;        
-        this.props.toggle(true);
-    }
-    
-    render() {
-        const { data, tourStep, tourSide} = this.props;    
+  componentDidMount() {
+    const { data, tourStep } = this.props;
 
-        // {(this.props.data[tourStep - 1].url === document.URL) && <div className={tourSide==='prev'?"trail_vC trail_video_overlayPrev":" trail_vC trail_video_overlayNext"}></div>
-        return (
-            <React.Fragment>
-                <div className={"trail_vC trail_video_overlayPrev"}>
-                    <img className="trail_loader_video" src={require('../images/loader.png')} />
-                    {/* <div className="video-wrap">
+    this.setState({
+      content: data[tourStep - 1] == undefined ? {} : data[tourStep - 1],
+    });
+  }
+
+  /**
+   * Manage popover web user tour button
+   * @data tooltip data
+   * @step tooltip current step
+   */
+  onClickToManagePopoverButton = async (event, step, tourSide) => {
+    let { tourStep } = this.props;
+
+    if (this.props.data[step - 1].url === document.URL) {
+      let type = this.props.data[step - 1].type;
+      this.setState({ content: this.props.data[step - 1] });
+      this.props.tour(step, type, tourSide);
+    } else {
+      let type = this.props.data[step - 1].type;
+      await this.props.tour(step, type, tourSide);
+      window.location.href = this.props.data[step - 1].url;
+    }
+  };
+
+  onClickToDoneTour = (data, step) => {
+    let { tourSteps } = this.props;
+    this.props.toggle(true);
+  };
+
+  render() {
+    const { data, tourStep, tourSide } = this.props;
+
+    // {(this.props.data[tourStep - 1].url === document.URL) && <div className={tourSide==='prev'?"trail_vC trail_video_overlayPrev":" trail_vC trail_video_overlayNext"}></div>
+    return (
+      <React.Fragment>
+        <div className={"trail_vC trail_video_overlayPrev"}>
+          <img
+            className="trail_loader_video"
+            src={require("../images/loader.png")}
+          />
+          {/* <div className="video-wrap">
                         {(this.props.data[tourStep - 1].url === document.URL) && <div className={"trail_vC trail_video_overlayPrev"}>
                             <div className="video-wrap">
                                 <p className="contentTitle videoShow">{this.state.content.title}</p>
@@ -66,10 +69,10 @@ class TooltipOverlay extends React.Component {
                                     </div>
                                 </div>}                            
                                     */}
-                </div>
-            </React.Fragment>
-        )
-    }
+        </div>
+      </React.Fragment>
+    );
+  }
 }
 
 export default TooltipOverlay;

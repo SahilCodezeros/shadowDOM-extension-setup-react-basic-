@@ -123,14 +123,6 @@ class Main extends React.Component {
   }
 
   async componentDidMount() {
-    console.log("componentDidMount");
-
-    autoLogoutTimeout = setTimeout(() => {
-      // Call logout function
-      // this.props.onClickToLogout();
-      console.log("Auto Logout");
-    }, 10000);
-
     chrome.storage.local.get(
       [
         "trail_web_user_tour",
@@ -2277,7 +2269,6 @@ class DefaultButton extends React.PureComponent {
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
-      console.log("changes2", changes);
       if (
         changes.trailDeleteModal &&
         changes.trailDeleteModal.newValue &&
@@ -3345,8 +3336,6 @@ class DefaultButton extends React.PureComponent {
             //   currentTourType: "",
             // });
           }
-
-          console.log("after update");
 
           chrome.storage.local.set({
             tourType: "",

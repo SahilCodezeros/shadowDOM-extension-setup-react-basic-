@@ -247,7 +247,7 @@ class SortableItem extends React.Component {
           >
             {/* {tourType !== "preview" && <DragHandle />} */}
             <div className="trailitStepTitle">
-              Step {i + 1} - {result.title}
+              Step {i + 1} <span>{result.title}</span>
             </div>
             <div className="trailitIconRight">
               <div className="trailit_right_container">

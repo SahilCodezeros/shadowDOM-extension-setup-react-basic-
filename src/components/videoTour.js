@@ -1,5 +1,4 @@
 import React from "react";
-import ReactPlayer from "react-player";
 import $ from "jquery";
 import Dragabilly from "draggabilly";
 import { Button } from "antd";

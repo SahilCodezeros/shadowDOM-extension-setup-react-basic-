@@ -1,5 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
-import ReactPlayer from "react-player";
 import $ from "jquery";
 import { Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
