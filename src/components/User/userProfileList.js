@@ -331,17 +331,17 @@ class UserProfileList extends Component {
                                     }
                                   />
                                   <span className="trailit_ml2 trailit_ellipsis_40">
-                                    {res.trail_name}
+                                    {`${res?.userData?.firstName || ""}`}
                                   </span>
                                 </div>
-                                <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
+                                {/* <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
                                   <img
                                     alt="trailit_coin"
                                     width="11px"
                                     src={require("../../images/trailit_coin.png")}
                                   />
                                   <span className="trailit_ml2">94</span>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>

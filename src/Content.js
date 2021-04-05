@@ -3908,6 +3908,8 @@ class DefaultButton extends React.PureComponent {
         `traiil_stop${this.state.tourStep}`
       );
       $(".trail_select_bx").removeClass("trail_select_bx");
+      console.log("removed");
+      $("#my-extension-defaultroot").css("box-shadow", "none");
 
       const tooltip = shadowRoot.querySelector(".trail_tooltip");
       if (tooltip) {
@@ -4471,7 +4473,6 @@ class DefaultButton extends React.PureComponent {
     }
 
     let sideBar = (
-      <div>
         <div className="first_step">
           <div className="hdr">
             <div className="titleBack">
@@ -4716,7 +4717,9 @@ class DefaultButton extends React.PureComponent {
                 </SortableContainer>
               </form>
             )}
-            <div className="mt-40">
+            
+          </div>
+          <div >
               {tourType !== "audio" &&
                 tourType !== "video" &&
                 this.state.saveSort && (
@@ -4742,9 +4745,7 @@ class DefaultButton extends React.PureComponent {
                   </div>
                 )}
             </div>
-          </div>
         </div>
-      </div>
     );
 
     if (tourType === "preview") {
@@ -4800,7 +4801,13 @@ class DefaultButton extends React.PureComponent {
           />
         )}
 
-        <div className="sidepanal adadad trail_sidepanel_overlay">
+        <div className={`sidepanal adadad trail_sidepanel_overlay ${
+              tourType === "audio" ||
+              tourType === "video" ||
+              tourType === "Make Edit"
+                ? "white_background"
+                : "transparent_background"
+            }`}>
           {createModalOpen && (
             <CreateModalComponent
               stepType={stepType}
@@ -4812,10 +4819,7 @@ class DefaultButton extends React.PureComponent {
             />
           )}
           <div>
-            {console.log({
-              data: this.state.targetDataNotFound,
-              tourUrl,
-            })}
+           
             {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
             {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
             {currentTourType === "tooltip" &&
@@ -4897,7 +4901,7 @@ class DefaultButton extends React.PureComponent {
                 />
               )}
 
-{console.log({toggle:this.state.targetDataNotFound, tourStep,tourUrl,currentTourType,tourType  })}
+
 
             {((currentTourType !== "" &&
               tourType === "preview" &&
@@ -4924,12 +4928,6 @@ class DefaultButton extends React.PureComponent {
           <div
             className={`sidepopup ${
               openSidebar ? "open trail_builder_side_panel_open" : ""
-            } ${
-              tourType === "audio" ||
-              tourType === "video" ||
-              tourType === "Make Edit"
-                ? "white_background"
-                : "transparent_background"
             }`}
           >
             <div className="space"></div>
@@ -5008,7 +5006,13 @@ class DefaultButton extends React.PureComponent {
                 />
               )}
 
-              <div className="sidepanal adadad trail_sidepanel_overlay">
+              <div className={`sidepanal adadad trail_sidepanel_overlay ${
+              tourType === "audio" ||
+              tourType === "video" ||
+              tourType === "Make Edit"
+                ? "white_background"
+                : "transparent_background"
+            }`}>
                 {createModalOpen && (
                   <CreateModalComponent
                     stepType={stepType}
@@ -5132,12 +5136,6 @@ class DefaultButton extends React.PureComponent {
                 <div
                   className={`sidepopup ${
                     openSidebar ? "open trail_builder_side_panel_open" : ""
-                  } ${
-                    tourType === "audio" ||
-                    tourType === "video" ||
-                    tourType === "Make Edit"
-                      ? "white_background"
-                      : "transparent_background"
                   }`}
                 >
                   <div className="space"></div>

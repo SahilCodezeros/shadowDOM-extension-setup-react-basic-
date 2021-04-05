@@ -773,7 +773,7 @@ class UserProfile extends React.Component {
                       }`}
                       onClick={(e) => this.onClickToList("Followed")}
                     >
-                      Followed
+                      Following
                     </button>
                   )}
                   {listTitle === "Followed" && (

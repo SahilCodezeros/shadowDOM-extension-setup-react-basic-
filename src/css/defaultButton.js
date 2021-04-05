@@ -39,6 +39,7 @@ export const defaultButtonCss1 = `
         font-family: 'Lato', sans-serif;
         display: block;
         z-index: 999999999;
+        box-shadow: rgb(212 30 121) 0px 0px 9px;
     }
     
     #my-extension-defaultroot .sidepopup {
@@ -374,7 +375,7 @@ export const defaultButtonCss2 = `
     #my-extension-defaultroot .sidepopup.open {
         animation: opacity 0.7s forwards;
         -webkit-animation: opacity 0.7s forwards;
-        overflow: auto !important;
+        // overflow: auto !important;
     }
 
     #my-extension-defaultroot .sidepopup.open * {

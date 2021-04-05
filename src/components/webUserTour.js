@@ -141,8 +141,7 @@ class WebUserTour extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("prev props", prevProps);
-    console.log("props", this.props);
+   
     if (prevProps.tourStep !== this.props.tourStep) {
       this.createPopOver(this.props.tourStep);
       chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));

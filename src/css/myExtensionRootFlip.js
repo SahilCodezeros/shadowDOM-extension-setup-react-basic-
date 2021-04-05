@@ -1744,8 +1744,9 @@ export const myExtensionRootFlipCss5 = `
     }
 
     .scrollable-steps-list {
-        height: 230px;
+        max-height: 600px;
         overflow: auto;
+
     }
 
     .scrollable-steps-list::-webkit-scrollbar-track {

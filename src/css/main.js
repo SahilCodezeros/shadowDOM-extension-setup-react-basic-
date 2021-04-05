@@ -93,28 +93,21 @@ export const main1Css = `
         content: attr(data-title);
         // color: #DA5E9A;
         color: #ff7958;
-        width: 220px;
+        // width: 220px; 
         margin-right: 6px;
-        /* box-shadow:0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
-        -webkit-box-shadow:0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
-        -moz-box-shadow:0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
-        background: #fff; */
         font-family: 'Lato', sans-serif;
-        /* font-size: 24px; */
         line-height: 30px;
         font-weight: 400!important;
-        text-align: right;
-        /* -webkit-border-radius: 5px;
-        -moz-border-radius: 5px;
-        border-radius: 5px; */
+        // text-align: right;
         position: absolute;
-        /* top: 25px;
-        right: 100px; */
         text-transform: capitalize!important;
         letter-spacing: 0;
-        text-shadow: 5px 2px 4px #00000052;
+        box-shadow: 5px 2px 4px #00000052;
         opacity: 0;
-        pointer-events: none;
+        background: white;
+        border-radius: 3px;
+        padding: 5px 15px;
+        background: white;
         transition: all 0.2s ease-out;
         font-size: 22px !important;
         top: 15px !important;
