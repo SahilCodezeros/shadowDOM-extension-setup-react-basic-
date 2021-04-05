@@ -1,12 +1,9 @@
 import React from "react";
-import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { Form, Input, Button } from "antd";
+import { Modal, ModalBody } from "reactstrap";
+import { Button } from "antd";
 import { CloseOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import $ from "jquery";
 
-import AudioTour from "../audioTour";
-import { resizeScreen } from "../../common/helper";
-import { stopMediaPlaying } from "../../common/stopePlayingMedia";
 import {
   addTrailitLogo,
   removeTrailitLogo,
@@ -14,18 +11,16 @@ import {
 import ContinueTourConfirmation from "./ContinueTourConfirmation";
 
 const chrome = window.chrome;
-class PreviewModalComponent extends React.Component {
+class TargetNotFound extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: "",
-      description: "",
-      open: true,
-      autoPlay: true,
+      open: false,
     };
   }
 
   handleWithoutLogin = (event, tourSide, type, currentStep) => {
+    this.setState({ open: false });
     chrome.storage.local.get(["isGuest"], (items) => {
       if (currentStep % 3 === 0 && tourSide === "next" && items.isGuest) {
         this.props.previewModalToggle();
@@ -44,97 +39,26 @@ class PreviewModalComponent extends React.Component {
     this.props.toggle();
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+
+    setTimeout(() => {
+      this.setState({ open: true });
+    }, 3500);
+
     const scrollTop = $(window).scrollTop();
     $("html, body").animate({ scrollTop: scrollTop });
 
-    if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
-      window.location.href = this.props.data[this.props.tourStep - 1].url;
-    }
-
-    // this.setState({ autoPlay: true });
-
-    // setTimeout(() => {
-    //     document.querySelectorAll('video').forEach(res => {
-    //         
-    //         if(res.className !== "preview-video") {
-    //             res.pause()
-    //         }
-    //     })
-    // }, 1000);
-
-    // chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-    //     
-    //     if(items && (!items.AutoPlayMediaToggle || items.AutoPlayMediaToggle)) {
-    //         autoplay = items.AutoPlayMediaToggle;
-    //         this.setState({ autoPlay: items.AutoPlayMediaToggle });
-    //     }
-
-    // });
-
-    // Add modal class to dom
-    this.addModalClass();
-
-    // if (document.readyState === 'loading') {
-    //     
-    // } else if (document.readyState === 'complete') {
-    //     
+    // if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
+    //   window.location.href = this.props.data[this.props.tourStep - 1].url;
     // }
 
-    if (document.readyState === "complete") {
-      $(document).ready(() => {
-        // Call toggle website media
-        this.toggleWebSitesMedia();
-      });
-    } else if (
-      document.readyState === "interactive" &&
-      document.URL.includes("https://www.youtube.com/")
-    ) {
-      // document.body.onload = function () { https://www.dailymotion.com/
-      //     
-      //     // Call toggle website media
-      //     this.toggleWebSitesMedia();
-      // };
-      $(document).ready(() => {
-        // Call toggle website media
-        this.toggleWebSitesMedia();
-      });
-    } else if (document.URL.includes("https://twitter.com/")) {
-      $(document).ready(() => {
-        // Call toggle website media
-        this.toggleWebSitesMedia();
-      });
-    } else {
-      $(window).on("load", () => {
-        // Call toggle website media
-        this.toggleWebSitesMedia();
-      });
+    this.addModalClass();
 
-      // document.body.onload = async function () {
-      //     
-      //     // Call toggle website media
-      //     await this.toggleWebSitesMedia();
-      // };
-    }
-
-    // Add trailit logo
     addTrailitLogo();
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-    //     if(prevState.autoPlay !== items.AutoPlayMediaToggle) {
-    //         this.setState({ autoPlay: items.AutoPlayMediaToggle });
-    //     }
-    // });
-
-    // this.setState({ autoPlay: true });
-
-    // Add modal class to dom
     this.addModalClass();
-
-    // Call toggle website media
-    this.toggleWebSitesMedia();
   }
 
   /**
@@ -143,17 +67,21 @@ class PreviewModalComponent extends React.Component {
    * @step tooltip current step
    */
   onClickToManagePopoverButton = async (event, tourSide) => {
+    
+    this.props.toogleTargetDataNotFound(false);
+    
+
     let { tourStep } = this.props;
     let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
 
-
     await this.toggle();
 
-    // 
     if (this.props.data[step - 1].url === document.URL) {
+      
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
     } else {
+      
       // Set loading true to show overlay
       this.props.setLoadingState(true);
 
@@ -161,15 +89,11 @@ class PreviewModalComponent extends React.Component {
       await this.props.tour(step, type, tourSide);
       window.location.href = this.props.data[step - 1].url;
     }
-    // if(document.querySelector('#my-extension-root-flip').classList.value ==="") {
-    //     document.querySelector('#my-extension-root-flip').classList.remove('trail_flip_box');
-    // }
-    this.setState({ open: true });
+
   };
 
   onClickToDoneTour = (data, step) => {
-    let { tourSteps } = this.props;
-    this.setState({ open: false });
+    this.props.toogleTargetDataNotFound(false);
     if (
       document
         .getElementById("extension-div")
@@ -186,6 +110,7 @@ class PreviewModalComponent extends React.Component {
   };
 
   onButtonCloseHandler = async (e) => {
+    this.props.toogleTargetDataNotFound(false);
     // Call parent component function to close tooltip preview
     if (
       document
@@ -233,73 +158,17 @@ class PreviewModalComponent extends React.Component {
     });
   };
 
-  toggleWebSitesMedia = () => {
-    const { tourStep, data } = this.props;
-    if (
-      data[tourStep - 1].mediaType &&
-      data[tourStep - 1].mediaType === "video"
-    ) {
-      // Stop playing websites audio or video
-      stopMediaPlaying();
-    }
-  };
-
   componentWillUnmount() {
     // Remove trailit log
     removeTrailitLogo();
   }
 
   render() {
-    const { open, autoPlay } = this.state;
-    const { tourStep, tourSide, play } = this.props;
-    const { title, description } = this.props.data[tourStep - 1];
-    let preview = null;
-
-    if (
-      this.props.data[tourStep - 1].mediaType &&
-      this.props.data[tourStep - 1].mediaType === "video"
-    ) {
-      preview = (
-        <div className="tr_preview_video_bx">
-          <video
-            className="preview-video"
-            disablePictureInPicture
-            controlsList="nodownload"
-            controls
-            allow="autoplay"
-            autoPlay={autoPlay}
-          >
-            <source src={this.props.data[tourStep - 1].web_url} />
-          </video>
-        </div>
-      );
-    } else if (
-      this.props.data[tourStep - 1].mediaType &&
-      this.props.data[tourStep - 1].mediaType === "audio"
-    ) {
-      preview = (
-        <AudioTour
-          data={this.props.data}
-          toggle={this.props.toggle}
-          tourStep={this.props.tourStep}
-          tour={this.props.tour}
-          previewInTooltip
-        />
-      );
-    } else if (
-      this.props.data[tourStep - 1].mediaType &&
-      this.props.data[tourStep - 1].mediaType === "image"
-    ) {
-      preview = (
-        <div className="tr_preview_picture_bx">
-          <img
-            className="preview-picture"
-            src={this.props.data[tourStep - 1].web_url}
-            alt="preview-img"
-          />
-        </div>
-      );
-    }
+    const { open } = this.state;
+    const { tourStep } = this.props;
+    let preview = (
+      <div className={`trail_modal_title p-0`}>Target Data not Found</div>
+    );
 
     return (
       <div>
@@ -318,24 +187,7 @@ class PreviewModalComponent extends React.Component {
           container={document
             .getElementById("extension-div")
             .shadowRoot.querySelector(".modal-open")}
-          className={`tr_modal trail_preview_modal trail_tooltip_done ${
-            this.props.data[tourStep - 1].mediaType &&
-            this.props.data[tourStep - 1].mediaType === "text"
-              ? "trail_text_only"
-              : "" ||
-                (this.props.data[tourStep - 1].mediaType &&
-                  this.props.data[tourStep - 1].mediaType === "video")
-              ? "tr_video_only"
-              : "" ||
-                (this.props.data[tourStep - 1].mediaType &&
-                  this.props.data[tourStep - 1].mediaType === "image")
-              ? "tr_picture_only"
-              : "" ||
-                (this.props.data[tourStep - 1].mediaType &&
-                  this.props.data[tourStep - 1].mediaType === "audio")
-              ? "tr_audio_only"
-              : ""
-          }`}
+          className="tr_modal trail_preview_modal trail_tooltip_done trail_text_only"
         >
           <ModalBody>
             {this.props.data.length > 0 && (
@@ -348,22 +200,7 @@ class PreviewModalComponent extends React.Component {
                 <CloseOutlined type="close" />
               </Button>
             )}
-            <div className="trail_modal_content_main">
-              <div
-                className={`trail_modal_title ${
-                  resizeScreen() && "trail_modal_title_mobile"
-                }`}
-              >
-                {title}
-              </div>
-              {
-                <span
-                  className="trail_modal_content"
-                  dangerouslySetInnerHTML={{ __html: description }}
-                ></span>
-              }
-              {preview}
-            </div>
+            <div className="trail_modal_content_main">{preview}</div>
 
             <div className="btn-wrap">
               {1 < tourStep && (
@@ -417,4 +254,4 @@ class PreviewModalComponent extends React.Component {
   }
 }
 
-export default PreviewModalComponent;
+export default TargetNotFound;

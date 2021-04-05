@@ -36,9 +36,11 @@ export const defaultButtonCss1 = `
     } */
     
     div#my-extension-defaultroot {
-        font-family: 'Lato', sans-serif;
         display: block;
+        border-radius: 5px;
+        font-family: 'Lato', sans-serif;
         z-index: 999999999;
+        box-shadow: rgb(212 30 121) 0px 0px 9px;
     }
     
     #my-extension-defaultroot .sidepopup {

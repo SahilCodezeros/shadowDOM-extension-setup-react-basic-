@@ -67,6 +67,8 @@ class WebUserTour extends React.Component {
   }
 
   handleWithoutLogin = (event, tourSide, type, currentStep) => {
+    this.props.toogleTargetDataNotFound(false);
+
     chrome.storage.local.get(["isGuest"], (items) => {
       if (currentStep % 3 === 0 && tourSide === "next" && items.isGuest) {
         this.props.tooltipToggle();
@@ -87,11 +89,10 @@ class WebUserTour extends React.Component {
   componentDidMount() {
     let { tourStep } = this.state;
     this.createPopOver(tourStep);
-
-    window.addEventListener("load", this.handleLoad);
-
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     this.getWebUserTour("", this.props.data[tourStep - 1], tourStep);
+
+    window.addEventListener("load", this.handleLoad);
 
     if (
       this.props.data[tourStep - 1].mediaType &&
@@ -139,7 +140,16 @@ class WebUserTour extends React.Component {
     });
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    if (prevProps.tourStep !== this.props.tourStep) {
+      this.createPopOver(this.props.tourStep);
+      chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
+      this.getWebUserTour(
+        "",
+        this.props.data[this.props.tourStep - 1],
+        this.props.tourStep
+      );
+    }
     // Call add logo function
     this.addLogo();
   }
@@ -240,28 +250,33 @@ class WebUserTour extends React.Component {
     }
 
     if (document.querySelector(unqTarget) == null) {
-      let a = () => {
-        if (resizeScreen()) {
-          countN++;
+      this.props.toogleTargetDataNotFound(true);
+      console.log(
+        "document.querySelector(unqTarget)",
+        document.querySelector(unqTarget)
+      );
+      // let a = () => {
+      //   if (resizeScreen()) {
+      //     countN++;
 
-          if (countN == 4) {
-            alert("Your target not found!!");
-            clearInt();
-            this.onButtonCloseHandler(event);
-            this.props.onNotFoundTarget({
-              trail_data_id: this.props.data[step - 1].trail_data_id,
-            });
-            countN = 0;
-          }
-        }
+      //     if (countN == 4) {
+      //       alert("Your target not found!!");
+      //       clearInt();
+      //       this.onButtonCloseHandler(event);
+      //       this.props.onNotFoundTarget({
+      //         trail_data_id: this.props.data[step - 1].trail_data_id,
+      //       });
+      //       countN = 0;
+      //     }
+      //   }
 
-        if (document.querySelector(unqTarget) != null) {
-          countN = 0;
-          clearInt();
-          this.createPopOver(step);
-          this.getWebUserTour(event, data, step);
-        }
-      };
+      //   if (document.querySelector(unqTarget) != null) {
+      //     countN = 0;
+      //     clearInt();
+      //     this.createPopOver(step);
+      //     this.getWebUserTour(event, data, step);
+      //   }
+      // };
 
       const interval = setInterval(a, 1000);
 
@@ -269,8 +284,6 @@ class WebUserTour extends React.Component {
         clearInterval(interval);
       }
     } else {
-      document.querySelector(unqTarget).classList.add("trail_web_user_tour");
-
       // Call Add overlay function
       addOverlay();
 
@@ -365,6 +378,8 @@ class WebUserTour extends React.Component {
    * @step tooltip current step
    */
   onClickToManagePopoverButton = async (event, tourSide) => {
+    this.props.toogleTargetDataNotFound(false);
+
     let step =
       tourSide === "prev" ? this.props.tourStep - 1 : this.props.tourStep + 1;
 
@@ -417,6 +432,7 @@ class WebUserTour extends React.Component {
   };
 
   onClickToDoneTour = (data, step) => {
+    this.props.toogleTargetDataNotFound(false);
     let { tourSteps, tourStep } = this.state;
 
     Object.keys(tourSteps).map((r, i) => {
@@ -446,6 +462,7 @@ class WebUserTour extends React.Component {
   };
 
   onButtonCloseHandler = async (e) => {
+    this.props.toogleTargetDataNotFound(false);
     let res = await this.props.closeButtonHandler(e);
 
     return res;

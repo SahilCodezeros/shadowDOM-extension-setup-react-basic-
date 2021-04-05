@@ -5,7 +5,7 @@ export const videoTourCss1 = `
     }
 
     .video-wrap_tooltip-smallScreen {
-        top: 43vh;
+        top: calc(100% - 235px);
         // top: calc(100% - 205px);
         left: calc(100% - 430px);
         width: 348px;

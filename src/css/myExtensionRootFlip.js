@@ -1173,6 +1173,9 @@ export const myExtensionRootFlipCss4 = `
         box-sizing: border-box;
         user-select: none;
     }
+    .trail_modal_title.p-0{
+        padding: 0px !important;
+    }
 
     .trail_preview_modal .trail_modal_content {
         // display: flex !important;

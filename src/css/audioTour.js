@@ -526,7 +526,7 @@ export const audioPlayerCss2 = `
     .audio_wrap_mobile {
         right: 15vw !important;
         width: 72vw;
-        top: 65vh !important;
+        // top: 65vh !important;
     }
 
     .trail_tooltip_done .audio_wrap_mobile {
