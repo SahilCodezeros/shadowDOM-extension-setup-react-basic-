@@ -251,32 +251,28 @@ class WebUserTour extends React.Component {
 
     if (document.querySelector(unqTarget) == null) {
       this.props.toogleTargetDataNotFound(true);
-      console.log(
-        "document.querySelector(unqTarget)",
-        document.querySelector(unqTarget)
-      );
-      // let a = () => {
-      //   if (resizeScreen()) {
-      //     countN++;
+      let a = () => {
+        if (resizeScreen()) {
+          countN++;
 
-      //     if (countN == 4) {
-      //       alert("Your target not found!!");
-      //       clearInt();
-      //       this.onButtonCloseHandler(event);
-      //       this.props.onNotFoundTarget({
-      //         trail_data_id: this.props.data[step - 1].trail_data_id,
-      //       });
-      //       countN = 0;
-      //     }
-      //   }
+          if (countN == 4) {
+            alert("Your target not found!!");
+            clearInt();
+            this.onButtonCloseHandler(event);
+            this.props.onNotFoundTarget({
+              trail_data_id: this.props.data[step - 1].trail_data_id,
+            });
+            countN = 0;
+          }
+        }
 
-      //   if (document.querySelector(unqTarget) != null) {
-      //     countN = 0;
-      //     clearInt();
-      //     this.createPopOver(step);
-      //     this.getWebUserTour(event, data, step);
-      //   }
-      // };
+        if (document.querySelector(unqTarget) != null) {
+          countN = 0;
+          clearInt();
+          this.createPopOver(step);
+          this.getWebUserTour(event, data, step);
+        }
+      };
 
       const interval = setInterval(a, 1000);
 

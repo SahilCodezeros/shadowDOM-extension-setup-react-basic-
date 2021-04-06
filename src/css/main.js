@@ -336,13 +336,21 @@ export const main1Css = `
     }
 
     .d-flex {
+        width: 100%;
         display: flex;
         line-height: 1.2;
-        justify-content: space-between;
+        // justify-content: space-between;
+        justify-content: left;
     }
 
     .d-flex-1 {
         // width: 70px;
+        width: 20%;
+    }
+
+    .d-flex-2 {
+        // width: 60%;
+        width: 160px;
     }
 
     .d-flex-1 h4 {
@@ -405,6 +413,9 @@ export const main2Css = `
         color: #fff;
         // line-height: 20px;
         font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .d-flex-3 {

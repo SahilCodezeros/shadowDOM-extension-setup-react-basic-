@@ -4900,27 +4900,26 @@ class DefaultButton extends React.PureComponent {
               tourType,
             })}
 
-            {((currentTourType !== "" &&
+            {currentTourType !== "" &&
               tourType === "preview" &&
               tourStep !== "" &&
-              this.state.targetDataNotFound) ||
-              (tourStep !== "" && !tourUrl)) && (
-              <TargetNotFound
-                toogleTargetDataNotFound={(value) =>
-                  this.setState({ targetDataNotFound: value })
-                }
-                previewModalToggle={this.modelToggler}
-                onDone={onDone}
-                data={trailList}
-                toggle={this.onClearToggle}
-                tourStep={tourStep}
-                tour={this.tourManage}
-                tourSide={this.state.tourSide}
-                closeButtonHandler={this.onCloseTooltipHandle}
-                setLoadingState={this.setLoadingState}
-                onSendTipModalOpen={this.onSendTipModalOpen}
-              />
-            )}
+              (this.state.targetDataNotFound || !tourUrl) && (
+                <TargetNotFound
+                  toogleTargetDataNotFound={(value) =>
+                    this.setState({ targetDataNotFound: value })
+                  }
+                  previewModalToggle={this.modelToggler}
+                  onDone={onDone}
+                  data={trailList}
+                  toggle={this.onClearToggle}
+                  tourStep={tourStep}
+                  tour={this.tourManage}
+                  tourSide={this.state.tourSide}
+                  closeButtonHandler={this.onCloseTooltipHandle}
+                  setLoadingState={this.setLoadingState}
+                  onSendTipModalOpen={this.onSendTipModalOpen}
+                />
+              )}
             {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
           </div>
           <div
@@ -5108,27 +5107,26 @@ class DefaultButton extends React.PureComponent {
                       />
                     )}
 
-                  {((currentTourType !== "" &&
+                  {currentTourType !== "" &&
                     tourType === "preview" &&
                     tourStep !== "" &&
-                    this.state.targetDataNotFound) ||
-                    (tourStep !== "" && !tourUrl)) && (
-                    <TargetNotFound
-                      toogleTargetDataNotFound={(value) =>
-                        this.setState({ targetDataNotFound: value })
-                      }
-                      previewModalToggle={this.modelToggler}
-                      onDone={onDone}
-                      data={trailList}
-                      toggle={this.onClearToggle}
-                      tourStep={tourStep}
-                      tour={this.tourManage}
-                      tourSide={this.state.tourSide}
-                      closeButtonHandler={this.onCloseTooltipHandle}
-                      setLoadingState={this.setLoadingState}
-                      onSendTipModalOpen={this.onSendTipModalOpen}
-                    />
-                  )}
+                    (this.state.targetDataNotFound || !tourUrl) && (
+                      <TargetNotFound
+                        toogleTargetDataNotFound={(value) =>
+                          this.setState({ targetDataNotFound: value })
+                        }
+                        previewModalToggle={this.modelToggler}
+                        onDone={onDone}
+                        data={trailList}
+                        toggle={this.onClearToggle}
+                        tourStep={tourStep}
+                        tour={this.tourManage}
+                        tourSide={this.state.tourSide}
+                        closeButtonHandler={this.onCloseTooltipHandle}
+                        setLoadingState={this.setLoadingState}
+                        onSendTipModalOpen={this.onSendTipModalOpen}
+                      />
+                    )}
 
                   {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
                 </div>

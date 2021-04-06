@@ -575,6 +575,7 @@ export const defaultButtonCss2 = `
     .info_bbx_gradient.active,
     .info_bbx_grey.active {
         border: 2px solid #f04d26;
+        width: 89.5% !important;
     }
 
     .trailitStepBox.trailitSubStepBox .trailitStepTitle {
