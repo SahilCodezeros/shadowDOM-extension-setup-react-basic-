@@ -3455,8 +3455,8 @@ class DefaultButton extends React.PureComponent {
   };
 
   tourManage = (step, type, tourSide) => {
-    console.log({step, type, tourSide});
-   
+    console.log({ step, type, tourSide });
+
     return new Promise((resolve, reject) => {
       chrome.storage.local.get(
         [
@@ -4473,279 +4473,273 @@ class DefaultButton extends React.PureComponent {
     }
 
     let sideBar = (
-        <div className="first_step">
-          <div className="hdr">
-            <div className="titleBack">
-              <button
-                disabled={onDone}
-                className="trail_builder-back-button"
-                onClick={this.onBackArrowClickHandler}
-                onTouchEnd={this.onBackArrowClickHandler}
+      <div className="first_step">
+        <div className="hdr">
+          <div className="titleBack">
+            <button
+              disabled={onDone}
+              className="trail_builder-back-button"
+              onClick={this.onBackArrowClickHandler}
+              onTouchEnd={this.onBackArrowClickHandler}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="7.734"
+                height="13.404"
+                viewBox="0 0 7.734 13.404"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="7.734"
-                  height="13.404"
-                  viewBox="0 0 7.734 13.404"
-                >
-                  <g id="left-arrow" transform="translate(0.557 0.557)">
-                    <path
-                      id="Path_2"
-                      data-name="Path 2"
-                      d="M39.276,18.719a.437.437,0,0,0,.617,0,.437.437,0,0,0,0-.617l-5.428-5.428,5.428-5.428a.437.437,0,0,0-.617-.617l-5.748,5.737a.437.437,0,0,0,0,.617Z"
-                      transform="translate(-33.4 -6.5)"
-                      fill="#289728"
-                      stroke="#D41E79"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="1"
-                    />
-                  </g>
-                </svg>
-              </button>
-              <span>Trail Builder</span>
+                <g id="left-arrow" transform="translate(0.557 0.557)">
+                  <path
+                    id="Path_2"
+                    data-name="Path 2"
+                    d="M39.276,18.719a.437.437,0,0,0,.617,0,.437.437,0,0,0,0-.617l-5.428-5.428,5.428-5.428a.437.437,0,0,0-.617-.617l-5.748,5.737a.437.437,0,0,0,0,.617Z"
+                    transform="translate(-33.4 -6.5)"
+                    fill="#289728"
+                    stroke="#D41E79"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1"
+                  />
+                </g>
+              </svg>
+            </button>
+            <span>Trail Builder</span>
+          </div>
+          {obj.previewUserId && obj.previewUserId !== "" && (
+            <div className="optionBtn">
+              {follow ? (
+                <Button type="primary" onClick={this.unFollowTrail}>
+                  Unfollow
+                </Button>
+              ) : (
+                <Button type="primary" onClick={this.followTrail}>
+                  Follow
+                </Button>
+              )}
             </div>
-            {obj.previewUserId && obj.previewUserId !== "" && (
-              <div className="optionBtn">
-                {follow ? (
-                  <Button type="primary" onClick={this.unFollowTrail}>
-                    Unfollow
-                  </Button>
-                ) : (
-                  <Button type="primary" onClick={this.followTrail}>
-                    Follow
-                  </Button>
-                )}
+          )}
+        </div>
+        <div id="scroll" className="sidepopcontent scrollbar">
+          {tourType === "audio" || tourType === "video" ? (
+            <h4 className="title my-4">Upload Media</h4>
+          ) : (
+            // <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
+            <h4 className="title my-4">{trailName}</h4>
+          )}
+          <div className="pl-4 trail_video_frm">
+            {tourStatus !== "preview" && tourType === "video" && (
+              <input
+                type="text"
+                name="title"
+                onChange={this.onChangeToInput}
+                onKeyDown={(e) => e.stopPropagation()}
+                placeholder="Enter Video title"
+                className="ant-input mb-2"
+                autoComplete="off"
+              />
+            )}
+            {tourStatus !== "preview" && tourType === "video" && (
+              <input
+                type="text"
+                name="web_url"
+                value={fileName}
+                onChange={this.onChangeToInput}
+                onKeyDown={(e) => e.stopPropagation()}
+                placeholder="Add Video URL"
+                className="ant-input mb-2"
+                autoComplete="off"
+                disabled={true}
+              />
+            )}
+            {tourStatus !== "preview" && tourType === "video" && (
+              <div className="upload_bx">
+                <div className="ant-upload">
+                  <p className="ant-upload-drag-icon">
+                    {fileLoading && (
+                      <div class="trial_spinner">
+                        <img
+                          alt="ring1"
+                          class="ring1"
+                          src={require(`./images/loding1.png`)}
+                        />
+                        <img
+                          alt="ring2"
+                          class="ring2"
+                          src={require(`./images/loding2.png`)}
+                        />
+                      </div>
+                    )}
+                    {!fileLoading && <CloudUploadOutlined />}
+                  </p>
+                  <p className="ant-upload-text">
+                    {fileLoading ? "Uploading" : "Upload"} Video
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  name="media"
+                  accept={mediaType}
+                  onChange={this.handleChange}
+                />
               </div>
             )}
-          </div>
-          <div id="scroll" className="sidepopcontent scrollbar">
-            {tourType === "audio" || tourType === "video" ? (
-              <h4 className="title my-4">Upload Media</h4>
-            ) : (
-              // <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
-              <h4 className="title my-4">{trailName}</h4>
-            )}
-            <div className="pl-4 trail_video_frm">
-              {tourStatus !== "preview" && tourType === "video" && (
-                <input
-                  type="text"
-                  name="title"
-                  onChange={this.onChangeToInput}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  placeholder="Enter Video title"
-                  className="ant-input mb-2"
-                  autoComplete="off"
-                />
-              )}
-              {tourStatus !== "preview" && tourType === "video" && (
-                <input
-                  type="text"
-                  name="web_url"
-                  value={fileName}
-                  onChange={this.onChangeToInput}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  placeholder="Add Video URL"
-                  className="ant-input mb-2"
-                  autoComplete="off"
-                  disabled={true}
-                />
-              )}
-              {tourStatus !== "preview" && tourType === "video" && (
-                <div className="upload_bx">
-                  <div className="ant-upload">
-                    <p className="ant-upload-drag-icon">
-                      {fileLoading && (
-                        <div class="trial_spinner">
-                          <img
-                            alt="ring1"
-                            class="ring1"
-                            src={require(`./images/loding1.png`)}
-                          />
-                          <img
-                            alt="ring2"
-                            class="ring2"
-                            src={require(`./images/loding2.png`)}
-                          />
-                        </div>
-                      )}
-                      {!fileLoading && <CloudUploadOutlined />}
-                    </p>
-                    <p className="ant-upload-text">
-                      {fileLoading ? "Uploading" : "Upload"} Video
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    name="media"
-                    accept={mediaType}
-                    onChange={this.handleChange}
-                  />
-                </div>
-              )}
-              {tourStatus !== "preview" && tourType === "video" && (
-                <div className="add-step-bt-container">
-                  <button
-                    disabled={fileLoading}
-                    onClick={this.onSaveTrail}
-                    className="custom-button add-step-button trail_add_step_btn"
-                  >
-                    ADD STEP
-                  </button>
-                </div>
-              )}
-              {tourStatus === "preview" && tourType === "video" && (
-                <input
-                  type="submit"
-                  onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)}
-                  value="Previous"
-                  className="custom-button"
-                />
-              )}
-              {tourStatus === "preview" && tourType === "video" && (
-                <input
-                  type="submit"
-                  onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)}
-                  value="Next"
-                  className="custom-button"
-                />
-              )}
-              {tourStatus !== "preview" && tourType === "audio" && (
-                <input
-                  type="text"
-                  name="title"
-                  placeholder="Enter Audio Title"
-                  className="ant-input mb-2"
-                  onChange={this.onChangeToInput}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  autoComplete="off"
-                />
-              )}
-              {tourStatus !== "preview" && tourType === "audio" && (
-                <input
-                  type="text"
-                  name="web_url"
-                  value={fileName}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  onChange={this.onChangeToInput}
-                  placeholder="Add Audio URL"
-                  className="ant-input mb-2"
-                  autoComplete="off"
-                  disabled={true}
-                />
-              )}
-              {tourStatus !== "preview" && tourType === "audio" && (
-                <div className="upload_bx">
-                  <div className="ant-upload">
-                    <p className="ant-upload-drag-icon">
-                      {fileLoading && (
-                        <div class="trial_spinner">
-                          <img
-                            class="ring1"
-                            src={require(`./images/loding1.png`)}
-                          />
-                          <img
-                            class="ring2"
-                            src={require(`./images/loding2.png`)}
-                          />
-                        </div>
-                      )}
-                      {!fileLoading && <CloudUploadOutlined />}
-                    </p>
-                    <p className="ant-upload-text">
-                      {fileLoading ? "Uploading" : "Upload"} Audio
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    name="media"
-                    accept={mediaType}
-                    onChange={this.handleChange}
-                  />
-                </div>
-              )}
-              {tourStatus !== "preview" && tourType === "audio" && (
-                <div className="add-step-bt-container">
-                  <button
-                    disabled={fileLoading}
-                    onClick={this.onSaveTrail}
-                    className="custom-button add-step-button trail_add_step_btn"
-                  >
-                    ADD STEP
-                  </button>
-                </div>
-              )}
-              {tourStatus === "preview" && tourType === "audio" && (
-                <input
-                  type="submit"
-                  onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)}
-                  value="Previous"
-                  className="custom-button"
-                />
-              )}
-              {tourStatus === "preview" && tourType === "audio" && (
-                <input
-                  type="submit"
-                  onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)}
-                  value="Next"
-                  className="custom-button"
-                />
-              )}
-            </div>
-            {tourType !== "audio" && tourType !== "video" && (
-              <form className="scrollable-steps-list" id="">
-                <SortableContainer
-                  pressDelay={200}
-                  onSortEnd={this.onSectionDragAndDrop}
-                  // useDragHandle
+            {tourStatus !== "preview" && tourType === "video" && (
+              <div className="add-step-bt-container">
+                <button
+                  disabled={fileLoading}
+                  onClick={this.onSaveTrail}
+                  className="custom-button add-step-button trail_add_step_btn"
                 >
-                  {this.state.trailList.map((result, index) => (
-                    <SortableItem
-                      key={`item-${index}`}
-                      tourType={this.state.tourType}
-                      onClick={this.onClickToGetRow}
-                      index={index}
-                      i={index}
-                      tourStep={tourStep}
-                      result={result}
-                      isDeleteModalOpen={this.state.deleteModal.show}
-                      onDeleteModalOpen={this.onDeleteModalOpen}
-                      MobileTargetNotFound={this.state.MobileTargetNotFound}
-                      currentTrailsTab={currentTrailsTab}
-                    />
-                  ))}
-                </SortableContainer>
-              </form>
+                  ADD STEP
+                </button>
+              </div>
             )}
-            
+            {tourStatus === "preview" && tourType === "video" && (
+              <input
+                type="submit"
+                onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)}
+                value="Previous"
+                className="custom-button"
+              />
+            )}
+            {tourStatus === "preview" && tourType === "video" && (
+              <input
+                type="submit"
+                onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)}
+                value="Next"
+                className="custom-button"
+              />
+            )}
+            {tourStatus !== "preview" && tourType === "audio" && (
+              <input
+                type="text"
+                name="title"
+                placeholder="Enter Audio Title"
+                className="ant-input mb-2"
+                onChange={this.onChangeToInput}
+                onKeyDown={(e) => e.stopPropagation()}
+                autoComplete="off"
+              />
+            )}
+            {tourStatus !== "preview" && tourType === "audio" && (
+              <input
+                type="text"
+                name="web_url"
+                value={fileName}
+                onKeyDown={(e) => e.stopPropagation()}
+                onChange={this.onChangeToInput}
+                placeholder="Add Audio URL"
+                className="ant-input mb-2"
+                autoComplete="off"
+                disabled={true}
+              />
+            )}
+            {tourStatus !== "preview" && tourType === "audio" && (
+              <div className="upload_bx">
+                <div className="ant-upload">
+                  <p className="ant-upload-drag-icon">
+                    {fileLoading && (
+                      <div class="trial_spinner">
+                        <img
+                          class="ring1"
+                          src={require(`./images/loding1.png`)}
+                        />
+                        <img
+                          class="ring2"
+                          src={require(`./images/loding2.png`)}
+                        />
+                      </div>
+                    )}
+                    {!fileLoading && <CloudUploadOutlined />}
+                  </p>
+                  <p className="ant-upload-text">
+                    {fileLoading ? "Uploading" : "Upload"} Audio
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  name="media"
+                  accept={mediaType}
+                  onChange={this.handleChange}
+                />
+              </div>
+            )}
+            {tourStatus !== "preview" && tourType === "audio" && (
+              <div className="add-step-bt-container">
+                <button
+                  disabled={fileLoading}
+                  onClick={this.onSaveTrail}
+                  className="custom-button add-step-button trail_add_step_btn"
+                >
+                  ADD STEP
+                </button>
+              </div>
+            )}
+            {tourStatus === "preview" && tourType === "audio" && (
+              <input
+                type="submit"
+                onClick={() => this.onTourVideoTrail(this.state.tourStep - 1)}
+                value="Previous"
+                className="custom-button"
+              />
+            )}
+            {tourStatus === "preview" && tourType === "audio" && (
+              <input
+                type="submit"
+                onClick={() => this.onTourVideoTrail(this.state.tourStep + 1)}
+                value="Next"
+                className="custom-button"
+              />
+            )}
           </div>
-          <div >
-              {tourType !== "audio" &&
-                tourType !== "video" &&
-                this.state.saveSort && (
-                  <div className="trailButtonsWrapper">
-                    <button
-                      className="custom-button"
-                      onClick={this.saveSortedTrails}
-                    >
-                      Save
-                    </button>
-                  </div>
-                )}
-              {tourType !== "audio" &&
-                tourType !== "video" &&
-                this.state.trailList.length > 0 && (
-                  <div className="trailButtonsWrapper jc-end pb-0">
-                    <button
-                      className="custom-button share-button"
-                      onClick={this.tooltipShareBtn}
-                    >
-                      Share
-                    </button>
-                  </div>
-                )}
-            </div>
+          {tourType !== "audio" && tourType !== "video" && (
+            <form className="scrollable-steps-list" id="">
+              <SortableContainer
+                pressDelay={200}
+                onSortEnd={this.onSectionDragAndDrop}
+                // useDragHandle
+              >
+                {this.state.trailList.map((result, index) => (
+                  <SortableItem
+                    key={`item-${index}`}
+                    tourType={this.state.tourType}
+                    onClick={this.onClickToGetRow}
+                    index={index}
+                    i={index}
+                    tourStep={tourStep}
+                    result={result}
+                    isDeleteModalOpen={this.state.deleteModal.show}
+                    onDeleteModalOpen={this.onDeleteModalOpen}
+                    MobileTargetNotFound={this.state.MobileTargetNotFound}
+                    currentTrailsTab={currentTrailsTab}
+                  />
+                ))}
+              </SortableContainer>
+            </form>
+          )}
         </div>
+        <div>
+          {tourType !== "audio" && tourType !== "video" && this.state.saveSort && (
+            <div className="trailButtonsWrapper">
+              <button className="custom-button" onClick={this.saveSortedTrails}>
+                Save
+              </button>
+            </div>
+          )}
+          {tourType !== "audio" &&
+            tourType !== "video" &&
+            this.state.trailList.length > 0 && (
+              <div className="trailButtonsWrapper jc-end pb-0">
+                <button
+                  className="custom-button share-button"
+                  onClick={this.tooltipShareBtn}
+                >
+                  Share
+                </button>
+              </div>
+            )}
+        </div>
+      </div>
     );
 
     if (tourType === "preview") {
@@ -4801,13 +4795,15 @@ class DefaultButton extends React.PureComponent {
           />
         )}
 
-        <div className={`sidepanal adadad trail_sidepanel_overlay ${
-              tourType === "audio" ||
-              tourType === "video" ||
-              tourType === "Make Edit"
-                ? "white_background"
-                : "transparent_background"
-            }`}>
+        <div
+          className={`sidepanal adadad trail_sidepanel_overlay ${
+            tourType === "audio" ||
+            tourType === "video" ||
+            tourType === "Make Edit"
+              ? "white_background"
+              : "transparent_background"
+          }`}
+        >
           {createModalOpen && (
             <CreateModalComponent
               stepType={stepType}
@@ -4819,7 +4815,6 @@ class DefaultButton extends React.PureComponent {
             />
           )}
           <div>
-           
             {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
             {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
             {currentTourType === "tooltip" &&
@@ -4828,7 +4823,9 @@ class DefaultButton extends React.PureComponent {
               tourStep !== "" &&
               tourUrl && (
                 <WebUserTour
-                  toogleTargetDataNotFound={(value) => this.setState({targetDataNotFound:value })                  }
+                  toogleTargetDataNotFound={(value) =>
+                    this.setState({ targetDataNotFound: value })
+                  }
                   tooltipRef={this.state.tooltipRef}
                   tooltipToggle={this.webTourToggler}
                   onDone={onDone}
@@ -4901,28 +4898,26 @@ class DefaultButton extends React.PureComponent {
                 />
               )}
 
-
-
-            {((currentTourType !== "" &&
+            {currentTourType !== "" &&
               tourType === "preview" &&
               tourStep !== "" &&
-              this.state.targetDataNotFound) ||
-              (tourStep !== "" && !tourUrl)) && (
-              <TargetNotFound
-              toogleTargetDataNotFound={(value) => this.setState({targetDataNotFound:value })                  }
-
-                previewModalToggle={this.modelToggler}
-                onDone={onDone}
-                data={trailList}
-                toggle={this.onClearToggle}
-                tourStep={tourStep}
-                tour={this.tourManage}
-                tourSide={this.state.tourSide}
-                closeButtonHandler={this.onCloseTooltipHandle}
-                setLoadingState={this.setLoadingState}
-                onSendTipModalOpen={this.onSendTipModalOpen}
-              />
-            )}
+              (this.state.targetDataNotFound || !tourUrl) && (
+                <TargetNotFound
+                  toogleTargetDataNotFound={(value) =>
+                    this.setState({ targetDataNotFound: value })
+                  }
+                  previewModalToggle={this.modelToggler}
+                  onDone={onDone}
+                  data={trailList}
+                  toggle={this.onClearToggle}
+                  tourStep={tourStep}
+                  tour={this.tourManage}
+                  tourSide={this.state.tourSide}
+                  closeButtonHandler={this.onCloseTooltipHandle}
+                  setLoadingState={this.setLoadingState}
+                  onSendTipModalOpen={this.onSendTipModalOpen}
+                />
+              )}
             {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
           </div>
           <div
@@ -5006,13 +5001,15 @@ class DefaultButton extends React.PureComponent {
                 />
               )}
 
-              <div className={`sidepanal adadad trail_sidepanel_overlay ${
-              tourType === "audio" ||
-              tourType === "video" ||
-              tourType === "Make Edit"
-                ? "white_background"
-                : "transparent_background"
-            }`}>
+              <div
+                className={`sidepanal adadad trail_sidepanel_overlay ${
+                  tourType === "audio" ||
+                  tourType === "video" ||
+                  tourType === "Make Edit"
+                    ? "white_background"
+                    : "transparent_background"
+                }`}
+              >
                 {createModalOpen && (
                   <CreateModalComponent
                     stepType={stepType}
@@ -5026,7 +5023,7 @@ class DefaultButton extends React.PureComponent {
                 <div>
                   {/* {currentTourType === 'tooltip' && tourType === 'preview' && !overlay && tourStep!=='' && tourUrl && <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} />} */}
                   {/* <TooltipOverlay data={trailList} toggle={this.onClearToggle} tourStep={tourStep} tour={this.tourManage} tourSide={this.state.tourSide} /> */}
-                 
+
                   {currentTourType === "tooltip" &&
                     tourType === "preview" &&
                     !overlay &&
@@ -5110,26 +5107,26 @@ class DefaultButton extends React.PureComponent {
                       />
                     )}
 
-                  {((currentTourType !== "" &&
-                    tourType === "preview" &&
-                    tourStep !== "" &&
-                    this.state.targetDataNotFound) ||
-                    (tourStep !== "" && !tourUrl)) && (
-                    <TargetNotFound
-                  toogleTargetDataNotFound={(value) => this.setState({targetDataNotFound:value })                  }
-
-                      previewModalToggle={this.modelToggler}
-                      onDone={onDone}
-                      data={trailList}
-                      toggle={this.onClearToggle}
-                      tourStep={tourStep}
-                      tour={this.tourManage}
-                      tourSide={this.state.tourSide}
-                      closeButtonHandler={this.onCloseTooltipHandle}
-                      setLoadingState={this.setLoadingState}
-                      onSendTipModalOpen={this.onSendTipModalOpen}
-                    />
-                  )}
+{currentTourType !== "" &&
+              tourType === "preview" &&
+              tourStep !== "" &&
+              (this.state.targetDataNotFound || !tourUrl) && (
+                <TargetNotFound
+                  toogleTargetDataNotFound={(value) =>
+                    this.setState({ targetDataNotFound: value })
+                  }
+                  previewModalToggle={this.modelToggler}
+                  onDone={onDone}
+                  data={trailList}
+                  toggle={this.onClearToggle}
+                  tourStep={tourStep}
+                  tour={this.tourManage}
+                  tourSide={this.state.tourSide}
+                  closeButtonHandler={this.onCloseTooltipHandle}
+                  setLoadingState={this.setLoadingState}
+                  onSendTipModalOpen={this.onSendTipModalOpen}
+                />
+              )}
 
                   {/* <img src={require('./images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/> */}
                 </div>
