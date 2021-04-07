@@ -43,7 +43,7 @@ class TargetNotFound extends React.Component {
 
     setTimeout(() => {
       this.setState({ open: true });
-    }, 3500);
+    }, 4000);
 
     const scrollTop = $(window).scrollTop();
     $("html, body").animate({ scrollTop: scrollTop });
