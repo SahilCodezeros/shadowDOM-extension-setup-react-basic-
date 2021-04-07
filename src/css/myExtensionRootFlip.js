@@ -1768,6 +1768,25 @@ export const myExtensionRootFlipCss5 = `
         background-color: #c4c4c4;
     }
 
+    .sidepopcontent::-webkit-scrollbar-track {
+        // -webkit-box-shadow: none;
+        // background-color: transparent;
+        display: none;
+    }
+
+    .sidepopcontent::-webkit-scrollbar {
+        // width: 7px;
+        // background-color: transparent;
+        display: none;
+    }
+
+    .sidepopcontent::-webkit-scrollbar-thumb {
+        // border-radius: 5px;
+        // -webkit-box-shadow: none;
+        // background-color: #c4c4c4;
+        display: none;
+    }
+
     .add-step-bt-container {
         margin-top: 10px;
         text-align: center;

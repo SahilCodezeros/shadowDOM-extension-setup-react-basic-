@@ -525,7 +525,7 @@ export const audioPlayerCss2 = `
 
     .audio_wrap_mobile {
         right: 15vw !important;
-        width: 72vw;
+        width: 72vw !important;
         // top: 65vh !important;
     }
 
