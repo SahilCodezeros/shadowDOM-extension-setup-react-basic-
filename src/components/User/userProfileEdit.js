@@ -278,9 +278,9 @@ class UserProfileEdit extends PureComponent {
             />
             <label className="d-block">Upload Image</label>
           </div>
-          <label className="trailit_12700 d-block trailit_mb3">
+          {/* <label className="trailit_12700 d-block trailit_mb3">
             ADD MORE CONTENT
-          </label>
+          </label> */}
           {/* <div className="d-flex">
                         <div className="trailit_addMoreImage">
                         <input type="file"/>
@@ -318,10 +318,16 @@ class UserProfileEdit extends PureComponent {
             />
             <span></span>
             <label>Make this trail private</label>
-            <button type="button" className="trailit_deleteIcon">
+            {/* <button type="button" className="trailit_deleteIcon">
               <img src={require("../../images/delete.svg")} alt="delete" />
-            </button>
+            </button> */}
           </div>
+        {trail_user_status === "public"  &&  <div style={{marginBottom:5}}>
+            {" "}
+            By deselecting this, your Trail will be visible on Trailit.co's main
+            website. Are you sure you're ready to go live? If so, click on
+            'Save' to publish{" "}
+          </div>}
           <div className="trailit_userPanalFooterBox">
             <button
               type="button"

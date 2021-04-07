@@ -240,7 +240,7 @@ class CreateModalComponent extends React.PureComponent {
             toggle={this.toggle}
             className="tr_modal_trail_modal_header"
           >
-            Create {headerTitle} Modal
+            Create {headerTitle} Overlay
           </ModalHeader>
           <ModalBody>
             {commonTypeSelectonButton(

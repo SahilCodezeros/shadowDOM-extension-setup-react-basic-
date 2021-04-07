@@ -1,5 +1,5 @@
 import React from "react";
-import _ from "lodash";
+import _, { first } from "lodash";
 import { Button } from "antd";
 import Cropper from "react-easy-crop";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
@@ -272,7 +272,7 @@ class UserProfile extends React.Component {
         //   flag: "unread",
         // };
 
-        if (items.currentTrailsTab && items.currentTrailsTab === "Followed") {
+        if (items.currentTrailsTab && items.currentTrailsTab === "Following") {
           // Call user followed trail data function
           await this.userFollowedTrailData();
         } else {
@@ -380,7 +380,7 @@ class UserProfile extends React.Component {
     this.setState({ listTitle, isLoading: true });
     chrome.storage.local.set({ currentTrailsTab: listTitle });
 
-    if (listTitle === "Followed") {
+    if (listTitle === "Following") {
       // Call user followed trail data function
       await this.userFollowedTrailData();
     } else {
@@ -593,7 +593,7 @@ class UserProfile extends React.Component {
     let list = [];
     if (listTitle === "My Trails") {
       list = myTrilsListData;
-    } else if (listTitle === "Followed") {
+    } else if (listTitle === "Following") {
       list = myTrilsListData;
     }
 
@@ -753,8 +753,11 @@ class UserProfile extends React.Component {
             <UserProfileList
               list={list}
               addRaw={addRaw}
-              errorMsg={errorMsg}
               title={listTitle}
+              errorMsg={errorMsg}
+              lastName={lastName}
+              userName={userName}
+              firstName={firstName}
               isLoading={isLoading}
               getRow={this.getEditData}
               profileImage={profileImage}
@@ -771,12 +774,12 @@ class UserProfile extends React.Component {
                       className={`${
                         isDisabled ? "trailit_btnGray" : "trailit_btnPink"
                       }`}
-                      onClick={(e) => this.onClickToList("Followed")}
+                      onClick={(e) => this.onClickToList("Following")}
                     >
-                      Followed
+                      Following
                     </button>
                   )}
-                  {listTitle === "Followed" && (
+                  {listTitle === "Following" && (
                     <button
                       type="button"
                       // disabled={isDisabled}

@@ -747,7 +747,7 @@ html #site-wrap {
 #my-extension-defaultroot .sidepopup.open {
   animation: opacity 1s forwards;
   -webkit-animation: opacity 1s forwards;
-  overflow: "auto" !important;
+  /* overflow: "auto" !important; */
 }
 
 @keyframes opacity {
@@ -2901,7 +2901,7 @@ html #site-wrap {
 #my-extension-defaultroot .sidepopup.open {
   animation: opacity 0.7s forwards;
   -webkit-animation: opacity 0.7s forwards;
-  overflow: "auto" !important;
+  /* overflow: "auto" !important; */
 }
 
 @keyframes opacity {

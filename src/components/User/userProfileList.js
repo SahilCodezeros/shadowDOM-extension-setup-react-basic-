@@ -201,7 +201,13 @@ class UserProfileList extends Component {
       isLoading,
       list,
     } = this.state;
-    const { profileImage, errorMsg } = this.props;
+    const {
+      profileImage,
+      errorMsg,
+      firstName,
+      lastName,
+      userName,
+    } = this.props;
 
     return (
       <div className="trailit_userPanalContentInnerBox">
@@ -254,6 +260,26 @@ class UserProfileList extends Component {
                   };
                 }
 
+                let user_name = "-";
+
+                if (this.props.title === "Following") {
+                  if (
+                    res.userData &&
+                    res.userData.firstName &&
+                    res.userData.lastName
+                  ) {
+                    user_name = `${res.userData.firstName} ${res.userData.lastName}`;
+                  } else if (res.userData && res.userData.userName) {
+                    user_name = res.userData.userName;
+                  }
+                } else {
+                  if (firstName && lastName) {
+                    user_name = `${firstName} ${lastName}`;
+                  } else if (userName) {
+                    user_name = userName;
+                  }
+                }
+
                 return (
                   <div className="trailit_col6">
                     <div
@@ -268,7 +294,7 @@ class UserProfileList extends Component {
                         >
                           <div className="trailit_img_content">
                             <div className="trailit_top">
-                              {this.props.title !== "Followed" && (
+                              {this.props.title !== "Following" && (
                                 <div className="trailit_dotsMenu">
                                   <button
                                     type="button"
@@ -320,7 +346,7 @@ class UserProfileList extends Component {
                                     alt="user_image"
                                     className="trialit_user"
                                     src={
-                                      this.props.title === "Followed"
+                                      this.props.title === "Following"
                                         ? res.userData &&
                                           res.userData.profileImage !== ""
                                           ? res.userData.profileImage
@@ -331,17 +357,17 @@ class UserProfileList extends Component {
                                     }
                                   />
                                   <span className="trailit_ml2 trailit_ellipsis_40">
-                                    {res.trail_name}
+                                    {user_name}
                                   </span>
                                 </div>
-                                <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
+                                {/* <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
                                   <img
                                     alt="trailit_coin"
                                     width="11px"
                                     src={require("../../images/trailit_coin.png")}
                                   />
                                   <span className="trailit_ml2">94</span>
-                                </div>
+                                </div> */}
                               </div>
                             </div>
                           </div>
@@ -349,7 +375,7 @@ class UserProfileList extends Component {
                       </div>
                       <div className="trailit_bx_title">
                         <div className="trailit_10_500 trailit_ellips_2line">
-                          {res.trail_description}
+                          {res.trail_name}
                         </div>
                       </div>
                     </div>

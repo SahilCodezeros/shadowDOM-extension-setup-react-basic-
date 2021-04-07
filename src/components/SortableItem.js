@@ -153,7 +153,7 @@ class SortableItem extends React.Component {
           <div
             // onMouseLeave={this.onMouseLeave}
             className={`${
-              currentTrailsTab === "Followed"
+              currentTrailsTab === "Following"
                 ? result.visited
                   ? "info_bbx_gradient"
                   : "info_bbx_grey"
@@ -245,7 +245,7 @@ class SortableItem extends React.Component {
               tourStep === i + 1 ? "active" : "inactive"
             } ${this.state.showMenu ? "z-index-2" : ""}`}
           >
-            {/* {tourType !== "preview" && <DragHandle />} */}
+            {tourType !== "preview" && <DragHandle />}
             <div className="trailitStepTitle">
               Step {i + 1} <span>{result.title}</span>
             </div>

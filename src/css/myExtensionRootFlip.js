@@ -664,8 +664,11 @@ export const myExtensionRootFlipCss2 = `
     }
 
     .mobile_preview_popover .popover {
-        width: 400px !important;
-        max-width: 400px !important;
+        // width: 400px !important;
+        // max-width: 400px !important;
+
+        width: calc(100% - 10px) !important;
+        max-width: calc(100% - 10px) !important;
     }
 
     .trail_tooltip .bs-popover-auto[x-placement^="bottom"],
@@ -1617,7 +1620,7 @@ export const myExtensionRootFlipCss5 = `
         display: flex;
         justify-content: space-around;
         vertical-align: middle;
-        height: 7.5rem;
+        // height: 7.5rem;
     }
 
     .video-bubble-option,
@@ -1744,8 +1747,9 @@ export const myExtensionRootFlipCss5 = `
     }
 
     .scrollable-steps-list {
-        height: 230px;
+        max-height: 600px;
         overflow: auto;
+
     }
 
     .scrollable-steps-list::-webkit-scrollbar-track {

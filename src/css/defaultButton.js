@@ -376,7 +376,7 @@ export const defaultButtonCss2 = `
     #my-extension-defaultroot .sidepopup.open {
         animation: opacity 0.7s forwards;
         -webkit-animation: opacity 0.7s forwards;
-        overflow: auto !important;
+        // overflow: auto !important;
     }
 
     #my-extension-defaultroot .sidepopup.open * {
@@ -481,7 +481,8 @@ export const defaultButtonCss2 = `
     #my-extension-defaultroot .sidepopup.open .drag_icon img {
         width: 15px !important;
         height: 15px !important;
-        opacity: 0.3 !important;
+        // opacity: 0.3 !important;
+        opacity: 1 !important;
         animation: none !important;
         color: #aaaaaa !important;
     }
