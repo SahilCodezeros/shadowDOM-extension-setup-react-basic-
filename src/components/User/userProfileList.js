@@ -25,7 +25,7 @@ class UserProfileList extends Component {
   }
 
   styleBgImg = {
-    background: `url(${BgImage}) no-repeat scroll center center / cover`,
+    background: `linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${BgImage}) center center / cover no-repeat scroll`,
   };
 
   async componentWillReceiveProps(nextProps, prevState) {
