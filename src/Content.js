@@ -647,14 +647,6 @@ class Main extends React.Component {
         allTrails = [];
       }
 
-      console.log({
-        step,
-        tourStep: items.tourStep,
-        allTrails,
-        trail_id,
-        continueFlag,
-      });
-
       this.setState({
         trail_web_user_tour: trailWebUserTour,
         followedTrailUserData: items.followedTrailUserData
@@ -3808,6 +3800,8 @@ class DefaultButton extends React.PureComponent {
 
   // Save last show preview trail
   onBackArrowClickHandler = async (e, close) => {
+    const shadowRoot = document.getElementById("extension-div").shadowRoot;
+
     chrome.storage.local.get(
       [
         "isPreview",
@@ -3876,7 +3870,6 @@ class DefaultButton extends React.PureComponent {
         }
       }
     );
-    const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
     // if (close === undefined) {
     //   chrome.storage.local.set({ closeContinue: false });
@@ -3901,8 +3894,7 @@ class DefaultButton extends React.PureComponent {
         `traiil_stop${this.state.tourStep}`
       );
       $(".trail_select_bx").removeClass("trail_select_bx");
-      console.log("removed");
-      $("#my-extension-defaultroot").css("box-shadow", "none");
+      // $("#my-extension-defaultroot").css("box-shadow", "none");
 
       const tooltip = shadowRoot.querySelector(".trail_tooltip");
       if (tooltip) {
@@ -4317,6 +4309,43 @@ class DefaultButton extends React.PureComponent {
       // 	window.location.href = trailList[tourStep - 1].url;
       // }
     }
+
+    const shadowRoot = document.getElementById("extension-div").shadowRoot;
+    if (openSidebar) {
+      const defaultRoot = shadowRoot.getElementById("my-extension-defaultroot");
+
+      if (defaultRoot) {
+        defaultRoot.style.boxShadow = "rgb(212 30 121) 0px 0px 9px";
+      }
+    } else {
+      const defaultRoot = shadowRoot.getElementById("my-extension-defaultroot");
+
+      if (defaultRoot) {
+        defaultRoot.style.boxShadow = "none";
+      }
+    }
+
+    // if (openSidebar && tourType === "preview" && tourStep > 0) {
+    //   const sidePanelEle = shadowRoot.querySelector(
+    //     ".trail_builder_side_panel_open"
+    //   );
+
+    //   console.log("sidepanel", sidePanelEle);
+
+    //   if (sidePanelEle) {
+    //     sidePanelEle.style.overflow = "auto";
+    //   }
+    // } else {
+    //   const sidePanelEle = shadowRoot.querySelector(
+    //     ".trail_builder_side_panel_open"
+    //   );
+
+    //   console.log("sidepanel111", sidePanelEle);
+
+    //   if (sidePanelEle) {
+    //     sidePanelEle.style.overflow = "unset";
+    //   }
+    // }
 
     // let openPopup = openSidebar;
 
@@ -4915,7 +4944,7 @@ class DefaultButton extends React.PureComponent {
           <div
             className={`sidepopup ${
               openSidebar ? "open trail_builder_side_panel_open" : ""
-            }`}
+            } ${tourType === "preview" ? "overflow1" : ""}`}
           >
             <div className="space"></div>
             {/* <div className="preview">.
@@ -5125,7 +5154,7 @@ class DefaultButton extends React.PureComponent {
                 <div
                   className={`sidepopup ${
                     openSidebar ? "open trail_builder_side_panel_open" : ""
-                  }`}
+                  } ${tourType === "preview" ? "overflow1" : ""}`}
                 >
                   <div className="space"></div>
                   {/* <div className="preview">.

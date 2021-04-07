@@ -119,8 +119,6 @@ export const handleFileChange = (e, trailStatus, uploadFile) => {
   const fileType = file.type.split("/");
   e.target.value = null;
 
-  console.log("file", file);
-
   if (trailStatus === "audio" && fileType[1] === "mp4") {
     // Upload file function
     uploadFile(file);
@@ -131,30 +129,27 @@ export const handleFileChange = (e, trailStatus, uploadFile) => {
     // Return alert
     return alert("MKV format suport coming soon.");
   } else if (trailStatus === "image" && fileType[0] === "image") {
-    const size = { width: 380, height: 214 };
-    const imageTool = new ImageTools();
-    imageTool
-      .crop(file, size)
-      .then((blob) => {
-        console.log("blob", blob);
-        const date = new Date().getTime();
-        const resizedFile = new File([blob], `trail_image_${date}`, {
-          lastModified: date,
-          type: file.type,
-        });
+    // const size = { width: 380, height: 214 };
+    // const imageTool = new ImageTools();
+    // imageTool
+    //   .crop(file, size)
+    //   .then((blob) => {
+    //     const date = new Date().getTime();
+    //     const resizedFile = new File([blob], `trail_image_${date}`, {
+    //       lastModified: date,
+    //       type: file.type,
+    //     });
 
-        console.log("resizedFile", resizedFile);
+    //     // Upload file function
+    //     uploadFile(resizedFile);
+    //   })
+    //   .catch((err) => {
+    //     console.log("err", err);
+    //     alert("Error while resizing image. Please uplaod again.");
+    //   });
 
-        // Upload file function
-        uploadFile(resizedFile);
-      })
-      .catch((err) => {
-        console.log("err", err);
-        alert("Error while resizing image. Please uplaod again.");
-      });
-
-    // // Upload file function
-    // uploadFile(file);
+    // Upload file function
+    uploadFile(file);
   } else {
     // Upload file function
     uploadFile(file);

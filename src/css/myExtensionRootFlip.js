@@ -1776,6 +1776,10 @@ export const myExtensionRootFlipCss5 = `
     .trail_flipped .my-extension.my-extension-mobile {
         display: none;
     }
+
+    .overflow1 {
+        overflow: auto;
+    }
 `;
 
 // export const myExtensionRootCss = `

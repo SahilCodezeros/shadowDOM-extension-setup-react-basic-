@@ -542,7 +542,6 @@ class UserProfile extends React.Component {
   };
 
   onCropComplete = (croppedArea, croppedAreaPixels) => {
-    console.log("croppedAreaPixels", croppedAreaPixels);
     // Set cropped area pixels
     this.setState({ croppedAreaPixels });
   };

@@ -214,8 +214,6 @@ class AudioTour extends React.PureComponent {
   };
 
   componentWillUnmount() {
-    console.log("unmount component");
-
     if (audio && timeInterval) {
       this.cleanup();
     }
@@ -337,9 +335,6 @@ class AudioTour extends React.PureComponent {
 
       //toggle between playing and pausing on button click
       playBtn.addEventListener("click", () => {
-        console.log("on play button click");
-        console.log("audio.pause", audio.paused);
-
         if (audio.paused) {
           playBtn.classList.add("tr_audioplayer-playing");
           chrome.storage.local.get(["AutoPlayMediaToggle"], (items) => {
