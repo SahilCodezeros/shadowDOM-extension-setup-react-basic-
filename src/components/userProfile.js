@@ -1,5 +1,4 @@
 import React from "react";
-import _, { first } from "lodash";
 import { Button } from "antd";
 import Cropper from "react-easy-crop";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
@@ -12,7 +11,6 @@ import getCroppedImg, { blobToFile } from "../AppUtill";
 import { handleFileUpload } from "../common/audAndVidCommon";
 import SettingsComponent from "../components/settingsComponents";
 
-// import BgImage from "../images/trailit_bx_img.png";
 import {
   getUserSingleTrail,
   getAllCategory,
@@ -29,10 +27,7 @@ import $ from "jquery";
 
 import "../index.css";
 
-let autoLogoutTimeout;
-
 const chrome = window.chrome;
-// let bkg = chrome.extension.getBackgroundPage();
 
 class UserProfile extends React.Component {
   constructor(props) {
