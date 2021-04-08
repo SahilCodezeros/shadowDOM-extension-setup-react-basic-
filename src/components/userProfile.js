@@ -1,5 +1,4 @@
 import React from "react";
-import _, { first } from "lodash";
 import { Button } from "antd";
 import Cropper from "react-easy-crop";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
@@ -12,7 +11,6 @@ import getCroppedImg, { blobToFile } from "../AppUtill";
 import { handleFileUpload } from "../common/audAndVidCommon";
 import SettingsComponent from "../components/settingsComponents";
 
-// import BgImage from "../images/trailit_bx_img.png";
 import {
   getUserSingleTrail,
   getAllCategory,
@@ -29,10 +27,7 @@ import $ from "jquery";
 
 import "../index.css";
 
-let autoLogoutTimeout;
-
 const chrome = window.chrome;
-// let bkg = chrome.extension.getBackgroundPage();
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -73,6 +68,7 @@ class UserProfile extends React.Component {
       zoom: 1,
       croppedAreaPixels: null,
       errorMsg: "",
+      id: null,
     };
   }
 
@@ -244,6 +240,7 @@ class UserProfile extends React.Component {
           profileImage: userData.profileImage ? userData.profileImage : "",
           privateKey: items.keypair,
           userName: userData.userName,
+          id: userData._id ? userData._id : null,
           firstName: userData.firstName ? userData.firstName : null,
           lastName: userData.lastName ? userData.lastName : null,
           isPreview: items.isPreview,
@@ -564,6 +561,7 @@ class UserProfile extends React.Component {
   render() {
     // console.log('getBalance', getBalance());
     const {
+      id,
       userName,
       firstName,
       lastName,
@@ -688,9 +686,9 @@ class UserProfile extends React.Component {
               <div className="trailit_userName trailit_ellips">
                 {firstName && lastName ? `${firstName} ${lastName}` : userName}
               </div>
-              <div className="trailit_userSubName trailit_ellips">
+              {/* <div className="trailit_userSubName trailit_ellips">
                 Founder, Creator, Designer
-              </div>
+              </div> */}
               {nearBalance && (
                 <div
                   className="trailit_userName cursor_pointer"
@@ -750,6 +748,7 @@ class UserProfile extends React.Component {
           </div>
           <div className="trailit_userPanalContentBox">
             <UserProfileList
+              userId={id}
               list={list}
               addRaw={addRaw}
               title={listTitle}

@@ -27,11 +27,6 @@ export const videoTourCss1 = `
         z-index: 0;
     }
 
-    .videoShow-smallScreen {
-        right: 0;
-        bottom: -40px;
-    }
-
     .btn-wrap.videoShow {
         position: absolute;
     }
@@ -136,7 +131,8 @@ export const videoTourCss1 = `
     }
     
     .videoShow-smallScreen {
-        right: 0;
+        right: 2.5%;
+        bottom: -40px;
     }
     
     .video-wrap_tooltip.video-wrap_tooltip-smallScreen video {

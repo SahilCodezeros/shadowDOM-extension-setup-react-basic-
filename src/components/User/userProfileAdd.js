@@ -41,7 +41,6 @@ class userProfileAdd extends Component {
 
   onClickToSubmit = (e) => {
     e.preventDefault();
-    const { trail_title } = this.state;
     const { errors, isValid } = isValidated(this.state);
 
     if (!isValid) {

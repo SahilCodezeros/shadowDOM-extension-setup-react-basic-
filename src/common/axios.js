@@ -50,9 +50,9 @@ export const getFollowTrails = async () => {
   // );
 
   return await axios.get(
-    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20`
+    `${process.env.REACT_APP_MS4_URL}userTourDataDetail/getTrailList?type=following`
   );
-  // userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20&loggedInId=6008389da0d1567ee8224390
+  // userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20
 };
 
 // Unfollow trail

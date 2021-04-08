@@ -1317,6 +1317,7 @@ class Main extends React.Component {
     if (document.URL.includes("https://www.reddit.com")) return true;
     if (document.URL.includes("https://twitter.com")) return true;
     if (document.URL.includes("https://docs.google.com")) return true;
+    if (document.URL.includes("https://www.youtube.com")) return true;
 
     return false;
   };
@@ -2511,7 +2512,7 @@ class DefaultButton extends React.PureComponent {
     const trailId = trailList[trailList.length - 1].trail_id;
     const URL = trailList[0].url;
     let qryString = URL.split("?").length > 1 ? "&" : "?";
-    const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+    const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1&singleStepPreview=undefined&trailDataId=undefined&previewUserId=undefined&redirectUrl=undefined`;
 
     function copyStringToClipboard(str) {
       // Create new element
@@ -3663,10 +3664,15 @@ class DefaultButton extends React.PureComponent {
   };
 
   tooltipShareBtn = (e) => {
-    const { trailList } = this.state;
-    const trailDataId = trailList[trailList.length - 1].trail_data_id;
-    const trailId = trailList[trailList.length - 1].trail_id;
-    const trailUrl = `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trail_data_tour/${trailDataId}?trailId=${trailId}&user_id=${this.state.currUserId}`;
+    const { trailList, currUserId } = this.state;
+    // const trailDataId = trailList[trailList.length - 1].trail_data_id;
+    // const trailId = trailList[trailList.length - 1].trail_id;
+    // const trailUrl = `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trail_data_tour/${trailDataId}?trailId=${trailId}&user_id=${this.state.currUserId}`;
+
+    const trailId = trailList[0].trail_id;
+    const URL = trailList[0].url;
+    let qryString = URL.split("?").length > 1 ? "&" : "?";
+    const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1&singleStepPreview=undefined&trailDataId=undefined&previewUserId=undefined&redirectUrl=undefined`;
 
     function copyStringToClipboard(str) {
       // Create new element
@@ -3706,7 +3712,7 @@ class DefaultButton extends React.PureComponent {
     const trailId = trailList[trailList.length - 1].trail_id;
     const URL = trailList[0].url;
     let qryString = URL.split("?").length > 1 ? "&" : "?";
-    const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+    const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${currUserId}&trailId=${trailId}&trailPreview=true&tourStep=1&singleStepPreview=undefined&trailDataId=undefined&previewUserId=undefined&redirectUrl=undefined`;
 
     function copyStringToClipboard(str) {
       // Create new element
@@ -4753,7 +4759,7 @@ class DefaultButton extends React.PureComponent {
               <div className="trailButtonsWrapper jc-end pb-0">
                 <button
                   className="custom-button share-button"
-                  onClick={this.tooltipShareBtn}
+                  onClick={this.copyWebApplink}
                 >
                   Share
                 </button>

@@ -74,8 +74,10 @@ class UserProfileList extends Component {
   onPublishLink = async (e, res) => {
     e.stopPropagation();
     // this.setState({ isLoadingLink: true });
+    const { userId } = this.props;
     let screen = resizeScreen() ? "mobile" : "web";
     let result = await getUserOneTrail(res.trail_id, screen);
+
     if (result.status == 200) {
       if (result.data.response.statusCode == 200) {
         let trailList = result.data.response.result;
@@ -87,7 +89,8 @@ class UserProfileList extends Component {
           const trailId = res.trail_id;
           const URL = trailList[0].url;
           let qryString = URL.split("?").length > 1 ? "&" : "?";
-          const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${res.user_id}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+          // const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${res.user_id}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+          const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${userId}&trailId=${trailId}&trailPreview=true&tourStep=1&singleStepPreview=undefined&trailDataId=undefined&previewUserId=undefined&redirectUrl=undefined`;
 
           function copyStringToClipboard(str) {
             // Create new element
