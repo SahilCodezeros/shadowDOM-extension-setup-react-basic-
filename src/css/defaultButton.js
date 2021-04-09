@@ -39,7 +39,7 @@ export const defaultButtonCss1 = `
         display: block;
         border-radius: 5px;
         font-family: 'Lato', sans-serif;
-        z-index: 999999999;
+        z-index: 99999999;
         box-shadow: rgb(212 30 121) 0px 0px 9px;
     }
     
@@ -687,7 +687,8 @@ export const defaultButtonCss3 = `
 `;
 
 export const deleteModalCss = `
-    .trial_modal_show {
+    .trial_create_modal_main,
+    .trail_preview_modal_main {
         z-index: unset !important;  
     }
 

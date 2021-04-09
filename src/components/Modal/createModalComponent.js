@@ -62,7 +62,10 @@ class CreateModalComponent extends React.PureComponent {
     this.setState({ description: value });
   };
 
-  onAddStep = (values) => {
+  onAddStep = async (values) => {
+    // Call on tour loading function
+    this.props.onTourLoading(true);
+
     let obj;
     const { trailStatus, title, web_url, description } = this.state;
 
@@ -94,8 +97,19 @@ class CreateModalComponent extends React.PureComponent {
       };
     }
 
-    this.props.onSave(obj);
-    this.toggle();
+    try {
+      await this.props.onSave(obj);
+      this.toggle();
+
+      // Call on tour loading function
+      this.props.onTourLoading(false);
+    } catch (err) {
+      console.log("err", err);
+      // Call on tour loading function
+      this.props.onTourLoading(false);
+
+      alert("Error while creating tour!");
+    }
   };
 
   toggle = () => {
@@ -180,7 +194,8 @@ class CreateModalComponent extends React.PureComponent {
       this.onDescriptionChangeHandler,
       this.toggle,
       this.onAddStep,
-      this.selectedTooltipForm
+      this.selectedTooltipForm,
+      fileLoading
     );
 
     const { trailStatus } = this.state;

@@ -297,7 +297,8 @@ export const commonInitialRenderFunction = (
   onDescriptionChangeHandler,
   onClickToVisiblePopover,
   onClickToSubmit,
-  selectedTooltipForm
+  selectedTooltipForm,
+  fileLoading
 ) => {
   let tooltipForm = null;
 
@@ -342,7 +343,11 @@ export const commonInitialRenderFunction = (
               Cancel
             </button>
 
-            <button className="custom-button" htmlType="submit">
+            <button
+              disabled={fileLoading}
+              className="custom-button"
+              htmlType="submit"
+            >
               Add Step
             </button>
           </div>

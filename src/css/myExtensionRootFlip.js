@@ -7,8 +7,9 @@ export const myExtensionRootFlipCss1 = `
         position: fixed;
         top: 130px;
         right: 40px;
-        z-index: 9999;
-        z-index: 9999999999;
+        // z-index: 9999;
+        // z-index: 9999999999;
+        z-index: 99999999;
         height: calc(100vh - 170px);
         perspective: 1800px;
     }
@@ -22,7 +23,8 @@ export const myExtensionRootFlipCss1 = `
         height: auto;
     }
 
-    .trial_modal_show {
+    .trial_create_modal_main,
+    .trail_preview_modal_main {
         z-index: unset !important;  
     }
 
@@ -629,7 +631,8 @@ export const myExtensionRootFlipCss2 = `
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 99999999;
+        // z-index: 99999999;
+        z-index: 9999999;
         position: absolute;
     }
 
@@ -1710,6 +1713,14 @@ export const myExtensionRootFlipCss5 = `
         background-color: #ffffff;
     }
 
+    .custom-button[disabled],
+    .custom-button[disabled]:hover {   
+        color: #ffffff;     
+        background: #808080;
+        cursor: not-allowed !important;
+        border: 1px solid #808080 !important;
+    }
+
     .mt-13 {
         margin-top: 13px;
     }
@@ -1798,6 +1809,53 @@ export const myExtensionRootFlipCss5 = `
 
     .overflow1 {
         overflow: auto;
+    }
+
+    @keyframes rotate {
+        100% {
+          transform: rotate(360deg);
+        }
+    }
+
+    @keyframes dash {
+        0% {
+          stroke-dasharray: 1, 150;
+          stroke-dashoffset: 0;
+        }
+        50% {
+          stroke-dasharray: 90, 150;
+          stroke-dashoffset: -35;
+        }
+        100% {
+          stroke-dasharray: 90, 150;
+          stroke-dashoffset: -124;
+        }
+    }
+
+    #extension-splash-screen {
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        position: fixed;
+        align-items: center;
+        z-index: 999999999999;
+        justify-content: center;
+        flex-direction: column;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    #extension-splash-screen svg {
+        animation: rotate 2s linear infinite;
+        margin-left: calc(100vw - 100%);
+        width: 60px;
+        height: 60px;
+    }
+    
+    #extension-splash-screen svg circle {
+        stroke: #D41E79;
+        stroke-linecap: round;
+        animation: dash 1.5s ease-in-out infinite;
     }
 `;
 

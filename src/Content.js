@@ -78,7 +78,7 @@ import {
 
 import "./Content.css";
 import { get } from "./AppUtill";
-import { resolve } from "promise";
+import { reject, resolve } from "promise";
 import TargetNotFound from "./components/Modal/targetNotFound";
 
 /*global chrome*/
@@ -1017,6 +1017,8 @@ class Main extends React.Component {
   };
 
   openMenu = async (type, previewId, closeContinue, stepType) => {
+    // console.log("type", type);
+
     let mainObj = {},
       objStatus = true;
 
@@ -1857,12 +1859,18 @@ class DefaultButton extends React.PureComponent {
       videoRef: false,
       tooltipRef: false,
       targetDataNotFound: false,
+      isTourLoading: false,
     };
 
     this.previewModalRef = React.createRef();
 
     this.onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
   }
+
+  onTourLoading = (value) => {
+    // Set state
+    this.setState({ isTourLoading: value });
+  };
 
   // Hide send tip modal
   onSendTipModalClose = () => {
@@ -1907,7 +1915,7 @@ class DefaultButton extends React.PureComponent {
   };
 
   // On delete button click
-  async onDeleteButtonClick(e) {
+  async onDeleteButtonClick() {
     try {
       // Set state
       this.setState({ onDone: true });
@@ -2775,20 +2783,22 @@ class DefaultButton extends React.PureComponent {
 
               ReactDOM.render(
                 <Tooltip
-                  uniqueTarget={uniqueTarget}
-                  target={e.target}
-                  elementIndex={elementIndex}
                   path={e.path}
-                  type={this.state.tourType}
-                  rowData={this.state.rowData}
+                  target={e.target}
                   count={popoverCount}
+                  type={this.state.tourType}
+                  elementIndex={elementIndex}
+                  uniqueTarget={uniqueTarget}
+                  rowData={this.state.rowData}
+                  onCancel={this.onCancelTooltip}
+                  onHandleChange={this.handleChange}
+                  onTourLoading={this.onTourLoading}
+                  isTourLoading={this.state.isTourLoading}
                   onSave={
                     this.state.tourType === "Make Edit"
                       ? this.onUpdateTrail
                       : this.onSaveTrail
                   }
-                  onCancel={this.onCancelTooltip}
-                  onHandleChange={this.handleChange}
                 />,
                 node
               );
@@ -3054,6 +3064,25 @@ class DefaultButton extends React.PureComponent {
     // this.setState({ trailList: trailData, web_url: '', fileAddStatus: false, fileName: '' });
   };
 
+  addStepClickHandler = async (e) => {
+    try {
+      // Call on tour loading function
+      this.onTourLoading(true);
+
+      await this.onSaveTrail(e);
+
+      // Call on tour loading function
+      this.onTourLoading(false);
+    } catch (err) {
+      console.log("err", err);
+
+      // Call on tour loading function
+      this.onTourLoading(false);
+
+      alert("Error while adding step!");
+    }
+  };
+
   /**
    * on click to save tour in local system
    */
@@ -3061,119 +3090,126 @@ class DefaultButton extends React.PureComponent {
     let trailData = [];
     let obj = {};
     let responsive = "web";
-    chrome.storage.local.get(
-      ["trail_web_user_tour", "userData", "trail_id"],
-      function (items) {
-        const trail_id = items.trail_id;
-        if (items.trail_web_user_tour !== undefined) {
-          trailData = items.trail_web_user_tour;
-        }
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get(
+        ["trail_web_user_tour", "userData", "trail_id"],
+        async function (items) {
+          const trail_id = items.trail_id;
+          if (items.trail_web_user_tour !== undefined) {
+            trailData = items.trail_web_user_tour;
+          }
 
-        let timeStamp = new Date().getTime();
+          let timeStamp = new Date().getTime();
 
-        // This if check work on tooltip audio video upload
-        if (data.type === "tooltip" && data.mediaType !== "text") {
-          obj = {
-            trail_id,
-            userId: items.userData._id,
-            url: data.url,
-            path: data.path,
-            selector: data.selector,
-            class: data.class,
-            title: data.title,
-            web_url: data.web_url,
-            type: data.type,
-            responsive,
-            uniqueTarget: data.uniqueTarget,
-            mediaType: data.mediaType,
-            created: timeStamp,
-            trailIndex: items.trail_web_user_tour.length + 1,
-            flag: "",
-          };
+          // This if check work on tooltip audio video upload
+          if (data.type === "tooltip" && data.mediaType !== "text") {
+            obj = {
+              trail_id,
+              userId: items.userData._id,
+              url: data.url,
+              path: data.path,
+              selector: data.selector,
+              class: data.class,
+              title: data.title,
+              web_url: data.web_url,
+              type: data.type,
+              responsive,
+              uniqueTarget: data.uniqueTarget,
+              mediaType: data.mediaType,
+              created: timeStamp,
+              trailIndex: items.trail_web_user_tour.length + 1,
+              flag: "",
+            };
 
-          trailData.push(obj);
-        } else if (
-          this.state.tourType === "video" ||
-          this.state.tourType === "audio"
-        ) {
-          obj = {
-            trail_id,
-            userId: items.userData._id,
-            url: document.URL,
-            path: "",
-            selector: "",
-            class: "",
-            responsive,
-            title: this.state.title,
-            web_url: this.state.web_url,
-            type: this.state.tourType,
-            mediaType: this.state.tourType,
-            created: timeStamp,
-            trailIndex: items.trail_web_user_tour.length + 1,
-            flag: "",
-          };
+            trailData.push(obj);
+          } else if (
+            this.state.tourType === "video" ||
+            this.state.tourType === "audio"
+          ) {
+            obj = {
+              trail_id,
+              userId: items.userData._id,
+              url: document.URL,
+              path: "",
+              selector: "",
+              class: "",
+              responsive,
+              title: this.state.title,
+              web_url: this.state.web_url,
+              type: this.state.tourType,
+              mediaType: this.state.tourType,
+              created: timeStamp,
+              trailIndex: items.trail_web_user_tour.length + 1,
+              flag: "",
+            };
 
-          trailData.push(obj);
-        } else if (data.type === "modal" && data.mediaType === "modal") {
-          obj = {
-            trail_id,
-            userId: items.userData._id,
-            url: data.url,
-            path: "",
-            selector: "",
-            class: "",
-            responsive,
-            title: data.title,
-            description: data.description,
+            trailData.push(obj);
+          } else if (data.type === "modal" && data.mediaType === "modal") {
+            obj = {
+              trail_id,
+              userId: items.userData._id,
+              url: data.url,
+              path: "",
+              selector: "",
+              class: "",
+              responsive,
+              title: data.title,
+              description: data.description,
+              web_url: "",
+              type: data.type,
+              uniqueTarget: "",
+              mediaType: data.mediaType,
+              created: timeStamp,
+              trailIndex: items.trail_web_user_tour.length + 1,
+              flag: "",
+            };
+
+            trailData.push(obj);
+          } else {
+            obj = {
+              ...data,
+              trail_id,
+              responsive,
+              userId: items.userData._id,
+              created: timeStamp,
+              // web_url: '',
+              trailIndex: items.trail_web_user_tour.length + 1,
+              flag: "",
+            };
+
+            trailData.push(obj);
+          }
+
+          // Save trail into database
+          await this.publishTrails(obj);
+
+          this.setState({
+            trailList: trailData,
             web_url: "",
-            type: data.type,
-            uniqueTarget: "",
-            mediaType: data.mediaType,
-            created: timeStamp,
-            trailIndex: items.trail_web_user_tour.length + 1,
-            flag: "",
-          };
+            fileAddStatus: false,
+            fileName: "",
+            open: false,
+            draggable: false,
+            tourType: "",
+            currentTourType: "",
+          });
+          chrome.storage.local.set({
+            trail_web_user_tour: trailData,
+            currentTourType: "",
+            tourType: "",
+          });
 
-          trailData.push(obj);
-        } else {
-          obj = {
-            ...data,
-            trail_id,
-            responsive,
-            userId: items.userData._id,
-            created: timeStamp,
-            // web_url: '',
-            trailIndex: items.trail_web_user_tour.length + 1,
-            flag: "",
-          };
+          // Call init button position function
+          initButtonPosition();
 
-          trailData.push(obj);
-        }
+          // this.props.this.props,mainToggle();
+          this.props.onChangeTourType("");
+          this.props.mainToggle();
 
-        this.setState({
-          trailList: trailData,
-          web_url: "",
-          fileAddStatus: false,
-          fileName: "",
-          open: false,
-          draggable: false,
-        });
-        chrome.storage.local.set({
-          trail_web_user_tour: trailData,
-          tourType: "",
-        });
-
-        // Call init button position function
-        initButtonPosition();
-
-        // Save trail into database
-        this.publishTrails(obj);
-      }.bind(this)
-    );
-
-    // this.props.this.props,mainToggle();
-    this.props.onChangeTourType("");
-    this.props.mainToggle();
+          resolve();
+        }.bind(this)
+      );
+    });
   };
 
   /**
@@ -3586,7 +3622,7 @@ class DefaultButton extends React.PureComponent {
   publishTrails = async (data) => {
     try {
       const res = await uploadTrails(data);
-      this.setState({ publishLoader: false });
+      // this.setState({ publishLoader: false });
       if (!res.data.response) {
         throw new Error("Saving trails failed!");
       }
@@ -3624,42 +3660,47 @@ class DefaultButton extends React.PureComponent {
       // 	return (+a.trailIndex) - (+b.trailIndex);
       // });
 
-      chrome.storage.local.get(
-        ["trail_id"],
-        async function (items) {
-          // Get all trail from database
-          let screen = resizeScreen() ? "mobile" : "web";
-          const allDataRes = await getUserOneTrail(items.trail_id, screen);
-          const newDataArray = allDataRes.data.response.result.map((el) => {
-            return {
-              userId: this.state.currUserId,
-              trail_data_id: el.trail_data_id,
-              url: el.url,
-              path: el.path,
-              selector: el.selector,
-              class: el.class,
-              title: el.title,
-              description: el.description,
-              web_url: el.web_url,
-              trail_id: el.trail_id,
-              type: el.type,
-              uniqueTarget: el.unique_target,
-              unique_target_one: el.unique_target_one,
-              mobile_media_type: el.mobile_media_type,
-              mobile_title: el.mobile_title,
-              mobile_description: el.mobile_description,
-              mediaType: el.media_type,
-              created: el.created,
-              trailIndex: el.trailIndex,
-            };
-          });
+      return new Promise((resolve, reject) => {
+        chrome.storage.local.get(
+          ["trail_id"],
+          async function (items) {
+            // Get all trail from database
+            let screen = resizeScreen() ? "mobile" : "web";
+            const allDataRes = await getUserOneTrail(items.trail_id, screen);
+            const newDataArray = allDataRes.data.response.result.map((el) => {
+              return {
+                userId: this.state.currUserId,
+                trail_data_id: el.trail_data_id,
+                url: el.url,
+                path: el.path,
+                selector: el.selector,
+                class: el.class,
+                title: el.title,
+                description: el.description,
+                web_url: el.web_url,
+                trail_id: el.trail_id,
+                type: el.type,
+                uniqueTarget: el.unique_target,
+                unique_target_one: el.unique_target_one,
+                mobile_media_type: el.mobile_media_type,
+                mobile_title: el.mobile_title,
+                mobile_description: el.mobile_description,
+                mediaType: el.media_type,
+                created: el.created,
+                trailIndex: el.trailIndex,
+              };
+            });
 
-          chrome.storage.local.set({ trail_web_user_tour: newDataArray });
-          this.setState({ trailList: newDataArray });
-        }.bind(this)
-      );
+            chrome.storage.local.set({ trail_web_user_tour: newDataArray });
+            this.setState({ trailList: newDataArray });
+
+            resolve();
+          }.bind(this)
+        );
+      });
     } catch (err) {
-      this.setState({ publishLoader: false });
+      alert(err.message);
+      // this.setState({ publishLoader: false });
     }
   };
 
@@ -4288,7 +4329,9 @@ class DefaultButton extends React.PureComponent {
       trailName,
       openSidebar,
       currentTrailsTab,
+      isTourLoading,
     } = this.state;
+    const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
     // Auto logout function
     autoLogoutFunction();
@@ -4316,7 +4359,6 @@ class DefaultButton extends React.PureComponent {
       // }
     }
 
-    const shadowRoot = document.getElementById("extension-div").shadowRoot;
     if (openSidebar) {
       const defaultRoot = shadowRoot.getElementById("my-extension-defaultroot");
 
@@ -4615,7 +4657,7 @@ class DefaultButton extends React.PureComponent {
               <div className="add-step-bt-container">
                 <button
                   disabled={fileLoading}
-                  onClick={this.onSaveTrail}
+                  onClick={this.addStepClickHandler}
                   className="custom-button add-step-button trail_add_step_btn"
                 >
                   ADD STEP
@@ -4696,7 +4738,7 @@ class DefaultButton extends React.PureComponent {
               <div className="add-step-bt-container">
                 <button
                   disabled={fileLoading}
-                  onClick={this.onSaveTrail}
+                  onClick={this.addStepClickHandler}
                   className="custom-button add-step-button trail_add_step_btn"
                 >
                   ADD STEP
@@ -4803,6 +4845,8 @@ class DefaultButton extends React.PureComponent {
         {this.state.deleteModal.show && (
           <TrailDeleteModal
             onDone={onDone}
+            isTourLoading={isTourLoading}
+            onTourLoading={this.onTourLoading}
             deleteModal={this.state.deleteModal}
             onDeleteModalClose={this.onDeleteModalClose}
             onDeleteButtonClick={this.onDeleteButtonClick}
@@ -4836,9 +4880,11 @@ class DefaultButton extends React.PureComponent {
               stepType={stepType}
               open={createModalOpen}
               screenSize={resizeScreen}
-              toggle={this.onToggleCreateModal}
-              closeButtonHandler={this.onBackArrowClickHandler}
               onSave={this.onSaveTrail}
+              isTourLoading={isTourLoading}
+              toggle={this.onToggleCreateModal}
+              onTourLoading={this.onTourLoading}
+              closeButtonHandler={this.onBackArrowClickHandler}
             />
           )}
           <div>
@@ -5009,6 +5055,8 @@ class DefaultButton extends React.PureComponent {
               {this.state.deleteModal.show && (
                 <TrailDeleteModal
                   onDone={onDone}
+                  isTourLoading={isTourLoading}
+                  onTourLoading={this.onTourLoading}
                   deleteModal={this.state.deleteModal}
                   onDeleteModalClose={this.onDeleteModalClose}
                   onDeleteButtonClick={this.onDeleteButtonClick}
@@ -5041,10 +5089,12 @@ class DefaultButton extends React.PureComponent {
                   <CreateModalComponent
                     stepType={stepType}
                     open={createModalOpen}
-                    screenSize={resizeScreen}
-                    toggle={this.onToggleCreateModal}
-                    closeButtonHandler={this.onBackArrowClickHandler}
                     onSave={this.onSaveTrail}
+                    screenSize={resizeScreen}
+                    isTourLoading={isTourLoading}
+                    toggle={this.onToggleCreateModal}
+                    onTourLoading={this.onTourLoading}
+                    closeButtonHandler={this.onBackArrowClickHandler}
                   />
                 )}
                 <div>
@@ -5199,6 +5249,31 @@ class DefaultButton extends React.PureComponent {
       );
     }
 
+    if (isTourLoading) {
+      if (
+        currentTourType === "preview" &&
+        (tourType === "modal" || tourType === "Make Edit")
+      ) {
+        const modal = shadowRoot.querySelector(".trial_create_modal_main");
+
+        if (modal) {
+          modal.classList.remove("trial_create_modal_main");
+        }
+      }
+
+      const loader = shadowRoot.getElementById("extension-splash-screen");
+
+      if (loader) {
+        loader.style.display = "flex";
+      }
+    } else {
+      const loader = shadowRoot.getElementById("extension-splash-screen");
+
+      if (loader) {
+        loader.style.display = "none";
+      }
+    }
+
     return (
       <>
         <style>{defaultButtonCss1}</style>
@@ -5241,6 +5316,21 @@ if (extensionRoot) {
       app = document.createElement("div");
       app.setAttribute("id", "my-extension-root-flip");
 
+      const loader = document.createElement("div");
+      loader.setAttribute("id", "extension-splash-screen");
+      loader.innerHTML = `
+        <svg className="extension-splash-spinner" viewBox="0 0 50 50">
+          <circle
+              className="path"
+              cx="25"
+              cy="25"
+              r="20"
+              fill="none"
+              strokeWidth="5"
+          ></circle>
+        </svg>
+      `;
+
       const modalOpen = document.createElement("div");
       modalOpen.setAttribute("class", "modal-open");
 
@@ -5266,14 +5356,15 @@ if (extensionRoot) {
       tooltipStyle1.textContent = tooltipCss1;
 
       // Append div to shadow DOM
-      shadowRoot.appendChild(app);
-      extensionRoot.shadowRoot.appendChild(app);
       extensionRoot.shadowRoot.appendChild(style1);
       extensionRoot.shadowRoot.appendChild(style2);
       extensionRoot.shadowRoot.appendChild(style3);
       extensionRoot.shadowRoot.appendChild(style4);
       extensionRoot.shadowRoot.appendChild(style5);
       extensionRoot.shadowRoot.appendChild(tooltipStyle1);
+      shadowRoot.appendChild(app);
+      shadowRoot.appendChild(loader);
+      extensionRoot.shadowRoot.appendChild(app);
       shadowRoot.appendChild(modalOpen);
     }
   }

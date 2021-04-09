@@ -8,13 +8,27 @@ class TrailDeleteModal extends Component {
     $("html, body").animate({ scrollTop: scrollTop });
   }
 
+  onDelete = async () => {
+    try {
+      // Call on tour loading function
+      this.props.onTourLoading(true);
+
+      // Call on delete button click function
+      await this.props.onDeleteButtonClick();
+
+      // Call on tour loading function
+      this.props.onTourLoading(false);
+    } catch (err) {
+      console.log("err", err);
+      // Call on tour loading function
+      this.props.onTourLoading(false);
+
+      alert("Error while deleting");
+    }
+  };
+
   render() {
-    const {
-      onDone,
-      onDeleteModalClose,
-      deleteModal,
-      onDeleteButtonClick,
-    } = this.props;
+    const { onDone, onDeleteModalClose, deleteModal } = this.props;
 
     $(document).ready(() => {
       const modalDiv = document
@@ -59,7 +73,7 @@ class TrailDeleteModal extends Component {
               type="button"
               disabled={onDone}
               className="custom-button"
-              onClick={(e) => onDeleteButtonClick(e)}
+              onClick={this.onDelete}
             >
               DELETE
             </button>
