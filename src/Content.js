@@ -1403,7 +1403,7 @@ class Main extends React.Component {
                 className="trail_continue_btn"
                 onClick={this.onContinueTour}
               >
-                Continue...
+                Continue
               </button>
             )}
             <MySubscription
@@ -4974,7 +4974,8 @@ class DefaultButton extends React.PureComponent {
             {currentTourType !== "" &&
               tourType === "preview" &&
               tourStep !== "" &&
-              (this.state.targetDataNotFound || !tourUrl) && (
+              !overlay &&
+              this.state.targetDataNotFound && (
                 <TargetNotFound
                   toogleTargetDataNotFound={(value) =>
                     this.setState({ targetDataNotFound: value })
@@ -5187,7 +5188,8 @@ class DefaultButton extends React.PureComponent {
                   {currentTourType !== "" &&
                     tourType === "preview" &&
                     tourStep !== "" &&
-                    (this.state.targetDataNotFound || !tourUrl) && (
+                    !overlay &&
+                    this.state.targetDataNotFound && (
                       <TargetNotFound
                         toogleTargetDataNotFound={(value) =>
                           this.setState({ targetDataNotFound: value })
@@ -5261,12 +5263,24 @@ class DefaultButton extends React.PureComponent {
         }
       }
 
+      const myExtensionRootFlip = shadowRoot.getElementById('my-extension-root-flip');
+
+      if (myExtensionRootFlip) {
+        myExtensionRootFlip.style.zIndex = '99999999';
+      }
+
       const loader = shadowRoot.getElementById("extension-splash-screen");
 
       if (loader) {
         loader.style.display = "flex";
       }
     } else {
+      const myExtensionRootFlip = shadowRoot.getElementById('my-extension-root-flip');
+
+      if (myExtensionRootFlip) {
+        myExtensionRootFlip.style.zIndex = '9999999999';
+      }
+
       const loader = shadowRoot.getElementById("extension-splash-screen");
 
       if (loader) {

@@ -40,13 +40,12 @@ class TargetNotFound extends React.Component {
   };
 
   componentDidMount() {
-
     setTimeout(() => {
+      const scrollTop = $(window).scrollTop();
+      $("html, body").animate({ scrollTop: scrollTop });
+
       this.setState({ open: true });
     }, 3500);
-
-    const scrollTop = $(window).scrollTop();
-    $("html, body").animate({ scrollTop: scrollTop });
 
     // if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
     //   window.location.href = this.props.data[this.props.tourStep - 1].url;
@@ -67,9 +66,7 @@ class TargetNotFound extends React.Component {
    * @step tooltip current step
    */
   onClickToManagePopoverButton = async (event, tourSide) => {
-    
     this.props.toogleTargetDataNotFound(false);
-    
 
     let { tourStep } = this.props;
     let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
@@ -77,11 +74,9 @@ class TargetNotFound extends React.Component {
     await this.toggle();
 
     if (this.props.data[step - 1].url === document.URL) {
-      
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
     } else {
-      
       // Set loading true to show overlay
       this.props.setLoadingState(true);
 
@@ -89,7 +84,6 @@ class TargetNotFound extends React.Component {
       await this.props.tour(step, type, tourSide);
       window.location.href = this.props.data[step - 1].url;
     }
-
   };
 
   onClickToDoneTour = (data, step) => {

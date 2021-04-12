@@ -1303,6 +1303,7 @@ body {
   text-overflow: ellipsis !important;
   height: 27px !important;
   word-break: break-all !important;
+  white-space: nowrap;
 }
 
 /* .trailMain {
@@ -1598,15 +1599,26 @@ button:focus {
 }
 
 .trailit_bx .trialit_user {
-  height: 18px;
   width: 18px;
+  height: 18px;
   border-radius: 50px;
 }
 
 .trailit_bx .trailit_bx_title {
-  background: var(--white);
+  display: flex;
   padding: 5px 15px;
+  background: var(--white);
   border-radius: 0 0 10px 10px;
+}
+
+.trailit_bx_title .logo_image_div {
+  margin-top: -5px;
+  margin-right: 10px;
+}
+
+.trailit_bx_title .logo_image_div .logo_image {
+  width: 17px;
+  height: 17px;
 }
 
 .trailit_bx .img {

@@ -1,15 +1,11 @@
 import React from "react";
-import Tour from "react-user-tour";
-import { Button, notification } from "antd";
+import { Button } from "antd";
 import { CloseOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
-import ReactDOM from "react-dom";
 import { Popover, PopoverHeader, PopoverBody } from "reactstrap";
-import unique from "unique-selector";
 import $ from "jquery";
 
 import AudioTour from "./audioTour";
 import { resizeScreen } from "../common/helper";
-import { urlStingCheck, getScrollParent } from "./common";
 import { stopMediaPlaying } from "../common/stopePlayingMedia";
 import {
   addOverlay,
@@ -164,8 +160,6 @@ class WebUserTour extends React.Component {
   };
 
   handleMessage(msg) {
-    let { tourStep } = this.state;
-
     setTimeout(() => {
       chrome.storage.local.get(
         [
@@ -207,7 +201,7 @@ class WebUserTour extends React.Component {
    * create popover based on their url
    */
   createPopOver = (step) => {
-    const { tourSteps, tourStep } = this.state;
+    const { tourSteps } = this.state;
 
     let content = this.props.data
       .map((res, index) => {
@@ -238,8 +232,7 @@ class WebUserTour extends React.Component {
    * get currentweb user tour
    */
   getWebUserTour = (event, data, step) => {
-    let checkFirstStep = true;
-    let { tourSteps, tourStep } = this.state;
+    let { tourSteps } = this.state;
     let activeWeb = data;
     let unqTarget = this.props.data[step - 1].uniqueTarget;
 

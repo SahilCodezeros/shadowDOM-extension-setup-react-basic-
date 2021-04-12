@@ -158,15 +158,13 @@ class UserProfileList extends Component {
       followedTrailUserData = { ...res.userData };
     }
 
-    chrome.storage.local.set(
-      {
-        trail_id: res.trail_id,
-        trail_name: res.trail_name,
-        trail_web_user_tour: undefined,
-        followedTrailUserData,
-      },
-      (items) => console.log("trail_web_user_tourtrail_web_user_tour", items)
-    );
+    chrome.storage.local.set({
+      trail_id: res.trail_id,
+      trail_name: res.trail_name,
+      trail_web_user_tour: undefined,
+      followedTrailUserData,
+      trail_status: res.trail_user_status,
+    });
 
     let authToken, reload, userData;
     chrome.storage.local.get(
@@ -211,6 +209,8 @@ class UserProfileList extends Component {
       lastName,
       userName,
     } = this.props;
+
+    console.log("list", list);
 
     return (
       <div className="trailit_userPanalContentInnerBox">

@@ -7,9 +7,8 @@ export const myExtensionRootFlipCss1 = `
         position: fixed;
         top: 130px;
         right: 40px;
-        // z-index: 9999;
-        // z-index: 9999999999;
-        z-index: 99999999;
+        z-index: 9999999999;
+        // z-index: 99999999;
         height: calc(100vh - 170px);
         perspective: 1800px;
     }
@@ -234,6 +233,10 @@ export const myExtensionRootFlipCss1 = `
         bottom: 20px;
         width: 100px;
         z-index: 999999999 !important;
+    }
+
+    .cursor {
+        cursor: pointer;
     }
 
     .trial_modal_show .modal-dialog-centered {
@@ -1521,7 +1524,8 @@ export const myExtensionRootFlipCss5 = `
         bottom: 0;
         left: 0;
         z-index: 1040;
-        background-color: #000;
+        // background-color: #000;
+        background-color: rgba(0,0,0,0.8);
     }
 
     .tr_gradient_border:after {

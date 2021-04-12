@@ -7,11 +7,11 @@ import $ from "jquery";
 import AudioTour from "../audioTour";
 import { resizeScreen } from "../../common/helper";
 import { stopMediaPlaying } from "../../common/stopePlayingMedia";
+import ContinueTourConfirmation from "./ContinueTourConfirmation";
 import {
   addTrailitLogo,
   removeTrailitLogo,
 } from "../../common/trailitLogoInPreview";
-import ContinueTourConfirmation from "./ContinueTourConfirmation";
 
 const chrome = window.chrome;
 class PreviewModalComponent extends React.Component {
@@ -56,7 +56,7 @@ class PreviewModalComponent extends React.Component {
 
     // setTimeout(() => {
     //     document.querySelectorAll('video').forEach(res => {
-    //         
+    //
     //         if(res.className !== "preview-video") {
     //             res.pause()
     //         }
@@ -64,7 +64,7 @@ class PreviewModalComponent extends React.Component {
     // }, 1000);
 
     // chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-    //     
+    //
     //     if(items && (!items.AutoPlayMediaToggle || items.AutoPlayMediaToggle)) {
     //         autoplay = items.AutoPlayMediaToggle;
     //         this.setState({ autoPlay: items.AutoPlayMediaToggle });
@@ -76,9 +76,9 @@ class PreviewModalComponent extends React.Component {
     this.addModalClass();
 
     // if (document.readyState === 'loading') {
-    //     
+    //
     // } else if (document.readyState === 'complete') {
-    //     
+    //
     // }
 
     if (document.readyState === "complete") {
@@ -91,7 +91,7 @@ class PreviewModalComponent extends React.Component {
       document.URL.includes("https://www.youtube.com/")
     ) {
       // document.body.onload = function () { https://www.dailymotion.com/
-      //     
+      //
       //     // Call toggle website media
       //     this.toggleWebSitesMedia();
       // };
@@ -111,7 +111,7 @@ class PreviewModalComponent extends React.Component {
       });
 
       // document.body.onload = async function () {
-      //     
+      //
       //     // Call toggle website media
       //     await this.toggleWebSitesMedia();
       // };
@@ -146,10 +146,9 @@ class PreviewModalComponent extends React.Component {
     let { tourStep } = this.props;
     let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
 
-
     await this.toggle();
 
-    // 
+    //
     if (this.props.data[step - 1].url === document.URL) {
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
