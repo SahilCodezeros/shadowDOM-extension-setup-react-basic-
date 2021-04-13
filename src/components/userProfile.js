@@ -731,7 +731,7 @@ class UserProfile extends React.Component {
                     <button type="button" onClick={this.onSettingButtonClick}>
                       Settings
                     </button>
-                    <button type="button">Notifications</button>
+                    {/* <button type="button">Notifications</button> */}
                     <button
                       type="button"
                       onClick={() => {

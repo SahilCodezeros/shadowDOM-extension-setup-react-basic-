@@ -5253,8 +5253,8 @@ class DefaultButton extends React.PureComponent {
 
     if (isTourLoading) {
       if (
-        currentTourType === "preview" &&
-        (tourType === "modal" || tourType === "Make Edit")
+        (currentTourType === "preview" || currentTourType === "") &&
+        (tourType === "modal" || tourType === "Make Edit" || tourType === "")
       ) {
         const modal = shadowRoot.querySelector(".trial_create_modal_main");
 
@@ -5263,10 +5263,12 @@ class DefaultButton extends React.PureComponent {
         }
       }
 
-      const myExtensionRootFlip = shadowRoot.getElementById('my-extension-root-flip');
+      const myExtensionRootFlip = shadowRoot.getElementById(
+        "my-extension-root-flip"
+      );
 
       if (myExtensionRootFlip) {
-        myExtensionRootFlip.style.zIndex = '99999999';
+        myExtensionRootFlip.style.zIndex = "99999999";
       }
 
       const loader = shadowRoot.getElementById("extension-splash-screen");
@@ -5275,10 +5277,12 @@ class DefaultButton extends React.PureComponent {
         loader.style.display = "flex";
       }
     } else {
-      const myExtensionRootFlip = shadowRoot.getElementById('my-extension-root-flip');
+      const myExtensionRootFlip = shadowRoot.getElementById(
+        "my-extension-root-flip"
+      );
 
       if (myExtensionRootFlip) {
-        myExtensionRootFlip.style.zIndex = '9999999999';
+        myExtensionRootFlip.style.zIndex = "9999999999";
       }
 
       const loader = shadowRoot.getElementById("extension-splash-screen");

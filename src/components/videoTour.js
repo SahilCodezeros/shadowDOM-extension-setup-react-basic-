@@ -273,7 +273,7 @@ class VideoTour extends React.PureComponent {
       const shadowRootDoc = document.getElementById("extension-div").shadowRoot;
       // Setting top and left for small video screen
       shadowRootDoc.querySelector(".video-wrap_tooltip").style.top =
-        "calc(100% - 205px)";
+        "calc(100% - 235px)";
       shadowRootDoc.querySelector(".video-wrap_tooltip").style.left =
         "calc(100% - 430px)";
 

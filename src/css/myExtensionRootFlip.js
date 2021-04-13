@@ -1710,6 +1710,7 @@ export const myExtensionRootFlipCss5 = `
         text-transform: uppercase;
         font-size: 10px;
         line-height: 12.19px;
+        padding: 1px 6px !important;
     }
 
     .custom-button:hover {

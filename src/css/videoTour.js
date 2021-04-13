@@ -194,10 +194,10 @@ export const videoTourCss1 = `
 
     .trail_video_overlayNext *,
     .trail_video_overlayPrev * {
-        color: #fff !important;
-        font-family: "Lato", sans-serif !important;
-        background: transparent !important;
-        font-size: 16px;
+        // color: #fff !important;
+        // font-family: "Lato", sans-serif !important;
+        // background: transparent !important;
+        // font-size: 16px;
     }
 
     .video-wrap_tooltip-fullScreen {
@@ -231,6 +231,6 @@ export const videoTourCss1 = `
     }
 
     .video-mobile {
-        top: 47vh !important;
+        // top: 47vh !important;
     }
 `;
