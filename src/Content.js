@@ -278,7 +278,7 @@ class Main extends React.Component {
 
         if (
           document.URL.includes(
-            `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trail_data_tour/`
+            `${process.env.REACT_APP_NEW_MS1_DOMAIN}userTourDataDetail/readTrailit_trail_data_tour/`
           ) &&
           !items.saveSort
         ) {
@@ -1030,7 +1030,7 @@ class Main extends React.Component {
       return "";
     } else if (
       document.URL.includes(
-        `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trail_data_tour/`
+        `${process.env.REACT_APP_NEW_MS1_DOMAIN}userTourDataDetail/readTrailit_trail_data_tour/`
       ) &&
       previewId !== "" &&
       (type === "video" || type === "audio" || type === "tooltip")
@@ -3708,7 +3708,7 @@ class DefaultButton extends React.PureComponent {
     const { trailList, currUserId } = this.state;
     // const trailDataId = trailList[trailList.length - 1].trail_data_id;
     // const trailId = trailList[trailList.length - 1].trail_id;
-    // const trailUrl = `${process.env.REACT_APP_MS4_URL}userTourDataDetail/readTrailit_trail_data_tour/${trailDataId}?trailId=${trailId}&user_id=${this.state.currUserId}`;
+    // const trailUrl = `${process.env.REACT_APP_NEW_MS1_DOMAIN}userTourDataDetail/readTrailit_trail_data_tour/${trailDataId}?trailId=${trailId}&user_id=${this.state.currUserId}`;
 
     const trailId = trailList[0].trail_id;
     const URL = trailList[0].url;

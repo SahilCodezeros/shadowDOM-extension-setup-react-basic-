@@ -34,7 +34,7 @@ class Login extends React.Component {
     this.setState({ isLoading: true });
 
     axios
-      .post(`${process.env.REACT_APP_MS2_URL}user/login`, values, {
+      .post(`${process.env.REACT_APP_NEW_MS2_DOMAIN}user/login`, values, {
         withCredentials: true,
       })
       .then((res, err) => {

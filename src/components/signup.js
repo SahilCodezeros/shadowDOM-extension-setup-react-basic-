@@ -36,7 +36,7 @@ class Signup extends React.Component {
 
     values = { ...values, profileImage: this.state.profileImage };
     axios
-      .post(`${process.env.REACT_APP_MS2_URL}user/register`, values, {
+      .post(`${process.env.REACT_APP_NEW_MS2_DOMAIN}user/register`, values, {
         withCredentials: true,
       })
       .then((res) => {
