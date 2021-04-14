@@ -179,6 +179,14 @@ class Main extends React.Component {
         }
 
         chrome.storage.onChanged.addListener(async (changes) => {
+          if (
+            changes.tourType &&
+            changes.tourType.oldValue === "preview" &&
+            changes.tourType.newValue === ""
+          ) {
+            this.setState({ menuOpen: false });
+          }
+
           //
           //
           // if (changes.authorData && changes.authorData.userName.newValue) {
@@ -1442,7 +1450,7 @@ class Main extends React.Component {
               <button
                 className="blob"
                 onClick={(e) => this.openMenu("preview")}
-                data-title="Preview"
+                data-title="View Trail"
               >
                 <svg
                   width="40"
@@ -3905,7 +3913,6 @@ class DefaultButton extends React.PureComponent {
             guest_id: "",
             trail_web_user_tour: [],
             noStepsToWatch: "",
-
             userData: { ...items.old_user_data },
           });
         } else if (

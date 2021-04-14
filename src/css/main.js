@@ -90,6 +90,7 @@ export const main1Css = `
     #my-extension-root .wrap .blob svg path {fill: #fff;}
 
     #my-extension-root .wrap .blob:after {
+        width: 96px;
         content: attr(data-title);
         // color: #DA5E9A;
         color: #ff7958;
