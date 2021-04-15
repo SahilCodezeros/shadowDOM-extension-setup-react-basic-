@@ -314,7 +314,7 @@ class VideoTour extends React.PureComponent {
   };
 
   componentWillUnmount() {
-    // Remove trailit log
+    // Remove trailit logo
     removeTrailitLogo();
 
     // Remove add event listener

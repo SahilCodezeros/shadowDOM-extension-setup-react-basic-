@@ -1907,6 +1907,14 @@ class DefaultButton extends React.PureComponent {
         trail: false,
       },
     });
+
+    chrome.storage.local.set({
+      trailDeleteModal: {
+        value: "close",
+        title: "",
+        id: "",
+      },
+    });
   };
 
   // Show delete modal
@@ -1933,6 +1941,13 @@ class DefaultButton extends React.PureComponent {
       if (trail) {
         // Delete trail by id
         await deleteSingleTrail(id);
+
+        chrome.storage.local.get(["trail_id"], async (items) => {
+          if (items.trail_id && items.trail_id === id) {
+            // Close menu
+            toggle();
+          }
+        });
 
         // Set state
         this.setState({ onDone: false });
@@ -4481,10 +4496,6 @@ class DefaultButton extends React.PureComponent {
           modal.style.height = "75%";
         }
       }
-
-      // if (tourType && tourType !== '') {
-      // 	document.getElementById('extension-div').shadowRoot.getElementById('my-extension-defaultroot').style.position = 'relative';
-      // }
     });
 
     if (
@@ -5565,7 +5576,16 @@ chrome.runtime.onConnect.addListener((port) => {
 
 chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
   if (msgObj.status === "logout") {
+    // Remove items from local storage
+    window.localStorage.removeItem("add-on-auto-lgout-tm");
+
     app.style.display = "none";
+    // const extensionDiv = document.getElementById("extension-div");
+
+    // if (extensionDiv) {
+    //   extensionDiv.remove();
+    // }
+
     // appd.style.display = 'none';
   } else {
     if (
@@ -5612,35 +5632,8 @@ const toggle = () => {
 // }
 
 const autoLogoutFunction = () => {
-  // // Clear auto logout timeout
-  // clearTimeout(autoLogoutTimeout);
-
-  // autoLogoutTimeout = setTimeout(() => {
-  //   chrome.storage.local.get(
-  //     ["openButton", "tourType", "isAuth"],
-  //     function (items) {
-  //
-
-  //       if (items.isAuth) {
-  //         // this.onClickToRedirect("login");
-  //         chrome.runtime.sendMessage("", { type: "logout" });
-  //         chrome.runtime.sendMessage({ badgeText: `` });
-  //         chrome.storage.local.set({
-  //           trail_web_user_tour: [],
-  //           notification: true,
-  //           closeContinue: false,
-  //         });
-  //         chrome.storage.local.clear();
-  //       }
-  //     }
-  //   );
-  // }, 1800000);
-
   // Clear interval
   clearInterval(autoLogoutTimeout);
-
-  // Update auto logout time in localstorage
-  window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
 
   autoLogoutTimeout = setInterval(() => {
     chrome.storage.local.get(["isAuth"], async function (items) {
@@ -5665,4 +5658,13 @@ const autoLogoutFunction = () => {
       }
     });
   }, 5000);
+
+  chrome.storage.local.get(["isAuth"], async function (items) {
+    if (items.isAuth) {
+      // Update auto logout time in localstorage
+      window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
+    } else {
+      clearInterval(autoLogoutTimeout);
+    }
+  });
 };

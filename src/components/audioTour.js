@@ -218,7 +218,7 @@ class AudioTour extends React.PureComponent {
       this.cleanup();
     }
 
-    // Remove trailit log
+    // Remove trailit logo
     removeTrailitLogo();
 
     // Remove add event listener

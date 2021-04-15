@@ -84,19 +84,17 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "logout") {
-    chrome.tabs.query(
-      {
-        active: true,
-        lastFocusedWindow: true,
-      },
-      (tabs) => {
-        // ...and send a request for the DOM info...
-        chrome.tabs.sendMessage(tabs[0].id, {
-          from: "content.js",
-          status: "logout",
-        });
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "content.js",
+        status: "logout",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        // Send message to all tabs
+        chrome.tabs.sendMessage(tabs[i].id, message);
       }
-    );
+    });
   }
 
   if (message.type === "openInTab") {
@@ -114,19 +112,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === "updateTimeout") {
-    chrome.tabs.query(
-      {
-        active: true,
-        lastFocusedWindow: true,
-      },
-      (tabs) => {
-        // ...and send a request for the DOM info...
-        chrome.tabs.sendMessage(tabs[0].id, {
-          from: "popup",
-          subject: "updateTimeout",
-        });
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "popup",
+        subject: "updateTimeout",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        // Send message to all tabs
+        chrome.tabs.sendMessage(tabs[i].id, message);
       }
-    );
+    });
   }
 
   if (message.type === "DOMInfo") {

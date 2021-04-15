@@ -128,6 +128,7 @@ class WebUserTour extends React.Component {
     }
 
     window.addEventListener("resize", () => {
+      let { tourStep } = this.state;
       const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
       if (!shadowRoot.querySelector(".trail_tooltip_done")) return;
@@ -146,6 +147,7 @@ class WebUserTour extends React.Component {
         this.props.tourStep
       );
     }
+
     // Call add logo function
     this.addLogo();
   }
@@ -185,7 +187,7 @@ class WebUserTour extends React.Component {
     // Remove listener when this component unmounts
     chrome.runtime.onMessage.removeListener(this.handleMessage);
 
-    // Remove trailit log
+    // Remove trailit logo
     removeTrailitLogo();
 
     this.setState({ isTourActive: false });
@@ -508,6 +510,8 @@ class WebUserTour extends React.Component {
         </div>
       );
     }
+
+    console.log("resize", tourStep);
 
     return (
       <div>

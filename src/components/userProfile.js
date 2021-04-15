@@ -160,7 +160,7 @@ class UserProfile extends React.Component {
     }
   };
 
-  updateAutologoutTime = () => {
+  updateAutologoutTime = (message) => {
     chrome.runtime.sendMessage("", {
       type: "updateTimeout",
       status: true,
@@ -169,7 +169,9 @@ class UserProfile extends React.Component {
 
   componentWillUnmount() {
     // Remove click event listener
-    window.removeEventListener("click", this.updateAutologoutTime);
+    window.removeEventListener("click", () =>
+      this.updateAutologoutTime("hiiii")
+    );
   }
 
   async componentDidMount() {
@@ -391,7 +393,7 @@ class UserProfile extends React.Component {
 
   onClickToCreateTrail = (e) => {
     this.onChangeTrailEdit(false);
-    this.setState({ listTitle: "My Trails", slideBalance: false });
+    this.setState({ slideBalance: false });
     $("body").attr("class", "trailit_EditTrailShow");
   };
 

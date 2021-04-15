@@ -54,6 +54,16 @@ class App extends React.Component {
         }
       }.bind(this)
     );
+
+    // Listen chrome message
+    chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
+      if (msgObj.type === "logout") {
+        $("body").attr("class", "");
+
+        this.onClickToRedirect("login");
+        chrome.runtime.sendMessage({ userLoggedIn: false });
+      }
+    });
   }
 
   /**

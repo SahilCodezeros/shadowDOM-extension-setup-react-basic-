@@ -32,7 +32,7 @@ class UserProfileList extends Component {
     const { addRaw, getOneEditRow } = nextProps;
 
     let list = await nextProps.list;
-    if (!_.isEmpty(addRaw)) {
+    if (!_.isEmpty(addRaw) && this.props.title === "My Trails") {
       let findRow = await list.find((r) => r.trail_id == addRaw.trail_id);
       if (findRow == undefined) {
         list.push(addRaw);
@@ -209,8 +209,6 @@ class UserProfileList extends Component {
       lastName,
       userName,
     } = this.props;
-
-    console.log("list", list);
 
     return (
       <div className="trailit_userPanalContentInnerBox">

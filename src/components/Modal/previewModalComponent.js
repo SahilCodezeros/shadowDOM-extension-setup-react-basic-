@@ -244,7 +244,7 @@ class PreviewModalComponent extends React.Component {
   };
 
   componentWillUnmount() {
-    // Remove trailit log
+    // Remove trailit logo
     removeTrailitLogo();
   }
 

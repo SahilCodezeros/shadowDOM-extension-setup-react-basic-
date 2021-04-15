@@ -153,7 +153,7 @@ class TargetNotFound extends React.Component {
   };
 
   componentWillUnmount() {
-    // Remove trailit log
+    // Remove trailit logo
     removeTrailitLogo();
   }
 
