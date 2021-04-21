@@ -13,6 +13,7 @@ import {
   removeTrailitLogo,
 } from "../common/trailitLogoInPreview";
 import ContinueTourConfirmation from "./Modal/ContinueTourConfirmation";
+import { matchUrl } from "./common";
 
 const chrome = window.chrome;
 let timeInterval;
@@ -88,7 +89,7 @@ class AudioTour extends React.PureComponent {
       }
     );
 
-    if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
+    if (!matchUrl(this.props.data[this.props.tourStep - 1].url, document.URL)) {
       window.location.href = this.props.data[this.props.tourStep - 1].url;
     }
 
@@ -163,7 +164,7 @@ class AudioTour extends React.PureComponent {
     let { tourStep } = this.props;
     let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
 
-    if (this.props.data[step - 1].url === document.URL) {
+    if (matchUrl(this.props.data[step - 1].url, document.URL)) {
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
     } else {
@@ -258,7 +259,10 @@ class AudioTour extends React.PureComponent {
           playAudio = true;
 
           if (
-            this.props.data[this.props.tourStep - 1].url === document.URL &&
+            matchUrl(
+              this.props.data[this.props.tourStep - 1].url,
+              document.URL
+            ) &&
             document
               .getElementById("extension-div")
               .shadowRoot.querySelector(".audio_wrap_tooltip")
@@ -408,6 +412,8 @@ class AudioTour extends React.PureComponent {
       }
     }
     // });
+
+    console.log("in audioTour render");
 
     const { tourStep } = this.props;
 

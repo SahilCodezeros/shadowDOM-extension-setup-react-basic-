@@ -759,7 +759,8 @@ export const myExtensionRootFlipCss3 = `
         // position: absolute !important;
         position: fixed !important;
         right: 0;
-        bottom: -10px;
+        // bottom: -10px;
+        bottom: 5%;
         box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 4px, rgba(0, 0, 0, 0.28) 0px 4px 8px !important;
         height: 30px;
         width: 120px !important;
@@ -1861,6 +1862,10 @@ export const myExtensionRootFlipCss5 = `
         stroke: #D41E79;
         stroke-linecap: round;
         animation: dash 1.5s ease-in-out infinite;
+    }
+
+    .widthAuto {
+        width: auto !important;
     }
 `;
 

@@ -222,6 +222,10 @@ body {
   height: 45px;
 }
 
+.cursor {
+  cursor: pointer;
+}
+
 .tr_wrapper .tr_button1 {
   font-size: 14px;
   line-height: 22px;
@@ -1702,6 +1706,38 @@ button:focus {
   margin-bottom: 15px;
 }
 
+.activeTab-list-grid-view {
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-grid-buttons {
+  margin-right: 15px;
+  width: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.list-button,
+.grid-button {
+  border: 1px solid #d41e79 !important;
+  color: #d41e79;
+  border-radius: 5px;
+}
+
+.width100 {
+  width: 100% !important;
+}
+
+.list-button:hover,
+.grid-button:hover,
+.list-button.active,
+.grid-button.active {
+  color: var(--white);
+  background-color: var(--pink-hover);
+}
+
 button {
   cursor: pointer;
 }
@@ -1800,7 +1836,7 @@ body.trailit_EditTrailShow .trailit_userPanalLeftBox {
   cursor: pointer;
 }
 
-.trailit_uploadImage label {
+.trailit_uploadImage span {
   font-weight: bold !important;
   font-size: 12px !important;
   line-height: 15px !important;
@@ -1810,6 +1846,17 @@ body.trailit_EditTrailShow .trailit_userPanalLeftBox {
   border-radius: 7px !important;
   padding: 5px 10px !important;
 }
+
+/* .trailit_uploadImage label {
+  font-weight: bold !important;
+  font-size: 12px !important;
+  line-height: 15px !important;
+  color: #000000 !important;
+  background: #ffffff !important;
+  border: 1px solid #000000 !important;
+  border-radius: 7px !important;
+  padding: 5px 10px !important;
+} */
 
 .trailit_uploadImage input,
 .trailit_addMoreImage input {

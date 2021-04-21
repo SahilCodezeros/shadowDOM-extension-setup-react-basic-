@@ -17,6 +17,7 @@ import {
   removeTrailitLogo,
 } from "../common/trailitLogoInPreview";
 import ContinueTourConfirmation from "./Modal/ContinueTourConfirmation";
+import { matchUrl } from "./common";
 
 const chrome = window.chrome;
 
@@ -83,59 +84,22 @@ class WebUserTour extends React.Component {
   };
 
   componentDidMount() {
-    let { tourStep } = this.state;
-    this.createPopOver(tourStep);
-    chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
-    this.getWebUserTour("", this.props.data[tourStep - 1], tourStep);
+    // document.addEventListener("load", this.handleLoad);
+    // document.onload = this.handleLoad;
 
-    window.addEventListener("load", this.handleLoad);
-
-    if (
-      this.props.data[tourStep - 1].mediaType &&
-      (this.props.data[tourStep - 1].mediaType === "video" ||
-        this.props.data[tourStep - 1].mediaType === "audio")
-    ) {
-      if (document.readyState === "complete") {
-        $(document).ready(() => {
-          // Stop playing websites audio or video
-          stopMediaPlaying();
-        });
-      } else if (
-        document.readyState === "interactive" &&
-        document.URL.includes("https://www.youtube.com/")
-      ) {
-        $(document).ready(() => {
-          // Stop playing websites audio or video
-          stopMediaPlaying();
-        });
-      } else {
-        document.body.onload = function () {
-          // Stop playing websites audio or video
-          stopMediaPlaying();
-        };
-      }
-
-      // Add logo
-      this.addLogo();
-
-      setTimeout(() => {
-        document.querySelectorAll("video").forEach((res) => {
-          if (res.className !== "preview-video") {
-            res.pause();
-          }
-        });
-      }, 2000);
-    }
-
-    window.addEventListener("resize", () => {
-      let { tourStep } = this.state;
-      const shadowRoot = document.getElementById("extension-div").shadowRoot;
-
-      if (!shadowRoot.querySelector(".trail_tooltip_done")) return;
-
-      this.getWebUserTour("", this.props.data[tourStep - 1], tourStep);
+    $(() => {
+      this.handleLoad();
     });
   }
+
+  resizeFunction = () => {
+    let { tourStep } = this.state;
+    const shadowRoot = document.getElementById("extension-div").shadowRoot;
+
+    if (!shadowRoot.querySelector(".trail_tooltip_done")) return;
+
+    this.getWebUserTour("", this.props.data[tourStep - 1], tourStep);
+  };
 
   componentDidUpdate(prevProps) {
     if (prevProps.tourStep !== this.props.tourStep) {
@@ -153,7 +117,62 @@ class WebUserTour extends React.Component {
   }
 
   handleLoad = (e) => {
+    let { tourStep } = this.state;
+
     // alert("GGGGGGGGGGGGGGGGGGGGGGG");
+    // console.log("loaded");
+
+    let timeout = 0;
+
+    if (document.URL.includes("https://common.fund")) {
+      timeout = 2000;
+    }
+
+    setTimeout(() => {
+      this.createPopOver(tourStep);
+      chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
+      this.getWebUserTour("", this.props.data[tourStep - 1], tourStep);
+
+      if (
+        this.props.data[tourStep - 1].mediaType &&
+        (this.props.data[tourStep - 1].mediaType === "video" ||
+          this.props.data[tourStep - 1].mediaType === "audio")
+      ) {
+        if (document.readyState === "complete") {
+          $(document).ready(() => {
+            // Stop playing websites audio or video
+            stopMediaPlaying();
+          });
+        } else if (
+          document.readyState === "interactive" &&
+          document.URL.includes("https://www.youtube.com/")
+        ) {
+          $(document).ready(() => {
+            // Stop playing websites audio or video
+            stopMediaPlaying();
+          });
+        } else {
+          document.body.onload = function () {
+            // Stop playing websites audio or video
+            stopMediaPlaying();
+          };
+        }
+
+        // Add logo
+        this.addLogo();
+
+        setTimeout(() => {
+          document.querySelectorAll("video").forEach((res) => {
+            if (res.className !== "preview-video") {
+              res.pause();
+            }
+          });
+        }, 2000);
+      }
+
+      // Add event listener
+      window.addEventListener("resize", this.resizeFunction);
+    }, timeout);
   };
 
   addLogo = () => {
@@ -186,6 +205,9 @@ class WebUserTour extends React.Component {
   componentWillUnmount() {
     // Remove listener when this component unmounts
     chrome.runtime.onMessage.removeListener(this.handleMessage);
+
+    // Remove event listener
+    window.removeEventListener("resize", this.resizeFunction);
 
     // Remove trailit logo
     removeTrailitLogo();
@@ -243,6 +265,12 @@ class WebUserTour extends React.Component {
         unqTarget = this.props.data[step - 1].unique_target_one;
       }
     }
+
+    // console.log("unqTarget", unqTarget);
+    // console.log(
+    //   "document.querySelector(unqTarget)",
+    //   document.querySelector(unqTarget)
+    // );
 
     if (document.querySelector(unqTarget) == null) {
       this.props.toogleTargetDataNotFound(true);
@@ -339,7 +367,7 @@ class WebUserTour extends React.Component {
 
       let content = this.props.data
         .map((res, index) => {
-          if (res.url == document.URL) {
+          if (matchUrl(res.url, document.URL)) {
             tourSteps[`step${index + 1}`] = false;
             res["step"] = index + 1;
             return res;
@@ -392,12 +420,12 @@ class WebUserTour extends React.Component {
     }
 
     document.querySelector(unqTarget).classList.remove("trail_web_user_tour");
-    if (this.props.data[step - 1].url === document.URL) {
+    if (matchUrl(this.props.data[step - 1].url, document.URL)) {
       let type = this.props.data[step - 1].type;
 
       if (type === "tooltip") {
-        this.createPopOver(step);
-        this.getWebUserTour(event, this.props.data[step - 1], step);
+        // this.createPopOver(step);
+        // this.getWebUserTour(event, this.props.data[step - 1], step);
         this.props.tour(step, type, tourSide);
       } else {
         this.setState({ tourStep: step - 1 });
@@ -511,8 +539,6 @@ class WebUserTour extends React.Component {
       );
     }
 
-    console.log("resize", tourStep);
-
     return (
       <div>
         {this.props.tooltipRef && (
@@ -524,7 +550,7 @@ class WebUserTour extends React.Component {
           />
         )}
         {uniqueTargetStatus &&
-          this.props.data[tourStep - 1].url === document.URL && (
+          matchUrl(this.props.data[tourStep - 1].url, document.URL) && (
             <React.Fragment>
               {tourContent.map((res, index) => {
                 let unTarget = resizeScreen()

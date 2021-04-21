@@ -172,7 +172,9 @@ export const commonTooltipFormFunction = (
   onClickToSubmit,
   onChangeToInput,
   handleChange,
-  media
+  media,
+  titleInvalid,
+  fileNameInvalid
 ) => {
   const buttons = (
     <div className="trailButtonsWrapper mt-13">
@@ -181,14 +183,21 @@ export const commonTooltipFormFunction = (
       </button>
 
       <button
-        htmlType="submit"
+        // htmlType="submit"
+        type="button"
         disabled={fileLoading}
         className="custom-button"
+        onClick={onClickToSubmit}
       >
         ADD STEP
       </button>
     </div>
   );
+
+  let tourType = trailStatus;
+  if (tourType.length > 0) {
+    tourType = tourType.charAt(0).toUpperCase() + tourType.slice(1);
+  }
 
   let mediaType = "";
 
@@ -203,7 +212,79 @@ export const commonTooltipFormFunction = (
   return (
     <div>
       <div className="pl-4 trail_video_frm">
-        <Form
+        <div className=" mb-2">
+          <input
+            type="text"
+            name="title"
+            value={title}
+            autoComplete="off"
+            className="ant-input"
+            onChange={onChangeToInput}
+            onKeyDown={(e) => e.stopPropagation()}
+            placeholder={`Enter ${tourType} Title`}
+          />
+
+          {titleInvalid && title.length === 0 && (
+            <div class="ant-form-item-explain ant-form-item-explain-error">
+              <div role="alert">Please enter title!</div>
+            </div>
+          )}
+        </div>
+
+        <input
+          type="text"
+          disabled={true}
+          name="fileName"
+          value={fileName}
+          // onKeyDown={onChangeToInput}
+          onChange={onChangeToInput}
+          onKeyDown={(e) => e.stopPropagation()}
+          // placeholder={`Add ${tourType} URL`}
+          placeholder={`${tourType} Filename`}
+          className="ant-input mb-2"
+        />
+
+        <div className="upload_bx">
+          <div className="ant-upload">
+            <p className="ant-upload-drag-icon">
+              {fileLoading && (
+                <div class="trial_spinner">
+                  <img
+                    class="ring1"
+                    src={require(`../images/loding1.png`)}
+                    alt="ring1"
+                  />
+                  <img
+                    class="ring2"
+                    src={require(`../images/loding2.png`)}
+                    alt="ring2"
+                  />
+                </div>
+              )}
+              {!fileLoading && <CloudUploadOutlined />}
+            </p>
+            <p className="ant-upload-text">
+              {fileLoading ? "Uploading" : "Upload"} {tourType}
+            </p>
+          </div>
+
+          <input
+            type="file"
+            name="media"
+            accept={mediaType}
+            style={{ padding: 0 }}
+            onChange={handleChange}
+          />
+
+          {fileNameInvalid && fileName.length === 0 && (
+            <div class="ant-form-item-explain ant-form-item-explain-error">
+              <div role="alert">File is required!</div>
+            </div>
+          )}
+        </div>
+
+        {buttons}
+        {/* <Form
           onFinish={onClickToSubmit}
           initialValues={{
             title,
@@ -224,28 +305,29 @@ export const commonTooltipFormFunction = (
               // onKeyDown={onChangeToInput}
               onChange={onChangeToInput}
               onKeyDown={(e) => e.stopPropagation()}
-              placeholder={`Enter ${trailStatus} Title`}
+              placeholder={`Enter ${tourType} Title`}
             />
           </Form.Item>
 
-          {/* <input 
+          <input 
               type="text" 
               name="title" 
               value={title} 
-              placeholder={`Enter ${trailStatus} Title`} 
+              placeholder={`Enter ${tourType} Title`} 
               className="ant-input mb-2" 
               onKeyDown={onChangeToInput} 
               autoComplete="off" 
-          /> */}
+          />
           <input
             type="text"
-            name="web_url"
-            value={fileName}
             disabled={true}
+            name="fileName"
+            value={fileName}
             // onKeyDown={onChangeToInput}
             onChange={onChangeToInput}
             onKeyDown={(e) => e.stopPropagation()}
-            placeholder={`Add ${trailStatus} URL`}
+            // placeholder={`Add ${tourType} URL`}
+            placeholder={`${tourType} Filename`}
             className="ant-input mb-2"
           />
 
@@ -269,20 +351,27 @@ export const commonTooltipFormFunction = (
                 {!fileLoading && <CloudUploadOutlined />}
               </p>
               <p className="ant-upload-text">
-                {fileLoading ? "Uploading" : "Upload"} {trailStatus}
+                {fileLoading ? "Uploading" : "Upload"} {tourType}
               </p>
             </div>
+
             <input
               type="file"
               name="media"
+              accept={mediaType}
               style={{ padding: 0 }}
               onChange={handleChange}
-              accept={mediaType}
             />
+
+            {fileNameInvalid && fileName === "" && (
+              <div class="ant-form-item-explain ant-form-item-explain-error">
+                <div role="alert">File is required!</div>
+              </div>
+            )}
           </div>
 
           {buttons}
-        </Form>
+        </Form> */}
       </div>
     </div>
   );
@@ -516,4 +605,16 @@ export const getUrlVars = () => {
   }
 
   return vars;
+};
+
+export const matchUrl = (stepUrl, docUrl) => {
+  if (stepUrl && stepUrl[stepUrl.length - 1] === "/") {
+    stepUrl = stepUrl.slice(0, stepUrl.length - 1);
+  }
+
+  if (docUrl && docUrl[docUrl.length - 1] === "/") {
+    docUrl = docUrl.slice(0, docUrl.length - 1);
+  }
+
+  return stepUrl === docUrl;
 };

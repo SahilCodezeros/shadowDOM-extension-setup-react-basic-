@@ -6,6 +6,12 @@ export const isValidated = (data) => {
 
   if (data.hasOwnProperty("trail_title") && _.isEmpty(data.trail_title)) {
     errors.trail_title = "Please enter trail title";
+  } else if (
+    data.hasOwnProperty("trail_title") &&
+    !_.isEmpty(data.trail_title) &&
+    data.trail_title.length > 200
+  ) {
+    errors.trail_title = "Title limit exceeded!";
   } else {
     delete errors.trail_title;
   }
@@ -18,6 +24,12 @@ export const isValidated = (data) => {
     errors.trail_categor_id = "Please select category";
   } else {
     delete errors.trail_categor_id;
+  }
+
+  if (data.hasOwnProperty("file") && data.file.size > 1024 * 1024 * 8) {
+    errors.file = "Image size limit exceeded!";
+  } else {
+    delete errors.file;
   }
 
   return {

@@ -42,6 +42,8 @@ class userProfileAdd extends Component {
   onClickToSubmit = (e) => {
     e.preventDefault();
     const { errors, isValid } = isValidated(this.state);
+    console.log("error", errors);
+    console.log("isValid", isValid);
 
     if (!isValid) {
       this.setState({ errors });

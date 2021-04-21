@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import $ from "jquery";
 import _ from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList, faThLarge } from "@fortawesome/free-solid-svg-icons";
 
 import { getUserOneTrail } from "../../common/axios";
 import BgImage from "../../images/trailit_bx_img.png";
@@ -21,6 +23,7 @@ class UserProfileList extends Component {
       isLoadingLink: false,
       isCopiedLink: false,
       isCopiedError: false,
+      viewType: "grid",
     };
   }
 
@@ -194,6 +197,16 @@ class UserProfileList extends Component {
     });
   };
 
+  onListButtonHandler = () => {
+    // Set state
+    this.setState({ viewType: "list" });
+  };
+
+  onGridButtonHandler = () => {
+    // Set state
+    this.setState({ viewType: "grid" });
+  };
+
   render() {
     const {
       isLoadingLink,
@@ -201,6 +214,7 @@ class UserProfileList extends Component {
       isCopiedError,
       isLoading,
       list,
+      viewType,
     } = this.state;
     const {
       profileImage,
@@ -228,7 +242,23 @@ class UserProfileList extends Component {
             Please add trails data
           </div>
         )} */}
-        <div className="trailit_18600 trailit_mb3">{this.props.title}</div>
+        <div className="activeTab-list-grid-view">
+          <div className="trailit_18600 trailit_mb3">{this.props.title}</div>
+          <div className="list-grid-buttons">
+            <button
+              onClick={this.onListButtonHandler}
+              className={`list-button ${viewType === "list" ? "active" : ""}`}
+            >
+              <FontAwesomeIcon icon={faList} size="sm" />
+            </button>
+            <button
+              onClick={this.onGridButtonHandler}
+              className={`grid-button ${viewType === "grid" ? "active" : ""}`}
+            >
+              <FontAwesomeIcon icon={faThLarge} size="sm" />
+            </button>
+          </div>
+        </div>
         <div className="trailit_scrollBoxs">
           <div className="trailit_Row">
             {/* {isLoading && <div className="trailit_noData">Loading...</div>} */}
@@ -282,7 +312,11 @@ class UserProfileList extends Component {
                 }
 
                 return (
-                  <div className="trailit_col6">
+                  <div
+                    className={`trailit_col6 ${
+                      viewType === "list" ? "width100" : ""
+                    }`}
+                  >
                     <div
                       className="trailit_bx"
                       onClick={(e) => this.onBoxClick(e, res)}

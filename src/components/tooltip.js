@@ -22,15 +22,23 @@ class Tooltip extends React.PureComponent {
       description: "",
       web_url: "",
       tourType: "",
-      selectedOption: { value: "text", label: "Text" },
       trailStatus: "text",
       showPreview: false,
       fileName: "",
+      titleInvalid: false,
+      fileNameInvalid: false,
     };
   }
 
   onSelectOption = (trailStatus) => {
-    this.setState({ trailStatus });
+    this.setState({
+      trailStatus,
+      title: "",
+      fileName: "",
+      description: "",
+      titleInvalid: false,
+      fileNameInvalid: false,
+    });
   };
 
   componentDidMount() {
@@ -56,13 +64,29 @@ class Tooltip extends React.PureComponent {
    * on click to save tooltip
    */
   onClickToSubmit = async (e) => {
+    const { trailStatus, title, web_url, description, fileName } = this.state;
+
+    if (trailStatus !== "text" && (fileName === "" || title === "")) {
+      this.setState({
+        fileNameInvalid: true,
+        titleInvalid: true,
+      });
+
+      return;
+    } else {
+      this.setState({
+        fileNameInvalid: false,
+        titleInvalid: false,
+      });
+    }
+
     // Call on tour loading function
     this.props.onTourLoading(true);
 
     let obj = {};
     const { onCancel, onSave, rowData, target, count } = this.props;
 
-    if (this.state.trailStatus === "text") {
+    if (trailStatus === "text") {
       if (this.props.type === "Make Edit") {
         obj = {
           ...rowData,
@@ -70,24 +94,24 @@ class Tooltip extends React.PureComponent {
           unique_target_one: this.props.uniqueTarget,
           type: "tooltip",
           responsive: "mobile",
-          mobile_media_type: this.state.trailStatus,
-          mobile_title: this.state.title,
-          mobile_description: this.state.description,
-          web_url: this.state.web_url,
+          mobile_media_type: trailStatus,
+          mobile_title: title,
+          mobile_description: description,
+          web_url: web_url,
         };
       } else {
         obj = {
           url: document.URL,
           uniqueTarget: this.props.uniqueTarget,
           type: "tooltip",
-          mediaType: this.state.trailStatus,
-          title: this.state.title,
-          description: this.state.description,
-          web_url: this.state.web_url,
+          mediaType: trailStatus,
+          title: title,
+          description: description,
+          web_url: web_url,
         };
       }
     } else {
-      if (this.state.title === "" && this.state.web_url === "") {
+      if (title === "" && web_url === "") {
         return;
       }
 
@@ -95,23 +119,23 @@ class Tooltip extends React.PureComponent {
         obj = {
           ...rowData,
           type: "tooltip",
-          mediaType: this.state.trailStatus,
+          mediaType: trailStatus,
           unique_target_one: this.props.uniqueTarget,
           responsive: "mobile",
-          mobile_media_type: this.state.trailStatus,
-          mobile_title: this.state.title,
-          mobile_description: this.state.description,
-          web_url: this.state.web_url,
+          mobile_media_type: trailStatus,
+          mobile_title: title,
+          mobile_description: description,
+          web_url: web_url,
         };
       } else {
         obj = {
           ...rowData,
           type: "tooltip",
-          mediaType: this.state.trailStatus,
+          mediaType: trailStatus,
           uniqueTarget: this.props.uniqueTarget,
           url: document.URL,
-          title: this.state.title,
-          web_url: this.state.web_url,
+          title: title,
+          web_url: web_url,
         };
       }
     }
@@ -157,8 +181,14 @@ class Tooltip extends React.PureComponent {
   onChangeToInput = (e) => {
     e.stopPropagation();
 
-    // this.setState({ [e.target.name]: e.target.value });
-    this.setState({ title: e.target.value });
+    const value = e.target.value;
+    const isInvalid = value.length === 0 ? true : false;
+
+    // Set state
+    this.setState({
+      title: value,
+      titleInvalid: isInvalid,
+    });
   };
 
   uploadFile = (file) => {
@@ -176,8 +206,9 @@ class Tooltip extends React.PureComponent {
           showPreview: true,
           fileLoading: false,
           fileName: file.name,
-          web_url: data.response.result.fileUrl,
           fileAddStatus: true,
+          fileNameInvalid: false,
+          web_url: data.response.result.fileUrl,
         });
       })
       .catch((err) => {
@@ -203,7 +234,14 @@ class Tooltip extends React.PureComponent {
   // };
 
   selectedTooltipForm = (mediaType) => {
-    const { trailStatus, title, fileName, fileLoading } = this.state;
+    const {
+      trailStatus,
+      title,
+      fileName,
+      fileLoading,
+      titleInvalid,
+      fileNameInvalid,
+    } = this.state;
 
     // Common tooltip form function imported from common file
     return commonTooltipFormFunction(
@@ -215,7 +253,9 @@ class Tooltip extends React.PureComponent {
       this.onClickToSubmit,
       this.onChangeToInput,
       this.handleChange,
-      mediaType
+      mediaType,
+      titleInvalid,
+      fileNameInvalid
     );
   };
 

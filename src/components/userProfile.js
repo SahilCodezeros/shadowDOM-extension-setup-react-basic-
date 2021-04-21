@@ -78,13 +78,13 @@ class UserProfile extends React.Component {
 
     chrome.storage.local.get(["userData"], (items) => {
       if (items.userData._id) {
-        getBalance(items.userData._id)
-          .then((res) => {
-            this.setState({ nearBalance: res });
-          })
-          .catch((err) => {
-            this.setState({ nearBalance: null });
-          });
+        // getBalance(items.userData._id)
+        //   .then((res) => {
+        //     this.setState({ nearBalance: res });
+        //   })
+        //   .catch((err) => {
+        //     this.setState({ nearBalance: null });
+        //   });
       }
     });
   }

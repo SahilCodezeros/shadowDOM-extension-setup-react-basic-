@@ -9,6 +9,7 @@ import {
   removeTrailitLogo,
 } from "../../common/trailitLogoInPreview";
 import ContinueTourConfirmation from "./ContinueTourConfirmation";
+import { matchUrl } from "../common";
 
 const chrome = window.chrome;
 class TargetNotFound extends React.Component {
@@ -73,7 +74,7 @@ class TargetNotFound extends React.Component {
 
     await this.toggle();
 
-    if (this.props.data[step - 1].url === document.URL) {
+    if (matchUrl(this.props.data[step - 1].url, document.URL)) {
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
     } else {

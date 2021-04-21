@@ -1,5 +1,6 @@
 import React from "react";
 import $ from "jquery";
+import { matchUrl } from "./common";
 
 const chrome = window.chrome;
 
@@ -27,7 +28,7 @@ class TooltipOverlay extends React.Component {
   onClickToManagePopoverButton = async (event, step, tourSide) => {
     let { tourStep } = this.props;
 
-    if (this.props.data[step - 1].url === document.URL) {
+    if (matchUrl(this.props.data[step - 1].url, document.URL)) {
       let type = this.props.data[step - 1].type;
       this.setState({ content: this.props.data[step - 1] });
       this.props.tour(step, type, tourSide);

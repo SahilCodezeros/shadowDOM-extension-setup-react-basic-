@@ -13,6 +13,7 @@ import {
   removeTrailitLogo,
 } from "../common/trailitLogoInPreview";
 import ContinueTourConfirmation from "./Modal/ContinueTourConfirmation";
+import { matchUrl } from "./common";
 
 let draggie, dragEle;
 const chrome = window.chrome;
@@ -84,7 +85,7 @@ class VideoTour extends React.PureComponent {
       }
     });
 
-    if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
+    if (!matchUrl(this.props.data[this.props.tourStep - 1].url, document.URL)) {
       window.location.href = this.props.data[this.props.tourStep - 1].url;
     }
 
@@ -210,7 +211,7 @@ class VideoTour extends React.PureComponent {
       $("body").removeClass("trail_fullscreen");
     }
 
-    if (this.props.data[step - 1].url === document.URL) {
+    if (matchUrl(this.props.data[step - 1].url, document.URL)) {
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
     } else {

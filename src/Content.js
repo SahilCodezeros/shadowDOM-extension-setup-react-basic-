@@ -23,7 +23,7 @@ import { handleFileUpload } from "./common/audAndVidCommon";
 import { initButtonPosition } from "./common/initButtonPosition";
 import CreateNewTrailModal from "./components/CreateNewTrailModal";
 import CreateModalComponent from "./components/Modal/createModalComponent";
-import { queryParentElement } from "./components/common";
+import { matchUrl, queryParentElement } from "./components/common";
 import TrailDeleteModal from "./components/Modal/TrailDeleteModal";
 import PreviewModalComponent from "./components/Modal/previewModalComponent";
 import SortableItem, { SortableContainer } from "./components/SortableItem";
@@ -78,7 +78,6 @@ import {
 
 import "./Content.css";
 import { get } from "./AppUtill";
-import { reject, resolve } from "promise";
 import TargetNotFound from "./components/Modal/targetNotFound";
 
 /*global chrome*/
@@ -93,6 +92,7 @@ WebFont.load({
 
 let app;
 let obj = {};
+let updateOverlay;
 let root1 = "none";
 let allTrails = [];
 let trailWebUserTour = [];
@@ -1149,7 +1149,7 @@ class Main extends React.Component {
 
               if (
                 tour.url &&
-                tour.url !== document.URL &&
+                !matchUrl(tour.url, document.URL) &&
                 (closeContinue !== undefined || closeContinue === undefined)
               ) {
                 // Set loading state to false
@@ -1160,7 +1160,7 @@ class Main extends React.Component {
                 });
               } else if (
                 !tour.url &&
-                trail_web_user_tour[0].url !== document.URL &&
+                !matchUrl(trail_web_user_tour[0].url, document.URL) &&
                 (closeContinue !== undefined || closeContinue === undefined)
               ) {
                 // Set loading state to false
@@ -1171,14 +1171,14 @@ class Main extends React.Component {
                 });
               } else if (
                 !tour.url &&
-                trail_web_user_tour[0].url === document.URL &&
+                matchUrl(trail_web_user_tour[0].url, document.URL) &&
                 (closeContinue !== undefined || closeContinue === undefined)
               ) {
                 // Set loading state to false
                 chrome.storage.local.set({ loading: "false" });
               } else if (
                 tour.url &&
-                tour.url === document.URL &&
+                matchUrl(tour.url, document.URL) &&
                 (closeContinue !== undefined || closeContinue === undefined)
               ) {
                 // Set loading state to false
@@ -1323,7 +1323,7 @@ class Main extends React.Component {
   }
 
   disableTooltipTourButton = () => {
-    if (document.URL === "https://imgur.com/") return true;
+    if (matchUrl("https://imgur.com/", document.URL)) return true;
     if (document.URL.includes("https://www.reddit.com")) return true;
     if (document.URL.includes("https://twitter.com")) return true;
     if (document.URL.includes("https://docs.google.com")) return true;
@@ -1868,6 +1868,8 @@ class DefaultButton extends React.PureComponent {
       tooltipRef: false,
       targetDataNotFound: false,
       isTourLoading: false,
+      titleInvalid: false,
+      fileNameInvalid: false,
     };
 
     this.previewModalRef = React.createRef();
@@ -2456,14 +2458,11 @@ class DefaultButton extends React.PureComponent {
 
         // Add trailit logo when trail menu open
         addTrailitLogo();
-      } else {
-        if (
-          changes.currentTourType &&
-          changes.currentTourType.newValue === ""
-        ) {
-          // Remove trailit logo function
-          removeTrailitLogo();
-        }
+      }
+
+      if (changes.currentTourType && changes.currentTourType.newValue === "") {
+        // Remove trailit logo function
+        removeTrailitLogo();
       }
 
       //
@@ -2528,6 +2527,11 @@ class DefaultButton extends React.PureComponent {
   componentWillUnmount() {
     // Remove listener when this component unmounts
     window.removeEventListener("resize", this.resize);
+
+    if (updateOverlay) {
+      window.removeEventListener("resize", updateOverlay);
+    }
+
     chrome.runtime.onMessage.removeListener(this.handleMessage);
   }
 
@@ -2748,7 +2752,9 @@ class DefaultButton extends React.PureComponent {
                 leftPosition
               );
 
-              const updateOverlay = () => {
+              updateOverlay = () => {
+                console.log("in updateOverlay");
+
                 if (
                   root1 === "block" &&
                   getClass === "" &&
@@ -2979,7 +2985,7 @@ class DefaultButton extends React.PureComponent {
           let myExtensionRoot = $("#my-extension-root").css("display");
 
           if (myExtensionRoot === "none" && myExtensionDefaultroot === "none") {
-            if (obj.trailList[obj.tourStep - 1].url === document.URL) {
+            if (matchUrl(obj.trailList[obj.tourStep - 1].url, document.URL)) {
               $("#my-extension-defaultroot").css("display", "block");
             }
           }
@@ -3089,6 +3095,22 @@ class DefaultButton extends React.PureComponent {
 
   addStepClickHandler = async (e) => {
     try {
+      const { fileName, title } = this.state;
+
+      if (fileName === "" || title === "") {
+        this.setState({
+          fileNameInvalid: true,
+          titleInvalid: true,
+        });
+
+        return;
+      } else {
+        this.setState({
+          fileNameInvalid: false,
+          titleInvalid: false,
+        });
+      }
+
       // Call on tour loading function
       this.onTourLoading(true);
 
@@ -3211,6 +3233,7 @@ class DefaultButton extends React.PureComponent {
             web_url: "",
             fileAddStatus: false,
             fileName: "",
+            title: "",
             open: false,
             draggable: false,
             tourType: "",
@@ -3458,8 +3481,14 @@ class DefaultButton extends React.PureComponent {
   onChangeToInput = (e) => {
     e.stopPropagation();
 
+    const value = e.target.value;
+    const isInvalid = value.length === 0 ? true : false;
+
     // Set state
-    this.setState({ [e.target.name]: e.target.value });
+    this.setState({
+      title: value,
+      titleInvalid: isInvalid,
+    });
   };
 
   /**
@@ -3554,7 +3583,7 @@ class DefaultButton extends React.PureComponent {
       let type = this.state.trailList[step - 1].type;
       chrome.storage.local.set({ currentTourType: type, tourStep: step });
       this.setState({ currentTourType: type, tourStep: step });
-      if (this.state.trailList[step - 1].url !== document.URL) {
+      if (!matchUrl(this.state.trailList[step - 1].url, document.URL)) {
         window.location.href = this.state.trailList[step - 1].url;
       }
     }
@@ -3575,8 +3604,9 @@ class DefaultButton extends React.PureComponent {
           showPreview: true,
           fileLoading: false,
           fileName: file.name,
-          web_url: data.response.result.fileUrl,
           fileAddStatus: true,
+          fileNameInvalid: false,
+          web_url: data.response.result.fileUrl,
         });
       })
       .catch((err) => {
@@ -4073,11 +4103,14 @@ class DefaultButton extends React.PureComponent {
                 tourStep: "",
                 overlay: false,
                 fileName: "",
+                titile: "",
                 loading: false,
                 stepType: "",
                 open: false,
                 openSidebar: false,
                 draggable: false,
+                titleInvalid: false,
+                fileNameInvalid: false,
               });
             }
 
@@ -4352,7 +4385,11 @@ class DefaultButton extends React.PureComponent {
       openSidebar,
       currentTrailsTab,
       isTourLoading,
+      title,
+      titleInvalid,
+      fileNameInvalid,
     } = this.state;
+
     const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
     // Auto logout function
@@ -4375,10 +4412,25 @@ class DefaultButton extends React.PureComponent {
     tourUrl = false;
 
     if (tourStep !== "" && stateCount > 0) {
-      tourUrl = trailList[tourStep - 1].url === document.URL;
-      // if(trailList[tourStep - 1].url !== document.URL) {
-      // 	window.location.href = trailList[tourStep - 1].url;
-      // }
+      tourUrl = matchUrl(trailList[tourStep - 1].url, document.URL);
+    }
+
+    if (tourType === "" && currentTourType === "") {
+      const myExtensionRootFlip = shadowRoot.getElementById(
+        "my-extension-root-flip"
+      );
+
+      if (myExtensionRootFlip) {
+        myExtensionRootFlip.classList.add("widthAuto");
+      }
+    } else {
+      const myExtensionRootFlip = shadowRoot.getElementById(
+        "my-extension-root-flip"
+      );
+
+      if (myExtensionRootFlip) {
+        myExtensionRootFlip.classList.remove("widthAuto");
+      }
     }
 
     if (openSidebar) {
@@ -4616,24 +4668,34 @@ class DefaultButton extends React.PureComponent {
           )}
           <div className="pl-4 trail_video_frm">
             {tourStatus !== "preview" && tourType === "video" && (
-              <input
-                type="text"
-                name="title"
-                onChange={this.onChangeToInput}
-                onKeyDown={(e) => e.stopPropagation()}
-                placeholder="Enter Video title"
-                className="ant-input mb-2"
-                autoComplete="off"
-              />
+              <div className="mb-2">
+                <input
+                  type="text"
+                  name="title"
+                  value={title}
+                  onChange={this.onChangeToInput}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  placeholder="Enter Video title"
+                  className="ant-input"
+                  autoComplete="off"
+                />
+
+                {titleInvalid && title.length === 0 && (
+                  <div class="ant-form-item-explain ant-form-item-explain-error">
+                    <div role="alert">Please enter title!</div>
+                  </div>
+                )}
+              </div>
             )}
             {tourStatus !== "preview" && tourType === "video" && (
               <input
                 type="text"
                 name="web_url"
                 value={fileName}
-                onChange={this.onChangeToInput}
+                // onChange={this.onChangeToInput}
                 onKeyDown={(e) => e.stopPropagation()}
-                placeholder="Add Video URL"
+                // placeholder="Add Video URL"
+                placeholder="Video Filename"
                 className="ant-input mb-2"
                 autoComplete="off"
                 disabled={true}
@@ -4663,12 +4725,19 @@ class DefaultButton extends React.PureComponent {
                     {fileLoading ? "Uploading" : "Upload"} Video
                   </p>
                 </div>
+
                 <input
                   type="file"
                   name="media"
                   accept={mediaType}
                   onChange={this.handleChange}
                 />
+
+                {fileNameInvalid && fileName.length === 0 && (
+                  <div class="ant-form-item-explain ant-form-item-explain-error">
+                    <div role="alert">File is required!</div>
+                  </div>
+                )}
               </div>
             )}
             {tourStatus !== "preview" && tourType === "video" && (
@@ -4699,15 +4768,24 @@ class DefaultButton extends React.PureComponent {
               />
             )}
             {tourStatus !== "preview" && tourType === "audio" && (
-              <input
-                type="text"
-                name="title"
-                placeholder="Enter Audio Title"
-                className="ant-input mb-2"
-                onChange={this.onChangeToInput}
-                onKeyDown={(e) => e.stopPropagation()}
-                autoComplete="off"
-              />
+              <div className="mb-2">
+                <input
+                  type="text"
+                  name="title"
+                  value={title}
+                  placeholder="Enter Audio Title"
+                  className="ant-input"
+                  onChange={this.onChangeToInput}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  autoComplete="off"
+                />
+
+                {titleInvalid && title.length === 0 && (
+                  <div class="ant-form-item-explain ant-form-item-explain-error">
+                    <div role="alert">Please enter title!</div>
+                  </div>
+                )}
+              </div>
             )}
             {tourStatus !== "preview" && tourType === "audio" && (
               <input
@@ -4715,8 +4793,9 @@ class DefaultButton extends React.PureComponent {
                 name="web_url"
                 value={fileName}
                 onKeyDown={(e) => e.stopPropagation()}
-                onChange={this.onChangeToInput}
-                placeholder="Add Audio URL"
+                // onChange={this.onChangeToInput}
+                // placeholder="Add Audio URL"
+                placeholder="Audio Filename"
                 className="ant-input mb-2"
                 autoComplete="off"
                 disabled={true}
@@ -4729,10 +4808,12 @@ class DefaultButton extends React.PureComponent {
                     {fileLoading && (
                       <div class="trial_spinner">
                         <img
+                          alt="ring1"
                           class="ring1"
                           src={require(`./images/loding1.png`)}
                         />
                         <img
+                          alt="ring2"
                           class="ring2"
                           src={require(`./images/loding2.png`)}
                         />
@@ -4744,12 +4825,19 @@ class DefaultButton extends React.PureComponent {
                     {fileLoading ? "Uploading" : "Upload"} Audio
                   </p>
                 </div>
+
                 <input
                   type="file"
                   name="media"
                   accept={mediaType}
                   onChange={this.handleChange}
                 />
+
+                {fileNameInvalid && fileName.length === 0 && (
+                  <div class="ant-form-item-explain ant-form-item-explain-error">
+                    <div role="alert">File is required!</div>
+                  </div>
+                )}
               </div>
             )}
             {tourStatus !== "preview" && tourType === "audio" && (

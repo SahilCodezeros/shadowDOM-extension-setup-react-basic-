@@ -12,6 +12,7 @@ import {
   addTrailitLogo,
   removeTrailitLogo,
 } from "../../common/trailitLogoInPreview";
+import { matchUrl } from "../common";
 
 const chrome = window.chrome;
 class PreviewModalComponent extends React.Component {
@@ -48,7 +49,7 @@ class PreviewModalComponent extends React.Component {
     const scrollTop = $(window).scrollTop();
     $("html, body").animate({ scrollTop: scrollTop });
 
-    if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
+    if (!matchUrl(this.props.data[this.props.tourStep - 1].url, document.URL)) {
       window.location.href = this.props.data[this.props.tourStep - 1].url;
     }
 
@@ -149,7 +150,7 @@ class PreviewModalComponent extends React.Component {
     await this.toggle();
 
     //
-    if (this.props.data[step - 1].url === document.URL) {
+    if (matchUrl(this.props.data[step - 1].url, document.URL)) {
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
     } else {
@@ -299,6 +300,8 @@ class PreviewModalComponent extends React.Component {
         </div>
       );
     }
+
+    console.log("in modal render");
 
     return (
       <div>
