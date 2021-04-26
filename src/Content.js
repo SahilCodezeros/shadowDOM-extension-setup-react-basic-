@@ -1,5 +1,5 @@
 import * as React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM, { unmountComponentAtNode } from "react-dom";
 import { Button } from "antd";
 import { CloudUploadOutlined } from "@ant-design/icons";
 import unique from "unique-selector";
@@ -98,10 +98,13 @@ let allTrails = [];
 let trailWebUserTour = [];
 let preventToggle = false;
 let autoLogoutTimeout;
+let mouseOut, mouseClick, mouseOver;
 
 if (window.location.href.includes("https://www.and.co")) {
   document.querySelector("html").style.zoom = "100%";
 }
+
+const autoLogoutFunction = () => {};
 
 class Main extends React.Component {
   constructor(props) {
@@ -1086,6 +1089,7 @@ class Main extends React.Component {
             "trail_web_user_tour",
             "userData",
             "isPreview",
+            "webUrl",
             "continueTourStepId",
           ],
           async function (items) {
@@ -1192,7 +1196,16 @@ class Main extends React.Component {
                   currentTourType: "preview",
                 });
               } else {
-                alert("There are no trails, Please create the trails");
+                if (items.isPreview && items.webUrl === document.URL) {
+                  chrome.storage.local.set({
+                    isPreview: false,
+                    webUrl: "",
+                  });
+
+                  alert("No trails to preview!");
+                } else if (!items.isPreview) {
+                  alert("There are no trails, Please create the trails");
+                }
               }
             }
             if (
@@ -2276,19 +2289,37 @@ class DefaultButton extends React.PureComponent {
 
     this.setState({ overlay: true });
     this.onChromeStorageChange();
-    this.onCreateTooltipHandle();
+    // this.onCreateTooltipHandle();
 
     window.addEventListener(
       "load",
       () => {
         this.setState({ overlay: false });
-        this.onCreateTooltipHandle();
+        // this.onCreateTooltipHandle();
       },
       false
     );
 
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
     chrome.storage.onChanged.addListener(async (changes) => {
+      if (
+        changes.currentTourType &&
+        changes.currentTourType.newValue === "preview" &&
+        changes.tourType &&
+        changes.tourType.newValue === "tooltip"
+      ) {
+        // Call onCreateTooltipHandler function
+        this.onCreateTooltipHandle();
+      } else if (
+        changes.currentTourType &&
+        changes.currentTourType.oldValue === "preview" &&
+        changes.tourType &&
+        changes.tourType.oldValue === "tooltip"
+      ) {
+        // Call removeTooltipHanlder function
+        this.removeTooltipHandler();
+      }
+
       if (
         changes.trailDeleteModal &&
         changes.trailDeleteModal.newValue &&
@@ -2533,6 +2564,9 @@ class DefaultButton extends React.PureComponent {
     }
 
     chrome.runtime.onMessage.removeListener(this.handleMessage);
+
+    // Call removeTooltipHandler function
+    this.removeTooltipHandler();
   }
 
   // Copy Web app link
@@ -2599,149 +2633,164 @@ class DefaultButton extends React.PureComponent {
       .catch((err) => {});
   };
 
-  onCreateTooltipHandle = () => {
-    // to handle border add on mousover event
-    // document.querySelector('.a4bIc .gLFyf.gsfi').style.background = 'green';
-    document.querySelector("body").addEventListener("mouseover", (e) => {
-      chrome.storage.local.get(
-        [
-          "tourStatus",
-          "tourType",
-          "tourStep",
-          "currentTourType",
-          "closeContinue",
-        ],
-        function (items) {
-          //
-          if (
-            items.tourType !== undefined &&
-            this.state.tourType !== items.tourType
-          ) {
-            if (items.tourType === "preview") {
-              if (this.state.trailList.length > 0) {
-                let tourStape = items.tourStep === "" ? 1 : items.tourStep;
-                this.setState({
-                  tourStep: tourStape,
-                  tourType: items.tourType,
-                  currentTourType: this.state.trailList[tourStape - 1].type,
-                });
-              } else {
-                this.setState({ tourType: items.tourType });
-              }
-            }
-            //  else {
-            //   if (items.tourType === "tooltip") {
-            //     this.setState({
-            //       tourType: items.tourType,
-            //       open: false,
-            //       openSidebar: false,
-            //     });
-            //   } else if (items.tourType === "Make Edit") {
-            //
-            //     this.setState({
-            //       tourType: items.tourType,
-            //       // open: true,
-            //       // openSidebar: true,
-            //     });
-            //   } else {
-            //     this.setState({ tourType: items.tourType });
-            //   }
-            // }
-          }
-        }.bind(this)
-      );
-
-      const trailOverlay = document
-        .getElementById("extension-div")
-        .shadowRoot.querySelector(".trail_overlay");
-      if (!trailOverlay) {
+  mouseOverEventData = (e) => {
+    chrome.storage.local.get(
+      [
+        "tourStatus",
+        "tourType",
+        "tourStep",
+        "currentTourType",
+        "closeContinue",
+      ],
+      function (items) {
+        //
         if (
-          this.state.tourStatus === "continue" &&
-          (this.state.tourType === "tooltip" ||
-            (this.state.tourType === "Make Edit" &&
-              !_.isEmpty(this.state.rowData)))
+          items.tourType !== undefined &&
+          this.state.tourType !== items.tourType
         ) {
-          // let parentElement = queryParentElement(e.target, '.sidepanal');
-          let parentElement = queryParentElement(e.target, "#extension-div");
-          let parentElement1 = queryParentElement(e.target, ".trail_tooltip");
-          let getClass =
-            parentElement == null ? "" : parentElement.getAttribute("class");
-          let getClass1 =
-            parentElement1 == null ? "" : parentElement1.getAttribute("class");
-
-          if (root1 === "block" && getClass === "" && getClass1 === "") {
-            e.target.classList.add("trail_select_bx");
+          if (items.tourType === "preview") {
+            if (this.state.trailList.length > 0) {
+              let tourStape = items.tourStep === "" ? 1 : items.tourStep;
+              this.setState({
+                tourStep: tourStape,
+                tourType: items.tourType,
+                currentTourType: this.state.trailList[tourStape - 1].type,
+              });
+            } else {
+              this.setState({ tourType: items.tourType });
+            }
           }
+          //  else {
+          //   if (items.tourType === "tooltip") {
+          //     this.setState({
+          //       tourType: items.tourType,
+          //       open: false,
+          //       openSidebar: false,
+          //     });
+          //   } else if (items.tourType === "Make Edit") {
+          //
+          //     this.setState({
+          //       tourType: items.tourType,
+          //       // open: true,
+          //       // openSidebar: true,
+          //     });
+          //   } else {
+          //     this.setState({ tourType: items.tourType });
+          //   }
+          // }
+        }
+      }.bind(this)
+    );
+
+    const trailOverlay = document
+      .getElementById("extension-div")
+      .shadowRoot.querySelector(".trail_overlay");
+    if (!trailOverlay) {
+      if (
+        this.state.tourStatus === "continue" &&
+        (this.state.tourType === "tooltip" ||
+          (this.state.tourType === "Make Edit" &&
+            !_.isEmpty(this.state.rowData)))
+      ) {
+        // let parentElement = queryParentElement(e.target, '.sidepanal');
+        let parentElement = queryParentElement(e.target, "#extension-div");
+        let parentElement1 = queryParentElement(e.target, ".trail_tooltip");
+        let getClass =
+          parentElement == null ? "" : parentElement.getAttribute("class");
+        let getClass1 =
+          parentElement1 == null ? "" : parentElement1.getAttribute("class");
+
+        if (root1 === "block" && getClass === "" && getClass1 === "") {
+          e.target.classList.add("trail_select_bx");
         }
       }
-    });
+    }
+  };
 
-    // to handle on click event to add tooltip
-    document.querySelector("body").addEventListener(
-      "click",
-      (e) => {
-        e.target.classList.remove("trail_select_bx");
-        let uniqueTarget = $.trim(unique(e.target));
+  mouseClickEventData = (e) => {
+    e.target.classList.remove("trail_select_bx");
+    let uniqueTarget = $.trim(unique(e.target));
+
+    if (
+      this.state.tourStatus === "continue" &&
+      (this.state.tourType === "tooltip" || this.state.tourType === "Make Edit")
+    ) {
+      if (
+        this.state.tourType === "tooltip" ||
+        (this.state.tourType === "Make Edit" && !_.isEmpty(this.state.rowData))
+      ) {
+        // let parentElement = queryParentElement(e.target, '.sidepanal');
+        let parentElement = queryParentElement(e.target, "#extension-div");
+        let parentElement1 = queryParentElement(e.target, ".trail_tooltip");
+        let getClass =
+          parentElement == null ? "" : parentElement.getAttribute("class");
+        let getClass1 =
+          parentElement1 == null ? "" : parentElement1.getAttribute("class");
+        let getClass2;
+
+        const trailOverlay = document
+          .getElementById("extension-div")
+          .shadowRoot.querySelector(".trail_overlay");
+        if (trailOverlay) {
+          getClass2 = trailOverlay.getAttribute("class");
+        }
+        // let root1 = ReactDOM.findDOMNode(this).parentNode.style.display;
 
         if (
-          this.state.tourStatus === "continue" &&
-          (this.state.tourType === "tooltip" ||
-            this.state.tourType === "Make Edit")
+          root1 === "block" &&
+          getClass === "" &&
+          getClass1 === "" &&
+          getClass2 === undefined
         ) {
-          if (
-            this.state.tourType === "tooltip" ||
-            (this.state.tourType === "Make Edit" &&
-              !_.isEmpty(this.state.rowData))
-          ) {
-            // let parentElement = queryParentElement(e.target, '.sidepanal');
-            let parentElement = queryParentElement(e.target, "#extension-div");
-            let parentElement1 = queryParentElement(e.target, ".trail_tooltip");
-            let getClass =
-              parentElement == null ? "" : parentElement.getAttribute("class");
-            let getClass1 =
-              parentElement1 == null
-                ? ""
-                : parentElement1.getAttribute("class");
-            let getClass2;
+          e.preventDefault();
+          e.stopPropagation();
+          e.target.classList.add("trail_web_user");
+          e.target.classList.add("trail_tour_tooltip");
+          let original = document.querySelector(uniqueTarget);
+          let bounding = original.getBoundingClientRect();
+          let offset = $(uniqueTarget).offset();
+          let leftPosition = offset.left;
+          let topPosition = offset.top;
+          var docHeight = document.documentElement.scrollHeight;
+          $(".trail_tour_tooltip").prepend(
+            "<span class='trail_user_tooltip trail_tour_ToolTipExtend'></span>"
+          );
+          let node = document.querySelector(".trail_user_tooltip");
 
-            const trailOverlay = document
-              .getElementById("extension-div")
-              .shadowRoot.querySelector(".trail_overlay");
-            if (trailOverlay) {
-              getClass2 = trailOverlay.getAttribute("class");
-            }
-            // let root1 = ReactDOM.findDOMNode(this).parentNode.style.display;
+          let elementIndex = Array.from(
+            e.target.parentElement.children
+          ).indexOf(e.target);
 
+          // Call add overlay function
+          addOverlay();
+
+          // $('body').append("<div class='trail_overlay'></div>");
+          // let bodyElement = $(unique(getScrollParent(document.querySelector(uniqueTarget)))).scrollHeight;
+
+          // Call set overlay html function
+          setOverlayHtml(
+            window,
+            docHeight,
+            topPosition,
+            bounding,
+            leftPosition
+          );
+
+          updateOverlay = () => {
             if (
               root1 === "block" &&
               getClass === "" &&
               getClass1 === "" &&
               getClass2 === undefined
             ) {
-              e.preventDefault();
-              e.stopPropagation();
-              e.target.classList.add("trail_web_user");
-              e.target.classList.add("trail_tour_tooltip");
-              let original = document.querySelector(uniqueTarget);
+              let docHeight = document.documentElement.scrollHeight;
               let bounding = original.getBoundingClientRect();
               let offset = $(uniqueTarget).offset();
               let leftPosition = offset.left;
               let topPosition = offset.top;
-              var docHeight = document.documentElement.scrollHeight;
-              $(".trail_tour_tooltip").prepend(
-                "<span class='trail_user_tooltip trail_tour_ToolTipExtend'></span>"
-              );
-              let node = document.querySelector(".trail_user_tooltip");
-
-              let elementIndex = Array.from(
-                e.target.parentElement.children
-              ).indexOf(e.target);
 
               // Call add overlay function
               addOverlay();
-
-              // $('body').append("<div class='trail_overlay'></div>");
-              // let bodyElement = $(unique(getScrollParent(document.querySelector(uniqueTarget)))).scrollHeight;
 
               // Call set overlay html function
               setOverlayHtml(
@@ -2751,115 +2800,118 @@ class DefaultButton extends React.PureComponent {
                 bounding,
                 leftPosition
               );
-
-              updateOverlay = () => {
-                console.log("in updateOverlay");
-
-                if (
-                  root1 === "block" &&
-                  getClass === "" &&
-                  getClass1 === "" &&
-                  getClass2 === undefined
-                ) {
-                  let docHeight = document.documentElement.scrollHeight;
-                  let bounding = original.getBoundingClientRect();
-                  let offset = $(uniqueTarget).offset();
-                  let leftPosition = offset.left;
-                  let topPosition = offset.top;
-
-                  // Call add overlay function
-                  addOverlay();
-
-                  // Call set overlay html function
-                  setOverlayHtml(
-                    window,
-                    docHeight,
-                    topPosition,
-                    bounding,
-                    leftPosition
-                  );
-                }
-              };
-
-              window.addEventListener("resize", () => {
-                // Update overlay
-                updateOverlay();
-              });
-
-              // document.onchange = () => {
-              //
-              //   // Update overlay
-              //   updateOverlay();
-              // };
-
-              // $(".trail_overlay").append(`
-              // 	<svg height="100%" width="100%">
-              // 		<polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
-              // 		Sorry, your browser does not support inline SVG.
-              // 	</svg>`
-              // );
-
-              // document.querySelector("body").classList.add('trail_body');
-              // $(".trail_overlay")
-              // 	.height(docHeight)
-              // 	.css({
-              // 		'position': 'absolute',
-              // 		'top': 0,
-              // 		'left': 0,
-              // 		'width': '100%',
-              // 		'z-index': 99999999
-              // 	});
-
-              ReactDOM.render(
-                <Tooltip
-                  path={e.path}
-                  target={e.target}
-                  count={popoverCount}
-                  type={this.state.tourType}
-                  elementIndex={elementIndex}
-                  uniqueTarget={uniqueTarget}
-                  rowData={this.state.rowData}
-                  onCancel={this.onCancelTooltip}
-                  onHandleChange={this.handleChange}
-                  onTourLoading={this.onTourLoading}
-                  isTourLoading={this.state.isTourLoading}
-                  onSave={
-                    this.state.tourType === "Make Edit"
-                      ? this.onUpdateTrail
-                      : this.onSaveTrail
-                  }
-                />,
-                node
-              );
-              popoverCount++;
             }
-          }
-        }
-      },
-      true
-    );
+          };
 
-    // to handle border remove on mousout event
-    document.querySelector("body").addEventListener("mouseout", (e) => {
-      e.preventDefault();
-      if (
-        this.state.tourStatus === "continue" &&
-        (this.state.tourType === "tooltip" ||
-          this.state.tourType === "Make Edit")
-      ) {
-        // let parentElement = queryParentElement(e.target, '.sidepanal');
-        let parentElement = queryParentElement(e.target, "#extension-div");
-        let parentElement1 = queryParentElement(e.target, ".trail_tooltip");
-        let getClass =
-          parentElement == null ? "" : parentElement.getAttribute("class");
-        let getClass1 =
-          parentElement1 == null ? "" : parentElement1.getAttribute("class");
-        // let root1 = ReactDOM.findDOMNode(this).parentNode.style.display;
-        if (root1 === "block" && getClass === "" && getClass1 === "") {
-          e.target.classList.remove("trail_select_bx");
+          window.addEventListener("resize", () => {
+            // Update overlay
+            updateOverlay();
+          });
+
+          // document.onchange = () => {
+          //
+          //   // Update overlay
+          //   updateOverlay();
+          // };
+
+          // $(".trail_overlay").append(`
+          // 	<svg height="100%" width="100%">
+          // 		<polygon points="0,0 ${window.innerWidth},0 ${window.innerWidth},${docHeight} 0,${docHeight} 0,${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition + bounding.height + 10} ${leftPosition + bounding.width + 10},${topPosition - 10} ${leftPosition - 10},${topPosition - 10} ${leftPosition - 10},${topPosition + bounding.height + 10} 0,${topPosition + bounding.height + 10}" style="fill:rgba(0,0,0,0.8);"/>
+          // 		Sorry, your browser does not support inline SVG.
+          // 	</svg>`
+          // );
+
+          // document.querySelector("body").classList.add('trail_body');
+          // $(".trail_overlay")
+          // 	.height(docHeight)
+          // 	.css({
+          // 		'position': 'absolute',
+          // 		'top': 0,
+          // 		'left': 0,
+          // 		'width': '100%',
+          // 		'z-index': 99999999
+          // 	});
+
+          ReactDOM.render(
+            <Tooltip
+              path={e.path}
+              target={e.target}
+              count={popoverCount}
+              type={this.state.tourType}
+              elementIndex={elementIndex}
+              uniqueTarget={uniqueTarget}
+              rowData={this.state.rowData}
+              onCancel={this.onCancelTooltip}
+              onHandleChange={this.handleChange}
+              onTourLoading={this.onTourLoading}
+              isTourLoading={this.state.isTourLoading}
+              onSave={
+                this.state.tourType === "Make Edit"
+                  ? this.onUpdateTrail
+                  : this.onSaveTrail
+              }
+            />,
+            node
+          );
+          popoverCount++;
         }
       }
-    });
+    }
+  };
+
+  mouseOutEventData = (e) => {
+    e.preventDefault();
+    if (
+      this.state.tourStatus === "continue" &&
+      (this.state.tourType === "tooltip" || this.state.tourType === "Make Edit")
+    ) {
+      // let parentElement = queryParentElement(e.target, '.sidepanal');
+      let parentElement = queryParentElement(e.target, "#extension-div");
+      let parentElement1 = queryParentElement(e.target, ".trail_tooltip");
+      let getClass =
+        parentElement == null ? "" : parentElement.getAttribute("class");
+      let getClass1 =
+        parentElement1 == null ? "" : parentElement1.getAttribute("class");
+      // let root1 = ReactDOM.findDOMNode(this).parentNode.style.display;
+      if (root1 === "block" && getClass === "" && getClass1 === "") {
+        e.target.classList.remove("trail_select_bx");
+      }
+    }
+  };
+
+  onCreateTooltipHandle = () => {
+    // to handle border add on mousover event
+    // document.querySelector('.a4bIc .gLFyf.gsfi').style.background = 'green';
+    document
+      .querySelector("body")
+      .addEventListener("mouseover", this.mouseOverEventData);
+    // to handle on click event to add tooltip
+    document
+      .querySelector("body")
+      .addEventListener("click", this.mouseClickEventData, true);
+    // to handle border remove on mousout event
+    document
+      .querySelector("body")
+      .addEventListener("mouseout", this.mouseOutEventData);
+    // mouseOver = this.mouseOverEventData;
+    // mouseClick = this.mouseClickEventData;
+    // mouseOut = this.mouseOutEventData;
+  };
+
+  removeTooltipHandler = () => {
+    document
+      .querySelector("body")
+      .removeEventListener("mouseover", this.mouseOverEventData);
+
+    // to handle on click event to add tooltip
+    document
+      .querySelector("body")
+      .removeEventListener("click", this.mouseClickEventData, true);
+
+    // to handle border remove on mousout event
+    document
+      .querySelector("body")
+      .removeEventListener("mouseout", this.mouseOutEventData);
   };
 
   resize = () => {
@@ -5417,82 +5469,6 @@ class DefaultButton extends React.PureComponent {
 // document.body.appendChild(app);
 
 // extension-test(content.js)
-const extensionTestID = "extension-div";
-let extensionTest = document.getElementById(extensionTestID);
-
-if (!extensionTest) {
-  extensionTest = document.createElement("div");
-  extensionTest.setAttribute("id", extensionTestID);
-  window.document.body.append(extensionTest);
-  extensionTest.attachShadow({ mode: "open" });
-}
-
-// Select our shadow host
-let extensionRoot = document.getElementById("extension-div");
-if (extensionRoot) {
-  // Create the shadow root
-  const shadowRoot = extensionRoot.shadowRoot;
-
-  if (shadowRoot) {
-    app = shadowRoot.getElementById("my-extension-root-flip");
-    if (!app) {
-      // Create a div element
-      app = document.createElement("div");
-      app.setAttribute("id", "my-extension-root-flip");
-
-      const loader = document.createElement("div");
-      loader.setAttribute("id", "extension-splash-screen");
-      loader.innerHTML = `
-        <svg className="extension-splash-spinner" viewBox="0 0 50 50">
-          <circle
-              className="path"
-              cx="25"
-              cy="25"
-              r="20"
-              fill="none"
-              strokeWidth="5"
-          ></circle>
-        </svg>
-      `;
-
-      const modalOpen = document.createElement("div");
-      modalOpen.setAttribute("class", "modal-open");
-
-      const style0 = document.createElement("style");
-      style0.textContent = myExtensionRootFlipCss0;
-
-      const style1 = document.createElement("style");
-      style1.textContent = myExtensionRootFlipCss1;
-
-      const style2 = document.createElement("style");
-      style2.textContent = myExtensionRootFlipCss2;
-
-      const style3 = document.createElement("style");
-      style3.textContent = myExtensionRootFlipCss3;
-
-      const style4 = document.createElement("style");
-      style4.textContent = myExtensionRootFlipCss4;
-
-      const style5 = document.createElement("style");
-      style5.textContent = myExtensionRootFlipCss5;
-
-      const tooltipStyle1 = document.createElement("style");
-      tooltipStyle1.textContent = tooltipCss1;
-
-      // Append div to shadow DOM
-      extensionRoot.shadowRoot.appendChild(style1);
-      extensionRoot.shadowRoot.appendChild(style2);
-      extensionRoot.shadowRoot.appendChild(style3);
-      extensionRoot.shadowRoot.appendChild(style4);
-      extensionRoot.shadowRoot.appendChild(style5);
-      extensionRoot.shadowRoot.appendChild(tooltipStyle1);
-      shadowRoot.appendChild(app);
-      shadowRoot.appendChild(loader);
-      extensionRoot.shadowRoot.appendChild(app);
-      shadowRoot.appendChild(modalOpen);
-    }
-  }
-}
 
 class MainFlip extends React.Component {
   constructor(props) {
@@ -5619,15 +5595,104 @@ class MainFlip extends React.Component {
   }
 }
 
-chrome.storage.local.get(["isAuth", "authToken", "userData"], function (items) {
-  if (items.isAuth) {
-    ReactDOM.render(<MainFlip />, app);
-    // ReactDOM.render(<Main />, app);
-    // ReactDOM.render(<DefaultButton />, appd);
-  }
-});
+// MainFlip render function
+const mainFlipRender = () => {
+  chrome.storage.local.get(
+    ["isAuth", "authToken", "userData"],
+    function (items) {
+      // let extensionRoot = document.getElementById("extension-div");
+      // if (extensionRoot) {
+      //   extensionRoot.remove();
+      // }
 
-app.style.display = "none";
+      if (items.isAuth) {
+        // Update content file code in tabs
+        const extensionTestID = "extension-div";
+        let extensionTest = document.getElementById(extensionTestID);
+
+        if (!extensionTest) {
+          extensionTest = document.createElement("div");
+          extensionTest.setAttribute("id", extensionTestID);
+          window.document.body.append(extensionTest);
+          extensionTest.attachShadow({ mode: "open" });
+        }
+
+        // Select our shadow host
+        let extensionRoot = document.getElementById("extension-div");
+        if (extensionRoot) {
+          // Create the shadow root
+          const shadowRoot = extensionRoot.shadowRoot;
+
+          if (shadowRoot) {
+            app = shadowRoot.getElementById("my-extension-root-flip");
+            if (!app) {
+              // Create a div element
+              app = document.createElement("div");
+              app.setAttribute("id", "my-extension-root-flip");
+
+              const loader = document.createElement("div");
+              loader.setAttribute("id", "extension-splash-screen");
+              loader.innerHTML = `
+                <svg className="extension-splash-spinner" viewBox="0 0 50 50">
+                  <circle
+                      className="path"
+                      cx="25"
+                      cy="25"
+                      r="20"
+                      fill="none"
+                      strokeWidth="5"
+                  ></circle>
+                </svg>
+              `;
+
+              const modalOpen = document.createElement("div");
+              modalOpen.setAttribute("class", "modal-open");
+
+              const style0 = document.createElement("style");
+              style0.textContent = myExtensionRootFlipCss0;
+
+              const style1 = document.createElement("style");
+              style1.textContent = myExtensionRootFlipCss1;
+
+              const style2 = document.createElement("style");
+              style2.textContent = myExtensionRootFlipCss2;
+
+              const style3 = document.createElement("style");
+              style3.textContent = myExtensionRootFlipCss3;
+
+              const style4 = document.createElement("style");
+              style4.textContent = myExtensionRootFlipCss4;
+
+              const style5 = document.createElement("style");
+              style5.textContent = myExtensionRootFlipCss5;
+
+              const tooltipStyle1 = document.createElement("style");
+              tooltipStyle1.textContent = tooltipCss1;
+
+              // Append div to shadow DOM
+              extensionRoot.shadowRoot.appendChild(style1);
+              extensionRoot.shadowRoot.appendChild(style2);
+              extensionRoot.shadowRoot.appendChild(style3);
+              extensionRoot.shadowRoot.appendChild(style4);
+              extensionRoot.shadowRoot.appendChild(style5);
+              extensionRoot.shadowRoot.appendChild(tooltipStyle1);
+              shadowRoot.appendChild(app);
+              shadowRoot.appendChild(loader);
+              extensionRoot.shadowRoot.appendChild(app);
+              shadowRoot.appendChild(modalOpen);
+            }
+          }
+        }
+
+        app.style.display = "none";
+
+        ReactDOM.render(<MainFlip />, app);
+        // ReactDOM.render(<Main />, app);
+        // ReactDOM.render(<DefaultButton />, appd);
+      }
+    }
+  );
+};
 
 // app = document.createElement('div');
 // app.id = 'my-extension-root';
@@ -5646,60 +5711,64 @@ app.style.display = "none";
 // });
 // appd.style.display = 'none';
 chrome.runtime.onConnect.addListener((port) => {
-  port.onMessage.addListener((msgObj, sender, sendResponse) => {
-    if (msgObj.message === "check_login_status") {
-      chrome.storage.local.get(["isAuth", "userData"], (items) => {
-        if (items.isAuth) {
-          port.postMessage({
-            response: true,
-            userId: get(["userData", "_id"], items),
-          });
-        } else {
-          port.postMessage({ response: false });
-        }
-      });
-    }
-  });
-});
-
-chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
-  if (msgObj.status === "logout") {
-    // Remove items from local storage
-    window.localStorage.removeItem("add-on-auto-lgout-tm");
-
-    app.style.display = "none";
-    // const extensionDiv = document.getElementById("extension-div");
-
-    // if (extensionDiv) {
-    //   extensionDiv.remove();
-    // }
-
-    // appd.style.display = 'none';
-  } else {
-    if (
-      msgObj.subject !== "updateTimeout" &&
-      msgObj.subject !== "DOMObj" &&
-      msgObj !== "chrome_modal" &&
-      msgObj.subject !== "CreateTrail" &&
-      msgObj.message !== "urlChanged"
-    ) {
-      setTimeout(() => {
-        // to handle open tab in entire tab
-        chrome.storage.local.get(["openButton", "tourType"], function (items) {
-          // if(items.openButton === 'CreateTrail') {
-          // 	appd.style.display = 'block';
-          // } else {
-          if (app.style.display === "none") {
-            // this.props.toggle();
-            app.style.display = "block";
-            // toggle()
+  // console.log("port", port);
+  if (port.name === "Trailit-webapp") {
+    port.onMessage.addListener((msgObj, sender, sendResponse) => {
+      if (msgObj.message === "check_login_status") {
+        chrome.storage.local.get(["isAuth", "userData"], (items) => {
+          if (items.isAuth) {
+            port.postMessage({
+              response: true,
+              userId: get(["userData", "_id"], items),
+            });
+          } else {
+            port.postMessage({ response: false });
           }
-          // }
         });
-      });
-    }
+      }
+    });
   }
 });
+
+if (chrome.runtime.id) {
+  // Call mainFlipRender function
+  mainFlipRender();
+
+  chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
+    if (msgObj.status === "logout") {
+      // Remove items from local storage
+      window.localStorage.removeItem("add-on-auto-lgout-tm");
+
+      app.style.display = "none";
+    } else {
+      if (
+        msgObj.subject !== "updateTimeout" &&
+        msgObj.subject !== "DOMObj" &&
+        msgObj !== "chrome_modal" &&
+        msgObj.subject !== "CreateTrail" &&
+        msgObj.message !== "urlChanged"
+      ) {
+        setTimeout(() => {
+          // to handle open tab in entire tab
+          chrome.storage.local.get(
+            ["openButton", "tourType"],
+            function (items) {
+              // if(items.openButton === 'CreateTrail') {
+              // 	appd.style.display = 'block';
+              // } else {
+              if (app.style.display === "none") {
+                // this.props.toggle();
+                app.style.display = "block";
+                // toggle()
+              }
+              // }
+            }
+          );
+        });
+      }
+    }
+  });
+}
 
 const toggle = () => {
   if (app.style.display === "none") {
@@ -5719,40 +5788,40 @@ const toggle = () => {
 // 	}
 // }
 
-const autoLogoutFunction = () => {
-  // Clear interval
-  clearInterval(autoLogoutTimeout);
+// const autoLogoutFunction = () => {
+//   // Clear interval
+//   clearInterval(autoLogoutTimeout);
 
-  autoLogoutTimeout = setInterval(() => {
-    chrome.storage.local.get(["isAuth"], async function (items) {
-      const logoutTime = parseInt(
-        window.localStorage.getItem("add-on-auto-lgout-tm")
-      );
+//   autoLogoutTimeout = setInterval(() => {
+//     chrome.storage.local.get(["isAuth"], async function (items) {
+//       const logoutTime = parseInt(
+//         window.localStorage.getItem("add-on-auto-lgout-tm")
+//       );
 
-      if (items.isAuth && logoutTime < Date.now()) {
-        try {
-          // Call logout api
-          await logout();
+//       if (items.isAuth && logoutTime < Date.now()) {
+//         try {
+//           // Call logout api
+//           await logout();
 
-          chrome.runtime.sendMessage("", { type: "logout" });
-          chrome.runtime.sendMessage({ badgeText: `` });
-          chrome.storage.local.set({
-            trail_web_user_tour: [],
-            notification: true,
-            closeContinue: false,
-          });
-          chrome.storage.local.clear();
-        } catch (err) {}
-      }
-    });
-  }, 5000);
+//           chrome.runtime.sendMessage("", { type: "logout" });
+//           chrome.runtime.sendMessage({ badgeText: `` });
+//           chrome.storage.local.set({
+//             trail_web_user_tour: [],
+//             notification: true,
+//             closeContinue: false,
+//           });
+//           chrome.storage.local.clear();
+//         } catch (err) {}
+//       }
+//     });
+//   }, 5000);
 
-  chrome.storage.local.get(["isAuth"], async function (items) {
-    if (items.isAuth) {
-      // Update auto logout time in localstorage
-      window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
-    } else {
-      clearInterval(autoLogoutTimeout);
-    }
-  });
-};
+//   chrome.storage.local.get(["isAuth"], async function (items) {
+//     if (items.isAuth) {
+//       // Update auto logout time in localstorage
+//       window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
+//     } else {
+//       clearInterval(autoLogoutTimeout);
+//     }
+//   });
+// };

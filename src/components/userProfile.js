@@ -765,46 +765,45 @@ class UserProfile extends React.Component {
               onEdit={this.onChangeTrailEdit}
             />
             <div className="trailit_userPanalFooterBox">
-              {!isPreview && !isPreviewSingleTrail && (
+              {/* {!isPreview && !isPreviewSingleTrail && (
                 <>
-                  {listTitle === "My Trails" && (
-                    <button
-                      type="button"
-                      disabled={isDisabled}
-                      className={`${
-                        isDisabled ? "trailit_btnGray" : "trailit_btnPink"
-                      }`}
-                      onClick={(e) => this.onClickToList("Following")}
-                    >
-                      Following
-                    </button>
-                  )}
-                  {listTitle === "Following" && (
-                    <button
-                      type="button"
-                      // disabled={isDisabled}
-                      className="trailit_btnPink"
-                      onClick={(e) => this.onClickToList("My Trails")}
-                    >
-                      My Trails
-                    </button>
-                  )}
-                  {listTitle === "Loading..." && (
-                    <button disabled type="button" className="trailit_btnPink">
-                      {listTitle}
-                    </button>
-                  )}
+                  
                 </>
-              )}
-              {!isPreview && !isPreviewSingleTrail && (
+              )} */}
+              {listTitle === "My Trails" && (
                 <button
                   type="button"
-                  className="trailit_btnPink"
-                  onClick={this.onClickToCreateTrail}
+                  disabled={isDisabled}
+                  className={`${
+                    isDisabled ? "trailit_btnGray" : "trailit_btnPink"
+                  }`}
+                  onClick={(e) => this.onClickToList("Following")}
                 >
-                  Create Trail
+                  Following
                 </button>
               )}
+              {listTitle === "Following" && (
+                <button
+                  type="button"
+                  // disabled={isDisabled}
+                  className="trailit_btnPink"
+                  onClick={(e) => this.onClickToList("My Trails")}
+                >
+                  My Trails
+                </button>
+              )}
+              {listTitle === "Loading..." && (
+                <button disabled type="button" className="trailit_btnPink">
+                  {listTitle}
+                </button>
+              )}
+              <button
+                type="button"
+                className="trailit_btnPink"
+                onClick={this.onClickToCreateTrail}
+              >
+                Create Trail
+              </button>
             </div>
           </div>
         </div>

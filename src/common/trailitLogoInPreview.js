@@ -7,22 +7,20 @@ export const addTrailitLogo = () => {
   // <img src={require('/images/trailit_logo.png')} className="trailit_logoLeftBottom" alt=".."/>
   if (extensionDiv && !image) {
     const element = document.createElement("img");
-    element.src = "https://trailit.co/wp-content/uploads/2020/04/logo.png";
+    // element.src = "https://trailit.co/wp-content/uploads/2020/04/logo.png";
+    element.src = require("../images/logo.png");
     element.alt = "logo_image_in_preview";
+    element.className = "trailit_logoLeftBottom cursor";
 
     chrome.storage.local.get(
       ["trail_status", "trail_id", "userData"],
       (items) => {
-        const classArray = ["trailit_logoLeftBottom"];
-
         if (
           items.trail_status === "public" &&
           items.trail_id &&
           items.userData &&
           items.userData._id
         ) {
-          classArray.push("cursor");
-          element.className = classArray.join(" ");
           element.onclick = () => {
             // Open trail profile page in new tab
             window.open(
@@ -31,7 +29,10 @@ export const addTrailitLogo = () => {
             );
           };
         } else {
-          element.className = classArray.join(" ");
+          element.onclick = () => {
+            // Open trail profile page in new tab
+            window.open("https://www.trailit.co/", "_blank");
+          };
         }
       }
     );

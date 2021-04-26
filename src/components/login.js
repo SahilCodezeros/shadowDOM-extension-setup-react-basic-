@@ -182,19 +182,19 @@ class Login extends React.Component {
                       </b>
                     </div>
                     <Col md={12}>
-                      <button
+                      {/* <button
                         type="button"
                         className="trailit_facebook"
                         onClick={this.onNearLoginCilck}
                       >
                         Sign In with NEAR
-                      </button>
-                      {/* <button type="button" className="trailit_facebook">
+                      </button> */}
+                      <button type="button" className="trailit_facebook">
                         Sign In with Facebook
                       </button>
                       <button type="button" className="trailit_google">
                         Sign In with Google
-                      </button> */}
+                      </button>
                       <hr className="trailit_dark trail_or" />
                     </Col>
                     <Col md={12}>

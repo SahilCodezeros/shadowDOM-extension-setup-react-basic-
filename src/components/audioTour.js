@@ -74,14 +74,24 @@ class AudioTour extends React.PureComponent {
     chrome.storage.local.get(
       ["userData", "isPreview", "authorData", "followedTrailUserData"],
       (items) => {
+        let profileImage = "";
+        if (
+          items.isPreview &&
+          items.authorData &&
+          items.authorData.profileImage
+        ) {
+          profileImage = items.authorData.profileImage;
+        } else if (
+          items.followedTrailUserData &&
+          items.followedTrailUserData.profileImage
+        ) {
+          profileImage = items.followedTrailUserData.profileImage;
+        } else if (items.userData && items.userData.profileImage) {
+          profileImage = items.userData.profileImage;
+        }
+
         self.setState({
-          profileImage: items.isPreview
-            ? items.authorData.profileImage
-            : items.followedTrailUserData
-            ? items.followedTrailUserData.profileImage
-            : items.userData.profileImage
-            ? items.userData.profileImage
-            : "",
+          profileImage: profileImage,
           audioLoad: true,
           audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
           tourStep: this.props.tourStep,
@@ -412,9 +422,6 @@ class AudioTour extends React.PureComponent {
       }
     }
     // });
-
-    console.log("in audioTour render");
-
     const { tourStep } = this.props;
 
     return (

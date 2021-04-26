@@ -1742,6 +1742,11 @@ button {
   cursor: pointer;
 }
 
+.trailit_userPanalContentBox::-webkit-scrollbar,
+.trailit_userPanalContentInnerBox::-webkit-scrollbar {
+  display: none;
+}
+
 .trailit_scrollBoxs {
   height: calc(100% - 34px);
   overflow: auto;
