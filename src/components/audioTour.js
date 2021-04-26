@@ -69,7 +69,6 @@ class AudioTour extends React.PureComponent {
   };
 
   componentDidMount() {
-    // console.log("this.props", this.props);
     let self = this;
     chrome.storage.local.get(
       ["userData", "isPreview", "authorData", "followedTrailUserData"],
@@ -102,41 +101,6 @@ class AudioTour extends React.PureComponent {
     if (!matchUrl(this.props.data[this.props.tourStep - 1].url, document.URL)) {
       window.location.href = this.props.data[this.props.tourStep - 1].url;
     }
-
-    //
-
-    // if(document.URL.includes('youtube.com')) {
-    //     let videoElem = document.querySelector('.video-stream.html5-main-video');
-    //     videoElem.addEventListener('onloadeddata', () => {
-    //         videoElem.pause();
-    //     })
-    //     setTimeout(() => {
-    //         videoElem.pause();
-    //     }, 1000)
-    // }
-
-    // setTimeout(() => {
-    //     if(document.querySelector('.audio_wrap_tooltip')!== null) {
-    //         document.querySelectorAll('video').forEach(res => {
-    //             if(res.className !== "preview-video") {
-    //                 res.pause()
-    //             }
-    //         })
-    //     }
-    // }, 1000);
-
-    // if (document.readyState === 'complete') {
-    //     $(document).ready(() => {
-    // // Stop playing websites audio or video
-    // stopMediaPlaying();
-    //     });
-
-    // } else {
-    //     document.body.onload = function () {
-    //         // Stop playing websites audio or video
-    //         stopMediaPlaying();
-    //     };
-    // }
 
     if (document.readyState === "complete") {
       $(document).ready(() => {
@@ -195,12 +159,10 @@ class AudioTour extends React.PureComponent {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    // console.log("did updated");
     if (
       this.props.tourStep !== prevProps.tourStep &&
       this.props.data[this.props.tourStep - 1].type === this.state.type
     ) {
-      // console.log("audio url");
       this.setState({
         audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
       });
@@ -242,7 +204,6 @@ class AudioTour extends React.PureComponent {
       this.cleanup();
     }
 
-    // $(() => {
     const tr_audioplayer = document
       .getElementById("extension-div")
       .shadowRoot.querySelector(".tr_audioplayer");
@@ -421,11 +382,9 @@ class AudioTour extends React.PureComponent {
         ).padStart(2, 0)}`;
       }
     }
-    // });
     const { tourStep } = this.props;
 
     return (
-      // className={`trail_tooltip_done ${tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"}`}
       <div>
         {this.props.audioRef && (
           <ContinueTourConfirmation

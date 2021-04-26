@@ -312,36 +312,6 @@ class UserProfileEdit extends PureComponent {
           {errors.file && (
             <div className="trailit-validation-error">{errors.file}</div>
           )}
-          {/* <label className="trailit_12700 d-block trailit_mb3">
-            ADD MORE CONTENT
-          </label> */}
-          {/* <div className="d-flex">
-                        <div className="trailit_addMoreImage">
-                        <input type="file"/>
-                        <label>
-                        <img src={require("../../images/image.svg")} alt="image"/>
-                        <span className="d-block">Image</span>
-                        </label>
-                        </div>
-                        <div className="trailit_addMoreImage">
-                        <input type="file"/>
-                        <label>
-                        <img src={require("../../images/video.svg")} alt="image"/>
-                        <span className="d-block">Video</span>
-                        </label>
-                        </div>
-                        <button type="button" className="trailit_addMoreOther">
-                        <img src={require("../../images/video.svg")} alt="image"/>
-                        <span className="d-block">Other</span>
-                        </button>
-                    </div> */}
-          {/* <ul className="trailit_HashTagsList">
-                        <li>Visual Arts <img src={require("../../images/close.svg")} alt="image"/></li>
-                        <li>Concept Arts <img src={require("../../images/close.svg")} alt="image"/></li>
-                    </ul>
-                    <div>
-                        <input type="text" className="trailit_inputHashTags trailit_mb3" placeholder="Hashtags"/>
-                    </div> */}
           <div className="d-block trailit_checkbox trailit_mb3">
             <input
               type="checkbox"
@@ -352,9 +322,6 @@ class UserProfileEdit extends PureComponent {
             />
             <span></span>
             <label>Make this trail private</label>
-            {/* <button type="button" className="trailit_deleteIcon">
-              <img src={require("../../images/delete.svg")} alt="delete" />
-            </button> */}
           </div>
           {trail_user_status === "public" && (
             <div style={{ marginBottom: 5 }}>

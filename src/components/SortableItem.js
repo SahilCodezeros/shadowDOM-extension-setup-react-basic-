@@ -10,29 +10,6 @@ const resizeScreen = () => {
   return window.innerWidth <= 760;
 };
 
-const onTitleClickHandler = (e) => {
-  e.preventDefault();
-
-  const titles = document.querySelectorAll(".en_title");
-
-  titles.forEach((el) => {
-    el.addEventListener("keydown", (e) => {
-      e.stopPropagation();
-    });
-  });
-};
-
-const onDescriptionHandler = (e) => {
-  e.preventDefault();
-
-  const descriptions = document.querySelectorAll(".en_desc");
-  descriptions.forEach((el) => {
-    el.addEventListener("keydown", (e) => {
-      e.stopPropagation();
-    });
-  });
-};
-
 /**
  * Draggable list handle
  */
@@ -85,18 +62,6 @@ class SortableItem extends React.Component {
     }
   };
 
-  // componentDidUpdate() {
-  //   const trailBuilderElement = document.querySelector('.trail_builder_side_panel_open');
-  //   console.log('trailBuilderElement', trailBuilderElement);
-  //   console.log('this.state.showMenu', this.state.showMenu);
-  //   console.log(this.state.showMenu && trailBuilderElement);
-
-  //   if (this.state.showMenu && trailBuilderElement) {
-  //     // Hide detele button
-  //     this.setState({ showMenu: false });
-  //   }
-  // };
-
   render() {
     let { i, result, tourStep, tourType, currentTrailsTab, index } = this.props;
 
@@ -115,39 +80,6 @@ class SortableItem extends React.Component {
     }
 
     return (
-      // <div key={i} className={`li done trailTourStep ${tourStep === (i + 1) ? 'active' : ''}`}>
-      //     <DragHandle />
-      //     <div className="counter"><span>{i + 1}</span></div>
-      //     <div>
-      //         <div className="en_title">
-      //             {result.title}
-      //         </div>
-      //         <div className="en_desc mb-2">
-      //             {(result.type !== 'audio' &&
-      //             result.type !== 'video' &&
-      //             result.mediaType === 'text') ? <span dangerouslySetInnerHTML={{ __html: result.description }}></span> : result.url}
-      //         </div>
-      //         {subStepStatus && <div>
-      //             <button onClick={(e) => this.onClickToAddSubMenu(e, result, (i + 1))}>Add</button>
-      //         </div>}
-      //         {subStep && <div>
-      //             <div className="en_title">
-      //                 {result.mobile_title}
-      //             </div>
-      //             <div className="en_desc mb-2">
-      //                 {(result.type !== 'audio' &&
-      //                 result.type !== 'video' &&
-      //                 result.mobile_media_type === 'text') ? <span dangerouslySetInnerHTML={{ __html: result.mobile_description }}></span> : result.url}
-      //             </div>
-      //         </div>}
-      //     </div>
-      // </div>
-
-      //   <div className={`${
-      //     this.state.showMenu
-      //       ? "z-index-2"
-      //       : ""
-      //   }`}>
       <div className="mr-5">
         {tourType !== "Make Edit" ? (
           <div
@@ -280,12 +212,6 @@ class SortableItem extends React.Component {
                         fill="white"
                       />
                     </svg>
-
-                    {/* <img
-                      width="16px"
-                      src={require("../images/trailit_dotsPink.png")}
-                      alt="dots"
-                    /> */}
                   </button>
                 )}
                 {this.state.showMenu && (
@@ -326,13 +252,6 @@ class SortableItem extends React.Component {
                     fill="white"
                   />
                 </svg>
-
-                // <img
-                //   width="16px"
-                //   height="14px"
-                //   src={require("../images/trialit_image.png")}
-                //   alt="dots"
-                // />
               )}
               {result.mediaType === "video" && (
                 <svg
@@ -347,21 +266,8 @@ class SortableItem extends React.Component {
                     fill="white"
                   />
                 </svg>
-
-                // <img
-                //   width="18px"
-                //   height="18px"
-                //   src={require("../images/trialit_video.png")}
-                //   alt="dots"
-                // />
               )}
               {result.mediaType === "text" && (
-                // <img
-                //   width="16px"
-                //   height="14px"
-                //   src={require("../images/trailit_text.png")}
-                //   alt="dots"
-                // />
                 <svg
                   width="19"
                   height="19"
@@ -398,13 +304,6 @@ class SortableItem extends React.Component {
                     fill="white"
                   />
                 </svg>
-
-                // <img
-                //   width="18px"
-                //   height="18px"
-                //   src={require("../images/trailit_audio.png")}
-                //   alt="dots"
-                // />
               )}
             </div>
           </div>
@@ -420,25 +319,6 @@ class SortableItem extends React.Component {
             <div className="trailitStepTitle">
               Step {i + 1} - {result.title}
             </div>
-            {/* <div>
-            <button
-              type="button"
-              onClick={this.handleClickMenu}
-              className="trailit_dotsButton"
-            >
-              <img
-                width="16px"
-                src={require("../images/trailit_dotsPink.png")}
-                alt="dots"
-              />
-            </button>
-            {this.state.showMenu && (
-              <div className={`trailit_dotsMenuList`}>
-                <button type="button">Edit</button>
-                <button type="button">Delete</button>
-              </div>
-            )}
-          </div> */}
           </div>
         )}
         {subStepStatus && tourType === "Make Edit" && (

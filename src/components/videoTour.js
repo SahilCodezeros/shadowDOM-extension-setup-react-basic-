@@ -56,8 +56,6 @@ class VideoTour extends React.PureComponent {
   };
 
   componentDidMount() {
-    //Make the DIV element draggable
-    // this.elementDragging();
     this.setState({ loadVideo: true, fullScreen: false, draggable: true });
     let video = document
       .getElementById("extension-div")
@@ -74,51 +72,12 @@ class VideoTour extends React.PureComponent {
       ) {
         video.play();
         playButton.style.display = "none";
-        // let playPromise = video[0].play();
-        // if (playPromise !== undefined) {
-        //     playPromise.then(function() {
-        //         $('.tr_play_button').css('display', 'none');
-        //     }).catch(function(error) {
-        //         $('.tr_play_button').css('display', 'block')
-        //     });
-        // }
       }
     });
 
     if (!matchUrl(this.props.data[this.props.tourStep - 1].url, document.URL)) {
       window.location.href = this.props.data[this.props.tourStep - 1].url;
     }
-
-    // if(document.URL.includes('youtube.com')) {
-    //     let videoElem = document.querySelector('.video-stream.html5-main-video');
-    //     videoElem.addEventListener('onloadeddata', () => {
-    //         videoElem.pause();
-    //     })
-    //     setTimeout(() => {
-    //         videoElem.pause();
-    //     }, 1000)
-    // }
-
-    // setTimeout(() => {
-    //     document.querySelectorAll('video').forEach(res => {
-    //         if(res.className !== "preview-video") {
-    //             res.pause()
-    //         }
-    //     })
-    // }, 1000)
-
-    // if (document.readyState === 'complete') {
-    //     $(document).ready(() => {
-    //         // Stop playing websites audio or video
-    //         stopMediaPlaying();
-    //     });
-
-    // } else {
-    //     document.body.onload = function () {
-    //         // Stop playing websites audio or video
-    //         stopMediaPlaying();
-    //     };
-    // }
 
     if (document.readyState === "complete") {
       $(document).ready(() => {
@@ -129,11 +88,6 @@ class VideoTour extends React.PureComponent {
       document.readyState === "interactive" &&
       document.URL.includes("https://www.youtube.com/")
     ) {
-      // document.body.onload = function () {
-      //     console.log('body is loaded!!!!');
-      //     // Call toggle website media
-      //     this.toggleWebSitesMedia();
-      // };
       $(document).ready(() => {
         // Stop playing websites audio or video
         stopMediaPlaying();
@@ -144,36 +98,6 @@ class VideoTour extends React.PureComponent {
         stopMediaPlaying();
       };
     }
-
-    // let pipButton = document.getElementById('trail_pip_video_button');
-    // let videoShow = $('.videoShow');
-    // let pipWindow;
-
-    // pipButton.addEventListener('click', async function(event) {
-    //     pipButton.disabled = true;
-    //     try {
-    //         if (video !== document.pictureInPictureElement)
-    //             await video.requestPictureInPicture();
-    //         else
-    //             await document.exitPictureInPicture();
-    //     } catch (error) {
-    //     } finally {
-    //         pipButton.disabled = false;
-    //     }
-    // });
-
-    // video.addEventListener('enterpictureinpicture', function (event) {
-    //     pipWindow = event.pictureInPictureWindow;
-    //     video.style.display = "none";
-    //     videoShow.css({display: 'none'});
-    //     $('.trail_vC').css({display: 'none'});
-    // });
-
-    // video.addEventListener('leavepictureinpicture', function (event) {
-    //     video.style.display = "block";
-    //     videoShow.css({display: 'block'});
-    //     $('.trail_vC').css({display: 'block'});
-    // });
 
     // Add trailit logo
     addTrailitLogo();
@@ -251,7 +175,6 @@ class VideoTour extends React.PureComponent {
   }
 
   onClickToDoneTour = (data, step) => {
-    let { tourSteps } = this.props;
     if ($("body")) {
       $("body").removeClass("trail_fullscreen");
     }
@@ -291,9 +214,6 @@ class VideoTour extends React.PureComponent {
   };
 
   onClickToPlayVideo = () => {
-    // var video = document.getElementById('extension-div').shadowRoot.getElementById('trail_video');
-    // video[0].play();
-
     let video = document
       .getElementById("extension-div")
       .shadowRoot.getElementById("trail_video");
@@ -303,7 +223,6 @@ class VideoTour extends React.PureComponent {
       .getElementById("extension-div")
       .shadowRoot.querySelector(".tr_play_button");
     playButton.style.display = "none";
-    // $('.tr_play_button').css('display', 'none');
   };
 
   onClickPauseVideo = () => {
@@ -311,7 +230,6 @@ class VideoTour extends React.PureComponent {
       .getElementById("extension-div")
       .shadowRoot.querySelector(".tr_play_button");
     playButton.style.display = "block";
-    // $('.tr_play_button').css('display', 'block')
   };
 
   componentWillUnmount() {
@@ -322,49 +240,18 @@ class VideoTour extends React.PureComponent {
     window.removeEventListener("resize", this.resizeWindow);
   }
 
-  // videoPlayIconChange = (e) => {
-  //     e.preventDefault();
-  //     console.log('mouseIn');
-  //     document.addEventListener('keypress', (e) => {
-  //         console.log('keypress');
-  //         if (e.keyCode === 32 || e.which === 32) {
-  //             const playIcon = document.querySelector('.tr_play_button');
-
-  //             if (playIcon.style.display === 'block') {
-  //                 playIcon.style.display = 'none';
-  //             } else {
-  //                 playIcon.style.display = 'block';
-  //             }
-  //         }
-  //     });
-  // };
-
   render() {
     if (this.state.loadVideo) {
       if (!this.state.fullScreen) {
-        // Enable dragging
-        // draggie.enable();
         dragElement(
           document
             .getElementById("extension-div")
             .shadowRoot.querySelector(".video-wrap_tooltip")
         );
-      } else {
-        // Disable dragging
-        // draggie.disable();
       }
     }
 
-    // picture in picture mode code
-    // <a id="trail_pip_video_button" className="icon videoShow"><img src={ this.fullScreen ? "https://res.cloudinary.com/dlhkpit1h/image/upload/v1578376401/iti33lwa5ued6zunxefv.png":  } /></a>
-
-    // overlay
-    // className={tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"}
-
-    // tooltip overlay
-    // tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"
-
-    const { tourStep, tourSide, play } = this.props;
+    const { tourStep, tourSide } = this.props;
 
     return (
       <>
@@ -405,7 +292,6 @@ class VideoTour extends React.PureComponent {
                 <CloseOutlined />
               </Button>
             )}
-            {/* <p className="title videoShow">Next Learn I will show you</p> */}
             <div
               className={[
                 !this.state.fullScreen ? "tr_gradient_border" : "",

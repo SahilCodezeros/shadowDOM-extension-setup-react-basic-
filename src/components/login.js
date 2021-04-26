@@ -1,16 +1,13 @@
 /* eslint-disable react/jsx-no-target-blank */
-import React, { useRef, createRef } from "react";
+import React from "react";
 import { Form, Input, Button, Col } from "antd";
 import axios from "axios";
 import * as nearAPI from "near-api-js";
 import { Near } from "near-api-js";
 
-import { getAllNotification } from "../common/axios";
 import { keyPairGenerate } from "../code/generateKey";
 
 const chrome = window.chrome;
-// let bkg = chrome.extension.getBackgroundPage();
-
 axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 
 const NearConfig = {
@@ -108,8 +105,6 @@ class Login extends React.Component {
 
   // Validate password with regular expression function
   validateToNextPassword = (rule, value, callback) => {
-    const { form } = this.props;
-
     var digit = /^(.*[0-9]+.*)$/;
     var upper = /^(.*[A-Z]+.*)$/;
     var lower = /^(.*[a-z]+.*)$/;
@@ -182,13 +177,6 @@ class Login extends React.Component {
                       </b>
                     </div>
                     <Col md={12}>
-                      {/* <button
-                        type="button"
-                        className="trailit_facebook"
-                        onClick={this.onNearLoginCilck}
-                      >
-                        Sign In with NEAR
-                      </button> */}
                       <button type="button" className="trailit_facebook">
                         Sign In with Facebook
                       </button>
@@ -235,12 +223,6 @@ class Login extends React.Component {
                       </Form.Item>
                     </Col>
                     <Col md={12} className="text-center mb-3 mb-1">
-                      {/* <Button
-                        type="submit"
-                        className="py-2 px-3 btn-sm btn-pink"
-                      >
-                        Sign in
-                      </Button> */}
                       <Button
                         disabled={this.state.isLoading}
                         htmlType="submit"

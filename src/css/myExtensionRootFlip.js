@@ -1699,6 +1699,16 @@ export const myExtensionRootFlipCss5 = `
         margin-top: 10px;
     }
 
+    .custom-button-unlink {
+        margin-left: 5px !important;
+        width: 60px;
+    }
+
+    .custom-button-link {
+        margin-left: 0 !important;
+        width: 55px;
+    }
+
     .custom-button {
         width: 72.27px;
         height: 25px;

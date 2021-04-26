@@ -21,35 +21,6 @@ import { matchUrl } from "./common";
 
 const chrome = window.chrome;
 
-function getWindowRelativeOffset(parentWindow, elem) {
-  var offset = {
-    left: 0,
-    top: 0,
-  };
-
-  // relative to the target field's document
-  offset.left = elem.getBoundingClientRect().left;
-  offset.top = elem.getBoundingClientRect().top;
-
-  // now we will calculate according to the current document, this current
-  // document might be same as the document of target field or it may be
-  // parent of the document of the target field
-
-  var childWindow = elem.document.frames.window;
-
-  while (childWindow != parentWindow) {
-    offset.left =
-      offset.left + childWindow.frameElement.getBoundingClientRect().left;
-    offset.top =
-      offset.top + childWindow.frameElement.getBoundingClientRect().top;
-    childWindow = childWindow.parent;
-  }
-
-  return offset;
-}
-
-let countN = 0;
-
 class WebUserTour extends React.Component {
   constructor(props) {
     super(props);
@@ -84,9 +55,6 @@ class WebUserTour extends React.Component {
   };
 
   componentDidMount() {
-    // document.addEventListener("load", this.handleLoad);
-    // document.onload = this.handleLoad;
-
     $(() => {
       this.handleLoad();
     });
@@ -118,10 +86,6 @@ class WebUserTour extends React.Component {
 
   handleLoad = (e) => {
     let { tourStep } = this.state;
-
-    // alert("GGGGGGGGGGGGGGGGGGGGGGG");
-    // console.log("loaded");
-
     let timeout = 0;
 
     if (document.URL.includes("https://common.fund")) {
@@ -266,42 +230,8 @@ class WebUserTour extends React.Component {
       }
     }
 
-    // console.log("unqTarget", unqTarget);
-    // console.log(
-    //   "document.querySelector(unqTarget)",
-    //   document.querySelector(unqTarget)
-    // );
-
     if (document.querySelector(unqTarget) == null) {
       this.props.toogleTargetDataNotFound(true);
-      // let a = () => {
-      //   if (resizeScreen()) {
-      //     countN++;
-
-      //     if (countN == 4) {
-      //       alert("Your target not found!!");
-      //       clearInt();
-      //       this.onButtonCloseHandler(event);
-      //       this.props.onNotFoundTarget({
-      //         trail_data_id: this.props.data[step - 1].trail_data_id,
-      //       });
-      //       countN = 0;
-      //     }
-      //   }
-
-      //   if (document.querySelector(unqTarget) != null) {
-      //     countN = 0;
-      //     clearInt();
-      //     this.createPopOver(step);
-      //     this.getWebUserTour(event, data, step);
-      //   }
-      // };
-
-      // const interval = setInterval(a, 1000);
-
-      // function clearInt() {
-      //   clearInterval(interval);
-      // }
     } else {
       // Call Add overlay function
       addOverlay();
@@ -365,16 +295,6 @@ class WebUserTour extends React.Component {
         }, 2000);
       });
 
-      let content = this.props.data
-        .map((res, index) => {
-          if (matchUrl(res.url, document.URL)) {
-            tourSteps[`step${index + 1}`] = false;
-            res["step"] = index + 1;
-            return res;
-          }
-        })
-        .filter((r) => r != undefined);
-
       activeWeb = {
         ...activeWeb,
         uniqueTarget: unqTarget,
@@ -388,7 +308,6 @@ class WebUserTour extends React.Component {
         tourSteps,
       });
     }
-    // }
   };
 
   /**
@@ -406,11 +325,9 @@ class WebUserTour extends React.Component {
 
     // document.getElementById('extension-div').shadowRoot.querySelector('.trail_overlay').remove();
     $(".trail_web_user_tour").parents().css("z-index", "");
-    // $('.trail_web_user_tour').parent().parent().removeAttr('style');
     $(".trail_web_user_tour").removeAttr("trail_web_user_tour");
-    // $(`traiil_stop${this.state.tourStep}`).removeAttr(`traiil_stop${this.state.tourStep}`);
 
-    let { tourSteps, tourStep, tourContent } = this.state;
+    let { tourStep } = this.state;
     let unqTarget = this.props.data[tourStep - 1].uniqueTarget;
 
     if (resizeScreen()) {
@@ -424,8 +341,6 @@ class WebUserTour extends React.Component {
       let type = this.props.data[step - 1].type;
 
       if (type === "tooltip") {
-        // this.createPopOver(step);
-        // this.getWebUserTour(event, this.props.data[step - 1], step);
         this.props.tour(step, type, tourSide);
       } else {
         this.setState({ tourStep: step - 1 });
@@ -436,10 +351,6 @@ class WebUserTour extends React.Component {
       this.props.setLoadingState(true);
       let type = this.props.data[step - 1].type;
       await this.props.tour(step, type, tourSide);
-      // chrome.runtime.sendMessage({type: "notification", options: {
-      //     url: this.props.data[step - 1].url
-      // }});
-
       window.location.href = this.props.data[step - 1].url;
       setTimeout(() => {
         this.createPopOver(step);
@@ -452,7 +363,7 @@ class WebUserTour extends React.Component {
 
   onClickToDoneTour = (data, step) => {
     this.props.toogleTargetDataNotFound(false);
-    let { tourSteps, tourStep } = this.state;
+    let { tourSteps } = this.state;
 
     Object.keys(tourSteps).map((r, i) => {
       tourSteps[r] = false;

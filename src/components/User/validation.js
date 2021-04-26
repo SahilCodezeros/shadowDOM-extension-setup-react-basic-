@@ -2,7 +2,6 @@ import _ from "lodash";
 
 export const isValidated = (data) => {
   const errors = {};
-  let isValid = false;
 
   if (data.hasOwnProperty("trail_title") && _.isEmpty(data.trail_title)) {
     errors.trail_title = "Please enter trail title";

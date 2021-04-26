@@ -1,6 +1,6 @@
 import React from "react";
-import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import { Form, Input, Button } from "antd";
+import { Modal, ModalBody } from "reactstrap";
+import { Button } from "antd";
 import { CloseOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import $ from "jquery";
 
@@ -53,34 +53,8 @@ class PreviewModalComponent extends React.Component {
       window.location.href = this.props.data[this.props.tourStep - 1].url;
     }
 
-    // this.setState({ autoPlay: true });
-
-    // setTimeout(() => {
-    //     document.querySelectorAll('video').forEach(res => {
-    //
-    //         if(res.className !== "preview-video") {
-    //             res.pause()
-    //         }
-    //     })
-    // }, 1000);
-
-    // chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-    //
-    //     if(items && (!items.AutoPlayMediaToggle || items.AutoPlayMediaToggle)) {
-    //         autoplay = items.AutoPlayMediaToggle;
-    //         this.setState({ autoPlay: items.AutoPlayMediaToggle });
-    //     }
-
-    // });
-
     // Add modal class to dom
     this.addModalClass();
-
-    // if (document.readyState === 'loading') {
-    //
-    // } else if (document.readyState === 'complete') {
-    //
-    // }
 
     if (document.readyState === "complete") {
       $(document).ready(() => {
@@ -91,11 +65,6 @@ class PreviewModalComponent extends React.Component {
       document.readyState === "interactive" &&
       document.URL.includes("https://www.youtube.com/")
     ) {
-      // document.body.onload = function () { https://www.dailymotion.com/
-      //
-      //     // Call toggle website media
-      //     this.toggleWebSitesMedia();
-      // };
       $(document).ready(() => {
         // Call toggle website media
         this.toggleWebSitesMedia();
@@ -110,12 +79,6 @@ class PreviewModalComponent extends React.Component {
         // Call toggle website media
         this.toggleWebSitesMedia();
       });
-
-      // document.body.onload = async function () {
-      //
-      //     // Call toggle website media
-      //     await this.toggleWebSitesMedia();
-      // };
     }
 
     // Add trailit logo
@@ -123,14 +86,6 @@ class PreviewModalComponent extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // chrome.storage.local.get(['AutoPlayMediaToggle'], (items) => {
-    //     if(prevState.autoPlay !== items.AutoPlayMediaToggle) {
-    //         this.setState({ autoPlay: items.AutoPlayMediaToggle });
-    //     }
-    // });
-
-    // this.setState({ autoPlay: true });
-
     // Add modal class to dom
     this.addModalClass();
 
@@ -161,9 +116,6 @@ class PreviewModalComponent extends React.Component {
       await this.props.tour(step, type, tourSide);
       window.location.href = this.props.data[step - 1].url;
     }
-    // if(document.querySelector('#my-extension-root-flip').classList.value ==="") {
-    //     document.querySelector('#my-extension-root-flip').classList.remove('trail_flip_box');
-    // }
     this.setState({ open: true });
   };
 
@@ -251,7 +203,7 @@ class PreviewModalComponent extends React.Component {
 
   render() {
     const { open, autoPlay } = this.state;
-    const { tourStep, tourSide, play } = this.props;
+    const { tourStep } = this.props;
     const { title, description } = this.props.data[tourStep - 1];
     let preview = null;
 
@@ -300,8 +252,6 @@ class PreviewModalComponent extends React.Component {
         </div>
       );
     }
-
-    console.log("in modal render");
 
     return (
       <div>

@@ -302,18 +302,18 @@ const TextEditor = memo((props) => {
               onChange={(e) => onInputChangeHandler(e)}
             />
             <div className="create-link-button-container">
-              <input
-                value="Link"
-                type="button"
-                className="create-link-button"
+              <button
+                className="custom-button-link custom-button"
                 onClick={(e) => onCreateLinkClickHandler("createLink")}
-              />
-              <input
-                type="button"
-                value="Unlink"
-                className="create-link-button"
+              >
+                Link
+              </button>
+              <button
+                className="custom-button-unlink custom-button"
                 onClick={(e) => onUnlinkClickHandler("unlink")}
-              />
+              >
+                Unlink
+              </button>
             </div>
           </div>
         </div>

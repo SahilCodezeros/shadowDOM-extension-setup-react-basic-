@@ -224,15 +224,6 @@ class Tooltip extends React.PureComponent {
     handleFileChange(e, trailStatus, this.uploadFile);
   };
 
-  // onSaveTrail = (e, data) => {
-  //     // saveTrail(this.state.tourType, this.state.title, this.state.web_url, data, (trailData) => {
-  //     //     console.log('from line: 154', trailData);
-  // 	// 	this.setState({ web_url: '', fileAddStatus: false });
-  // 	// 	chrome.storage.local.set({ trail_web_user_tour: trailData, tourType: '' });
-  //  // });
-  //     this.onClickToSubmit(e);
-  // };
-
   selectedTooltipForm = (mediaType) => {
     const {
       trailStatus,

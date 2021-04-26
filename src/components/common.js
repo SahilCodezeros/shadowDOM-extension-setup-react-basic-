@@ -1,9 +1,8 @@
 import React from "react";
-import { Form, Input, Button } from "antd";
+import { Form, Input } from "antd";
 import { CloudUploadOutlined } from "@ant-design/icons";
 
 import TextEditor from "../common/textEditor";
-import ImageTools from "../common/imageResizer";
 import { handleFileUpload } from "../common/audAndVidCommon";
 
 const chrome = window.chrome;
@@ -57,18 +56,6 @@ export function urlStingCheck(url, array) {
 
   return status;
 }
-
-// export function getScrollParent(node) {
-//     if (node == null) {
-//       return null;
-//     }
-
-//     if (node.scrollHeight > node.clientHeight) {
-//       return node;
-//     } else {
-//       return getScrollParent(node.parentNode);
-//     }
-//   }
 
 export const getScrollParent = (node) => {
   const regex = /(auto|scroll)/;
@@ -129,38 +116,12 @@ export const handleFileChange = (e, trailStatus, uploadFile) => {
     // Return alert
     return alert("MKV format suport coming soon.");
   } else if (trailStatus === "image" && fileType[0] === "image") {
-    // const size = { width: 380, height: 214 };
-    // const imageTool = new ImageTools();
-    // imageTool
-    //   .crop(file, size)
-    //   .then((blob) => {
-    //     const date = new Date().getTime();
-    //     const resizedFile = new File([blob], `trail_image_${date}`, {
-    //       lastModified: date,
-    //       type: file.type,
-    //     });
-
-    //     // Upload file function
-    //     uploadFile(resizedFile);
-    //   })
-    //   .catch((err) => {
-    //     console.log("err", err);
-    //     alert("Error while resizing image. Please uplaod again.");
-    //   });
-
-    // Upload file function
     uploadFile(file);
   } else {
     // Upload file function
     uploadFile(file);
   }
 };
-
-// On cancel click handler function
-// export const onCancelClickHandler = (onCancel, target, count) => {
-//     document.designMode = 'off';
-//     onCancel(target, count);
-// };
 
 // Tooltip form selection function
 export const commonTooltipFormFunction = (
@@ -236,10 +197,8 @@ export const commonTooltipFormFunction = (
           disabled={true}
           name="fileName"
           value={fileName}
-          // onKeyDown={onChangeToInput}
           onChange={onChangeToInput}
           onKeyDown={(e) => e.stopPropagation()}
-          // placeholder={`Add ${tourType} URL`}
           placeholder={`${tourType} Filename`}
           className="ant-input mb-2"
         />
@@ -284,94 +243,6 @@ export const commonTooltipFormFunction = (
         </div>
 
         {buttons}
-        {/* <Form
-          onFinish={onClickToSubmit}
-          initialValues={{
-            title,
-          }}
-        >
-          <Form.Item
-            name="title"
-            rules={[
-              {
-                required: true,
-                message: "Please enter title!",
-              },
-            ]}
-          >
-            <Input
-              type="text"
-              autoComplete="off"
-              // onKeyDown={onChangeToInput}
-              onChange={onChangeToInput}
-              onKeyDown={(e) => e.stopPropagation()}
-              placeholder={`Enter ${tourType} Title`}
-            />
-          </Form.Item>
-
-          <input 
-              type="text" 
-              name="title" 
-              value={title} 
-              placeholder={`Enter ${tourType} Title`} 
-              className="ant-input mb-2" 
-              onKeyDown={onChangeToInput} 
-              autoComplete="off" 
-          />
-          <input
-            type="text"
-            disabled={true}
-            name="fileName"
-            value={fileName}
-            // onKeyDown={onChangeToInput}
-            onChange={onChangeToInput}
-            onKeyDown={(e) => e.stopPropagation()}
-            // placeholder={`Add ${tourType} URL`}
-            placeholder={`${tourType} Filename`}
-            className="ant-input mb-2"
-          />
-
-          <div className="upload_bx">
-            <div className="ant-upload">
-              <p className="ant-upload-drag-icon">
-                {fileLoading && (
-                  <div class="trial_spinner">
-                    <img
-                      class="ring1"
-                      src={require(`../images/loding1.png`)}
-                      alt="ring1"
-                    />
-                    <img
-                      class="ring2"
-                      src={require(`../images/loding2.png`)}
-                      alt="ring2"
-                    />
-                  </div>
-                )}
-                {!fileLoading && <CloudUploadOutlined />}
-              </p>
-              <p className="ant-upload-text">
-                {fileLoading ? "Uploading" : "Upload"} {tourType}
-              </p>
-            </div>
-
-            <input
-              type="file"
-              name="media"
-              accept={mediaType}
-              style={{ padding: 0 }}
-              onChange={handleChange}
-            />
-
-            {fileNameInvalid && fileName === "" && (
-              <div class="ant-form-item-explain ant-form-item-explain-error">
-                <div role="alert">File is required!</div>
-              </div>
-            )}
-          </div>
-
-          {buttons}
-        </Form> */}
       </div>
     </div>
   );
@@ -412,8 +283,6 @@ export const commonInitialRenderFunction = (
         >
           <Input
             type="text"
-            // // onChange={ onTitleChangeHandler }
-            // onKeyDown={ onTitleChangeHandler }
             onChange={onTitleChangeHandler}
             onKeyDown={(e) => e.stopPropagation()}
             placeholder="Enter Title"
@@ -471,10 +340,7 @@ export const commonTypeSelectonButton = (
           id="text_tooltip"
           className={trailStatus === "text" ? "tr_active" : ""}
           onClick={() => onSelectOption("text")}
-          // disabled={ (trailStatus !== 'text' && fileName !== '') || fileLoading }
         >
-          {/* <img alt="Text_tooltip" src={require(`../images/text_tooltip.svg`)} /> */}
-
           <svg
             width="19"
             height="19"
@@ -504,13 +370,7 @@ export const commonTypeSelectonButton = (
               id="audio_tooltip"
               className={trailStatus === "audio" ? "tr_active" : ""}
               onClick={() => onSelectOption("audio")}
-              // disabled={ (trailStatus !== 'audio' && fileName !== '') || fileLoading }
             >
-              {/* <img
-                alt="audio_tooltip"
-                src={require(`../images/audio_tooltip.svg`)}
-              /> */}
-
               <svg
                 width="24"
                 height="19"
@@ -528,13 +388,7 @@ export const commonTypeSelectonButton = (
               id="video_tooltip"
               className={trailStatus === "video" ? "tr_active" : ""}
               onClick={() => onSelectOption("video")}
-              // disabled={ (trailStatus !== 'video' && fileName !== '') || fileLoading }
             >
-              {/* <img
-                alt="video_tooltip"
-                src={require(`../images/video_tooltip.svg`)}
-              /> */}
-
               <svg
                 width="21"
                 height="13"
@@ -554,13 +408,7 @@ export const commonTypeSelectonButton = (
           id="picture_tooltip"
           className={trailStatus === "image" ? "tr_active" : ""}
           onClick={() => onSelectOption("image")}
-          // disabled={ (trailStatus !== 'image' && fileName !== '') || fileLoading }
         >
-          {/* <img
-            alt="image_tooltip"
-            src={require(`../images/picture_tooltip.svg`)}
-          /> */}
-
           <svg
             width="16"
             height="14"

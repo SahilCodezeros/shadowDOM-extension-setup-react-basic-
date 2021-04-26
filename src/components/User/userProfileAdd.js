@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import $ from "jquery";
-import { Button } from "antd";
 
 import { isValidated } from "./validation";
 import { getAllCategory, createTrailId } from "../../common/axios";
@@ -108,8 +107,16 @@ class userProfileAdd extends Component {
         {isLoading && (
           <div className="trailit_loaderBox">
             <div class="trial_spinner">
-              <img class="ring1" src={require(`../../images/loding1.png`)} />
-              <img class="ring2" src={require(`../../images/loding2.png`)} />
+              <img
+                alt="loading1"
+                class="ring1"
+                src={require(`../../images/loding1.png`)}
+              />
+              <img
+                alt="loading2"
+                class="ring2"
+                src={require(`../../images/loding2.png`)}
+              />
             </div>
           </div>
         )}

@@ -92,13 +92,6 @@ class UserProfile extends React.Component {
   // On setting button click function
   onSettingButtonClick() {
     chrome.storage.local.set({ showSetting: true });
-    // chrome.storage.local.get(["showSetting"], (items) => {
-    //   if (!items.showSetting) {
-    //     chrome.storage.local.set({ showSetting: true });
-    //   } else {
-    //     chrome.storage.local.set({ showSetting: false });
-    //   }
-    // });
   }
 
   // Get user's followed trail data
@@ -226,6 +219,9 @@ class UserProfile extends React.Component {
 
         if (status === 200 && data.data && data.data.response) {
           userData = { ...data.data.response };
+        } else {
+          // Logout if user not found
+          this.props.onClickToLogout();
         }
 
         let disabledButton = false;
@@ -266,11 +262,6 @@ class UserProfile extends React.Component {
           });
         });
 
-        // const data = {
-        //   user_id: userData._id,
-        //   flag: "unread",
-        // };
-
         if (items.currentTrailsTab && items.currentTrailsTab === "Following") {
           // Call user followed trail data function
           await this.userFollowedTrailData();
@@ -278,39 +269,6 @@ class UserProfile extends React.Component {
           // Call fetch user's trail data function
           await this.fetchUserTrailsData();
         }
-
-        // getAllNotification(data).then(async (res) => {
-        //   const data = res.data.response;
-
-        //   if (data.result && _.isArray(data.result) && data.result.length > 0) {
-        //     let user = await getAllUser();
-
-        //     let filterdFollowers = data.result.map((el) => {
-        //       for (let i = 0; i < user.data.data.response.length; i++) {
-        //         if (el.creator_id === user.data.data.response[i]._id) {
-        //           return {
-        //             email: user.data.data.response[i].email,
-        //             pictures: user.data.data.response[i].pictures,
-        //             creator_id: user.data.data.response[i]._id,
-        //             currUserId: el.user_id,
-        //             created: el.created,
-        //           };
-        //         }
-        //       }
-        //     });
-
-        //     filterdFollowers = filterdFollowers.sort((a, b) => {
-        //       return b.created - a.created;
-        //     });
-
-        //     // Update notificationData state
-        //     this.setState({
-        //       notificationData: filterdFollowers,
-        //       getOneEditRow: {},
-        //       addRaw: {},
-        //     });
-        //   }
-        // });
 
         this.setState({
           email: userData.email,
@@ -506,15 +464,12 @@ class UserProfile extends React.Component {
   };
 
   handleChange = async (e) => {
-    const { tourType } = this.state;
     const file = e.target.files[0];
-    const fileType = file.type.split("/");
     e.target.value = null;
 
     // Upload file function
     await this.uploadFile(file);
 
-    // console.log("after upload successed");
     chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
       if (
         tabs.length > 0 &&
@@ -567,13 +522,11 @@ class UserProfile extends React.Component {
       userName,
       firstName,
       lastName,
-      isPreview,
       isLoading,
       listTitle,
       showSetting,
       myTrilsListData,
       categoryList,
-      notificationData,
       editTrail,
       getOneEditRow,
       addRaw,
@@ -581,11 +534,9 @@ class UserProfile extends React.Component {
       slideBalance,
       nearBalance,
       isDisabled,
-      isPreviewSingleTrail,
       profilePreview,
       crop,
       zoom,
-      croppedAreaPixels,
       errorMsg,
     } = this.state;
 
@@ -617,8 +568,16 @@ class UserProfile extends React.Component {
         {isLoading && (
           <div className="trailit_loaderBox">
             <div class="trial_spinner">
-              <img class="ring1" src={require(`../images/loding1.png`)} />
-              <img class="ring2" src={require(`../images/loding2.png`)} />
+              <img
+                alt="loading1"
+                class="ring1"
+                src={require(`../images/loding1.png`)}
+              />
+              <img
+                alt="loading2"
+                class="ring2"
+                src={require(`../images/loding2.png`)}
+              />
             </div>
           </div>
         )}
@@ -688,9 +647,6 @@ class UserProfile extends React.Component {
               <div className="trailit_userName trailit_ellips">
                 {firstName && lastName ? `${firstName} ${lastName}` : userName}
               </div>
-              {/* <div className="trailit_userSubName trailit_ellips">
-                Founder, Creator, Designer
-              </div> */}
               {nearBalance && (
                 <div
                   className="trailit_userName cursor_pointer"
@@ -733,7 +689,6 @@ class UserProfile extends React.Component {
                     <button type="button" onClick={this.onSettingButtonClick}>
                       Settings
                     </button>
-                    {/* <button type="button">Notifications</button> */}
                     <button
                       type="button"
                       onClick={() => {
@@ -765,11 +720,6 @@ class UserProfile extends React.Component {
               onEdit={this.onChangeTrailEdit}
             />
             <div className="trailit_userPanalFooterBox">
-              {/* {!isPreview && !isPreviewSingleTrail && (
-                <>
-                  
-                </>
-              )} */}
               {listTitle === "My Trails" && (
                 <button
                   type="button"
@@ -785,7 +735,6 @@ class UserProfile extends React.Component {
               {listTitle === "Following" && (
                 <button
                   type="button"
-                  // disabled={isDisabled}
                   className="trailit_btnPink"
                   onClick={(e) => this.onClickToList("My Trails")}
                 >

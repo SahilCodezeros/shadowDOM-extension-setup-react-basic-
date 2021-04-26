@@ -93,11 +93,6 @@ class CreateModalComponent extends React.PureComponent {
     let obj;
 
     if (trailStatus === "text") {
-      // this.props.form.validateFields((err, values) => {
-      //     if (err || values.title === '' || (!description || description === '')) {
-      //         return;
-      //     }
-
       obj = {
         url: document.URL,
         type: "modal",
