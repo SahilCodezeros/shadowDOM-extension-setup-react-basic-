@@ -32,11 +32,6 @@ export const myExtensionRootFlipCss1 = `
         overflow-y: hidden;
     }
 
-    // .modal-open {
-    //     position: fixed;
-    //     top: 0;
-    // }
-
     // .trial_create_modal_main {
     //     position: fixed !important;
     // }

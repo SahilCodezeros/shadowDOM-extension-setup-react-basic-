@@ -153,18 +153,24 @@ class UserProfile extends React.Component {
     }
   };
 
-  updateAutologoutTime = (message) => {
-    chrome.runtime.sendMessage("", {
-      type: "updateTimeout",
-      status: true,
+  updateAutologoutTime = () => {
+    chrome.storage.local.get(["autoLogoutTime"], (items) => {
+      const logoutTime = items.autoLogoutTime;
+      if (logoutTime < Date.now()) {
+        // Call auto logout function
+        this.props.onClickToLogout();
+      } else {
+        chrome.runtime.sendMessage("", {
+          type: "updateTimeout",
+          status: true,
+        });
+      }
     });
   };
 
   componentWillUnmount() {
     // Remove click event listener
-    window.removeEventListener("click", () =>
-      this.updateAutologoutTime("hiiii")
-    );
+    window.removeEventListener("click", this.updateAutologoutTime);
   }
 
   async componentDidMount() {
