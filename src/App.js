@@ -5,19 +5,9 @@ import "./index.css";
 import "antd/dist/antd.css";
 
 import { logout } from "./common/axios";
-import {
-  ForgotPassword,
-  Login,
-  UserConfirmation,
-  UserProfile,
-  UserVerification,
-  OtpVerification,
-  Signup,
-  ConfirmPassword,
-} from "./components";
+import { Login, UserProfile } from "./components";
 
 const chrome = window.chrome;
-let bkg = chrome.extension.getBackgroundPage();
 
 class App extends React.Component {
   constructor(props) {
@@ -102,16 +92,7 @@ class App extends React.Component {
   };
 
   render() {
-    const {
-      login,
-      forgotPassword,
-      userConfirmation,
-      userVerification,
-      userProfile,
-      otpVerification,
-      signup,
-      confirmPassword,
-    } = this.state.active;
+    const { login, userConfirmation, userProfile } = this.state.active;
 
     chrome.storage.local.get(["isAuth"], function (items) {
       if (items.isAuth) {
@@ -131,37 +112,15 @@ class App extends React.Component {
     return (
       <div className={"trailMain"}>
         {login && <Login clickToRedirect={this.onClickToRedirect} />}
-        {forgotPassword && (
-          <ForgotPassword clickToRedirect={this.onClickToRedirect} />
-        )}
-        {userConfirmation && (
-          <UserConfirmation clickToRedirect={this.onClickToRedirect} />
-        )}
-        {userVerification && (
-          <UserVerification clickToRedirect={this.onClickToRedirect} />
-        )}
         {userProfile && (
           <UserProfile
             clickToRedirect={this.onClickToRedirect}
             onClickToLogout={this.onClickToLogout}
           />
         )}
-        {otpVerification && (
-          <OtpVerification clickToRedirect={this.onClickToRedirect} />
-        )}
-        {signup && <Signup clickToRedirect={this.onClickToRedirect} />}
-        {confirmPassword && (
-          <ConfirmPassword clickToRedirect={this.onClickToRedirect} />
-        )}
       </div>
     );
   }
 }
-
-chrome.storage.onChanged.addListener(function (changes, namespace) {
-  for (var key in changes) {
-    var storageChange = changes[key];
-  }
-});
 
 export default App;

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 import $ from "jquery";
-import { Button } from "antd";
 
 import SettingsComponent from "../settingsComponents";
 
@@ -52,11 +51,6 @@ class TrailSetting extends Component {
         </ModalHeader>
         <ModalBody>
           <SettingsComponent />
-          {/* <div className="trailButtonsWrapper">
-            <Button type="primary" onClick={this.hideModal}>
-              Close
-            </Button>
-          </div> */}
         </ModalBody>
       </Modal>
     );

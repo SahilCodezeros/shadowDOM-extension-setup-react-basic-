@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import $ from "jquery";
 import _ from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList, faThLarge } from "@fortawesome/free-solid-svg-icons";
 
 import { getUserOneTrail } from "../../common/axios";
 import BgImage from "../../images/trailit_bx_img.png";
@@ -21,6 +23,7 @@ class UserProfileList extends Component {
       isLoadingLink: false,
       isCopiedLink: false,
       isCopiedError: false,
+      viewType: "grid",
     };
   }
 
@@ -89,7 +92,6 @@ class UserProfileList extends Component {
           const trailId = res.trail_id;
           const URL = trailList[0].url;
           let qryString = URL.split("?").length > 1 ? "&" : "?";
-          // const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${res.user_id}&trailId=${trailId}&trailPreview=true&tourStep=1`;
           const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${userId}&trailId=${trailId}&trailPreview=true&tourStep=1&singleStepPreview=undefined&trailDataId=undefined&previewUserId=undefined&redirectUrl=undefined`;
 
           function copyStringToClipboard(str) {
@@ -117,12 +119,6 @@ class UserProfileList extends Component {
             document.body.removeChild(el);
           }
 
-          // this.setState({ isCopiedLink: true });
-
-          // setTimeout(() => {
-          //   this.setState({ isCopiedLink: false });
-          // }, 2000);
-
           copyStringToClipboard(trailUrl);
 
           alert("Successfully copied");
@@ -135,7 +131,6 @@ class UserProfileList extends Component {
         }
       }
     }
-    // this.setState({ isLoadingLink: false });
   };
 
   onBoxClick = (e, res) => {
@@ -165,14 +160,9 @@ class UserProfileList extends Component {
       followedTrailUserData,
       trail_status: res.trail_user_status,
     });
-
-    let authToken, reload, userData;
     chrome.storage.local.get(
       ["authToken", "userData", "reload", "openButton"],
       function (items) {
-        // authToken = items.authToken, reload = items.reload, userData = items.userData;
-        // chrome.storage.local.clear();
-
         if (items.openButton === undefined) {
           chrome.storage.local.set({ openButton: "ManageTrail" });
         }
@@ -194,14 +184,18 @@ class UserProfileList extends Component {
     });
   };
 
+  onListButtonHandler = () => {
+    // Set state
+    this.setState({ viewType: "list" });
+  };
+
+  onGridButtonHandler = () => {
+    // Set state
+    this.setState({ viewType: "grid" });
+  };
+
   render() {
-    const {
-      isLoadingLink,
-      isCopiedLink,
-      isCopiedError,
-      isLoading,
-      list,
-    } = this.state;
+    const { isLoading, list, viewType } = this.state;
     const {
       profileImage,
       errorMsg,
@@ -210,28 +204,48 @@ class UserProfileList extends Component {
       userName,
     } = this.props;
 
+    // let userImage = "";
+    // this.props.title === "Following" ? res.userData && res.userData.profileImage !== "" ? res.userData.profileImage : require("../../images/user.png")
+    // : profileImage == "" ? require("../../images/user.png") : profileImage
+    // if (
+    //   this.props.title === "Following"
+    // ) {
+    //   if (res.userData && res.userData.profileImage !== "") {
+
+    //   } else {
+
+    //   }
+    //   userImage = items.authorData.profileImage;
+    // } else if (
+    //   items.followedTrailUserData &&
+    //   items.followedTrailUserData.profileImage
+    // ) {
+    //   userImage = items.followedTrailUserData.profileImage;
+    // } else if (items.userData && items.userData.profileImage) {
+    //   userImage = items.userData.profileImage;
+    // }
+
     return (
       <div className="trailit_userPanalContentInnerBox">
-        {/* {isLoadingLink && (
-          <div className="trailit_loaderBox">
-            <div class="trial_spinner">
-              <img class="ring1" src={require(`../../images/loding1.png`)} />
-              <img class="ring2" src={require(`../../images/loding2.png`)} />
-            </div>
+        <div className="activeTab-list-grid-view">
+          <div className="trailit_18600 trailit_mb3">{this.props.title}</div>
+          <div className="list-grid-buttons">
+            <button
+              onClick={this.onListButtonHandler}
+              className={`list-button ${viewType === "list" ? "active" : ""}`}
+            >
+              <FontAwesomeIcon icon={faList} size="sm" />
+            </button>
+            <button
+              onClick={this.onGridButtonHandler}
+              className={`grid-button ${viewType === "grid" ? "active" : ""}`}
+            >
+              <FontAwesomeIcon icon={faThLarge} size="sm" />
+            </button>
           </div>
-        )} */}
-        {/* {isCopiedLink && (
-          <div class="trailit_16500 trailit_mb3">Successfully copied</div>
-        )}
-        {isCopiedError && (
-          <div class="trailit_16500 trailit_mb3" style={{ color: "red" }}>
-            Please add trails data
-          </div>
-        )} */}
-        <div className="trailit_18600 trailit_mb3">{this.props.title}</div>
+        </div>
         <div className="trailit_scrollBoxs">
           <div className="trailit_Row">
-            {/* {isLoading && <div className="trailit_noData">Loading...</div>} */}
             {list &&
               list.length === 0 &&
               !isLoading &&
@@ -262,6 +276,7 @@ class UserProfileList extends Component {
                 }
 
                 let user_name = "-";
+                let user_image = require("../../images/user.png");
 
                 if (this.props.title === "Following") {
                   if (
@@ -273,16 +288,32 @@ class UserProfileList extends Component {
                   } else if (res.userData && res.userData.userName) {
                     user_name = res.userData.userName;
                   }
+
+                  if (
+                    res.userData &&
+                    res.userData.profileImage &&
+                    res.userData.profileImage !== ""
+                  ) {
+                    user_image = res.userData.profileImage;
+                  }
                 } else {
                   if (firstName && lastName) {
                     user_name = `${firstName} ${lastName}`;
                   } else if (userName) {
                     user_name = userName;
                   }
+
+                  if (profileImage !== "") {
+                    user_image = profileImage;
+                  }
                 }
 
                 return (
-                  <div className="trailit_col6">
+                  <div
+                    className={`trailit_col6 ${
+                      viewType === "list" ? "width100" : ""
+                    }`}
+                  >
                     <div
                       className="trailit_bx"
                       onClick={(e) => this.onBoxClick(e, res)}
@@ -346,29 +377,12 @@ class UserProfileList extends Component {
                                   <img
                                     alt="user_image"
                                     className="trialit_user"
-                                    src={
-                                      this.props.title === "Following"
-                                        ? res.userData &&
-                                          res.userData.profileImage !== ""
-                                          ? res.userData.profileImage
-                                          : require("../../images/user.png")
-                                        : profileImage == ""
-                                        ? require("../../images/user.png")
-                                        : profileImage
-                                    }
+                                    src={user_image}
                                   />
                                   <span className="trailit_ml2 trailit_ellipsis_40">
                                     {user_name}
                                   </span>
                                 </div>
-                                {/* <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
-                                  <img
-                                    alt="trailit_coin"
-                                    width="11px"
-                                    src={require("../../images/trailit_coin.png")}
-                                  />
-                                  <span className="trailit_ml2">94</span>
-                                </div> */}
                               </div>
                             </div>
                           </div>

@@ -1,15 +1,10 @@
 import React from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Button, Modal, ModalHeader, ModalBody } from "reactstrap";
 import $ from "jquery";
 
-import { getAllUser } from "../common/axios";
 const chrome = window.chrome;
 
 class MySubscription extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   toggle = () => {
     this.props.toggle(false);
   };
@@ -55,28 +50,6 @@ class MySubscription extends React.Component {
                   </a>
                 </li>
               ))}
-
-              {/* <li><a href="javascript:void(0);">
-						<img src="https://ca.slack-edge.com/TC9UZTSLX-UC8UK8ECS-96ca73a9bdf0-512"/>
-						<div>
-							<h4>Etiam blandit elit nec rutrum consectetur.</h4>
-							<p>3 hrs ago</p>
-						</div>
-						</a></li>
-						<li><a href="javascript:void(0);">
-						<img src="https://ca.slack-edge.com/TC9UZTSLX-UC8UK8ECS-96ca73a9bdf0-512"/>
-						<div>
-							<h4>Etiam blandit elit nec rutrum consectetur.</h4>
-							<p>6 hrs ago</p>
-						</div>
-						</a></li>
-						<li><a href="javascript:void(0);">
-						<img src="https://ca.slack-edge.com/TC9UZTSLX-UC8UK8ECS-96ca73a9bdf0-512"/>
-						<div>
-							<h4>Etiam blandit elit nec rutrum consectetur rutrum consectetur.</h4>
-							<p>6 hrs ago</p>
-						</div>
-						</a></li> */}
             </ul>
             <div className="trailButtonsWrapper">
               <Button className="custom-button" onClick={this.toggle}>

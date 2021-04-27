@@ -4,6 +4,7 @@ import $ from "jquery";
 import { isValidated } from "./validation";
 import { UpdateSingleTrail } from "../../common/axios";
 import { handleFileUpload } from "../../common/audAndVidCommon";
+import _ from "lodash";
 
 const chrome = window.chrome;
 class UserProfileEdit extends PureComponent {
@@ -68,7 +69,20 @@ class UserProfileEdit extends PureComponent {
   };
 
   uploadFile = (file) => {
+    const { errors } = isValidated({ file });
+
+    if (errors.hasOwnProperty("file")) {
+      this.setState((prevState) => {
+        return {
+          errors: { ...prevState.errors, ...errors },
+        };
+      });
+
+      return;
+    }
+
     this.setState({ isLoading: true });
+
     handleFileUpload(file)
       .then((response) => {
         return response;
@@ -140,7 +154,7 @@ class UserProfileEdit extends PureComponent {
     e.preventDefault();
     const { errors, isValid } = isValidated(this.state);
 
-    if (!isValid) {
+    if (!isValid || _.keys(this.state.errors).length > 0) {
       this.setState({ errors });
     } else {
       this.setState({ isSubmit: true, isLoading: true });
@@ -175,6 +189,23 @@ class UserProfileEdit extends PureComponent {
       );
     }
   };
+
+  updateErrorState = (errors) => {
+    this.setState({ errors });
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    const { errors } = this.state;
+
+    if (errors && errors.file) {
+      setTimeout(() => {
+        const errorState = { ...errors };
+        delete errorState.file;
+
+        this.setState({ errors: errorState });
+      }, 5000);
+    }
+  }
 
   render() {
     const {
@@ -276,38 +307,11 @@ class UserProfileEdit extends PureComponent {
               accept="image/*"
               onChange={this.handleChange}
             />
-            <label className="d-block">Upload Image</label>
+            <span className="d-block cursor">Upload Image</span>
           </div>
-          {/* <label className="trailit_12700 d-block trailit_mb3">
-            ADD MORE CONTENT
-          </label> */}
-          {/* <div className="d-flex">
-                        <div className="trailit_addMoreImage">
-                        <input type="file"/>
-                        <label>
-                        <img src={require("../../images/image.svg")} alt="image"/>
-                        <span className="d-block">Image</span>
-                        </label>
-                        </div>
-                        <div className="trailit_addMoreImage">
-                        <input type="file"/>
-                        <label>
-                        <img src={require("../../images/video.svg")} alt="image"/>
-                        <span className="d-block">Video</span>
-                        </label>
-                        </div>
-                        <button type="button" className="trailit_addMoreOther">
-                        <img src={require("../../images/video.svg")} alt="image"/>
-                        <span className="d-block">Other</span>
-                        </button>
-                    </div> */}
-          {/* <ul className="trailit_HashTagsList">
-                        <li>Visual Arts <img src={require("../../images/close.svg")} alt="image"/></li>
-                        <li>Concept Arts <img src={require("../../images/close.svg")} alt="image"/></li>
-                    </ul>
-                    <div>
-                        <input type="text" className="trailit_inputHashTags trailit_mb3" placeholder="Hashtags"/>
-                    </div> */}
+          {errors.file && (
+            <div className="trailit-validation-error">{errors.file}</div>
+          )}
           <div className="d-block trailit_checkbox trailit_mb3">
             <input
               type="checkbox"
@@ -318,16 +322,15 @@ class UserProfileEdit extends PureComponent {
             />
             <span></span>
             <label>Make this trail private</label>
-            {/* <button type="button" className="trailit_deleteIcon">
-              <img src={require("../../images/delete.svg")} alt="delete" />
-            </button> */}
           </div>
-        {trail_user_status === "public"  &&  <div style={{marginBottom:5}}>
-            {" "}
-            By deselecting this, your Trail will be visible on Trailit.co's main
-            website. Are you sure you're ready to go live? If so, click on
-            'Save' to publish{" "}
-          </div>}
+          {trail_user_status === "public" && (
+            <div style={{ marginBottom: 5 }}>
+              {" "}
+              By deselecting this, your Trail will be visible on Trailit.co's
+              main website. Are you sure you're ready to go live? If so, click
+              on 'Save' to publish{" "}
+            </div>
+          )}
           <div className="trailit_userPanalFooterBox">
             <button
               type="button"

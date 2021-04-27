@@ -67,6 +67,7 @@
     "lodash": "^4.17.20",
     "mini-css-extract-plugin": "0.11.3",
     "mustache": "^4.0.1",
+    "near-api-js": "^0.39.0",
     "node-fetch": "^2.6.1",
     "node-sass": "^4.14.1",
     "object-assign": "^4.1.1",

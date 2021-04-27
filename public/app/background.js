@@ -30,6 +30,31 @@ if (typeof chrome.app.isInstalled !== "undefined") {
     }
   });
 
+  // Call when extension install, updated manually or updated automatically
+  chrome.runtime.onInstalled.addListener((details) => {
+    chrome.tabs.query({}, (tabs) => {
+      let contentjsFile = chrome.runtime.getManifest().content_scripts[0].js[0];
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].title && tabs[i].url) {
+          chrome.tabs.executeScript(
+            tabs[i].id,
+            { file: contentjsFile },
+            // eslint-disable-next-line no-loop-func
+            function () {
+              let e = chrome.runtime.lastError;
+              if (e !== undefined) {
+                // eslint-disable-next-line no-undef
+                console.error(
+                  "tab: " + tabs[i].id + " lastError: " + JSON.stringify(e)
+                );
+              }
+            }
+          );
+        }
+      }
+    });
+  });
+
   // function modifyDOM() {
   //    //You can play with your DOM here or check URL against your regex
   //
@@ -57,16 +82,15 @@ if (typeof chrome.app.isInstalled !== "undefined") {
   //
   //       });
 
-  //       chrome.tabs.executeScript(null, {
-  //          file: '/static/js/content.js'
-  //       }, function(ddd) {
-  //
-  //          // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-  //          if (chrome.runtime.lastError) {
-  //
+  // chrome.tabs.executeScript(null, {
+  //    file: '/static/js/content.js'
+  // }, function(ddd) {
 
-  //          }
-  //       });
+  //    // If you try and inject into an extensions page or the webstore/NTP you'll get an error
+  //    if (chrome.runtime.lastError) {
+
+  //    }
+  // });
 
   //       chrome.tabs.executeScript(null, { file: 'src/content' });
   //    });
@@ -83,6 +107,11 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.heartbeat) {
+    sendResponse(message);
+    return;
+  }
+
   if (message.type === "logout") {
     chrome.tabs.query({}, (tabs) => {
       const message = {
@@ -197,7 +226,9 @@ chrome.runtime.onMessageExternal.addListener(function (
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
-            const port = chrome.tabs.connect(tabs[0].id);
+            const port = chrome.tabs.connect(tabs[0].id, {
+              name: "Trailit-webapp",
+            });
             port.postMessage({
               message: "check_login_status",
             });
@@ -205,6 +236,10 @@ chrome.runtime.onMessageExternal.addListener(function (
             port.onMessage.addListener((response) => {
               sendResponse(response);
             });
+
+            // port.onDisconnect.addListener((obj) => {
+            //   console.log("disconnected!!!");
+            // });
           }
         );
       } else {
@@ -219,7 +254,6 @@ chrome.runtime.onMessageExternal.addListener(function (
           { active: true, currentWindow: true },
           function (tabs) {
             var activeTab = tabs[0];
-
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_all",
               payload: { ...request, url: tabs[0].url },

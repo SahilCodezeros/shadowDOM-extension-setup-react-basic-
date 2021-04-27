@@ -1,15 +1,32 @@
 /* eslint-disable react/jsx-no-target-blank */
-import React, { useRef, createRef } from "react";
+import React from "react";
 import { Form, Input, Button, Col } from "antd";
 import axios from "axios";
+import * as nearAPI from "near-api-js";
+import { Near } from "near-api-js";
 
-import { getAllNotification } from "../common/axios";
 import { keyPairGenerate } from "../code/generateKey";
 
 const chrome = window.chrome;
-// let bkg = chrome.extension.getBackgroundPage();
-
 axios.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
+
+const NearConfig = {
+  networkId: "testnet",
+  nodeUrl: "https://rpc.testnet.near.org",
+  contractName: "trail.testnet",
+  walletUrl: "https://wallet.testnet.near.org",
+  helperUrl: "https://helper.testnet.near.org",
+};
+
+const { networkId, nodeUrl, walletUrl } = NearConfig;
+
+const near = new Near({
+  networkId,
+  nodeUrl,
+  walletUrl,
+  deps: { keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore() },
+});
+const wallet = new nearAPI.WalletAccount(near);
 
 class Login extends React.Component {
   constructor(props) {
@@ -81,10 +98,13 @@ class Login extends React.Component {
       });
   };
 
+  onNearLoginCilck = async () => {
+    const appTitle = "Trail Web App";
+    await wallet.requestSignIn(NearConfig.contractName, appTitle);
+  };
+
   // Validate password with regular expression function
   validateToNextPassword = (rule, value, callback) => {
-    const { form } = this.props;
-
     var digit = /^(.*[0-9]+.*)$/;
     var upper = /^(.*[A-Z]+.*)$/;
     var lower = /^(.*[a-z]+.*)$/;
@@ -203,12 +223,6 @@ class Login extends React.Component {
                       </Form.Item>
                     </Col>
                     <Col md={12} className="text-center mb-3 mb-1">
-                      {/* <Button
-                        type="submit"
-                        className="py-2 px-3 btn-sm btn-pink"
-                      >
-                        Sign in
-                      </Button> */}
                       <Button
                         disabled={this.state.isLoading}
                         htmlType="submit"
@@ -229,77 +243,3 @@ class Login extends React.Component {
 }
 
 export default Login;
-
-// {/* <img className="logo_login" src={require('../images/icon129.png')} alt="login-img" />
-// <div className="tr_title">Welcome to the Trailit.</div>
-// <div className="tr_subtitle">
-// 	Enter your details to login. If you have not login details than
-// 	<a className="tr_link fw_400" target="_blank" href="http://169.61.16.14#signup">
-// 		Signup Now
-// 	</a>
-// </div>
-// {this.state.errors && <p className="tr_error">{this.state.errors}</p>}
-// <div className="tr_label">Signin</div>
-// <Form
-// 	ref={ this.formRef }
-// 	name="control-ref"
-// 	onFinish={ this.onClickToSubmit }
-// 	onFinishFailed={ this.onFinishFailed }
-// >
-// 	<Form.Item
-// 		name="email"
-// 		rules={[{
-// 			// type: 'email',
-// 			// message: 'Please enter valid email!',
-// 		},
-// 		{
-// 			required: true,
-// 			message: 'Please enter your email!',
-// 		}]}
-// 	>
-// 		{/* {getFieldDecorator('email', {
-// 			rules: [
-// 			{
-// 				type: 'email',
-// 				message: 'Please enter valid email!',
-// 			},
-// 			{
-// 				required: true,
-// 				message: 'Please enter your email!',
-// 			},
-// 			],
-// 		})(<Input placeholder="Enter your email" className="tr_input" />)} */}
-// 		<Input placeholder="Enter your email" className="tr_input" />
-// 	</Form.Item>
-// 	<Form.Item
-// 		name="password"
-// 		rules={[{
-// 			required: true,
-// 			min: 3,
-// 			message: 'Please input your password!',
-// 		}]}
-// 	>
-// 		{/* {getFieldDecorator('password', {
-// 			rules: [
-// 				{
-// 					required: true,
-// 					message: 'Please input your password!',
-// 				}
-// 			],
-// 		})(<Input type="password" placeholder="Password" className="tr_input" />)} */}
-// 		<Input type="password" placeholder="Password" className="tr_input" />
-// 	</Form.Item>
-// 	<Form.Item className="last_fg">
-// 		<a className="tr_link flex_grow_1" href="javascript:;">
-// 			Forgot password?
-// 		</a>
-// 		<Button
-// 			disabled={ this.state.isLoading }
-// 			type="primary"
-// 			htmlType="submit"
-// 			className="tr_button"
-// 		>
-// 			Log in now
-// 		</Button>
-// 	</Form.Item>
-// </Form> */}
