@@ -150,7 +150,7 @@ class Login extends React.Component {
                         <a
                           className="tr_link"
                           target="_blank"
-                          href="http://169.61.16.14/?signUp=true"
+                          href="http://169.61.16.14#signup"
                         >
                           Sign Up Now
                         </a>
@@ -234,7 +234,7 @@ export default Login;
 // <div className="tr_title">Welcome to the Trailit.</div>
 // <div className="tr_subtitle">
 // 	Enter your details to login. If you have not login details than
-// 	<a className="tr_link fw_400" target="_blank" href="http://169.61.16.14/?signUp=true">
+// 	<a className="tr_link fw_400" target="_blank" href="http://169.61.16.14#signup">
 // 		Signup Now
 // 	</a>
 // </div>
