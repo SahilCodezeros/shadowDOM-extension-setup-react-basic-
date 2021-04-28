@@ -135,7 +135,7 @@ const autoLogoutFunction = () => {
   chrome.storage.local.get(["isAuth"], async function (items) {
     if (items.isAuth) {
       // Update auto logout time in chrome storage
-      chrome.storage.local.set({ autoLogoutTime: Date.now() + 1800000 });
+      chrome.storage.local.set({ autoLogoutTime: Date.now() + 10000 });
 
       // Update auto logout time in localstorage
       // window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
@@ -4841,6 +4841,24 @@ chrome.runtime.onConnect.addListener((port) => {
       }
     });
   }
+});
+
+chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
+  if (msgObj.message === "addon_login") {
+    chrome.storage.local.set({
+      userData: {...msgObj.payload.loggedInData},
+      authToken: msgObj.payload.authToken,
+      isAuth: true,
+    });
+  }
+  if (msgObj.message === "addon_logout") {
+    chrome.storage.local.set({
+      userData: {},
+      authToken: "",
+      isAuth: false,
+    });
+  }
+  
 });
 
 if (chrome.runtime.id) {

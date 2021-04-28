@@ -318,6 +318,32 @@ chrome.runtime.onMessageExternal.addListener(function (
         );
       }
       break;
+    case "WEB_LOGIN":
+      if (request.action === "LOGIN_FROM_WEB") {
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            var activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, {
+              message: "addon_login",
+              payload: { ...request, url: tabs[0].url },
+            });
+          }
+        );
+      }
+      if (request.action === "LOGOUT_FROM_WEB") {
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            var activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, {
+              message: "addon_logout",
+              payload: { url: tabs[0].url },
+            });
+          }
+        );
+      }
+      break;
 
     default:
       break;

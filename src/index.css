@@ -1967,6 +1967,25 @@ hr.trailit_dark {
   opacity: 0.8;
 }
 
+.trailit_signin {
+  width: 100%;
+  border-radius: 10px !important;
+}
+
+.trailit_near {
+  background: #fff url("./images/near-protocol-near-logo.png") no-repeat scroll
+    10px 5px / 20px;
+  border-radius: 7px;
+  height: 32px;
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 15px;
+  text-align: center;
+  color: #000;
+  width: 100%;
+  margin-bottom: 1rem !important;
+}
+
 .trailit_facebook {
   background: #2f5c98 url("./images/trailit_facebook.png") no-repeat scroll 10px
     2px / 22px;
@@ -2013,6 +2032,10 @@ hr.trailit_dark {
 .pt-1 {
   padding-top: 1rem !important;
 }
+.pt-5 {
+  padding-top: 5rem !important;
+}
+
 
 .row {
   display: flex;
