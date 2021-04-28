@@ -4849,14 +4849,11 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
       userData: {...msgObj.payload.loggedInData},
       authToken: msgObj.payload.authToken,
       isAuth: true,
+      reload: true
     });
   }
   if (msgObj.message === "addon_logout") {
-    chrome.storage.local.set({
-      userData: {},
-      authToken: "",
-      isAuth: false,
-    });
+    chrome.storage.local.clear();
   }
   
 });
