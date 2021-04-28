@@ -9,22 +9,25 @@ import $ from "jquery";
 import WebFont from "webfontloader";
 import Draggable from "react-draggable";
 
+import { get } from "./AppUtill";
 import { socket } from "./common/socket";
-import { resizeScreen } from "./common/helper";
 import Tooltip from "./components/tooltip";
+import { resizeScreen } from "./common/helper";
 import VideoTour from "./components/videoTour";
 import AudioTour from "./components/audioTour";
 import { sendTransection } from "./code/sendtx";
 import WebUserTour from "./components/webUserTour";
 import MySubscription from "./components/mySubscription";
 import SendTipModal from "./components/Modal/SendTipModal";
-import TrailSetting from "./components/Modal/TrailSettingsModal";
 import { handleFileUpload } from "./common/audAndVidCommon";
+import TargetNotFound from "./components/Modal/targetNotFound";
 import { initButtonPosition } from "./common/initButtonPosition";
+import TrailSetting from "./components/Modal/TrailSettingsModal";
+import { removeTrailitLogo } from "./common/trailitLogoInPreview";
 import CreateNewTrailModal from "./components/CreateNewTrailModal";
-import CreateModalComponent from "./components/Modal/createModalComponent";
 import { matchUrl, queryParentElement } from "./components/common";
 import TrailDeleteModal from "./components/Modal/TrailDeleteModal";
+import CreateModalComponent from "./components/Modal/createModalComponent";
 import PreviewModalComponent from "./components/Modal/previewModalComponent";
 import SortableItem, { SortableContainer } from "./components/SortableItem";
 import {
@@ -32,10 +35,6 @@ import {
   setOverlayHtml,
   removeOverlay,
 } from "./common/trailOverlay";
-import {
-  addTrailitLogo,
-  removeTrailitLogo,
-} from "./common/trailitLogoInPreview";
 import CreateTourConfirmationModal from "./components/Modal/CreateTourConfirmationModal";
 import {
   logout,
@@ -75,8 +74,6 @@ import {
 } from "./css/defaultButton";
 
 import "./Content.css";
-import { get } from "./AppUtill";
-import TargetNotFound from "./components/Modal/targetNotFound";
 
 /*global chrome*/
 
@@ -93,16 +90,60 @@ let obj = {};
 let updateOverlay;
 let root1 = "none";
 let allTrails = [];
+let autoLogoutTimeout;
 let trailWebUserTour = [];
 let preventToggle = false;
-let autoLogoutTimeout;
-let mouseOut, mouseClick, mouseOver;
 
 if (window.location.href.includes("https://www.and.co")) {
   document.querySelector("html").style.zoom = "100%";
 }
 
-const autoLogoutFunction = () => {};
+const autoLogoutFunction = () => {
+  // Clear interval
+  clearInterval(autoLogoutTimeout);
+
+  autoLogoutTimeout = setInterval(() => {
+    chrome.storage.local.get(
+      ["isAuth", "autoLogoutTime"],
+      async function (items) {
+        const logoutTime = items.autoLogoutTime;
+
+        if (!logoutTime) return;
+        // const logoutTime = parseInt(
+        //   window.localStorage.getItem("add-on-auto-lgout-tm")
+        // );
+
+        if (items.isAuth && logoutTime < Date.now()) {
+          try {
+            // Call logout api
+            await logout();
+
+            chrome.runtime.sendMessage("", { type: "logout" });
+            chrome.runtime.sendMessage({ badgeText: `` });
+            chrome.storage.local.set({
+              trail_web_user_tour: [],
+              notification: true,
+              closeContinue: false,
+            });
+            chrome.storage.local.clear();
+          } catch (err) {}
+        }
+      }
+    );
+  }, 5000);
+
+  chrome.storage.local.get(["isAuth"], async function (items) {
+    if (items.isAuth) {
+      // Update auto logout time in chrome storage
+      chrome.storage.local.set({ autoLogoutTime: Date.now() + 1800000 });
+
+      // Update auto logout time in localstorage
+      // window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
+    } else {
+      clearInterval(autoLogoutTimeout);
+    }
+  });
+};
 
 class Main extends React.Component {
   constructor(props) {
@@ -2050,21 +2091,6 @@ class DefaultButton extends React.PureComponent {
       if (changes.openButton && changes.openButton.newValue === "CreateTrail") {
         this.onChromeStorageChange();
       }
-
-      // if (
-      //   changes.tourType &&
-      //   (changes.tourType.newValue === "tooltip" ||
-      //     changes.tourType.newValue === "audio" ||
-      //     changes.tourType.newValue === "video" ||
-      //     changes.tourType.newValue === "modal") &&
-      //   changes.currentTourType &&
-      //   changes.currentTourType.newValue === "preview"
-      // ) {
-      //   // this.setLoadingState(false);
-
-      //   // Add trailit logo when trail menu open
-      //   addTrailitLogo();
-      // }
 
       if (changes.currentTourType && changes.currentTourType.newValue === "") {
         // Remove trailit logo function
@@ -4776,15 +4802,14 @@ const mainFlipRender = () => {
               tooltipStyle1.textContent = tooltipCss1;
 
               // Append div to shadow DOM
-              extensionRoot.shadowRoot.appendChild(style1);
-              extensionRoot.shadowRoot.appendChild(style2);
-              extensionRoot.shadowRoot.appendChild(style3);
-              extensionRoot.shadowRoot.appendChild(style4);
-              extensionRoot.shadowRoot.appendChild(style5);
-              extensionRoot.shadowRoot.appendChild(tooltipStyle1);
+              shadowRoot.appendChild(style1);
+              shadowRoot.appendChild(style2);
+              shadowRoot.appendChild(style3);
+              shadowRoot.appendChild(style4);
+              shadowRoot.appendChild(style5);
+              shadowRoot.appendChild(tooltipStyle1);
               shadowRoot.appendChild(app);
               shadowRoot.appendChild(loader);
-              extensionRoot.shadowRoot.appendChild(app);
               shadowRoot.appendChild(modalOpen);
             }
           }
@@ -4825,7 +4850,10 @@ if (chrome.runtime.id) {
   chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
     if (msgObj.status === "logout") {
       // Remove items from local storage
-      window.localStorage.removeItem("add-on-auto-lgout-tm");
+      // window.localStorage.removeItem("add-on-auto-lgout-tm");
+
+      // Reset items from chrome storage
+      chrome.storage.local.remove("autoLogoutTime");
 
       app.style.display = "none";
     } else {
