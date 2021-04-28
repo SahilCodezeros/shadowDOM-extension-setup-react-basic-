@@ -264,14 +264,20 @@ class UserProfileList extends Component {
                 let stlStatus = false;
 
                 if (
-                  res.cover_image_url != null &&
-                  res.cover_image_url != "null" &&
-                  res.cover_image_url != "" &&
-                  res.cover_image_url != undefined
+                  res.cover_image_url !== "" &&
+                  res.cover_image_url !== null &&
+                  res.cover_image_url !== "undefined"
                 ) {
                   stlStatus = true;
+
+                  let fileUrl = res.cover_image_url;
+
+                  if (fileUrl.includes("(") && fileUrl.includes(")")) {
+                    fileUrl = `'${fileUrl}'`;
+                  }
+
                   styles = {
-                    background: `linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${res.cover_image_url}) center center / cover no-repeat scroll`,
+                    background: `linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${fileUrl}) center center / cover no-repeat scroll`,
                   };
                 }
 
