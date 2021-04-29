@@ -4849,7 +4849,7 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
       userData: { ...msgObj.payload.loggedInData },
       authToken: msgObj.payload.authToken,
       isAuth: true,
-      reload: true,
+      // reload: true,
     });
 
     // Call main flip render
