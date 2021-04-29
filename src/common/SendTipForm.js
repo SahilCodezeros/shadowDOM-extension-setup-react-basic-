@@ -57,12 +57,8 @@ class SendTipForm extends Component {
             </div>
           </div>
         )}
-        {/* <div className="tr_description">
-          <p>Microtipping enabled through Celo Blockchain cUSD</p>
-        </div> */}
         <Form
           ref={this.formRef}
-          // onFinishFailed={(error) => console.log("error", error)}
           onFinish={() => this.props.sendTip(toAddress, amount)}
           initialValues={{
             toAddress,
@@ -122,56 +118,12 @@ class SendTipForm extends Component {
               className={`${
                 this.props.modal ? "custom-button" : "trailit_btnPink"
               }`}
-              // className="ant-btn ant-btn-primary trail_add_step_btn"
-              // onClick={ (e) => this.props.sendTip(toAddress, amount) }
               disabled={sendLoader}
             >
               Send Tip
-              {/* {sendLoader ? "Sending..." : "Send Tip"} */}
             </button>
           </div>
         </Form>
-        {/* <form> */}
-        {/* <div className="d-block">
-            <input
-              type="text"
-              className="trailit_inputIntro trailit_mb3"
-              placeholder="Enter your to address"
-              name="toAddress"
-              onChange={this.onChangeInput}
-              value={toAddress }
-            />
-          </div> */}
-
-        {/* <div className="d-block">
-            <input
-              type="text"
-              className="trailit_inputIntro trailit_mb3"
-              placeholder="Enter your amount"
-              name="amount"
-              onChange={this.onChangeInput}
-              value={amount}
-            />
-          </div> */}
-
-        {/* <div className="trailit_userPanalFooterBox">
-            <button 
-              type="button" 
-              className="ant-btn ant-btn-primary trail_add_step_btn"
-              onClick={ this.onCancelButtonClick }
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"              
-              onClick={ (e) => this.props.sendTip(e, toAddress, amount) }
-              disabled={ sendLoader || ( !this.state.amount.length > 0 && !this.state.length > 0 ) }
-              className="ant-btn ant-btn-primary trail_add_step_btn"
-            >
-              {sendLoader ? "Loading..." : "Send Tip"}
-            </button>
-          </div> */}
-        {/* </form> */}
       </div>
     );
   }

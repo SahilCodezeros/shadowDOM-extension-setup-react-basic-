@@ -159,7 +159,8 @@ const TextEditor = memo((props) => {
   };
 
   // On create link click handler function
-  const onCreateLinkClickHandler = (command) => {
+  const onCreateLinkClickHandler = (e, command) => {
+    e.preventDefault();
     // if (!link.includes("https://")) {
     //   alert("Please provide valid https address!");
 
@@ -191,7 +192,9 @@ const TextEditor = memo((props) => {
   };
 
   // On unlink click handler function
-  const onUnlinkClickHandler = (command) => {
+  const onUnlinkClickHandler = (e, command) => {
+    e.preventDefault();
+
     const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
     // Execute exec command function
@@ -304,13 +307,13 @@ const TextEditor = memo((props) => {
             <div className="create-link-button-container">
               <button
                 className="custom-button-link custom-button"
-                onClick={(e) => onCreateLinkClickHandler("createLink")}
+                onClick={(e) => onCreateLinkClickHandler(e, "createLink")}
               >
                 Link
               </button>
               <button
                 className="custom-button-unlink custom-button"
-                onClick={(e) => onUnlinkClickHandler("unlink")}
+                onClick={(e) => onUnlinkClickHandler(e, "unlink")}
               >
                 Unlink
               </button>
