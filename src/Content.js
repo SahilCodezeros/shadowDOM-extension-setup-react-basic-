@@ -1,5 +1,5 @@
 import * as React from "react";
-import ReactDOM, { unmountComponentAtNode } from "react-dom";
+import ReactDOM from "react-dom";
 import { Button } from "antd";
 import { CloudUploadOutlined } from "@ant-design/icons";
 import unique from "unique-selector";
@@ -1880,6 +1880,7 @@ class DefaultButton extends React.PureComponent {
 
   async handlePreviewFromWeb(msg) {
     if (msg.message === "preview_all") {
+      console.log("web-request in content.js file");
       // Call common get user data function
       await this.getCurrUserDataCommon({
         userData: msg.payload.userData,
@@ -4824,7 +4825,6 @@ const mainFlipRender = () => {
 };
 
 chrome.runtime.onConnect.addListener((port) => {
-  // console.log("port", port);
   if (port.name === "Trailit-webapp") {
     port.onMessage.addListener((msgObj, sender, sendResponse) => {
       if (msgObj.message === "check_login_status") {
@@ -4846,16 +4846,22 @@ chrome.runtime.onConnect.addListener((port) => {
 chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
   if (msgObj.message === "addon_login") {
     chrome.storage.local.set({
-      userData: {...msgObj.payload.loggedInData},
+      userData: { ...msgObj.payload.loggedInData },
       authToken: msgObj.payload.authToken,
       isAuth: true,
-      reload: true
+      reload: true,
     });
+
+    // Call main flip render
+    mainFlipRender();
   }
   if (msgObj.message === "addon_logout") {
     chrome.storage.local.clear();
+
+    if (app && app.style) {
+      app.style.display = "none";
+    }
   }
-  
 });
 
 if (chrome.runtime.id) {
@@ -4877,14 +4883,16 @@ if (chrome.runtime.id) {
         msgObj.subject !== "DOMObj" &&
         msgObj !== "chrome_modal" &&
         msgObj.subject !== "CreateTrail" &&
-        msgObj.message !== "urlChanged"
+        msgObj.message !== "urlChanged" &&
+        msgObj.message !== "addon_login" &&
+        msgObj.message !== "addon_logout"
       ) {
         setTimeout(() => {
           // to handle open tab in entire tab
           chrome.storage.local.get(
             ["openButton", "tourType"],
             function (items) {
-              if (app.style.display === "none") {
+              if (app && app.style && app.style.display === "none") {
                 app.style.display = "block";
               }
             }

@@ -32,6 +32,7 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
   // Call when extension install, updated manually or updated automatically
   chrome.runtime.onInstalled.addListener((details) => {
+    console.log("details", details);
     chrome.tabs.query({}, (tabs) => {
       let contentjsFile = chrome.runtime.getManifest().content_scripts[0].js[0];
       for (let i = 0; i < tabs.length; i++) {
@@ -253,6 +254,7 @@ chrome.runtime.onMessageExternal.addListener(function (
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
+            console.log("web-request");
             var activeTab = tabs[0];
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_all",
