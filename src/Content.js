@@ -4843,6 +4843,21 @@ chrome.runtime.onConnect.addListener((port) => {
   }
 });
 
+chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
+  if (msgObj.message === "addon_login") {
+    chrome.storage.local.set({
+      userData: {...msgObj.payload.loggedInData},
+      authToken: msgObj.payload.authToken,
+      isAuth: true,
+      reload: true
+    });
+  }
+  if (msgObj.message === "addon_logout") {
+    chrome.storage.local.clear();
+  }
+  
+});
+
 if (chrome.runtime.id) {
   // Call mainFlipRender function
   mainFlipRender();

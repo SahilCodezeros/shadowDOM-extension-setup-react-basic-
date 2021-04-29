@@ -155,7 +155,7 @@ class Login extends React.Component {
                 {this.state.errors && (
                   <p className="tr_error">{this.state.errors}</p>
                 )}
-                <div className="pt-1">
+                <div className="pt-5">
                   <Form
                     className="row"
                     ref={this.formRef}
@@ -164,7 +164,7 @@ class Login extends React.Component {
                     onFinishFailed={this.onFinishFailed}
                   >
                     <div className="signup_message">
-                      Enter your details to login. If you have not logged in
+                      Enter your details to login. If you have not registered in
                       please{" "}
                       <b>
                         <a
@@ -177,15 +177,34 @@ class Login extends React.Component {
                       </b>
                     </div>
                     <Col md={12}>
-                      <button type="button" className="trailit_facebook">
+                      <button
+                        type="button"
+                        className="trailit_near"
+                        onClick={() =>
+                          window.open("http://169.61.16.14#signin")
+                        }
+                      >
+                        Sign In with Near
+                      </button>
+                    </Col>
+                    <Col md={12} className="text-center">
+                      <Button
+                        className="py-2 px-3 btn-sm btn-pink trailit_signin"
+                        onClick={() =>
+                          window.open("http://169.61.16.14#signin")
+                        }
+                      >
+                        Sign in
+                      </Button>
+                      {/* <button type="button" className="trailit_facebook">
                         Sign In with Facebook
                       </button>
                       <button type="button" className="trailit_google">
                         Sign In with Google
-                      </button>
-                      <hr className="trailit_dark trail_or" />
+                      </button> */}
+                      {/* <hr className="trailit_dark trail_or" /> */}
                     </Col>
-                    <Col md={12}>
+                    {/* <Col md={12}>
                       <Form.Item
                         name="email"
                         className="form-input"
@@ -230,7 +249,7 @@ class Login extends React.Component {
                       >
                         Sign in
                       </Button>
-                    </Col>
+                    </Col> */}
                   </Form>
                 </div>
               </div>
