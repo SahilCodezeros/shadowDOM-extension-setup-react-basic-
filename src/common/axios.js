@@ -139,12 +139,6 @@ export const getFollowedOneTrail = async (trail_id, author_id, loggedin_id) => {
   );
 };
 
-export const getTrailPublic = async (user_id, trail_id, steps) => {
-  return await axios.get(
-    `${process.env.REACT_APP_NEW_MS1_DOMAIN}userTourDataDetail/getLimitedStepsData/${trail_id}`
-  );
-};
-
 // Get trail_id of user
 export const getUserSingleTrail = async () => {
   return await axios.get(

@@ -170,7 +170,7 @@ class Login extends React.Component {
                         <a
                           className="tr_link"
                           target="_blank"
-                          href="http://169.61.16.14/?signUp=true"
+                          href="http://169.61.16.14#signup"
                         >
                           Sign Up Now
                         </a>
