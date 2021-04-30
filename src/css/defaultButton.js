@@ -325,7 +325,8 @@ export const defaultButtonCss1 = `
     }
 
     #my-extension-defaultroot .flow {
-        max-height: calc(100vh - 675px);
+        // max-height: calc(100vh - 675px);
+        max-height: calc(100vh - 19px);
     }
     
     #my-extension-defaultroot .flow .li {
@@ -496,9 +497,14 @@ export const defaultButtonCss2 = `
     }
 
     .sidepopcontent {
-        height: calc(100% - 31px); 
+        height: calc(100% - 105px); 
         overflow: auto;
+        // overflow: hidden;
         // padding-right: 29px;
+    }
+
+    .overflowAuto {
+        overflow: auto;
     }
 
     .sidepopcontent .trailButtonsWrapper {
@@ -555,9 +561,11 @@ export const defaultButtonCss2 = `
     }
     
     .tr_side_form {
-        display: table;
+        // display: table;
         padding: 10px 0;
         width: 100%;
+        overflow: auto;
+        height: 96%;
     }
 
     .trailitStepBox {

@@ -3913,14 +3913,20 @@ class DefaultButton extends React.PureComponent {
             </div>
           )}
         </div>
-        <div id="scroll" className="sidepopcontent scrollbar">
-          {tourType === "audio" || tourType === "video" ? (
-            <h4 className="title my-4">Upload Media</h4>
-          ) : (
-            // <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
-            <h4 className="title my-4">{trailName}</h4>
-          )}
-          <div className="pl-4 trail_video_frm">
+        {tourType === "audio" || tourType === "video" ? (
+          <h4 className="title my-4">Upload Media</h4>
+        ) : (
+          // <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
+          <h4 className="title my-4">{trailName}</h4>
+        )}
+        <div
+          id="scroll"
+          className="sidepopcontent scrollbar"
+          // className={`sidepopcontent ${
+          //   (tourType === "audio" || tourType === "video") && "overflowAuto"
+          // } scrollbar`}
+        >
+          <div className="pr5px pl-4 trail_video_frm">
             {tourStatus !== "preview" && tourType === "video" && (
               <div className="mb-2">
                 <input
@@ -4143,7 +4149,7 @@ class DefaultButton extends React.PureComponent {
             </form>
           )}
         </div>
-        <div>
+        <div className="mt-18">
           {tourType !== "audio" && tourType !== "video" && this.state.saveSort && (
             <div className="trailButtonsWrapper">
               <button className="custom-button" onClick={this.saveSortedTrails}>
@@ -4151,7 +4157,7 @@ class DefaultButton extends React.PureComponent {
               </button>
             </div>
           )}
-          {tourType !== "audio" &&
+          {/* {tourType !== "audio" &&
             tourType !== "video" &&
             this.state.trailList.length > 0 && (
               <div className="trailButtonsWrapper jc-end pb-0">
@@ -4162,7 +4168,7 @@ class DefaultButton extends React.PureComponent {
                   Share
                 </button>
               </div>
-            )}
+            )} */}
         </div>
       </div>
     );
@@ -4350,11 +4356,27 @@ class DefaultButton extends React.PureComponent {
           <div
             className={`sidepopup ${
               openSidebar ? "open trail_builder_side_panel_open" : ""
-            } ${tourType === "preview" ? "overflow1" : ""}`}
+            }`}
+            // className={`sidepopup ${
+            //   openSidebar ? "open trail_builder_side_panel_open" : ""
+            // } ${tourType === "preview" ? "overflow1" : ""}`}
           >
             <div className="space"></div>
             {sideBar}
             <div className="space"></div>
+
+            {tourType !== "audio" &&
+              tourType !== "video" &&
+              this.state.trailList.length > 0 && (
+                <div className="trailButtonsWrapper jc-end pb-0">
+                  <button
+                    className="custom-button share-button"
+                    onClick={this.copyWebApplink}
+                  >
+                    Share
+                  </button>
+                </div>
+              )}
           </div>
           {this.state.dynamicPopupButton && (
             <button className="menu pop" onClick={this.openPopup}>
@@ -4530,11 +4552,26 @@ class DefaultButton extends React.PureComponent {
                 <div
                   className={`sidepopup ${
                     openSidebar ? "open trail_builder_side_panel_open" : ""
-                  } ${tourType === "preview" ? "overflow1" : ""}`}
+                  }`}
+                  // className={`sidepopup ${
+                  //   openSidebar ? "open trail_builder_side_panel_open" : ""
+                  // } ${tourType === "preview" ? "overflow1" : ""}`}
                 >
                   <div className="space"></div>
                   {sideBar}
                   <div className="space"></div>
+                  {tourType !== "audio" &&
+                    tourType !== "video" &&
+                    this.state.trailList.length > 0 && (
+                      <div className="trailButtonsWrapper jc-end pb-0">
+                        <button
+                          className="custom-button share-button"
+                          onClick={this.copyWebApplink}
+                        >
+                          Share
+                        </button>
+                      </div>
+                    )}
                 </div>
                 {this.state.dynamicPopupButton && (
                   <button
