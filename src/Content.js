@@ -773,6 +773,17 @@ class Main extends React.Component {
   }
 
   onHandleSubscription = async (msObj) => {
+    if (msObj.status === "removeMenuPopButton") {
+      this.props.onChangeTourType("");
+      this.props.mainToggle();
+
+      if (app && app.style && app.style.display === "block") {
+        setTimeout(() => {
+          app.style.display = "none";
+        }, 1000);
+      }
+    }
+
     if (msObj.message === "urlChanged") {
       if (!this.state.menuOpen) {
         this.setState({ menuOpen: true });
@@ -1880,7 +1891,6 @@ class DefaultButton extends React.PureComponent {
 
   async handlePreviewFromWeb(msg) {
     if (msg.message === "preview_all") {
-      console.log("web-request in content.js file");
       // Call common get user data function
       await this.getCurrUserDataCommon({
         userData: msg.payload.userData,
@@ -2954,6 +2964,11 @@ class DefaultButton extends React.PureComponent {
       this.props.onChangeTourType("");
       this.props.mainToggle();
     }
+
+    // Send message to close all menu pop button in inactive tabs after preview
+    chrome.runtime.sendMessage("", {
+      type: "closeMenuPopButton",
+    });
   };
 
   openPopup = () => {
@@ -3567,6 +3582,11 @@ class DefaultButton extends React.PureComponent {
 
             resolve();
           }
+
+          // Send message to close all menu pop button in inactive tabs after preview
+          chrome.runtime.sendMessage("", {
+            type: "closeMenuPopButton",
+          });
         }
       );
     });
@@ -3771,23 +3791,23 @@ class DefaultButton extends React.PureComponent {
       tourUrl = matchUrl(trailList[tourStep - 1].url, document.URL);
     }
 
-    if (tourType === "" && currentTourType === "") {
-      const myExtensionRootFlip = shadowRoot.getElementById(
-        "my-extension-root-flip"
-      );
+    // if (tourType === "" && currentTourType === "") {
+    //   const myExtensionRootFlip = shadowRoot.getElementById(
+    //     "my-extension-root-flip"
+    //   );
 
-      if (myExtensionRootFlip) {
-        myExtensionRootFlip.classList.add("widthAuto");
-      }
-    } else {
-      const myExtensionRootFlip = shadowRoot.getElementById(
-        "my-extension-root-flip"
-      );
+    //   if (myExtensionRootFlip) {
+    //     myExtensionRootFlip.classList.add("widthAuto");
+    //   }
+    // } else {
+    //   const myExtensionRootFlip = shadowRoot.getElementById(
+    //     "my-extension-root-flip"
+    //   );
 
-      if (myExtensionRootFlip) {
-        myExtensionRootFlip.classList.remove("widthAuto");
-      }
-    }
+    //   if (myExtensionRootFlip) {
+    //     myExtensionRootFlip.classList.remove("widthAuto");
+    //   }
+    // }
 
     if (openSidebar) {
       const defaultRoot = shadowRoot.getElementById("my-extension-defaultroot");

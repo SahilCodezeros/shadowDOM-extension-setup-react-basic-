@@ -32,7 +32,6 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
   // Call when extension install, updated manually or updated automatically
   chrome.runtime.onInstalled.addListener((details) => {
-    console.log("details", details);
     chrome.tabs.query({}, (tabs) => {
       let contentjsFile = chrome.runtime.getManifest().content_scripts[0].js[0];
       for (let i = 0; i < tabs.length; i++) {
@@ -111,6 +110,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.heartbeat) {
     sendResponse(message);
     return;
+  }
+
+  if (message.type === "closeMenuPopButton") {
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "background.js",
+        status: "removeMenuPopButton",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].active) {
+          continue;
+        }
+
+        // Send message to all tabs
+        chrome.tabs.sendMessage(tabs[i].id, message);
+      }
+    });
   }
 
   if (message.type === "logout") {
@@ -254,7 +271,6 @@ chrome.runtime.onMessageExternal.addListener(function (
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
-            console.log("web-request");
             var activeTab = tabs[0];
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_all",
