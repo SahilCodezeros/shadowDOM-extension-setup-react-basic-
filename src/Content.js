@@ -99,43 +99,43 @@ if (window.location.href.includes("https://www.and.co")) {
 }
 
 const autoLogoutFunction = () => {
-  // Clear interval
-  clearInterval(autoLogoutTimeout);
+  // // Clear interval
+  // clearInterval(autoLogoutTimeout);
 
-  autoLogoutTimeout = setInterval(() => {
-    chrome.storage.local.get(
-      ["isAuth", "autoLogoutTime"],
-      async function (items) {
-        const logoutTime = items.autoLogoutTime;
+  // autoLogoutTimeout = setInterval(() => {
+  //   chrome.storage.local.get(
+  //     ["isAuth", "autoLogoutTime"],
+  //     async function (items) {
+  //       const logoutTime = items.autoLogoutTime;
 
-        if (!logoutTime) return;
-        // const logoutTime = parseInt(
-        //   window.localStorage.getItem("add-on-auto-lgout-tm")
-        // );
+  //       if (!logoutTime) return;
+  //       // const logoutTime = parseInt(
+  //       //   window.localStorage.getItem("add-on-auto-lgout-tm")
+  //       // );
 
-        if (items.isAuth && logoutTime < Date.now()) {
-          try {
-            // Call logout api
-            await logout();
+  //       if (items.isAuth && logoutTime < Date.now()) {
+  //         try {
+  //           // Call logout api
+  //           await logout();
 
-            chrome.runtime.sendMessage("", { type: "logout" });
-            chrome.runtime.sendMessage({ badgeText: `` });
-            chrome.storage.local.set({
-              trail_web_user_tour: [],
-              notification: true,
-              closeContinue: false,
-            });
-            chrome.storage.local.clear();
-          } catch (err) {}
-        }
-      }
-    );
-  }, 5000);
+  //           chrome.runtime.sendMessage("", { type: "logout" });
+  //           chrome.runtime.sendMessage({ badgeText: `` });
+  //           chrome.storage.local.set({
+  //             trail_web_user_tour: [],
+  //             notification: true,
+  //             closeContinue: false,
+  //           });
+  //           chrome.storage.local.clear();
+  //         } catch (err) {}
+  //       }
+  //     }
+  //   );
+  // }, 5000);
 
   chrome.storage.local.get(["isAuth"], async function (items) {
     if (items.isAuth) {
       // Update auto logout time in chrome storage
-      chrome.storage.local.set({ autoLogoutTime: Date.now() + 1800000 });
+      chrome.storage.local.set({ autoLogoutTime: Date.now() + 10000 });
 
       // Update auto logout time in localstorage
       // window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
@@ -4919,6 +4919,34 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
       app.style.display = "none";
     }
   }
+
+  if (msgObj.message === "autoLogoutTriggered") {
+    chrome.storage.local.get(
+      ["isAuth", "autoLogoutTime"],
+      async function (items) {
+        const logoutTime = items.autoLogoutTime;
+        if (!logoutTime) return;
+
+        if (items.isAuth && logoutTime < Date.now()) {
+          try {
+            // Call logout api
+            await logout();
+            // if (msgObj.apiCall) {
+            // }
+
+            chrome.runtime.sendMessage("", { type: "logout" });
+            chrome.runtime.sendMessage({ badgeText: `` });
+            chrome.storage.local.set({
+              trail_web_user_tour: [],
+              notification: true,
+              closeContinue: false,
+            });
+            chrome.storage.local.clear();
+          } catch (err) {}
+        }
+      }
+    );
+  }
 });
 
 if (chrome.runtime.id) {
@@ -4933,7 +4961,9 @@ if (chrome.runtime.id) {
       // Reset items from chrome storage
       chrome.storage.local.remove("autoLogoutTime");
 
-      app.style.display = "none";
+      if (app && app.style && app.style.display === "block") {
+        app.style.display = "none";
+      }
     } else {
       if (
         msgObj.subject !== "updateTimeout" &&

@@ -4,6 +4,31 @@ function onCaptured(imageUri) {}
 
 function onError(error) {}
 
+const alarmTrigger = (alarm) => {
+  if (alarm.name === "autoLogout") {
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "background.js",
+        message: "autoLogoutTriggered",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].url) {
+          if (tabs[i].active) {
+            message.apiCall = true;
+          }
+
+          // Send message to all tabs
+          chrome.tabs.sendMessage(tabs[i].id, message);
+        }
+      }
+
+      // Remove alarm listener
+      chrome.alarms.onAlarm.removeListener(alarmTrigger);
+    });
+  }
+};
+
 if (typeof chrome.app.isInstalled !== "undefined") {
   chrome.browserAction.onClicked.addListener(function (tab) {
     chrome.tabs.query(
@@ -53,6 +78,14 @@ if (typeof chrome.app.isInstalled !== "undefined") {
         }
       }
     });
+  });
+
+  chrome.storage.onChanged.addListener(async (changes) => {
+    if (changes.autoLogoutTime && changes.autoLogoutTime.newValue) {
+      chrome.alarms.create("autoLogout", {
+        when: changes.autoLogoutTime.newValue,
+      });
+    }
   });
 
   // function modifyDOM() {
@@ -348,6 +381,9 @@ chrome.runtime.onMessageExternal.addListener(function (
             });
           }
         );
+
+        // Add alarm listener
+        chrome.alarms.onAlarm.addListener(alarmTrigger);
       }
       if (request.action === "LOGOUT_FROM_WEB") {
         chrome.tabs.query(
@@ -360,6 +396,9 @@ chrome.runtime.onMessageExternal.addListener(function (
             });
           }
         );
+
+        // Remove alarm listener
+        chrome.alarms.onAlarm.removeListener(alarmTrigger);
       }
       break;
 
