@@ -135,10 +135,11 @@ const autoLogoutFunction = () => {
   chrome.storage.local.get(["isAuth"], async function (items) {
     if (items.isAuth) {
       // Update auto logout time in chrome storage
-      chrome.storage.local.set({ autoLogoutTime: Date.now() + 10000 });
+      chrome.storage.local.set({ autoLogoutTime: Date.now() + 3600000 });
 
-      // Update auto logout time in localstorage
-      // window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
+      // 1 hour = 3600000
+      // 30 min = 1800000
+      // 20 sec = 200000;
     } else {
       clearInterval(autoLogoutTimeout);
     }
