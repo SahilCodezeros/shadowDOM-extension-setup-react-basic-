@@ -18,7 +18,6 @@ class UserProfileEdit extends PureComponent {
       trail_id: "",
       trail_title: "",
       trail_user_status: "",
-      cover_image_name: "",
       errors: {},
       isSubmit: false,
       isLoading: false,
@@ -96,12 +95,12 @@ class UserProfileEdit extends PureComponent {
       .then((data) => {
         console.log("reponse", {
           [fieldLabel]: data.response.result.fileUrl,
-          // cover_image_name: file.name,
+          [fieldLabel+"_name"]: file.name,
           isLoading: false,
         });
         this.setState({
           [fieldLabel]: data.response.result.fileUrl,
-          // cover_image_name: file.name,
+          [fieldLabel+"_name"]: file.name,
           isLoading: false,
         });
       })
@@ -143,12 +142,14 @@ class UserProfileEdit extends PureComponent {
     this.setState({
       categoryList: [],
       cover_image_url: "",
+      trail_intro_url: "",
+      cover_image_url_name: "",
+      trail_intro_url_name: "",
       trail_categor_id: "",
       trail_description: "",
       trail_id: "",
       trail_title: "",
       trail_user_status: "",
-      cover_image_name: "",
       errors: {},
       isSubmit: false,
       isLoading: false,
@@ -219,9 +220,9 @@ class UserProfileEdit extends PureComponent {
     const {
       isLoading,
       cover_image_url,
-      cover_image_name,
       trail_intro_url,
-      trail_intro_name,
+      cover_image_url_name,
+      trail_intro_url_name,
       trail_categor_id,
       trail_description,
       trail_title,
@@ -306,8 +307,8 @@ class UserProfileEdit extends PureComponent {
           <label className="trailit_12500 d-block trialit_mb1">
             {!cover_image_url 
               ? `Choose a photo that represents your trail. Max 8MB.`
-              : cover_image_name
-              ? cover_image_name
+              : cover_image_url_name
+              ? cover_image_url_name
               : cover_image_url}
           </label>
           <div className="trailit_uploadImage trialit_mb4">
@@ -315,7 +316,7 @@ class UserProfileEdit extends PureComponent {
               type="file"
               name="media"
               accept="image/*"
-              onChange={this.handleChange}
+              onChange={(e)=>this.handleChange(e, "cover_image_url")}
             />
             <span className="d-block cursor">Upload Image</span>
           </div>
@@ -329,8 +330,8 @@ class UserProfileEdit extends PureComponent {
           <label className="trailit_12500 d-block trialit_mb1">
             {!trail_intro_url
               ? `Choose a photo that represents your trail. Max 8MB.`
-              : trail_intro_name
-              ? trail_intro_name
+              : trail_intro_url_name
+              ? trail_intro_url_name
               : trail_intro_url}
           </label>
           <div className="trailit_uploadImage trialit_mb4">
@@ -338,7 +339,7 @@ class UserProfileEdit extends PureComponent {
               type="file"
               name="media"
               accept="image/*, video/*"
-              onChange={this.handleChange}
+              onChange={(e)=>this.handleChange(e, "trail_intro_url")}
             />
             <span className="d-block cursor">Upload Image</span>
           </div>
