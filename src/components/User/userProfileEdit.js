@@ -309,7 +309,7 @@ class UserProfileEdit extends PureComponent {
               ? `Choose a photo that represents your trail. Max 8MB.`
               : cover_image_url_name
               ? cover_image_url_name
-              : cover_image_url}
+              : cover_image_url.split("/")[3]}
           </label>
           <div className="trailit_uploadImage trialit_mb4">
             <input
@@ -332,7 +332,7 @@ class UserProfileEdit extends PureComponent {
               ? `Choose a photo that represents your trail. Max 8MB.`
               : trail_intro_url_name
               ? trail_intro_url_name
-              : trail_intro_url}
+              : trail_intro_url.split("/")[3]}
           </label>
           <div className="trailit_uploadImage trialit_mb4">
             <input
@@ -341,7 +341,7 @@ class UserProfileEdit extends PureComponent {
               accept="image/*, video/*"
               onChange={(e)=>this.handleChange(e, "trail_intro_url")}
             />
-            <span className="d-block cursor">Upload Image</span>
+            <span className="d-block cursor">Upload Image/ Video</span>
           </div>
           {errors.trail_intro_url && (
             <div className="trailit-validation-error">{errors.trail_intro_url}</div>
