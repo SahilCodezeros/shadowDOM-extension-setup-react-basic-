@@ -1,18 +1,18 @@
 import React from "react";
-import _ from "lodash";
+import { Button } from "antd";
+import Cropper from "react-easy-crop";
+import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 
 import { socket } from "../common/socket";
 import { getBalance } from "../code/getBalance";
 import { getFollowTrails } from "../common/axios";
 import { wallet, getAddress } from "../common/celo";
+import getCroppedImg, { blobToFile } from "../AppUtill";
 import { handleFileUpload } from "../common/audAndVidCommon";
 import SettingsComponent from "../components/settingsComponents";
 
-// import BgImage from "../images/trailit_bx_img.png";
 import {
-  getAllNotification,
   getUserSingleTrail,
-  getAllUser,
   getAllCategory,
   UpdateProfilePicture,
   getUser,
@@ -28,7 +28,6 @@ import $ from "jquery";
 import "../index.css";
 
 const chrome = window.chrome;
-// let bkg = chrome.extension.getBackgroundPage();
 
 class UserProfile extends React.Component {
   constructor(props) {
@@ -61,39 +60,47 @@ class UserProfile extends React.Component {
       profileImage: "",
       slideBalance: false,
       privateKey: "",
-      nearBalance: 0,
+      nearBalance: "",
       showSetting: false,
+      isDisabled: false,
+      profilePreview: null,
+      crop: { x: 0, y: 0 },
+      zoom: 1,
+      croppedAreaPixels: null,
+      errorMsg: "",
+      id: null,
     };
   }
 
   // Get NEAR account balance
   getNearAccountBalance() {
     // Get NEAR balance of user
-    getBalance()
-      .then((res) => {
-        this.setState({ nearBalance: res });
-      })
-      .catch();
+
+    chrome.storage.local.get(["userData"], (items) => {
+      if (items.userData && items.userData._id) {
+        // getBalance(items.userData._id)
+        //   .then((res) => {
+        //     this.setState({ nearBalance: res });
+        //   })
+        //   .catch((err) => {
+        //     this.setState({ nearBalance: null });
+        //   });
+      }
+    });
   }
 
   // On setting button click function
   onSettingButtonClick() {
     chrome.storage.local.set({ showSetting: true });
-    // chrome.storage.local.get(["showSetting"], (items) => {
-    //   if (!items.showSetting) {
-    //     chrome.storage.local.set({ showSetting: true });
-    //   } else {
-    //     chrome.storage.local.set({ showSetting: false });
-    //   }
-    // });
   }
 
   // Get user's followed trail data
-  userFollowedTrailData = async (userData) => {
+  userFollowedTrailData = async () => {
     try {
       // Get follow data of user from database
-      const followData = await getFollowTrails(userData._id);
+      const followData = await getFollowTrails();
       const followedTrails = followData.data;
+
       if (
         followedTrails &&
         followedTrails.response &&
@@ -102,19 +109,94 @@ class UserProfile extends React.Component {
         this.setState({
           myTrilsListData: followedTrails.response.result,
           isLoading: false,
+          errorMsg: "",
         });
       } else {
         this.setState({
           myTrilsListData: [],
           isLoading: false,
+          errorMsg: "",
         });
       }
     } catch (err) {
-      console.log(err);
+      console.log("err", err);
+
+      this.setState({
+        isLoading: false,
+        myTrilsListData: [],
+        errorMsg: "Error while fetching data",
+      });
     }
   };
 
+  // Get user's trails data
+  fetchUserTrailsData = async () => {
+    try {
+      const result = await getUserSingleTrail();
+
+      if (result.status == 200) {
+        this.setState({
+          myTrilsListData: result.data.response ? result.data.response : [],
+          getOneEditRow: {},
+          addRaw: {},
+        });
+      }
+
+      this.setState({ isLoading: false, errorMsg: "" });
+    } catch (err) {
+      console.log("err", err);
+      this.setState({
+        isLoading: false,
+        myTrilsListData: [],
+        errorMsg: "Error while fetching data",
+      });
+    }
+  };
+
+  updateAutologoutTime = async () => {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get(["autoLogoutTime"], (items) => {
+        const logoutTime = items.autoLogoutTime;
+        if (logoutTime < Date.now()) {
+          // Call auto logout function
+          this.props.onClickToLogout();
+
+          resolve();
+        } else {
+          chrome.runtime.sendMessage("", {
+            type: "updateTimeout",
+            status: true,
+          });
+
+          resolve();
+        }
+      });
+    });
+  };
+
+  componentWillUnmount() {
+    // Remove click event listener
+    window.removeEventListener("click", this.updateAutologoutTime);
+  }
+
   async componentDidMount() {
+    // Call update auto logout time function
+    await this.updateAutologoutTime();
+
+    // Add click event listener
+    window.addEventListener("click", this.updateAutologoutTime);
+
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+      if (tabs && tabs.length > 0) {
+        const tab = tabs[0];
+        if (tab.url.includes("chrome://newtab/") && tab.title === "New Tab") {
+          chrome.tabs.update({ url: "http://169.61.16.14/" });
+        }
+      }
+    });
+
+    // let balance = 0;
+    // let address = "";
     let balance = await wallet.balance();
     let address = await getAddress(
       "0x8920565d5Bc8cf942eD2E18df4B71b8695a22D9B"
@@ -122,13 +204,15 @@ class UserProfile extends React.Component {
     this.setState({ isLoading: true });
     chrome.storage.local.get(
       [
-        "auth_Tokan",
+        "authToken",
         "userData",
         "reload",
         "keypair",
         "isPreview",
         "isPreviewSingleTrail",
         "currentTrailsTab",
+        "tourType",
+        "currentTourType",
       ],
       async function (items) {
         // // Get NEAR balance of user
@@ -147,16 +231,31 @@ class UserProfile extends React.Component {
 
         if (status === 200 && data.data && data.data.response) {
           userData = { ...data.data.response };
+        } else {
+          // Logout if user not found
+          this.props.onClickToLogout();
+        }
+
+        let disabledButton = false;
+        if (
+          items.currentTourType &&
+          items.currentTourType !== "" &&
+          items.tourType &&
+          items.tourType === "preview"
+        ) {
+          disabledButton = true;
         }
 
         this.setState({
           profileImage: userData.profileImage ? userData.profileImage : "",
           privateKey: items.keypair,
           userName: userData.userName,
+          id: userData._id ? userData._id : null,
           firstName: userData.firstName ? userData.firstName : null,
           lastName: userData.lastName ? userData.lastName : null,
           isPreview: items.isPreview,
           isPreviewSingleTrail: items.isPreviewSingleTrail,
+          isDisabled: disabledButton,
           listTitle: items.currentTrailsTab
             ? items.currentTrailsTab
             : "My Trails",
@@ -175,60 +274,13 @@ class UserProfile extends React.Component {
           });
         });
 
-        // const data = {
-        //   user_id: userData._id,
-        //   flag: "unread",
-        // };
-
-        if (items.currentTrailsTab && items.currentTrailsTab === "Followed") {
+        if (items.currentTrailsTab && items.currentTrailsTab === "Following") {
           // Call user followed trail data function
-          await this.userFollowedTrailData(items.userData);
+          await this.userFollowedTrailData();
         } else {
-          const result = await getUserSingleTrail(userData._id);
-
-          if (result.status == 200) {
-            this.setState({
-              myTrilsListData: result.data.response,
-              getOneEditRow: {},
-              addRaw: {},
-            });
-          }
-
-          this.setState({ isLoading: false });
+          // Call fetch user's trail data function
+          await this.fetchUserTrailsData();
         }
-
-        // getAllNotification(data).then(async (res) => {
-        //   const data = res.data.response;
-
-        //   if (data.result && _.isArray(data.result) && data.result.length > 0) {
-        //     let user = await getAllUser();
-
-        //     let filterdFollowers = data.result.map((el) => {
-        //       for (let i = 0; i < user.data.data.response.length; i++) {
-        //         if (el.creator_id === user.data.data.response[i]._id) {
-        //           return {
-        //             email: user.data.data.response[i].email,
-        //             pictures: user.data.data.response[i].pictures,
-        //             creator_id: user.data.data.response[i]._id,
-        //             currUserId: el.user_id,
-        //             created: el.created,
-        //           };
-        //         }
-        //       }
-        //     });
-
-        //     filterdFollowers = filterdFollowers.sort((a, b) => {
-        //       return b.created - a.created;
-        //     });
-
-        //     // Update notificationData state
-        //     this.setState({
-        //       notificationData: filterdFollowers,
-        //       getOneEditRow: {},
-        //       addRaw: {},
-        //     });
-        //   }
-        // });
 
         this.setState({
           email: userData.email,
@@ -267,30 +319,42 @@ class UserProfile extends React.Component {
     if (document.querySelector("#my-extension-root-flip")) {
       document.querySelector("#my-extension-root-flip").style.display = "none";
     }
+
+    chrome.storage.onChanged.addListener(this.handlerStorageChanges);
   }
 
-  onClickToList = (listTitle) => {
-    chrome.storage.local.get(
-      ["auth_Tokan", "userData", "reload"],
-      async function (items) {
-        if (listTitle === "Followed") {
-          // Call user followed trail data function
-          await this.userFollowedTrailData(items.userData);
-        } else {
-          const result = await getUserSingleTrail(items.userData._id);
+  handlerStorageChanges = (changes) => {
+    if (
+      changes.tourType &&
+      changes.tourType.newValue === "preview" &&
+      changes.currentTourType &&
+      changes.currentTourType.newValue !== ""
+    ) {
+      // Set isDisabled state
+      this.setState({ isDisabled: true });
+    }
 
-          if (result.status == 200) {
-            this.setState({
-              myTrilsListData: result.data.response,
-              isLoading: false,
-            });
-          }
-        }
-      }.bind(this)
-    );
+    if (
+      changes.tourType &&
+      changes.tourType.newValue === "" &&
+      changes.currentTourType &&
+      changes.currentTourType.newValue === ""
+    ) {
+      // Set isDisabled state
+      this.setState({ isDisabled: false });
+    }
+  };
 
-    chrome.storage.local.set({ currentTrailsTab: listTitle });
+  onClickToList = async (listTitle) => {
     this.setState({ listTitle, isLoading: true });
+    chrome.storage.local.set({ currentTrailsTab: listTitle });
+
+    if (listTitle === "Following") {
+      // Call user followed trail data function
+      await this.userFollowedTrailData();
+    } else {
+      await this.fetchUserTrailsData();
+    }
   };
 
   onChangeTrailEdit = (editTrail) => {
@@ -299,7 +363,7 @@ class UserProfile extends React.Component {
 
   onClickToCreateTrail = (e) => {
     this.onChangeTrailEdit(false);
-    this.setState({ listTitle: "My Trails", slideBalance: false });
+    this.setState({ slideBalance: false });
     $("body").attr("class", "trailit_EditTrailShow");
   };
 
@@ -316,10 +380,41 @@ class UserProfile extends React.Component {
     this.setState({ addRaw: data });
   };
 
+  showCroppedImage = async () => {
+    try {
+      const croppedImage = await getCroppedImg(
+        this.state.profilePreview,
+        this.state.croppedAreaPixels,
+        0
+      );
+
+      let file = blobToFile(croppedImage, "profile-picture.png");
+
+      // Call upload file function
+      await this.uploadFile(file);
+
+      // console.log("after upload successed");
+      chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+        if (
+          tabs.length > 0 &&
+          (tabs[0].url.includes("http://169.61.16.14") ||
+            tabs[0].url.includes("http://localhost:"))
+        ) {
+          chrome.tabs.reload();
+        }
+      });
+
+      // Call on cancel handler
+      this.onCancelHandler();
+    } catch (err) {
+      console.log("err", err);
+    }
+  };
+
   uploadFile = (file) => {
     this.setState({ isLoading: true });
 
-    handleFileUpload(file)
+    return handleFileUpload(file)
       .then((response) => {
         return response;
       })
@@ -331,34 +426,40 @@ class UserProfile extends React.Component {
           profileImage: data.response.result.fileUrl,
         });
 
-        chrome.storage.local.get(
-          ["auth_Tokan", "userData", "reload"],
-          async function (items) {
-            try {
-              let r = await UpdateProfilePicture({
-                email: items.userData.email,
-                profileImage: data.response.result.fileUrl,
-              });
-
-              if (r.status == 200) {
-                chrome.storage.local.set({
-                  userData: {
-                    ...items.userData,
-                    profileImage: data.response.result.fileUrl,
-                  },
+        new Promise((resolve, reject) => {
+          chrome.storage.local.get(
+            ["authToken", "userData", "reload"],
+            async function (items) {
+              try {
+                let r = await UpdateProfilePicture({
+                  email: items.userData.email,
+                  profileImage: data.response.result.fileUrl,
                 });
-              }
 
-              this.setState({
-                isLoading: false,
-              });
-            } catch (e) {
-              this.setState({
-                isLoading: false,
-              });
-            }
-          }.bind(this)
-        );
+                if (r.status == 200) {
+                  chrome.storage.local.set({
+                    userData: {
+                      ...items.userData,
+                      profileImage: data.response.result.fileUrl,
+                    },
+                  });
+                }
+
+                this.setState({
+                  isLoading: false,
+                });
+
+                resolve();
+              } catch (e) {
+                this.setState({
+                  isLoading: false,
+                });
+
+                resolve();
+              }
+            }.bind(this)
+          );
+        });
       })
       .catch((err) => {
         this.setState({ isLoading: false });
@@ -366,14 +467,30 @@ class UserProfile extends React.Component {
       });
   };
 
-  handleChange = (e) => {
-    const { tourType } = this.state;
+  handleImageUpload = (e) => {
+    const [file] = e.target.files;
+    if (file) {
+      // Set profile preview state
+      this.setState({ profilePreview: URL.createObjectURL(file) });
+    }
+  };
+
+  handleChange = async (e) => {
     const file = e.target.files[0];
-    const fileType = file.type.split("/");
     e.target.value = null;
 
     // Upload file function
-    this.uploadFile(file);
+    await this.uploadFile(file);
+
+    chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
+      if (
+        tabs.length > 0 &&
+        (tabs[0].url.includes("http://169.61.16.14") ||
+          tabs[0].url.includes("http://localhost:"))
+      ) {
+        chrome.tabs.reload();
+      }
+    });
   };
 
   onSlide = () => {
@@ -390,32 +507,55 @@ class UserProfile extends React.Component {
     $("body").attr("class", "");
   };
 
+  onCropComplete = (croppedArea, croppedAreaPixels) => {
+    // Set cropped area pixels
+    this.setState({ croppedAreaPixels });
+  };
+
+  setCrop = (data) => {
+    // Set crop
+    this.setState({ crop: data });
+  };
+
+  onCancelHandler = () => {
+    // Set state
+    this.setState({
+      zoom: 1,
+      crop: { x: 0, y: 0 },
+      profilePreview: null,
+      croppedAreaPixels: null,
+    });
+  };
+
   render() {
     // console.log('getBalance', getBalance());
     const {
+      id,
       userName,
       firstName,
       lastName,
-      isPreview,
       isLoading,
       listTitle,
       showSetting,
       myTrilsListData,
       categoryList,
-      notificationData,
       editTrail,
       getOneEditRow,
       addRaw,
       profileImage,
       slideBalance,
       nearBalance,
-      isPreviewSingleTrail,
+      isDisabled,
+      profilePreview,
+      crop,
+      zoom,
+      errorMsg,
     } = this.state;
 
     let list = [];
     if (listTitle === "My Trails") {
       list = myTrilsListData;
-    } else if (listTitle === "Followed") {
+    } else if (listTitle === "Following") {
       list = myTrilsListData;
     }
 
@@ -440,41 +580,94 @@ class UserProfile extends React.Component {
         {isLoading && (
           <div className="trailit_loaderBox">
             <div class="trial_spinner">
-              <img class="ring1" src={require(`../images/loding1.png`)} />
-              <img class="ring2" src={require(`../images/loding2.png`)} />
+              <img
+                alt="loading1"
+                class="ring1"
+                src={require(`../images/loding1.png`)}
+              />
+              <img
+                alt="loading2"
+                class="ring2"
+                src={require(`../images/loding2.png`)}
+              />
             </div>
           </div>
         )}
         <div className="trailit_userPanalRightBox">
           <div className="trailit_userPanalHeaderBox">
             <div className="trailit_userIMG">
-              <img
-                src={
-                  profileImage == ""
-                    ? require("../images/user.png")
-                    : this.state.profileImage
-                }
-                alt="user"
-              />
-              <input type="file" name="media" onChange={this.handleChange} />
-              <span className="trailitUploadICon">
-                <img src={require("../images/edit.svg")} alt=".." />
-              </span>
+              <div className="trailit-image-and-input">
+                {profilePreview && (
+                  <Cropper
+                    aspect={1}
+                    crop={crop}
+                    zoom={zoom}
+                    cropShape={"round"}
+                    image={profilePreview}
+                    onCropComplete={this.onCropComplete}
+                    onCropChange={(data) => this.setState({ crop: data })}
+                    onZoomChange={(data) => this.setState({ zoom: data })}
+                  />
+                )}
+
+                <img
+                  className="trailit-user-profile-image"
+                  src={
+                    profileImage == ""
+                      ? require("../images/user.png")
+                      : profileImage
+                  }
+                  alt="user"
+                />
+
+                {!profilePreview && (
+                  <div>
+                    <input
+                      type="file"
+                      name="media"
+                      // accept="image/*"
+                      accept=".png, .jpg, .jpeg"
+                      // onChange={this.handleChange}
+                      onChange={this.handleImageUpload}
+                    />
+
+                    <span className="trailitUploadICon">
+                      <img src={require("../images/edit.svg")} alt=".." />
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {profilePreview && (
+                <div className="text-center trailit-image-button-container">
+                  <Button
+                    size="small"
+                    icon={<CloseOutlined />}
+                    onClick={this.onCancelHandler}
+                    className="trailit-close-button"
+                  />
+                  <Button
+                    size="small"
+                    icon={<CheckOutlined />}
+                    onClick={this.showCroppedImage}
+                    className="trailit-check-button"
+                  />
+                </div>
+              )}
             </div>
             <div className="trailit_userBxs">
               <div className="trailit_userName trailit_ellips">
                 {firstName && lastName ? `${firstName} ${lastName}` : userName}
               </div>
-              <div className="trailit_userSubName trailit_ellips">
-                Founder, Creator, Designer
-              </div>
-              <div
-                className="trailit_userName cursor_pointer"
-                onClick={this.onSlide}
-              >
-                {this.state.nearBalance}{" "}
-                <span className="trailit_userSubName"> NEAR</span>
-              </div>
+              {nearBalance && (
+                <div
+                  className="trailit_userName cursor_pointer"
+                  onClick={this.onSlide}
+                >
+                  {nearBalance}{" "}
+                  <span className="trailit_userSubName"> NEAR</span>
+                </div>
+              )}
               <div className="trailit_3Boxs">
                 <div className="trailit_3Boxs1">
                   <div className="trailit_userName">100k</div>
@@ -508,7 +701,6 @@ class UserProfile extends React.Component {
                     <button type="button" onClick={this.onSettingButtonClick}>
                       Settings
                     </button>
-                    <button type="button">Notifications</button>
                     <button
                       type="button"
                       onClick={() => {
@@ -525,52 +717,54 @@ class UserProfile extends React.Component {
           </div>
           <div className="trailit_userPanalContentBox">
             <UserProfileList
-              profileImage={profileImage}
-              title={listTitle}
+              userId={id}
               list={list}
-              getOneEditRow={getOneEditRow}
               addRaw={addRaw}
-              onEdit={this.onChangeTrailEdit}
-              getRow={this.getEditData}
+              title={listTitle}
+              errorMsg={errorMsg}
+              lastName={lastName}
+              userName={userName}
+              firstName={firstName}
               isLoading={isLoading}
+              getRow={this.getEditData}
+              profileImage={profileImage}
+              getOneEditRow={getOneEditRow}
+              onEdit={this.onChangeTrailEdit}
             />
             <div className="trailit_userPanalFooterBox">
-              {!isPreview && !isPreviewSingleTrail && (
-                <>
-                  {listTitle === "My Trails" && (
-                    <button
-                      type="button"
-                      className="trailit_btnPink"
-                      onClick={(e) => this.onClickToList("Followed")}
-                    >
-                      Followed
-                    </button>
-                  )}
-                  {listTitle === "Followed" && (
-                    <button
-                      type="button"
-                      className="trailit_btnPink"
-                      onClick={(e) => this.onClickToList("My Trails")}
-                    >
-                      My Trails
-                    </button>
-                  )}
-                  {listTitle === "Loading..." && (
-                    <button disabled type="button" className="trailit_btnPink">
-                      {listTitle}
-                    </button>
-                  )}
-                </>
+              {listTitle === "My Trails" && (
+                <button
+                  type="button"
+                  disabled={isDisabled}
+                  className={`${
+                    isDisabled ? "trailit_btnGray" : "trailit_btnPink"
+                  }`}
+                  onClick={(e) => this.onClickToList("Following")}
+                >
+                  Following
+                </button>
               )}
-              {!isPreview && !isPreviewSingleTrail && (
+              {listTitle === "Following" && (
                 <button
                   type="button"
                   className="trailit_btnPink"
-                  onClick={this.onClickToCreateTrail}
+                  onClick={(e) => this.onClickToList("My Trails")}
                 >
-                  Create Trail
+                  My Trails
                 </button>
               )}
+              {listTitle === "Loading..." && (
+                <button disabled type="button" className="trailit_btnPink">
+                  {listTitle}
+                </button>
+              )}
+              <button
+                type="button"
+                className="trailit_btnPink"
+                onClick={this.onClickToCreateTrail}
+              >
+                Create Trail
+              </button>
             </div>
           </div>
         </div>

@@ -4,6 +4,31 @@ function onCaptured(imageUri) {}
 
 function onError(error) {}
 
+const alarmTrigger = (alarm) => {
+  if (alarm.name === "autoLogout") {
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "background.js",
+        message: "autoLogoutTriggered",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].url) {
+          if (tabs[i].active) {
+            message.apiCall = true;
+          }
+
+          // Send message to all tabs
+          chrome.tabs.sendMessage(tabs[i].id, message);
+        }
+      }
+
+      // Remove alarm listener
+      chrome.alarms.onAlarm.removeListener(alarmTrigger);
+    });
+  }
+};
+
 if (typeof chrome.app.isInstalled !== "undefined") {
   chrome.browserAction.onClicked.addListener(function (tab) {
     chrome.tabs.query(
@@ -26,6 +51,39 @@ if (typeof chrome.app.isInstalled !== "undefined") {
       chrome.tabs.sendMessage(tabId, {
         message: "urlChanged",
         url: changeInfo.url,
+      });
+    }
+  });
+
+  // Call when extension install, updated manually or updated automatically
+  chrome.runtime.onInstalled.addListener((details) => {
+    chrome.tabs.query({}, (tabs) => {
+      let contentjsFile = chrome.runtime.getManifest().content_scripts[0].js[0];
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].title && tabs[i].url) {
+          chrome.tabs.executeScript(
+            tabs[i].id,
+            { file: contentjsFile },
+            // eslint-disable-next-line no-loop-func
+            function () {
+              let e = chrome.runtime.lastError;
+              if (e !== undefined) {
+                // eslint-disable-next-line no-undef
+                console.error(
+                  "tab: " + tabs[i].id + " lastError: " + JSON.stringify(e)
+                );
+              }
+            }
+          );
+        }
+      }
+    });
+  });
+
+  chrome.storage.onChanged.addListener(async (changes) => {
+    if (changes.autoLogoutTime && changes.autoLogoutTime.newValue) {
+      chrome.alarms.create("autoLogout", {
+        when: changes.autoLogoutTime.newValue,
       });
     }
   });
@@ -57,16 +115,15 @@ if (typeof chrome.app.isInstalled !== "undefined") {
   //
   //       });
 
-  //       chrome.tabs.executeScript(null, {
-  //          file: '/static/js/content.js'
-  //       }, function(ddd) {
-  //
-  //          // If you try and inject into an extensions page or the webstore/NTP you'll get an error
-  //          if (chrome.runtime.lastError) {
-  //
+  // chrome.tabs.executeScript(null, {
+  //    file: '/static/js/content.js'
+  // }, function(ddd) {
 
-  //          }
-  //       });
+  //    // If you try and inject into an extensions page or the webstore/NTP you'll get an error
+  //    if (chrome.runtime.lastError) {
+
+  //    }
+  // });
 
   //       chrome.tabs.executeScript(null, { file: 'src/content' });
   //    });
@@ -83,6 +140,43 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.heartbeat) {
+    sendResponse(message);
+    return;
+  }
+
+  if (message.type === "closeMenuPopButton") {
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "background.js",
+        status: "removeMenuPopButton",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].active) {
+          continue;
+        }
+
+        // Send message to all tabs
+        chrome.tabs.sendMessage(tabs[i].id, message);
+      }
+    });
+  }
+
+  if (message.type === "logout") {
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "content.js",
+        status: "logout",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        // Send message to all tabs
+        chrome.tabs.sendMessage(tabs[i].id, message);
+      }
+    });
+  }
+
   if (message.type === "openInTab") {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       var activeTab = tabs[0];
@@ -95,6 +189,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.type === "notification") {
     chrome.notifications.create("", message.options);
+  }
+
+  if (message.type === "updateTimeout") {
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "popup",
+        subject: "updateTimeout",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        // Send message to all tabs
+        chrome.tabs.sendMessage(tabs[i].id, message);
+      }
+    });
   }
 
   if (message.type === "DOMInfo") {
@@ -169,7 +277,9 @@ chrome.runtime.onMessageExternal.addListener(function (
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
-            const port = chrome.tabs.connect(tabs[0].id);
+            const port = chrome.tabs.connect(tabs[0].id, {
+              name: "Trailit-webapp",
+            });
             port.postMessage({
               message: "check_login_status",
             });
@@ -177,6 +287,10 @@ chrome.runtime.onMessageExternal.addListener(function (
             port.onMessage.addListener((response) => {
               sendResponse(response);
             });
+
+            // port.onDisconnect.addListener((obj) => {
+            //   console.log("disconnected!!!");
+            // });
           }
         );
       } else {
@@ -191,7 +305,6 @@ chrome.runtime.onMessageExternal.addListener(function (
           { active: true, currentWindow: true },
           function (tabs) {
             var activeTab = tabs[0];
-
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_all",
               payload: { ...request, url: tabs[0].url },
@@ -254,6 +367,38 @@ chrome.runtime.onMessageExternal.addListener(function (
             });
           }
         );
+      }
+      break;
+    case "WEB_LOGIN":
+      if (request.action === "LOGIN_FROM_WEB") {
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            var activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, {
+              message: "addon_login",
+              payload: { ...request, url: tabs[0].url },
+            });
+          }
+        );
+
+        // Add alarm listener
+        chrome.alarms.onAlarm.addListener(alarmTrigger);
+      }
+      if (request.action === "LOGOUT_FROM_WEB") {
+        chrome.tabs.query(
+          { active: true, currentWindow: true },
+          function (tabs) {
+            var activeTab = tabs[0];
+            chrome.tabs.sendMessage(activeTab.id, {
+              message: "addon_logout",
+              payload: { url: tabs[0].url },
+            });
+          }
+        );
+
+        // Remove alarm listener
+        chrome.alarms.onAlarm.removeListener(alarmTrigger);
       }
       break;
 

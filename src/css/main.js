@@ -90,31 +90,25 @@ export const main1Css = `
     #my-extension-root .wrap .blob svg path {fill: #fff;}
 
     #my-extension-root .wrap .blob:after {
+        width: 96px;
         content: attr(data-title);
         // color: #DA5E9A;
         color: #ff7958;
-        width: 220px;
+        // width: 220px; 
         margin-right: 6px;
-        /* box-shadow:0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
-        -webkit-box-shadow:0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
-        -moz-box-shadow:0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
-        background: #fff; */
         font-family: 'Lato', sans-serif;
-        /* font-size: 24px; */
         line-height: 30px;
         font-weight: 400!important;
-        text-align: right;
-        /* -webkit-border-radius: 5px;
-        -moz-border-radius: 5px;
-        border-radius: 5px; */
+        // text-align: right;
         position: absolute;
-        /* top: 25px;
-        right: 100px; */
         text-transform: capitalize!important;
         letter-spacing: 0;
-        text-shadow: 5px 2px 4px #00000052;
+        box-shadow: 5px 2px 4px #00000052;
         opacity: 0;
-        pointer-events: none;
+        background: white;
+        border-radius: 3px;
+        padding: 5px 15px;
+        background: white;
         transition: all 0.2s ease-out;
         font-size: 22px !important;
         top: 15px !important;
@@ -336,13 +330,21 @@ export const main1Css = `
     }
 
     .d-flex {
+        width: 100%;
         display: flex;
-        line-height: 1.5;
-        justify-content: space-between;
+        line-height: 1.2;
+        // justify-content: space-between;
+        justify-content: left;
     }
 
     .d-flex-1 {
         // width: 70px;
+        width: 20%;
+    }
+
+    .d-flex-2 {
+        // width: 60%;
+        width: 160px;
     }
 
     .d-flex-1 h4 {
@@ -355,7 +357,8 @@ export const main1Css = `
 export const main2Css = `
     .info_bbx_gradient {
         background: linear-gradient(208.4deg, #9085f3 15.15%, #ef7e81 84.05%);
-        width: 100%;
+        // width: 100%;
+        // width: 96%;
         height: 45px;
         border-radius: 7px;
         padding: 10px;
@@ -371,11 +374,42 @@ export const main2Css = `
         margin: 0px 0px 10px 5px !important;
     }
 
+    .info_bbx_gradient.inactive,
+    .info_bbx_grey.inactive {
+        // width: 97% !important;
+        width: 91% !important;
+    }
+
+    // .trailitStepBox.active,
+    // .info_bbx.active,
+    .info_bbx_gradient.active,
+    .info_bbx_grey.active {
+        // border: 2px solid #f04d26;
+        // border-radius: 1rem;
+        // border-width: 10px;
+        // position: relative;
+    }
+
+    // .info_bbx_gradient.active::before,
+    // .info_bbx_grey.active::before {
+    //     content: "";
+    //     position: absolute;
+    //     top: -5px;
+    //     bottom: -5px;
+    //     left: -5px;
+    //     right: -5px;
+    //     border: 6px solid #222;
+    //     border-radius: .8rem;
+    // }
+
     .d-flex-2 p {
         margin: 0 0 0px 0;
         color: #fff;
         // line-height: 20px;
         font-size: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .d-flex-3 {
@@ -431,8 +465,9 @@ export const main2Css = `
 
     .trail_settings span {
         color: #000000;
-        font-size: 14px;
-        font-family: "Lato", sans-serif !important;
+        font-size: 13px;
+        font-family: 'Montserrat';
+        font-weight: 500;
     }
 
     #my-extension-root .wrap.open .blob[disabled] {

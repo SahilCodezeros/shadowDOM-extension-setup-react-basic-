@@ -5,7 +5,8 @@ export const videoTourCss1 = `
     }
 
     .video-wrap_tooltip-smallScreen {
-        top: calc(100% - 205px);
+        top: calc(100% - 235px);
+        // top: calc(100% - 205px);
         left: calc(100% - 430px);
         width: 348px;
         height: 194.344px;
@@ -24,11 +25,6 @@ export const videoTourCss1 = `
         height: 100%;
         width: 100%;
         z-index: 0;
-    }
-
-    .videoShow-smallScreen {
-        right: 0;
-        bottom: -40px;
     }
 
     .btn-wrap.videoShow {
@@ -135,7 +131,8 @@ export const videoTourCss1 = `
     }
     
     .videoShow-smallScreen {
-        right: 0;
+        right: 2.5%;
+        bottom: -40px;
     }
     
     .video-wrap_tooltip.video-wrap_tooltip-smallScreen video {
@@ -197,10 +194,10 @@ export const videoTourCss1 = `
 
     .trail_video_overlayNext *,
     .trail_video_overlayPrev * {
-        color: #fff !important;
-        font-family: "Lato", sans-serif !important;
-        background: transparent !important;
-        font-size: 16px;
+        // color: #fff !important;
+        // font-family: "Lato", sans-serif !important;
+        // background: transparent !important;
+        // font-size: 16px;
     }
 
     .video-wrap_tooltip-fullScreen {
@@ -231,5 +228,9 @@ export const videoTourCss1 = `
 
     .ex_mr_10{
         margin-right: 10px;
+    }
+
+    .video-mobile {
+        // top: 47vh !important;
     }
 `;

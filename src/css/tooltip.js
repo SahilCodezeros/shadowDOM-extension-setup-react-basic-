@@ -9,7 +9,8 @@ export const tooltipCss1 = `
     }
     
     .trail_tooltip .popover {
-        z-index: 9999999999;
+        // z-index: 9999999999;
+        z-index: 999999999;
         background: #ffffff;
         width: 300px !important;
         max-width: 300px !important;
@@ -39,7 +40,8 @@ export const tooltipCss1 = `
     }
 
     .trail_tooltip .popover-body {
-        padding: 15px;
+        // padding: 15px;
+        padding: 15px 15px 10px 15px;
     }
 
     .popover-inner form {

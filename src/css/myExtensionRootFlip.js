@@ -7,8 +7,8 @@ export const myExtensionRootFlipCss1 = `
         position: fixed;
         top: 130px;
         right: 40px;
-        z-index: 9999;
         z-index: 9999999999;
+        // z-index: 99999999;
         height: calc(100vh - 170px);
         perspective: 1800px;
     }
@@ -22,7 +22,8 @@ export const myExtensionRootFlipCss1 = `
         height: auto;
     }
 
-    .trial_modal_show {
+    .trial_create_modal_main,
+    .trail_preview_modal_main {
         z-index: unset !important;  
     }
 
@@ -30,11 +31,6 @@ export const myExtensionRootFlipCss1 = `
         background-color: transparent !important;
         overflow-y: hidden;
     }
-
-    // .modal-open {
-    //     position: fixed;
-    //     top: 0;
-    // }
 
     // .trial_create_modal_main {
     //     position: fixed !important;
@@ -159,16 +155,17 @@ export const myExtensionRootFlipCss1 = `
 
     .tr_modal_trail_modal_header h5 {
         margin: 0 !important;
-        font-weight: 500 !important;
+        font-weight: 600 !important;
         font-size: 16px !important;
-        font-weight: 400 !important;
         margin-bottom: 0 !important;
-        line-height: 1.5 !important;
-        color: #5f5d5d !important;
+        // line-height: 1.5 !important;
+        color: #D53884 !important;
+        line-height: 20px;
         text-transform: unset !important;
         text-align: left !important;
         letter-spacing: 0 !important;
-        font-family: "Lato", sans-serif !important;
+        font-family: Montserrat;
+        // font-family: "Lato", sans-serif !important;
     }
 
     .trial_modal_show .modal-dialog .modal-content .modal-body {	
@@ -193,14 +190,14 @@ export const myExtensionRootFlipCss1 = `
         font-size: 18px !important;
         line-height: 29px !important;
         color: #000000 !important;
-        font-family: "Lato", sans-serif !important;
+        font-family: Montserrat, "Lato", sans-serif !important;
         padding-bottom: 40px !important;
         display: block !important;
     }
 
-    .trail_create_modal p {
-        margin: 0 !important;
-    }
+    // .trail_create_modal p {
+    //     margin: 0 !important;
+    // }
 
     .trail_tooltip .trailButtonsWrapper,
     .trail_create_modal .trailButtonsWrapper {
@@ -231,6 +228,10 @@ export const myExtensionRootFlipCss1 = `
         bottom: 20px;
         width: 100px;
         z-index: 999999999 !important;
+    }
+
+    .cursor {
+        cursor: pointer;
     }
 
     .trial_modal_show .modal-dialog-centered {
@@ -273,7 +274,7 @@ export const myExtensionRootFlipCss1 = `
 
     .tr_icon_grp {
         display: flex;
-        justify-content: left;
+        justify-content: space-around;
         padding-bottom: 10px;
         position: unset;
         flex-direction: unset;
@@ -286,6 +287,7 @@ export const myExtensionRootFlipCss1 = `
     .trail_tooltip .popover-body .tr_icon_grp button.tr_active,
     .trail_create_modal .tr_icon_grp button.tr_active {
         filter: grayscale(0);
+        background: #D41E79 !important;
     }
 
     .trail_create_modal .tr_icon_grp button:hover,
@@ -298,10 +300,10 @@ export const myExtensionRootFlipCss1 = `
         cursor: default !important;
     }
 
-    .trail_tooltip .popover-body .tr_icon_grp button,
-    .trail_create_modal .tr_icon_grp button {
-        margin-right: 24px;
-    }
+    // .trail_tooltip .popover-body .tr_icon_grp button,
+    // .trail_create_modal .tr_icon_grp button {
+    //     margin-right: 24px;
+    // }
 
     .trail_create_modal .tr_icon_grp button:last-child {
         margin-right: 0;
@@ -310,9 +312,10 @@ export const myExtensionRootFlipCss1 = `
     .trail_tooltip .popover-body .tr_icon_grp button,
     .trail_create_modal .tr_icon_grp button {
         border: none;
-        background: #f2f2f2;
-        width: 50px;
-        height: 50px;
+        background: #E5E5E5;
+        // width: 50px;
+        min-width: 38px;
+        height: 38px;
         border-radius: 50%;
         margin-left: 0 !important;
         display: flex;
@@ -349,8 +352,8 @@ export const myExtensionRootFlipCss1 = `
     .trailMain input[type="text"]:focus,
     .trail_create_modal input[type="text"]:focus,
     .trailMain input[type="password"]:focus,
-    .trailMain textarea:focus,
-    #my-extension-defaultroot *:focus {
+    // #my-extension-defaultroot *:focus,
+    .trailMain textarea:focus {
         border: 1px solid #fb542b !important;
         box-shadow: none !important;
         -webkit-box-shadow: none !important;
@@ -411,6 +414,7 @@ export const myExtensionRootFlipCss2 = `
         border: 1px solid #fb542b !important;
         color: #fb542b !important;
     }
+
     .tr_modal .ant-btn.outlined-btn {
         color: #fb542b !important;
         border: 1px solid #fb542b !important;
@@ -423,7 +427,6 @@ export const myExtensionRootFlipCss2 = `
         color: #fff !important;
         background: #fb542b !important;
     }
-
 
     .trail_continue_btn,
     .tr_modal .ant-btn.ant-btn-primary,
@@ -626,7 +629,8 @@ export const myExtensionRootFlipCss2 = `
         left: 0;
         width: 100%;
         height: 100%;
-        z-index: 99999999;
+        // z-index: 99999999;
+        z-index: 9999999;
         position: absolute;
     }
 
@@ -661,8 +665,11 @@ export const myExtensionRootFlipCss2 = `
     }
 
     .mobile_preview_popover .popover {
-        width: 400px !important;
-        max-width: 400px !important;
+        // width: 400px !important;
+        // max-width: 400px !important;
+
+        width: calc(100% - 10px) !important;
+        max-width: calc(100% - 10px) !important;
     }
 
     .trail_tooltip .bs-popover-auto[x-placement^="bottom"],
@@ -747,7 +754,8 @@ export const myExtensionRootFlipCss3 = `
         // position: absolute !important;
         position: fixed !important;
         right: 0;
-        bottom: -10px;
+        // bottom: -10px;
+        bottom: 5%;
         box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 4px, rgba(0, 0, 0, 0.28) 0px 4px 8px !important;
         height: 30px;
         width: 120px !important;
@@ -847,6 +855,7 @@ export const myExtensionRootFlipCss3 = `
     }
 
     .trail_tooltip_done .popover-header {
+        user-select: none;
         background: none !important;
         border-bottom: none !important;
         padding: 12px 15px 0 !important;
@@ -859,6 +868,10 @@ export const myExtensionRootFlipCss3 = `
         width: 100%;
         text-align: center;
         box-sizing: border-box;
+    }
+
+    .tooltip_title_mobile {
+        width: 75% !important;
     }
 
     .trail_tooltip_done .popover-body,
@@ -878,6 +891,10 @@ export const myExtensionRootFlipCss3 = `
         line-height: 20px !important;
         display: inline-block !important;
         font-family: "Lato", sans-serif !important;
+    }
+
+    .trail_tooltip_done .popover-body {
+        user-select: none;
     }
 
     .trail_tooltip_done.tr_audio_only [x-placement="top"] .bottom.popover-header,
@@ -1102,7 +1119,7 @@ export const myExtensionRootFlipCss3 = `
         width: 1rem;
         margin-left: -0.5rem;
         content: "";
-        border-bottom: 1px solid #f7f7f7;
+        // border-bottom: 1px solid #f7f7f7;
     }
     
     .bs-popover-left,
@@ -1159,6 +1176,10 @@ export const myExtensionRootFlipCss4 = `
         width: 100%;
         text-align: center;
         box-sizing: border-box;
+        user-select: none;
+    }
+    .trail_modal_title.p-0{
+        padding: 0px !important;
     }
 
     .trail_preview_modal .trail_modal_content {
@@ -1190,6 +1211,7 @@ export const myExtensionRootFlipCss4 = `
 
     .tr_preview_video_bx {
         height: 214px;
+        background-color: #000000;
     }
 
     .preview-audio {
@@ -1205,7 +1227,8 @@ export const myExtensionRootFlipCss4 = `
     }
     
     .preview-picture {
-        width: 100%;
+        // width: 100%;
+        width: auto;
         height: 100%;
         margin-bottom: 10px;
     }
@@ -1251,7 +1274,7 @@ export const myExtensionRootFlipCss4 = `
     }
 
     .tr_video_only video {
-        object-fit: initial;
+        // object-fit: initial;
         height: 100%;
     }
 
@@ -1369,6 +1392,11 @@ export const myExtensionRootFlipCss4 = `
         width: 340px;
     }
 
+    .trail_modal_title_mobile {
+        // width: 250px !important;
+        width: 75% !important;
+    }
+
     .trail_tooltip .bs-popover-auto[x-placement^="top"],
     .trail_tooltip_done .bs-popover-auto[x-placement^="top"] {
       margin: 0 0 20px !important;
@@ -1412,7 +1440,7 @@ export const myExtensionRootFlipCss4 = `
         margin-right: 10px;
     }
 
-    .trail_flip_box .sidepanal .audio_wrap_tooltip{
+    .trail_container .sidepanal .audio_wrap_tooltip{
         bottom: auto;
         top: 60vh;
         right: 80px;
@@ -1456,14 +1484,16 @@ export const myExtensionRootFlipCss5 = `
 
     .tr_preview_picture_bx {
         display: flex;
-        justify-content: center;
         height: 214px;
+        justify-content: center;
+        background-color: #000000;
     }
 
     .trail_tooltip_done.tr_picture_only img.preview-picture {
         margin: 0 !important;
         height: 100%;
-        width: 100%;
+        // width: 100%;
+        width: auto;
     }
 
     .tr_picture_only .trail_modal_title,
@@ -1490,7 +1520,8 @@ export const myExtensionRootFlipCss5 = `
         bottom: 0;
         left: 0;
         z-index: 1040;
-        background-color: #000;
+        // background-color: #000;
+        background-color: rgba(0,0,0,0.8);
     }
 
     .tr_gradient_border:after {
@@ -1561,6 +1592,289 @@ export const myExtensionRootFlipCss5 = `
         text-shadow: none !important;
         -webkit-box-shadow: none !important;
         box-shadow: none !important;
+    }
+
+    .continue-modal-text {
+        // position: absolute;
+        // width: 189px;
+        height: 22px;
+        font-family: Montserrat, "Lato", sans-serif !important;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 22px;
+        /* identical to box height */
+        // display: flex;
+        // align-items: flex-end;
+        color: #D53884;
+        text-transform: capitalize;
+        text-align: center;
+        margin-top: -12px !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .tr_modal_trail_modal_header.confirmation_modal {
+        padding-top: 10px !important;
+        padding-right: 20px !important;
+        height: auto !important;
+    }
+
+    .modal-and-bubble-option-container {
+        display: flex;
+        justify-content: space-around;
+        vertical-align: middle;
+        // height: 7.5rem;
+    }
+
+    .video-bubble-option,
+    .video-modal-option,
+    .audio-bubble-option,
+    .audio-modal-option {
+        display: flex;
+        cursor: pointer;
+        position: relative;
+        text-align: center;
+        flex-direction: column;
+    }
+
+    .video-modal-container,
+    .audio-modal-container {
+        margin-top: 10px;
+    }
+
+    .bubble_user_svg,
+    .bubble_mic_svg {
+        position: absolute;
+        
+    }
+
+    .bubble_user_svg {
+        top: 19px;
+        left: 23.5px;
+        // height: 54px;
+        // width: 43.2px;
+    }
+
+    .bubble_mic_svg {
+        left: 31px;
+        top: 27px;
+        // width: 39px;
+        // height: 39px;
+    }
+
+    .modal-video-svg,
+    .modal-audio-svg {      
+        // width: 39px;
+        // height: 39px;
+        left: 34px;
+        top: 29.5px;
+        position: absolute;
+    }
+
+    // .modal-audio-svg {
+    //     left: 34px;
+    // }
+
+    // .modal-video-svg {        
+    //     left: 34px;
+    // }
+
+    .confirmation-modal-span {
+        color: #D02176;
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 15px;
+        font-style: normal;
+        font-family: Montserrat, 'LATO';
+        text-transform: capitalize;
+        margin-top: 3px;
+    }    
+
+    .custom-css {
+        margin-top: 10px;
+    }
+
+    .custom-button-unlink {
+        margin-left: 5px !important;
+        width: 60px;
+    }
+
+    .custom-button-link {
+        margin-left: 0 !important;
+        width: 55px;
+    }
+
+    .custom-button {
+        width: 72.27px;
+        height: 25px;
+        background-color: #D41E79;
+        border-radius: 15px;
+        border: none;
+        border: 1px solid #D41E79 !important;
+        color: #ffffff;
+        font-family: 'Montserrat';
+        text-transform: uppercase;
+        font-size: 10px;
+        line-height: 12.19px;
+        padding: 1px 6px !important;
+    }
+
+    .custom-button:hover {
+        color: #D41E79;
+        background-color: #ffffff;
+    }
+
+    .custom-button[disabled],
+    .custom-button[disabled]:hover {   
+        color: #ffffff;     
+        background: #808080;
+        cursor: not-allowed !important;
+        border: 1px solid #808080 !important;
+    }
+
+    .mt-13 {
+        margin-top: 13px;
+    }
+
+    .mt-8 {
+        margin-top: 8px;
+    }
+
+    .mt-40 {
+        margin-top: 40px
+    }
+
+    .mt-10 {
+        margin-top: 10px
+    }
+
+    .mr-5 {
+        margin-right: 5px
+    }
+
+    .pb-0 {
+        padding-bottom: 0px !important;
+    }
+
+    .share-button,
+    .add-step-button {
+        width: 108px !important;
+        height: 36px !important;
+        font-size: 13px;
+        border-radius: 50px !important;
+    }
+
+    .trailit_right_container button:focus {
+        border: none !important;
+    }
+
+    .scrollable-steps-list {
+        // max-height: 600px;
+        // max-height: 80%;
+        // overflow: auto;
+    }
+
+    .scrollable-steps-list::-webkit-scrollbar-track,
+    .sidepopcontent::-webkit-scrollbar-track {
+        -webkit-box-shadow: none;
+        background-color: transparent;
+    }
+
+    .scrollable-steps-list::-webkit-scrollbar,
+    .sidepopcontent::-webkit-scrollbar {
+        width: 7px;
+        background-color: transparent;
+    }
+
+    .scrollable-steps-list::-webkit-scrollbar-thumb,
+    .sidepopcontent::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: none;
+        background-color: #c4c4c4;
+    }
+
+    .tr_side_form::-webkit-scrollbar-track {
+        display: none;
+    }
+
+    .tr_side_form::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tr_side_form::-webkit-scrollbar-thumb {
+        display: none;
+    }
+
+    .add-step-bt-container {
+        margin-top: 10px;
+        text-align: center;
+    }
+
+    .trail_flipped .my-extension.my-extension-mobile {
+        display: none;
+    }
+
+    .overflow1 {
+        overflow: auto;
+    }
+
+    @keyframes rotate {
+        100% {
+          transform: rotate(360deg);
+        }
+    }
+
+    @keyframes dash {
+        0% {
+          stroke-dasharray: 1, 150;
+          stroke-dashoffset: 0;
+        }
+        50% {
+          stroke-dasharray: 90, 150;
+          stroke-dashoffset: -35;
+        }
+        100% {
+          stroke-dasharray: 90, 150;
+          stroke-dashoffset: -124;
+        }
+    }
+
+    #extension-splash-screen {
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        position: fixed;
+        align-items: center;
+        z-index: 999999999999;
+        justify-content: center;
+        flex-direction: column;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    #extension-splash-screen svg {
+        animation: rotate 2s linear infinite;
+        margin-left: calc(100vw - 100%);
+        width: 60px;
+        height: 60px;
+    }
+    
+    #extension-splash-screen svg circle {
+        stroke: #D41E79;
+        stroke-linecap: round;
+        animation: dash 1.5s ease-in-out infinite;
+    }
+
+    .widthAuto {
+        width: auto !important;
+    }
+
+    .mt-18 {
+        margin-top: 18px;
+    }
+
+    .pr5px {
+        padding-right: 5px !important;
     }
 `;
 

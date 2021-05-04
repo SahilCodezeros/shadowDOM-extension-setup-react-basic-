@@ -4,19 +4,10 @@ import $ from "jquery";
 import "./index.css";
 import "antd/dist/antd.css";
 
-import {
-  ForgotPassword,
-  Login,
-  UserConfirmation,
-  UserProfile,
-  UserVerification,
-  OtpVerification,
-  Signup,
-  ConfirmPassword,
-} from "./components";
+import { logout } from "./common/axios";
+import { Login, UserProfile } from "./components";
 
 const chrome = window.chrome;
-let bkg = chrome.extension.getBackgroundPage();
 
 class App extends React.Component {
   constructor(props) {
@@ -36,13 +27,10 @@ class App extends React.Component {
     };
   }
 
- 
-
   componentDidMount() {
-
     $("#my-extension-root-flip").remove();
     chrome.storage.local.get(
-      ["auth_Tokan", "userData", "isAuth"],
+      ["authToken", "userData", "isAuth"],
       function (items) {
         if (items.userData) {
           this.onClickToRedirect("userProfile");
@@ -56,6 +44,16 @@ class App extends React.Component {
         }
       }.bind(this)
     );
+
+    // Listen chrome message
+    chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
+      if (msgObj.type === "logout") {
+        $("body").attr("class", "");
+
+        this.onClickToRedirect("login");
+        chrome.runtime.sendMessage({ userLoggedIn: false });
+      }
+    });
   }
 
   /**
@@ -69,31 +67,32 @@ class App extends React.Component {
     this.setState({ active });
   };
 
-  onClickToLogout = () => {
-    this.onClickToRedirect("login");
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { status: "logout" });
-    });
-    chrome.runtime.sendMessage({ badgeText: `` });
-    chrome.storage.local.set({
-      trail_web_user_tour: [],
-      notification: true,
-      closeContinue: false,
-    });
-    chrome.storage.local.clear();
+  onClickToLogout = async () => {
+    try {
+      // Remove side tab if open
+      $("body").attr("class", "");
+
+      // Call logout api
+      await logout();
+
+      this.onClickToRedirect("login");
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { status: "logout" });
+      });
+      chrome.runtime.sendMessage({ badgeText: `` });
+      chrome.storage.local.set({
+        trail_web_user_tour: [],
+        notification: true,
+        closeContinue: false,
+      });
+      chrome.storage.local.clear();
+    } catch (err) {
+      console.log("err", err);
+    }
   };
 
   render() {
-    const {
-      login,
-      forgotPassword,
-      userConfirmation,
-      userVerification,
-      userProfile,
-      otpVerification,
-      signup,
-      confirmPassword,
-    } = this.state.active;
+    const { login, userConfirmation, userProfile } = this.state.active;
 
     chrome.storage.local.get(["isAuth"], function (items) {
       if (items.isAuth) {
@@ -113,37 +112,15 @@ class App extends React.Component {
     return (
       <div className={"trailMain"}>
         {login && <Login clickToRedirect={this.onClickToRedirect} />}
-        {forgotPassword && (
-          <ForgotPassword clickToRedirect={this.onClickToRedirect} />
-        )}
-        {userConfirmation && (
-          <UserConfirmation clickToRedirect={this.onClickToRedirect} />
-        )}
-        {userVerification && (
-          <UserVerification clickToRedirect={this.onClickToRedirect} />
-        )}
         {userProfile && (
           <UserProfile
             clickToRedirect={this.onClickToRedirect}
             onClickToLogout={this.onClickToLogout}
           />
         )}
-        {otpVerification && (
-          <OtpVerification clickToRedirect={this.onClickToRedirect} />
-        )}
-        {signup && <Signup clickToRedirect={this.onClickToRedirect} />}
-        {confirmPassword && (
-          <ConfirmPassword clickToRedirect={this.onClickToRedirect} />
-        )}
       </div>
     );
   }
 }
-
-chrome.storage.onChanged.addListener(function (changes, namespace) {
-  for (var key in changes) {
-    var storageChange = changes[key];
-  }
-});
 
 export default App;

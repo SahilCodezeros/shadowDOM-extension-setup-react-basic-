@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import $ from "jquery";
 import _ from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList, faThLarge } from "@fortawesome/free-solid-svg-icons";
 
 import { getUserOneTrail } from "../../common/axios";
 import BgImage from "../../images/trailit_bx_img.png";
@@ -21,18 +23,19 @@ class UserProfileList extends Component {
       isLoadingLink: false,
       isCopiedLink: false,
       isCopiedError: false,
+      viewType: "grid",
     };
   }
 
   styleBgImg = {
-    background: `url(${BgImage}) no-repeat scroll center center / cover`,
+    background: `linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${BgImage}) center center / cover no-repeat scroll`,
   };
 
   async componentWillReceiveProps(nextProps, prevState) {
     const { addRaw, getOneEditRow } = nextProps;
 
     let list = await nextProps.list;
-    if (!_.isEmpty(addRaw)) {
+    if (!_.isEmpty(addRaw) && this.props.title === "My Trails") {
       let findRow = await list.find((r) => r.trail_id == addRaw.trail_id);
       if (findRow == undefined) {
         list.push(addRaw);
@@ -73,17 +76,23 @@ class UserProfileList extends Component {
 
   onPublishLink = async (e, res) => {
     e.stopPropagation();
-    this.setState({ isLoadingLink: true });
+    // this.setState({ isLoadingLink: true });
+    const { userId } = this.props;
     let screen = resizeScreen() ? "mobile" : "web";
-    let result = await getUserOneTrail(res.user_id, res.trail_id, screen);
+    let result = await getUserOneTrail(res.trail_id, screen);
+
     if (result.status == 200) {
       if (result.data.response.statusCode == 200) {
         let trailList = result.data.response.result;
-        if (result.data.response.result.length > 0) {
+        if (
+          result.data.response &&
+          result.data.response.result &&
+          result.data.response.result.length > 0
+        ) {
           const trailId = res.trail_id;
           const URL = trailList[0].url;
           let qryString = URL.split("?").length > 1 ? "&" : "?";
-          const trailUrl = `http://go.trialit.co/live/${URL}${qryString}trailUserId=${res.user_id}&trailId=${trailId}&trailPreview=true&tourStep=1`;
+          const trailUrl = `${process.env.REACT_APP_GO_TRAILIT_URL}/live/${URL}${qryString}trailUserId=${userId}&trailId=${trailId}&trailPreview=true&tourStep=1&singleStepPreview=undefined&trailDataId=undefined&previewUserId=undefined&redirectUrl=undefined`;
 
           function copyStringToClipboard(str) {
             // Create new element
@@ -94,7 +103,10 @@ class UserProfileList extends Component {
 
             // Set non-editable to avoid focus and move outside of view
             el.setAttribute("readonly", "");
-            el.style = { position: "absolute", left: "-9999px" };
+            el.style = {
+              position: "absolute",
+              left: "-9999px",
+            };
             document.body.appendChild(el);
 
             // Select text inside element
@@ -107,13 +119,9 @@ class UserProfileList extends Component {
             document.body.removeChild(el);
           }
 
-          this.setState({ isCopiedLink: true });
-
-          setTimeout(() => {
-            this.setState({ isCopiedLink: false });
-          }, 2000);
-
           copyStringToClipboard(trailUrl);
+
+          alert("Successfully copied");
         } else {
           this.setState({ isCopiedError: true });
 
@@ -123,7 +131,6 @@ class UserProfileList extends Component {
         }
       }
     }
-    this.setState({ isLoadingLink: false });
   };
 
   onBoxClick = (e, res) => {
@@ -146,23 +153,16 @@ class UserProfileList extends Component {
       followedTrailUserData = { ...res.userData };
     }
 
-    chrome.storage.local.set(
-      {
-        trail_id: res.trail_id,
-        trail_name: res.trail_name,
-        trail_web_user_tour: undefined,
-        followedTrailUserData,
-      },
-      (items) => console.log("trail_web_user_tourtrail_web_user_tour", items)
-    );
-
-    let auth_Tokan, reload, userData;
+    chrome.storage.local.set({
+      trail_id: res.trail_id,
+      trail_name: res.trail_name,
+      trail_web_user_tour: undefined,
+      followedTrailUserData,
+      trail_status: res.trail_user_status,
+    });
     chrome.storage.local.get(
-      ["auth_Tokan", "userData", "reload", "openButton"],
+      ["authToken", "userData", "reload", "openButton"],
       function (items) {
-        // auth_Tokan = items.auth_Tokan, reload = items.reload, userData = items.userData;
-        // chrome.storage.local.clear();
-
         if (items.openButton === undefined) {
           chrome.storage.local.set({ openButton: "ManageTrail" });
         }
@@ -172,63 +172,154 @@ class UserProfileList extends Component {
     window.close();
   };
 
+  deleteButtonHandler = (e, trail) => {
+    e.stopPropagation();
+
+    chrome.storage.local.set({
+      trailDeleteModal: {
+        value: "open",
+        title: trail.trail_name,
+        id: trail.trail_id,
+      },
+    });
+  };
+
+  onListButtonHandler = () => {
+    // Set state
+    this.setState({ viewType: "list" });
+  };
+
+  onGridButtonHandler = () => {
+    // Set state
+    this.setState({ viewType: "grid" });
+  };
+
   render() {
+    const { isLoading, list, viewType } = this.state;
     const {
-      isLoadingLink,
-      isCopiedLink,
-      isCopiedError,
-      isLoading,
-      list,
-    } = this.state;
-    const { profileImage } = this.props;
+      profileImage,
+      errorMsg,
+      firstName,
+      lastName,
+      userName,
+    } = this.props;
+
+    // let userImage = "";
+    // this.props.title === "Following" ? res.userData && res.userData.profileImage !== "" ? res.userData.profileImage : require("../../images/user.png")
+    // : profileImage == "" ? require("../../images/user.png") : profileImage
+    // if (
+    //   this.props.title === "Following"
+    // ) {
+    //   if (res.userData && res.userData.profileImage !== "") {
+
+    //   } else {
+
+    //   }
+    //   userImage = items.authorData.profileImage;
+    // } else if (
+    //   items.followedTrailUserData &&
+    //   items.followedTrailUserData.profileImage
+    // ) {
+    //   userImage = items.followedTrailUserData.profileImage;
+    // } else if (items.userData && items.userData.profileImage) {
+    //   userImage = items.userData.profileImage;
+    // }
 
     return (
       <div className="trailit_userPanalContentInnerBox">
-        {isLoadingLink && (
-          <div className="trailit_loaderBox">
-            <div class="trial_spinner">
-              <img class="ring1" src={require(`../../images/loding1.png`)} />
-              <img class="ring2" src={require(`../../images/loding2.png`)} />
-            </div>
+        <div className="activeTab-list-grid-view">
+          <div className="trailit_18600 trailit_mb3">{this.props.title}</div>
+          <div className="list-grid-buttons">
+            <button
+              onClick={this.onListButtonHandler}
+              className={`list-button ${viewType === "list" ? "active" : ""}`}
+            >
+              <FontAwesomeIcon icon={faList} size="sm" />
+            </button>
+            <button
+              onClick={this.onGridButtonHandler}
+              className={`grid-button ${viewType === "grid" ? "active" : ""}`}
+            >
+              <FontAwesomeIcon icon={faThLarge} size="sm" />
+            </button>
           </div>
-        )}
-        {isCopiedLink && (
-          <div class="trailit_18600 trailit_mb3" style={{ color: "green" }}>
-            Your link successfully copied
-          </div>
-        )}
-        {isCopiedError && (
-          <div class="trailit_18600 trailit_mb3" style={{ color: "red" }}>
-            Please add trails data
-          </div>
-        )}
-        <div className="trailit_18600 trailit_mb3">{this.props.title}</div>
+        </div>
         <div className="trailit_scrollBoxs">
           <div className="trailit_Row">
-            {/* {isLoading && <div className="trailit_noData">Loading...</div>} */}
-            {list.length === 0 && !isLoading && (
-              <div className="trailit_noData">Data Not Available</div>
+            {list &&
+              list.length === 0 &&
+              !isLoading &&
+              errorMsg.length === 0 && (
+                <div className="trailit_noData">Data Not Available</div>
+              )}
+            {errorMsg.length > 0 && !isLoading && (
+              <div className="trailit_errorData">{errorMsg}</div>
             )}
             {!isLoading &&
+              list &&
               list.length > 0 &&
+              errorMsg.length === 0 &&
               list.map((res) => {
                 let styles = "";
                 let stlStatus = false;
 
                 if (
-                  res.cover_image_url != null &&
-                  res.cover_image_url != "null" &&
-                  res.cover_image_url != "" &&
-                  res.cover_image_url != undefined
+                  res.cover_image_url !== "" &&
+                  res.cover_image_url !== null &&
+                  res.cover_image_url !== "undefined"
                 ) {
                   stlStatus = true;
+
+                  let fileUrl = res.cover_image_url;
+
+                  if (fileUrl.includes("(") && fileUrl.includes(")")) {
+                    fileUrl = `'${fileUrl}'`;
+                  }
+
                   styles = {
-                    background: `url(${res.cover_image_url}) no-repeat scroll center center / cover`,
+                    background: `linear-gradient(0deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.25)), url(${fileUrl}) center center / cover no-repeat scroll`,
                   };
                 }
 
+                let user_name = "-";
+                let user_image = require("../../images/user.png");
+
+                if (this.props.title === "Following") {
+                  if (
+                    res.userData &&
+                    res.userData.firstName &&
+                    res.userData.lastName
+                  ) {
+                    user_name = `${res.userData.firstName} ${res.userData.lastName}`;
+                  } else if (res.userData && res.userData.userName) {
+                    user_name = res.userData.userName;
+                  }
+
+                  if (
+                    res.userData &&
+                    res.userData.profileImage &&
+                    res.userData.profileImage !== ""
+                  ) {
+                    user_image = res.userData.profileImage;
+                  }
+                } else {
+                  if (firstName && lastName) {
+                    user_name = `${firstName} ${lastName}`;
+                  } else if (userName) {
+                    user_name = userName;
+                  }
+
+                  if (profileImage !== "") {
+                    user_image = profileImage;
+                  }
+                }
+
                 return (
-                  <div className="trailit_col6">
+                  <div
+                    className={`trailit_col6 ${
+                      viewType === "list" ? "width100" : ""
+                    }`}
+                  >
                     <div
                       className="trailit_bx"
                       onClick={(e) => this.onBoxClick(e, res)}
@@ -241,41 +332,50 @@ class UserProfileList extends Component {
                         >
                           <div className="trailit_img_content">
                             <div className="trailit_top">
-                              <div className="trailit_dotsMenu">
-                                <button
-                                  type="button"
-                                  onClick={this.handleClickMenu}
-                                  className="trailit_dotsButton"
-                                >
-                                  <img
-                                    width="16px"
-                                    src={require("../../images/dots.svg")}
-                                    alt="dots"
-                                  />
-                                </button>
-                                {this.state.showMenu && (
-                                  <div className="trailit_dotsMenuList">
-                                    <button
-                                      type="button"
-                                      onClick={(e) =>
-                                        this.onPublishLink(e, res)
-                                      }
-                                    >
-                                      Share
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={(e) =>
-                                        this.onClickToEdit(e, res)
-                                      }
-                                    >
-                                      Edit
-                                    </button>
-                                    <button type="button">Publish</button>
-                                    <button type="button">Delete</button>
-                                  </div>
-                                )}
-                              </div>
+                              {this.props.title !== "Following" && (
+                                <div className="trailit_dotsMenu">
+                                  <button
+                                    type="button"
+                                    onClick={this.handleClickMenu}
+                                    className="trailit_dotsButton"
+                                  >
+                                    <img
+                                      width="16px"
+                                      src={require("../../images/dots.svg")}
+                                      alt="dots"
+                                    />
+                                  </button>
+                                  {this.state.showMenu && (
+                                    <div className="trailit_dotsMenuList">
+                                      <button
+                                        type="button"
+                                        onClick={(e) =>
+                                          this.onPublishLink(e, res)
+                                        }
+                                      >
+                                        Share
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={(e) =>
+                                          this.onClickToEdit(e, res)
+                                        }
+                                      >
+                                        Edit
+                                      </button>
+                                      {/* <button type="button">Publish</button> */}
+                                      <button
+                                        type="button"
+                                        onClick={(e) =>
+                                          this.deleteButtonHandler(e, res)
+                                        }
+                                      >
+                                        Delete
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                             <div className="trailit_bottom">
                               <div className="trailit_bottom_content d-flex justify-content-between">
@@ -283,28 +383,11 @@ class UserProfileList extends Component {
                                   <img
                                     alt="user_image"
                                     className="trialit_user"
-                                    src={
-                                      this.props.title === "Followed"
-                                        ? res.userData &&
-                                          res.userData.profileImage === ""
-                                          ? require("../../images/user.png")
-                                          : res.userData.profileImage
-                                        : profileImage == ""
-                                        ? require("../../images/user.png")
-                                        : profileImage
-                                    }
+                                    src={user_image}
                                   />
                                   <span className="trailit_ml2 trailit_ellipsis_40">
-                                    {res.trail_name}
+                                    {user_name}
                                   </span>
-                                </div>
-                                <div className="trailit_8_500_roboto trailit_text_white align-items-center d-flex">
-                                  <img
-                                    alt="trailit_coin"
-                                    width="11px"
-                                    src={require("../../images/trailit_coin.png")}
-                                  />
-                                  <span className="trailit_ml2">94</span>
                                 </div>
                               </div>
                             </div>
@@ -313,7 +396,7 @@ class UserProfileList extends Component {
                       </div>
                       <div className="trailit_bx_title">
                         <div className="trailit_10_500 trailit_ellips_2line">
-                          {res.trail_description}
+                          {res.trail_name}
                         </div>
                       </div>
                     </div>

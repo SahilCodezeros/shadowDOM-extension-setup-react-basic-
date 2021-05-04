@@ -67,8 +67,10 @@ export const textEditor1 = `
 
     .create-link-input {
         // flex: 1;
+        height: 15px;
+        font-size: 12px;
         width: 100%;
-        font-size: inherit;
+        // font-size: inherit;
         font-weight: normal;
         padding: 0.5em 0.8em;
         margin: 0 10px 0 0;
@@ -82,9 +84,11 @@ export const textEditor1 = `
     }
 
     .create-link-button-container {
+        width: 48%;
         display: flex;
+        align-items: center;
         margin-bottom: 10px;
-        border: 1px solid #bbb;
+        // border: 1px solid #bbb;
         border-top-color: #ccc;
         border-bottom-color: #888;
         border-radius: 3px;

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import $ from "jquery";
-import { Button } from "antd";
 
 import { isValidated } from "./validation";
 import { getAllCategory, createTrailId } from "../../common/axios";
@@ -41,8 +40,9 @@ class userProfileAdd extends Component {
 
   onClickToSubmit = (e) => {
     e.preventDefault();
-    const { trail_title } = this.state;
     const { errors, isValid } = isValidated(this.state);
+    console.log("error", errors);
+    console.log("isValid", isValid);
 
     if (!isValid) {
       this.setState({ errors });
@@ -54,7 +54,7 @@ class userProfileAdd extends Component {
         ["trail_web_user_tour", "userData"],
         async function (items) {
           let obj = {
-            user_id: items.userData._id,
+            // user_id: items.userData._id,
             trail_name: trail_title,
             trail_description,
             trail_category_id: 1,
@@ -107,8 +107,16 @@ class userProfileAdd extends Component {
         {isLoading && (
           <div className="trailit_loaderBox">
             <div class="trial_spinner">
-              <img class="ring1" src={require(`../../images/loding1.png`)} />
-              <img class="ring2" src={require(`../../images/loding2.png`)} />
+              <img
+                alt="loading1"
+                class="ring1"
+                src={require(`../../images/loding1.png`)}
+              />
+              <img
+                alt="loading2"
+                class="ring2"
+                src={require(`../../images/loding2.png`)}
+              />
             </div>
           </div>
         )}

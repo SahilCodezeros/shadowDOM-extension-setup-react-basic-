@@ -1,17 +1,19 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
-import ReactPlayer from "react-player";
 import $ from "jquery";
 import { Button } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
 import dragElement from "../common/draggable";
-import { audioTourCss1 } from "../css/audioTour";
+import { resizeScreen } from "../common/helper";
+import { audioTourCss1, audioPlayerCss2 } from "../css/audioTour";
 import { stopMediaPlaying } from "../common/stopePlayingMedia";
 import {
   addTrailitLogo,
   removeTrailitLogo,
 } from "../common/trailitLogoInPreview";
 import ContinueTourConfirmation from "./Modal/ContinueTourConfirmation";
+import { matchUrl } from "./common";
 
 const chrome = window.chrome;
 let timeInterval;
@@ -27,6 +29,7 @@ class AudioTour extends React.PureComponent {
       doneTour: false,
       step: 0,
       profileImage: "",
+      mobileScreen: false,
     };
   }
 
@@ -44,25 +47,50 @@ class AudioTour extends React.PureComponent {
     this.onClickToManagePopoverButton(event, tourSide);
     this.props.audioToggle();
   };
+
   toSignInWithoutLogin = () => {
-    this.props.toggle()
+    this.props.toggle();
+  };
+
+  resizeWindow = () => {
+    const { mobileScreen } = this.state;
+
+    if (resizeScreen()) {
+      if (!mobileScreen) {
+        // Set state
+        this.setState({ mobileScreen: true });
+      }
+    } else {
+      if (mobileScreen) {
+        // Set state
+        this.setState({ mobileScreen: false });
+      }
+    }
   };
 
   componentDidMount() {
-    // console.log("did mount");
-    // console.log("this.props", this.props);
     let self = this;
     chrome.storage.local.get(
       ["userData", "isPreview", "authorData", "followedTrailUserData"],
       (items) => {
+        let profileImage = "";
+        if (
+          items.isPreview &&
+          items.authorData &&
+          items.authorData.profileImage
+        ) {
+          profileImage = items.authorData.profileImage;
+        } else if (
+          items.followedTrailUserData &&
+          items.followedTrailUserData.profileImage
+        ) {
+          profileImage = items.followedTrailUserData.profileImage;
+        } else if (items.userData && items.userData.profileImage) {
+          profileImage = items.userData.profileImage;
+        }
+
         self.setState({
-          profileImage: items.isPreview
-            ? items.authorData.profileImage
-            : items.followedTrailUserData
-            ? items.followedTrailUserData.profileImage
-            : items.userData.profileImage
-            ? items.userData.profileImage
-            : "",
+          profileImage: profileImage,
           audioLoad: true,
           audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
           tourStep: this.props.tourStep,
@@ -70,44 +98,9 @@ class AudioTour extends React.PureComponent {
       }
     );
 
-    if (this.props.data[this.props.tourStep - 1].url !== document.URL) {
+    if (!matchUrl(this.props.data[this.props.tourStep - 1].url, document.URL)) {
       window.location.href = this.props.data[this.props.tourStep - 1].url;
     }
-
-    //
-
-    // if(document.URL.includes('youtube.com')) {
-    //     let videoElem = document.querySelector('.video-stream.html5-main-video');
-    //     videoElem.addEventListener('onloadeddata', () => {
-    //         videoElem.pause();
-    //     })
-    //     setTimeout(() => {
-    //         videoElem.pause();
-    //     }, 1000)
-    // }
-
-    // setTimeout(() => {
-    //     if(document.querySelector('.audio_wrap_tooltip')!== null) {
-    //         document.querySelectorAll('video').forEach(res => {
-    //             if(res.className !== "preview-video") {
-    //                 res.pause()
-    //             }
-    //         })
-    //     }
-    // }, 1000);
-
-    // if (document.readyState === 'complete') {
-    //     $(document).ready(() => {
-    // // Stop playing websites audio or video
-    // stopMediaPlaying();
-    //     });
-
-    // } else {
-    //     document.body.onload = function () {
-    //         // Stop playing websites audio or video
-    //         stopMediaPlaying();
-    //     };
-    // }
 
     if (document.readyState === "complete") {
       $(document).ready(() => {
@@ -131,6 +124,9 @@ class AudioTour extends React.PureComponent {
 
     // Add trailit logo
     addTrailitLogo();
+
+    // Register add event listener
+    window.addEventListener("resize", this.resizeWindow);
   }
 
   /**
@@ -139,13 +135,10 @@ class AudioTour extends React.PureComponent {
    * @step tooltip current step
    */
   onClickToManagePopoverButton = async (event, tourSide) => {
-
     let { tourStep } = this.props;
     let step = tourSide === "prev" ? tourStep - 1 : tourStep + 1;
 
-   
-   
-    if (this.props.data[step - 1].url === document.URL) {
+    if (matchUrl(this.props.data[step - 1].url, document.URL)) {
       let type = this.props.data[step - 1].type;
       this.props.tour(step, type, tourSide);
     } else {
@@ -166,12 +159,10 @@ class AudioTour extends React.PureComponent {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    // console.log("did updated");
     if (
       this.props.tourStep !== prevProps.tourStep &&
       this.props.data[this.props.tourStep - 1].type === this.state.type
     ) {
-      // console.log("audio url");
       this.setState({
         audioUrl: new Audio(this.props.data[this.props.tourStep - 1].web_url),
       });
@@ -200,8 +191,11 @@ class AudioTour extends React.PureComponent {
       this.cleanup();
     }
 
-    // Remove trailit log
+    // Remove trailit logo
     removeTrailitLogo();
+
+    // Remove add event listener
+    window.removeEventListener("resize", this.resizeWindow);
   }
 
   render() {
@@ -210,21 +204,16 @@ class AudioTour extends React.PureComponent {
       this.cleanup();
     }
 
-    // $(() => {
     const tr_audioplayer = document
       .getElementById("extension-div")
       .shadowRoot.querySelector(".tr_audioplayer");
 
-    // document.querySelector(".tr_audioplayer-time-current").textContent = this.getTimeCodeFromNum(0);
-    // audio = this.state.audioUrl;
-    // audio.src = this.props.data[this.props.tourStep - 1].web_url;
-    // audio.src = this.state.audioUrl;
-
-    if (this.state.audioLoad) {
+    if (this.state.audioLoad && this.state.audioUrl) {
       audio = this.state.audioUrl;
       audio.autoplay = true;
+
       const playBtn = tr_audioplayer.querySelector(".tr_audioplayer-playpause");
-      if (!this.props.previewInTooltip) {
+      if (!this.props.previewInTooltip && !resizeScreen()) {
         const audioWrapTooltip = document
           .getElementById("extension-div")
           .shadowRoot.querySelector(".audio_wrap_tooltip");
@@ -237,12 +226,14 @@ class AudioTour extends React.PureComponent {
 
       //credit for song: Adrian kreativaweb@gmail.com
       audio.addEventListener("loadeddata", () => {
-        // console.log("audio loaded", playAudio);
         if (!playAudio) {
           playAudio = true;
 
           if (
-            this.props.data[this.props.tourStep - 1].url === document.URL &&
+            matchUrl(
+              this.props.data[this.props.tourStep - 1].url,
+              document.URL
+            ) &&
             document
               .getElementById("extension-div")
               .shadowRoot.querySelector(".audio_wrap_tooltip")
@@ -319,7 +310,6 @@ class AudioTour extends React.PureComponent {
 
       //toggle between playing and pausing on button click
       playBtn.addEventListener("click", () => {
-        // console.log("on play button click");
         if (audio.paused) {
           playBtn.classList.add("tr_audioplayer-playing");
           chrome.storage.local.get(["AutoPlayMediaToggle"], (items) => {
@@ -392,14 +382,11 @@ class AudioTour extends React.PureComponent {
         ).padStart(2, 0)}`;
       }
     }
-    // });
-
     const { tourStep } = this.props;
 
     return (
-      // className={`trail_tooltip_done ${tourSide==='prev'?"trail_vC trail_video_overlayPrev trail_tooltip_done":"trail_vC trail_video_overlayNext trail_tooltip_done"}`}
       <div>
-         {this.props.audioRef && (
+        {this.props.audioRef && (
           <ContinueTourConfirmation
             open={this.props.audioRef}
             toggle={this.props.audioToggle}
@@ -408,10 +395,16 @@ class AudioTour extends React.PureComponent {
           />
         )}
         <style>{audioTourCss1}</style>
-        <div className="audio_wrap_tooltip">
+        <style>{audioPlayerCss2}</style>
+        <div
+          className={`audio_wrap_tooltip ${
+            resizeScreen() && "audio_wrap_mobile"
+          }`}
+        >
           <div className="audio_wrap_tooltip_innr">
             <div className="trialit_audio tr_gradient_border">
               <img
+                alt="user-img"
                 src={
                   this.state.profileImage == ""
                     ? require("../images/user.png")
@@ -419,22 +412,47 @@ class AudioTour extends React.PureComponent {
                 }
               />
               <div className="tr_audioplayer">
-                <div className="tr_audioplayer-playpause" title="Play">
+                <div
+                  className={`tr_audioplayer-playpause ${
+                    resizeScreen() && "playpause-mobile"
+                  }`}
+                  title="Play"
+                >
                   <a>Play</a>
                 </div>
-                <div className="tr_audioplayer-time tr_audioplayer-time-current">
+                <div
+                  className={`tr_audioplayer-time tr_audioplayer-time-current ${
+                    resizeScreen() && "time-current-mobile"
+                  }`}
+                >
                   00:00
                 </div>
-                <div className="tr_audioplayer-bar">
+                <div
+                  className={`tr_audioplayer-bar ${
+                    resizeScreen() && "time-bar-modile"
+                  }`}
+                >
                   <div className="tr_audioplayer-bar-loaded"></div>
                   <div className="tr_audioplayer-bar-played"></div>
                 </div>
-                <div className="tr_audioplayer-time tr_audioplayer-time-duration"></div>
-                <div className="volume-container">
+                <div
+                  className={`tr_audioplayer-time tr_audioplayer-time-duration ${
+                    resizeScreen() && "time-duration-mobile"
+                  }`}
+                ></div>
+                <div
+                  className={`volume-container ${
+                    resizeScreen() && "volume-mobile"
+                  }`}
+                >
                   <div className="volume-button">
                     <div className="volume icono-volumeMedium"></div>
                   </div>
-                  <div className="volume-slider">
+                  <div
+                    className={`volume-slider ${
+                      resizeScreen() && "volume-slider-mobile"
+                    }`}
+                  >
                     <div className="volume-slider-root">
                       <div className="volume-percentage"></div>
                     </div>
@@ -464,15 +482,11 @@ class AudioTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary ex_mr_10"
+                    className="custom-button ex_mr_10"
                     onClick={(e) => {
                       audio.pause();
                       clearInterval(timeInterval);
-                      this.onClickToManagePopoverButton(
-                        e,
-                        tourStep - 1,
-                        "prev"
-                      );
+                      this.onClickToManagePopoverButton(e, "prev");
                     }}
                   >
                     Previous
@@ -483,13 +497,11 @@ class AudioTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary"
+                    className="custom-button"
                     onClick={(e) => {
-
-                      console.log({current: this.props.data[this.props.tourStep]});
                       audio.pause();
                       clearInterval(timeInterval);
-                     
+
                       this.handleWithoutLogin(
                         e,
                         "next",
@@ -506,7 +518,7 @@ class AudioTour extends React.PureComponent {
                 <React.Fragment>
                   <button
                     disabled={this.props.onDone}
-                    className="ant-btn ant-btn-primary"
+                    className="custom-button"
                     onClick={() => {
                       audio.pause();
                       this.onClickToDoneTour(tourStep);

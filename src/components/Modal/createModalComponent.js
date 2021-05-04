@@ -26,6 +26,8 @@ class CreateModalComponent extends React.PureComponent {
       fileName: "",
       fileLoading: false,
       showPreview: false,
+      titleInvalid: false,
+      fileNameInvalid: false,
     };
   }
 
@@ -48,8 +50,14 @@ class CreateModalComponent extends React.PureComponent {
   onChangeToInput = (e) => {
     e.stopPropagation();
 
-    // this.setState({ [e.target.name]: e.target.value });
-    this.setState({ title: e.target.value });
+    const value = e.target.value;
+    const isInvalid = value.length === 0 ? true : false;
+
+    // Set state
+    this.setState({
+      title: value,
+      titleInvalid: isInvalid,
+    });
   };
 
   onTitleChangeHandler = (e) => {
@@ -62,21 +70,34 @@ class CreateModalComponent extends React.PureComponent {
     this.setState({ description: value });
   };
 
-  onAddStep = (values) => {
+  onAddStep = async () => {
+    const { trailStatus, title, web_url, description, fileName } = this.state;
+
+    if (fileName === "" || title === "") {
+      this.setState({
+        fileNameInvalid: true,
+        titleInvalid: true,
+      });
+
+      return;
+    } else {
+      this.setState({
+        fileNameInvalid: false,
+        titleInvalid: false,
+      });
+    }
+
+    // Call on tour loading function
+    this.props.onTourLoading(true);
+
     let obj;
-    const { trailStatus, title, web_url, description } = this.state;
 
     if (trailStatus === "text") {
-      // this.props.form.validateFields((err, values) => {
-      //     if (err || values.title === '' || (!description || description === '')) {
-      //         return;
-      //     }
-
       obj = {
         url: document.URL,
         type: "modal",
         mediaType: "modal",
-        title: values.title,
+        title: title,
         description,
       };
       // });
@@ -94,8 +115,19 @@ class CreateModalComponent extends React.PureComponent {
       };
     }
 
-    this.props.onSave(obj);
-    this.toggle();
+    try {
+      await this.props.onSave(obj);
+      this.toggle();
+
+      // Call on tour loading function
+      this.props.onTourLoading(false);
+    } catch (err) {
+      console.log("err", err);
+      // Call on tour loading function
+      this.props.onTourLoading(false);
+
+      alert("Error while creating tour!");
+    }
   };
 
   toggle = () => {
@@ -129,6 +161,7 @@ class CreateModalComponent extends React.PureComponent {
           showPreview: true,
           fileLoading: false,
           fileName: file.name,
+          fileNameInvalid: false,
           web_url: data.response.result.fileUrl,
         });
       })
@@ -146,7 +179,14 @@ class CreateModalComponent extends React.PureComponent {
   };
 
   selectedTooltipForm = (mediaType) => {
-    const { trailStatus, title, fileName, fileLoading } = this.state;
+    const {
+      trailStatus,
+      title,
+      fileName,
+      fileLoading,
+      titleInvalid,
+      fileNameInvalid,
+    } = this.state;
 
     // Common tooltip form function imported from common file
     return commonTooltipFormFunction(
@@ -158,7 +198,9 @@ class CreateModalComponent extends React.PureComponent {
       this.onAddStep,
       this.onChangeToInput,
       this.handleChange,
-      mediaType
+      mediaType,
+      titleInvalid,
+      fileNameInvalid
     );
   };
 
@@ -180,7 +222,8 @@ class CreateModalComponent extends React.PureComponent {
       this.onDescriptionChangeHandler,
       this.toggle,
       this.onAddStep,
-      this.selectedTooltipForm
+      this.selectedTooltipForm,
+      fileLoading
     );
 
     const { trailStatus } = this.state;
@@ -240,7 +283,7 @@ class CreateModalComponent extends React.PureComponent {
             toggle={this.toggle}
             className="tr_modal_trail_modal_header"
           >
-            Create {headerTitle} Modal
+            Create {headerTitle} Overlay
           </ModalHeader>
           <ModalBody>
             {commonTypeSelectonButton(

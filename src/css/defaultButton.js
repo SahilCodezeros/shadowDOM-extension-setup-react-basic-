@@ -36,9 +36,11 @@ export const defaultButtonCss1 = `
     } */
     
     div#my-extension-defaultroot {
-        font-family: 'Lato', sans-serif;
         display: block;
-        z-index: 999999999;
+        border-radius: 5px;
+        font-family: 'Lato', sans-serif;
+        z-index: 99999999;
+        box-shadow: rgb(212 30 121) 0px 0px 9px;
     }
     
     #my-extension-defaultroot .sidepopup {
@@ -50,7 +52,8 @@ export const defaultButtonCss1 = `
     }
     
     #my-extension-defaultroot .sidepanal {
-        height: calc(100vh - 170px);
+        // height: calc(100vh - 170px);
+        height: calc(100vh - 150px);
         position: relative;
     }
     
@@ -73,18 +76,19 @@ export const defaultButtonCss1 = `
     
     #my-extension-defaultroot .title {
         // font-size: 22px;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
         line-height: 24px;
-        color: #fb542b;
+        // color: #fb542b;
+        color: #000000;
         text-transform: unset;
         -webkit-text-transform: unset;
-        font-family: 'Lato', sans-serif;
+        font-family: Montserrat, 'Lato', sans-serif;
         text-align: left;
     }
     
     #my-extension-defaultroot .my-4 {
-        margin: 30px 0 10px;
+        margin: 30px 0 15px;
     }
     
     #my-extension-defaultroot .optionBtn {
@@ -93,10 +97,11 @@ export const defaultButtonCss1 = `
     
     #my-extension-defaultroot .titleBack {
         float: left;
-        color: #fb542b;
-        font-size: 17px;
-        font-weight: bold;
+        color: #D41E79;
         display: table;
+        font-size: 18px;
+        font-weight: bold;
+        font-family: Montserrat;
     }
 
     .trail_builder-back-button {
@@ -320,7 +325,8 @@ export const defaultButtonCss1 = `
     }
 
     #my-extension-defaultroot .flow {
-        max-height: calc(100vh - 675px);
+        // max-height: calc(100vh - 675px);
+        max-height: calc(100vh - 19px);
     }
     
     #my-extension-defaultroot .flow .li {
@@ -349,6 +355,11 @@ export const defaultButtonCss2 = `
         font-family: "Lato", sans-serif !important;
     }
 
+    #my-extension-defaultroot input[type="text"]:focus {
+        outline: none !important;
+        border: 1px solid #D41E79 !important;
+    }
+
     .trail_tooltip input.ant-input[type="password"]::-webkit-input-placeholder,
     .trail_tooltip input.ant-input[type="text"]::-webkit-input-placeholder,
     .trail_create_modal input.ant-input[type="text"]::-webkit-input-placeholder,
@@ -366,7 +377,7 @@ export const defaultButtonCss2 = `
     #my-extension-defaultroot .sidepopup.open {
         animation: opacity 0.7s forwards;
         -webkit-animation: opacity 0.7s forwards;
-        overflow: auto !important;
+        // overflow: auto !important;
     }
 
     #my-extension-defaultroot .sidepopup.open * {
@@ -471,7 +482,8 @@ export const defaultButtonCss2 = `
     #my-extension-defaultroot .sidepopup.open .drag_icon img {
         width: 15px !important;
         height: 15px !important;
-        opacity: 0.3 !important;
+        // opacity: 0.3 !important;
+        opacity: 1 !important;
         animation: none !important;
         color: #aaaaaa !important;
     }
@@ -485,15 +497,24 @@ export const defaultButtonCss2 = `
     }
 
     .sidepopcontent {
-        height: calc(100% - 31px); 
+        height: calc(100% - 105px); 
         overflow: auto;
-        padding-right: 29px;
+        // overflow: hidden;
+        // padding-right: 29px;
+    }
+
+    .overflowAuto {
+        overflow: auto;
     }
 
     .sidepopcontent .trailButtonsWrapper {
         display: flex;
         justify-content: space-around;
         padding-bottom: 20px;
+    }
+
+    .jc-end {
+        justify-content: flex-end !important;
     }
 
     .trail_video_frm {
@@ -531,28 +552,39 @@ export const defaultButtonCss2 = `
         transition: all 0.3s ease 0s;
         text-align: left;
     }
+
+    textarea.ant-input:focus,
+    input.ant-input[type="password"]:focus,
+    input.ant-input[type="text"]:focus {
+        outline: none !important;
+        border: 1px solid #D41E79 !important;
+    }
     
     .tr_side_form {
-        display: table;
+        // display: table;
         padding: 10px 0;
         width: 100%;
+        overflow: auto;
+        height: 96%;
     }
 
     .trailitStepBox {
         box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
         border-radius: 7px;
-        background: #fff;
+        background-color: #D41E79;
         margin: 0 0 10px 5px !important;
         position: relative;
         display: flex;
         justify-content: space-between;
+        height: 67px;
     }
 
     .trailitStepBox.active,
     .info_bbx.active,
-    // .info_bbx_gradient.active,
-    // .info_bbx_grey.active {
-        border: 1px solid black;
+    .info_bbx_gradient.active,
+    .info_bbx_grey.active {
+        border: 2px solid #f04d26;
+        width: 89.5% !important;
     }
 
     .trailitStepBox.trailitSubStepBox .trailitStepTitle {
@@ -577,13 +609,14 @@ export const defaultButtonCss2 = `
     }
 
     .trailitStepTitle {
-        font-family: "Roboto", sans-serif;
+        font-family: Montserrat, "Roboto", sans-serif;
         font-style: normal;
         font-weight: normal;
-        font-size: 14px;
+        font-size: 13px;
         margin: 25px 15px;
         line-height: 19px;
-        color: #000000;
+        // color: #000000;
+        color: #ffffff;
         display: -webkit-box !important;
         -webkit-line-clamp: 2 !important;
         -webkit-box-orient: vertical !important;
@@ -593,12 +626,16 @@ export const defaultButtonCss2 = `
         word-break: break-all !important;
     }
 
+    .trailitStepTitle span {
+        margin-left: 10px;
+    }
+
     .trailitIconRight {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: flex-end;
-        padding: 5px 10px 10px 0;
+        padding: 10px 10px 10px 0;
     }
 
     .trailitIconRight > div {
@@ -654,11 +691,12 @@ export const defaultButtonCss3 = `
 
     #my-extension-defaultroot .transparent_background {
         background: transparent;
-    }
+    }    
 `;
 
 export const deleteModalCss = `
-    .trial_modal_show {
+    .trial_create_modal_main,
+    .trail_preview_modal_main {
         z-index: unset !important;  
     }
 
@@ -818,7 +856,7 @@ export const deleteModalCss = `
         font-size: 18px !important;
         line-height: 29px !important;
         color: #000000 !important;
-        font-family: "Lato", sans-serif !important;
+        font-family: Montserrat, "Lato", sans-serif !important;
         padding-bottom: 40px !important;
         display: block !important;
     }
@@ -835,6 +873,4 @@ export const deleteModalCss = `
     button:focus {
         outline: none !important;
     }
-
-    //
 `;

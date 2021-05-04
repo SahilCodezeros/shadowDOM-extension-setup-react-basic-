@@ -159,27 +159,42 @@ const TextEditor = memo((props) => {
   };
 
   // On create link click handler function
-  const onCreateLinkClickHandler = (command) => {
-    if (!link.includes("https://")) return;
+  const onCreateLinkClickHandler = (e, command) => {
+    e.preventDefault();
+    // if (!link.includes("https://")) {
+    //   alert("Please provide valid https address!");
+
+    //   return;
+    // }
 
     const shadowRoot = document.getElementById("extension-div").shadowRoot;
+    const iFrame = shadowRoot.querySelector("iframe");
+
+    const selection = iFrame.contentWindow.document.getSelection();
 
     // Execute exec command function
-    shadowRoot
-      .querySelector("iframe")
-      .contentWindow.document.execCommand(command, false, link);
+    iFrame.contentWindow.document.execCommand(command, false, link);
+    selection.anchorNode.parentElement.target = "_blank";
 
     // Remove active-text-button class
     shadowRoot
       .querySelector(".linkButton")
       .classList.remove("active-text-button");
 
+    // Get innerHTML of body
+    const description = iFrame.contentWindow.document.body.innerHTML;
+
+    // Call on change function
+    onChange(description);
+
     // Call remove create link container
     removeCreateLinkContainer();
   };
 
   // On unlink click handler function
-  const onUnlinkClickHandler = (command) => {
+  const onUnlinkClickHandler = (e, command) => {
+    e.preventDefault();
+
     const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
     // Execute exec command function
@@ -191,6 +206,13 @@ const TextEditor = memo((props) => {
     shadowRoot
       .querySelector(".linkButton")
       .classList.remove("active-text-button");
+
+    // Get innerHTML of body
+    const description = shadowRoot.querySelector("iframe").contentWindow
+      .document.body.innerHTML;
+
+    // Call on change function
+    onChange(description);
 
     // Call remove create link container
     removeCreateLinkContainer();
@@ -279,21 +301,22 @@ const TextEditor = memo((props) => {
             <input
               value={link}
               className="create-link-input"
+              onKeyDown={(e) => e.stopPropagation()}
               onChange={(e) => onInputChangeHandler(e)}
             />
             <div className="create-link-button-container">
-              <input
-                value="Link"
-                type="button"
-                className="create-link-button"
-                onClick={(e) => onCreateLinkClickHandler("createLink")}
-              />
-              <input
-                type="button"
-                value="Unlink"
-                className="create-link-button"
-                onClick={(e) => onUnlinkClickHandler("unlink")}
-              />
+              <button
+                className="custom-button-link custom-button"
+                onClick={(e) => onCreateLinkClickHandler(e, "createLink")}
+              >
+                Link
+              </button>
+              <button
+                className="custom-button-unlink custom-button"
+                onClick={(e) => onUnlinkClickHandler(e, "unlink")}
+              >
+                Unlink
+              </button>
             </div>
           </div>
         </div>

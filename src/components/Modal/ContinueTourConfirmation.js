@@ -1,5 +1,5 @@
 import React from "react";
-import {  Modal, ModalHeader, ModalBody } from "reactstrap";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 import $ from "jquery";
 import { Button } from "antd";
 
@@ -43,7 +43,7 @@ class ContinueTourConfirmation extends React.Component {
           centered={true}
           container={document.getElementById("extension-div").shadowRoot}
         >
-          <ModalHeader className="tr_modal_trail_modal_header" >
+          <ModalHeader className="tr_modal_trail_modal_header">
             Reminder
           </ModalHeader>
           <ModalBody>
@@ -52,7 +52,11 @@ class ContinueTourConfirmation extends React.Component {
                 <Button type="primary" onClick={continueTrail}>
                   Continue Trail
                 </Button>
-                <Button className="outlined-btn"  onClick={(e) => toSignIn()} style={{marginLeft:5}}>
+                <Button
+                  className="outlined-btn"
+                  onClick={(e) => toSignIn()}
+                  style={{ marginLeft: 5 }}
+                >
                   SignIn
                 </Button>
               </div>
