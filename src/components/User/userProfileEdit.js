@@ -18,7 +18,6 @@ class UserProfileEdit extends PureComponent {
       trail_id: "",
       trail_title: "",
       trail_user_status: "",
-      cover_image_name: "",
       errors: {},
       isSubmit: false,
       isLoading: false,
@@ -37,6 +36,7 @@ class UserProfileEdit extends PureComponent {
     this.setState({
       categoryList: categoryList,
       cover_image_url: data.cover_image_url,
+      trail_intro_url: data.trail_intro_url,
       trail_categor_id: data.trail_categor_id,
       trail_description: data.trail_description,
       trail_id: data.trail_id,
@@ -68,10 +68,12 @@ class UserProfileEdit extends PureComponent {
     });
   };
 
-  uploadFile = (file) => {
-    const { errors } = isValidated({ file });
+  uploadFile = (file, fieldLabel) => {
+    const { errors } = isValidated({ [fieldLabel]:file });
 
-    if (errors.hasOwnProperty("file")) {
+    console.log({errors});
+
+    if (errors.hasOwnProperty(fieldLabel)) {
       this.setState((prevState) => {
         return {
           errors: { ...prevState.errors, ...errors },
@@ -91,9 +93,14 @@ class UserProfileEdit extends PureComponent {
         return res.data;
       })
       .then((data) => {
+        console.log("reponse", {
+          [fieldLabel]: data.response.result.fileUrl,
+          [fieldLabel+"_name"]: file.name,
+          isLoading: false,
+        });
         this.setState({
-          cover_image_url: data.response.result.fileUrl,
-          cover_image_name: file.name,
+          [fieldLabel]: data.response.result.fileUrl,
+          [fieldLabel+"_name"]: file.name,
           isLoading: false,
         });
       })
@@ -103,13 +110,13 @@ class UserProfileEdit extends PureComponent {
       });
   };
 
-  handleChange = (e) => {
+  handleChange = (e, fieldLabel) => {
     // const { tourType } = this.state;
     const file = e.target.files[0];
     // const fileType = file.type.split("/");
     e.target.value = null;
     // Upload file function
-    this.uploadFile(file);
+    this.uploadFile(file,fieldLabel);
   };
 
   onCheckedUserPrivate = async (e) => {
@@ -135,12 +142,14 @@ class UserProfileEdit extends PureComponent {
     this.setState({
       categoryList: [],
       cover_image_url: "",
+      trail_intro_url: "",
+      cover_image_url_name: "",
+      trail_intro_url_name: "",
       trail_categor_id: "",
       trail_description: "",
       trail_id: "",
       trail_title: "",
       trail_user_status: "",
-      cover_image_name: "",
       errors: {},
       isSubmit: false,
       isLoading: false,
@@ -211,7 +220,9 @@ class UserProfileEdit extends PureComponent {
     const {
       isLoading,
       cover_image_url,
-      cover_image_name,
+      trail_intro_url,
+      cover_image_url_name,
+      trail_intro_url_name,
       trail_categor_id,
       trail_description,
       trail_title,
@@ -294,23 +305,46 @@ class UserProfileEdit extends PureComponent {
             COVER IMAGE
           </label>
           <label className="trailit_12500 d-block trialit_mb1">
-            {cover_image_name === "" || cover_image_url === ""
+            {!cover_image_url 
               ? `Choose a photo that represents your trail. Max 8MB.`
-              : cover_image_name
-              ? cover_image_name
-              : cover_image_url}
+              : cover_image_url_name
+              ? cover_image_url_name
+              : cover_image_url.split("/")[3]}
           </label>
           <div className="trailit_uploadImage trialit_mb4">
             <input
               type="file"
               name="media"
               accept="image/*"
-              onChange={this.handleChange}
+              onChange={(e)=>this.handleChange(e, "cover_image_url")}
             />
             <span className="d-block cursor">Upload Image</span>
           </div>
-          {errors.file && (
-            <div className="trailit-validation-error">{errors.file}</div>
+          {errors.cover_image_url && (
+            <div className="trailit-validation-error">{errors.cover_image_url}</div>
+          )}
+
+<label className="trailit_12700 d-block trailit_mb3">
+           Intro Image/ Video
+          </label>
+          <label className="trailit_12500 d-block trialit_mb1">
+            {!trail_intro_url
+              ? `Choose a photo that represents your trail. Max 8MB.`
+              : trail_intro_url_name
+              ? trail_intro_url_name
+              : trail_intro_url.split("/")[3]}
+          </label>
+          <div className="trailit_uploadImage trialit_mb4">
+            <input
+              type="file"
+              name="media"
+              accept="image/*, video/*"
+              onChange={(e)=>this.handleChange(e, "trail_intro_url")}
+            />
+            <span className="d-block cursor">Upload Image/ Video</span>
+          </div>
+          {errors.trail_intro_url && (
+            <div className="trailit-validation-error">{errors.trail_intro_url}</div>
           )}
           <div className="d-block trailit_checkbox trailit_mb3">
             <input

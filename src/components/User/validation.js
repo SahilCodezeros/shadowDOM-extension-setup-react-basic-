@@ -25,10 +25,16 @@ export const isValidated = (data) => {
     delete errors.trail_categor_id;
   }
 
-  if (data.hasOwnProperty("file") && data.file.size > 1024 * 1024 * 8) {
-    errors.file = "Image size limit exceeded!";
+  if (data.hasOwnProperty("cover_image_url") && data.cover_image_url.size > 1024 * 1024 * 8) {
+    errors.cover_image_url = "Image size limit exceeded!";
   } else {
-    delete errors.file;
+    delete errors.cover_image_url;
+  }
+
+  if (data.hasOwnProperty("trail_intro_url") && data.trail_intro_url.size > 1024 * 1024 * 8) {
+    errors.trail_intro_url = "Image size limit exceeded!";
+  } else {
+    delete errors.trail_intro_url;
   }
 
   return {
