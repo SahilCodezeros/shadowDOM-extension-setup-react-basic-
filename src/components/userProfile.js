@@ -77,7 +77,7 @@ class UserProfile extends React.Component {
     // Get NEAR balance of user
 
     chrome.storage.local.get(["userData"], (items) => {
-      if (items.userData._id) {
+      if (items.userData && items.userData._id) {
         // getBalance(items.userData._id)
         //   .then((res) => {
         //     this.setState({ nearBalance: res });
@@ -153,18 +153,24 @@ class UserProfile extends React.Component {
     }
   };
 
-  updateAutologoutTime = () => {
-    chrome.storage.local.get(["autoLogoutTime"], (items) => {
-      const logoutTime = items.autoLogoutTime;
-      if (logoutTime < Date.now()) {
-        // Call auto logout function
-        this.props.onClickToLogout();
-      } else {
-        chrome.runtime.sendMessage("", {
-          type: "updateTimeout",
-          status: true,
-        });
-      }
+  updateAutologoutTime = async () => {
+    return new Promise((resolve, reject) => {
+      chrome.storage.local.get(["autoLogoutTime"], (items) => {
+        const logoutTime = items.autoLogoutTime;
+        if (logoutTime < Date.now()) {
+          // Call auto logout function
+          this.props.onClickToLogout();
+
+          resolve();
+        } else {
+          chrome.runtime.sendMessage("", {
+            type: "updateTimeout",
+            status: true,
+          });
+
+          resolve();
+        }
+      });
     });
   };
 
@@ -175,7 +181,7 @@ class UserProfile extends React.Component {
 
   async componentDidMount() {
     // Call update auto logout time function
-    this.updateAutologoutTime();
+    await this.updateAutologoutTime();
 
     // Add click event listener
     window.addEventListener("click", this.updateAutologoutTime);

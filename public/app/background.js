@@ -4,6 +4,31 @@ function onCaptured(imageUri) {}
 
 function onError(error) {}
 
+const alarmTrigger = (alarm) => {
+  if (alarm.name === "autoLogout") {
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "background.js",
+        message: "autoLogoutTriggered",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].url) {
+          if (tabs[i].active) {
+            message.apiCall = true;
+          }
+
+          // Send message to all tabs
+          chrome.tabs.sendMessage(tabs[i].id, message);
+        }
+      }
+
+      // Remove alarm listener
+      chrome.alarms.onAlarm.removeListener(alarmTrigger);
+    });
+  }
+};
+
 if (typeof chrome.app.isInstalled !== "undefined") {
   chrome.browserAction.onClicked.addListener(function (tab) {
     chrome.tabs.query(
@@ -32,7 +57,6 @@ if (typeof chrome.app.isInstalled !== "undefined") {
 
   // Call when extension install, updated manually or updated automatically
   chrome.runtime.onInstalled.addListener((details) => {
-    console.log("details", details);
     chrome.tabs.query({}, (tabs) => {
       let contentjsFile = chrome.runtime.getManifest().content_scripts[0].js[0];
       for (let i = 0; i < tabs.length; i++) {
@@ -54,6 +78,14 @@ if (typeof chrome.app.isInstalled !== "undefined") {
         }
       }
     });
+  });
+
+  chrome.storage.onChanged.addListener(async (changes) => {
+    if (changes.autoLogoutTime && changes.autoLogoutTime.newValue) {
+      chrome.alarms.create("autoLogout", {
+        when: changes.autoLogoutTime.newValue,
+      });
+    }
   });
 
   // function modifyDOM() {
@@ -111,6 +143,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.heartbeat) {
     sendResponse(message);
     return;
+  }
+
+  if (message.type === "closeMenuPopButton") {
+    chrome.tabs.query({}, (tabs) => {
+      const message = {
+        from: "background.js",
+        status: "removeMenuPopButton",
+      };
+
+      for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].active) {
+          continue;
+        }
+
+        // Send message to all tabs
+        chrome.tabs.sendMessage(tabs[i].id, message);
+      }
+    });
   }
 
   if (message.type === "logout") {
@@ -254,7 +304,6 @@ chrome.runtime.onMessageExternal.addListener(function (
         chrome.tabs.query(
           { active: true, currentWindow: true },
           function (tabs) {
-            console.log("web-request");
             var activeTab = tabs[0];
             chrome.tabs.sendMessage(activeTab.id, {
               message: "preview_all",
@@ -332,6 +381,9 @@ chrome.runtime.onMessageExternal.addListener(function (
             });
           }
         );
+
+        // Add alarm listener
+        chrome.alarms.onAlarm.addListener(alarmTrigger);
       }
       if (request.action === "LOGOUT_FROM_WEB") {
         chrome.tabs.query(
@@ -344,6 +396,9 @@ chrome.runtime.onMessageExternal.addListener(function (
             });
           }
         );
+
+        // Remove alarm listener
+        chrome.alarms.onAlarm.removeListener(alarmTrigger);
       }
       break;
 

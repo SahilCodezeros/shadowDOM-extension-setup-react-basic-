@@ -99,46 +99,47 @@ if (window.location.href.includes("https://www.and.co")) {
 }
 
 const autoLogoutFunction = () => {
-  // Clear interval
-  clearInterval(autoLogoutTimeout);
+  // // Clear interval
+  // clearInterval(autoLogoutTimeout);
 
-  autoLogoutTimeout = setInterval(() => {
-    chrome.storage.local.get(
-      ["isAuth", "autoLogoutTime"],
-      async function (items) {
-        const logoutTime = items.autoLogoutTime;
+  // autoLogoutTimeout = setInterval(() => {
+  //   chrome.storage.local.get(
+  //     ["isAuth", "autoLogoutTime"],
+  //     async function (items) {
+  //       const logoutTime = items.autoLogoutTime;
 
-        if (!logoutTime) return;
-        // const logoutTime = parseInt(
-        //   window.localStorage.getItem("add-on-auto-lgout-tm")
-        // );
+  //       if (!logoutTime) return;
+  //       // const logoutTime = parseInt(
+  //       //   window.localStorage.getItem("add-on-auto-lgout-tm")
+  //       // );
 
-        if (items.isAuth && logoutTime < Date.now()) {
-          try {
-            // Call logout api
-            await logout();
+  //       if (items.isAuth && logoutTime < Date.now()) {
+  //         try {
+  //           // Call logout api
+  //           await logout();
 
-            chrome.runtime.sendMessage("", { type: "logout" });
-            chrome.runtime.sendMessage({ badgeText: `` });
-            chrome.storage.local.set({
-              trail_web_user_tour: [],
-              notification: true,
-              closeContinue: false,
-            });
-            chrome.storage.local.clear();
-          } catch (err) {}
-        }
-      }
-    );
-  }, 5000);
+  //           chrome.runtime.sendMessage("", { type: "logout" });
+  //           chrome.runtime.sendMessage({ badgeText: `` });
+  //           chrome.storage.local.set({
+  //             trail_web_user_tour: [],
+  //             notification: true,
+  //             closeContinue: false,
+  //           });
+  //           chrome.storage.local.clear();
+  //         } catch (err) {}
+  //       }
+  //     }
+  //   );
+  // }, 5000);
 
   chrome.storage.local.get(["isAuth"], async function (items) {
     if (items.isAuth) {
       // Update auto logout time in chrome storage
-      chrome.storage.local.set({ autoLogoutTime: Date.now() + 1800000 });
+      chrome.storage.local.set({ autoLogoutTime: Date.now() + 3600000 });
 
-      // Update auto logout time in localstorage
-      // window.localStorage.setItem("add-on-auto-lgout-tm", Date.now() + 1800000); // 10000 // 1800000
+      // 1 hour = 3600000
+      // 30 min = 1800000
+      // 20 sec = 200000;
     } else {
       clearInterval(autoLogoutTimeout);
     }
@@ -773,6 +774,17 @@ class Main extends React.Component {
   }
 
   onHandleSubscription = async (msObj) => {
+    if (msObj.status === "removeMenuPopButton") {
+      this.props.onChangeTourType("");
+      this.props.mainToggle();
+
+      if (app && app.style && app.style.display === "block") {
+        setTimeout(() => {
+          app.style.display = "none";
+        }, 1000);
+      }
+    }
+
     if (msObj.message === "urlChanged") {
       if (!this.state.menuOpen) {
         this.setState({ menuOpen: true });
@@ -1880,7 +1892,6 @@ class DefaultButton extends React.PureComponent {
 
   async handlePreviewFromWeb(msg) {
     if (msg.message === "preview_all") {
-      console.log("web-request in content.js file");
       // Call common get user data function
       await this.getCurrUserDataCommon({
         userData: msg.payload.userData,
@@ -2954,6 +2965,11 @@ class DefaultButton extends React.PureComponent {
       this.props.onChangeTourType("");
       this.props.mainToggle();
     }
+
+    // Send message to close all menu pop button in inactive tabs after preview
+    chrome.runtime.sendMessage("", {
+      type: "closeMenuPopButton",
+    });
   };
 
   openPopup = () => {
@@ -3567,6 +3583,11 @@ class DefaultButton extends React.PureComponent {
 
             resolve();
           }
+
+          // Send message to close all menu pop button in inactive tabs after preview
+          chrome.runtime.sendMessage("", {
+            type: "closeMenuPopButton",
+          });
         }
       );
     });
@@ -3771,23 +3792,23 @@ class DefaultButton extends React.PureComponent {
       tourUrl = matchUrl(trailList[tourStep - 1].url, document.URL);
     }
 
-    if (tourType === "" && currentTourType === "") {
-      const myExtensionRootFlip = shadowRoot.getElementById(
-        "my-extension-root-flip"
-      );
+    // if (tourType === "" && currentTourType === "") {
+    //   const myExtensionRootFlip = shadowRoot.getElementById(
+    //     "my-extension-root-flip"
+    //   );
 
-      if (myExtensionRootFlip) {
-        myExtensionRootFlip.classList.add("widthAuto");
-      }
-    } else {
-      const myExtensionRootFlip = shadowRoot.getElementById(
-        "my-extension-root-flip"
-      );
+    //   if (myExtensionRootFlip) {
+    //     myExtensionRootFlip.classList.add("widthAuto");
+    //   }
+    // } else {
+    //   const myExtensionRootFlip = shadowRoot.getElementById(
+    //     "my-extension-root-flip"
+    //   );
 
-      if (myExtensionRootFlip) {
-        myExtensionRootFlip.classList.remove("widthAuto");
-      }
-    }
+    //   if (myExtensionRootFlip) {
+    //     myExtensionRootFlip.classList.remove("widthAuto");
+    //   }
+    // }
 
     if (openSidebar) {
       const defaultRoot = shadowRoot.getElementById("my-extension-defaultroot");
@@ -3913,14 +3934,20 @@ class DefaultButton extends React.PureComponent {
             </div>
           )}
         </div>
-        <div id="scroll" className="sidepopcontent scrollbar">
-          {tourType === "audio" || tourType === "video" ? (
-            <h4 className="title my-4">Upload Media</h4>
-          ) : (
-            // <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
-            <h4 className="title my-4">{trailName}</h4>
-          )}
-          <div className="pl-4 trail_video_frm">
+        {tourType === "audio" || tourType === "video" ? (
+          <h4 className="title my-4">Upload Media</h4>
+        ) : (
+          // <h4 className="title my-4">Trail It, Curated Guided Tour</h4>
+          <h4 className="title my-4">{trailName}</h4>
+        )}
+        <div
+          id="scroll"
+          className="sidepopcontent scrollbar"
+          // className={`sidepopcontent ${
+          //   (tourType === "audio" || tourType === "video") && "overflowAuto"
+          // } scrollbar`}
+        >
+          <div className="pr5px pl-4 trail_video_frm">
             {tourStatus !== "preview" && tourType === "video" && (
               <div className="mb-2">
                 <input
@@ -4143,7 +4170,7 @@ class DefaultButton extends React.PureComponent {
             </form>
           )}
         </div>
-        <div>
+        <div className="mt-18">
           {tourType !== "audio" && tourType !== "video" && this.state.saveSort && (
             <div className="trailButtonsWrapper">
               <button className="custom-button" onClick={this.saveSortedTrails}>
@@ -4151,7 +4178,7 @@ class DefaultButton extends React.PureComponent {
               </button>
             </div>
           )}
-          {tourType !== "audio" &&
+          {/* {tourType !== "audio" &&
             tourType !== "video" &&
             this.state.trailList.length > 0 && (
               <div className="trailButtonsWrapper jc-end pb-0">
@@ -4162,7 +4189,7 @@ class DefaultButton extends React.PureComponent {
                   Share
                 </button>
               </div>
-            )}
+            )} */}
         </div>
       </div>
     );
@@ -4350,11 +4377,27 @@ class DefaultButton extends React.PureComponent {
           <div
             className={`sidepopup ${
               openSidebar ? "open trail_builder_side_panel_open" : ""
-            } ${tourType === "preview" ? "overflow1" : ""}`}
+            }`}
+            // className={`sidepopup ${
+            //   openSidebar ? "open trail_builder_side_panel_open" : ""
+            // } ${tourType === "preview" ? "overflow1" : ""}`}
           >
             <div className="space"></div>
             {sideBar}
             <div className="space"></div>
+
+            {tourType !== "audio" &&
+              tourType !== "video" &&
+              this.state.trailList.length > 0 && (
+                <div className="trailButtonsWrapper jc-end pb-0">
+                  <button
+                    className="custom-button share-button"
+                    onClick={this.copyWebApplink}
+                  >
+                    Share
+                  </button>
+                </div>
+              )}
           </div>
           {this.state.dynamicPopupButton && (
             <button className="menu pop" onClick={this.openPopup}>
@@ -4530,11 +4573,26 @@ class DefaultButton extends React.PureComponent {
                 <div
                   className={`sidepopup ${
                     openSidebar ? "open trail_builder_side_panel_open" : ""
-                  } ${tourType === "preview" ? "overflow1" : ""}`}
+                  }`}
+                  // className={`sidepopup ${
+                  //   openSidebar ? "open trail_builder_side_panel_open" : ""
+                  // } ${tourType === "preview" ? "overflow1" : ""}`}
                 >
                   <div className="space"></div>
                   {sideBar}
                   <div className="space"></div>
+                  {tourType !== "audio" &&
+                    tourType !== "video" &&
+                    this.state.trailList.length > 0 && (
+                      <div className="trailButtonsWrapper jc-end pb-0">
+                        <button
+                          className="custom-button share-button"
+                          onClick={this.copyWebApplink}
+                        >
+                          Share
+                        </button>
+                      </div>
+                    )}
                 </div>
                 {this.state.dynamicPopupButton && (
                   <button
@@ -4862,6 +4920,34 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
       app.style.display = "none";
     }
   }
+
+  if (msgObj.message === "autoLogoutTriggered") {
+    chrome.storage.local.get(
+      ["isAuth", "autoLogoutTime"],
+      async function (items) {
+        const logoutTime = items.autoLogoutTime;
+        if (!logoutTime) return;
+
+        if (items.isAuth && logoutTime < Date.now()) {
+          try {
+            // Call logout api
+            await logout();
+            // if (msgObj.apiCall) {
+            // }
+
+            chrome.runtime.sendMessage("", { type: "logout" });
+            chrome.runtime.sendMessage({ badgeText: `` });
+            chrome.storage.local.set({
+              trail_web_user_tour: [],
+              notification: true,
+              closeContinue: false,
+            });
+            chrome.storage.local.clear();
+          } catch (err) {}
+        }
+      }
+    );
+  }
 });
 
 if (chrome.runtime.id) {
@@ -4876,7 +4962,9 @@ if (chrome.runtime.id) {
       // Reset items from chrome storage
       chrome.storage.local.remove("autoLogoutTime");
 
-      app.style.display = "none";
+      if (app && app.style && app.style.display === "block") {
+        app.style.display = "none";
+      }
     } else {
       if (
         msgObj.subject !== "updateTimeout" &&

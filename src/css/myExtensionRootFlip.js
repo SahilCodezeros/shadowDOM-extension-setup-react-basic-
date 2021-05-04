@@ -1769,43 +1769,39 @@ export const myExtensionRootFlipCss5 = `
     }
 
     .scrollable-steps-list {
-        max-height: 600px;
-        overflow: auto;
-
+        // max-height: 600px;
+        // max-height: 80%;
+        // overflow: auto;
     }
 
-    .scrollable-steps-list::-webkit-scrollbar-track {
+    .scrollable-steps-list::-webkit-scrollbar-track,
+    .sidepopcontent::-webkit-scrollbar-track {
         -webkit-box-shadow: none;
         background-color: transparent;
     }
 
-    .scrollable-steps-list::-webkit-scrollbar {
+    .scrollable-steps-list::-webkit-scrollbar,
+    .sidepopcontent::-webkit-scrollbar {
         width: 7px;
         background-color: transparent;
     }
 
-    .scrollable-steps-list::-webkit-scrollbar-thumb {
+    .scrollable-steps-list::-webkit-scrollbar-thumb,
+    .sidepopcontent::-webkit-scrollbar-thumb {
         border-radius: 5px;
         -webkit-box-shadow: none;
         background-color: #c4c4c4;
     }
 
-    .sidepopcontent::-webkit-scrollbar-track {
-        // -webkit-box-shadow: none;
-        // background-color: transparent;
+    .tr_side_form::-webkit-scrollbar-track {
         display: none;
     }
 
-    .sidepopcontent::-webkit-scrollbar {
-        // width: 7px;
-        // background-color: transparent;
+    .tr_side_form::-webkit-scrollbar {
         display: none;
     }
 
-    .sidepopcontent::-webkit-scrollbar-thumb {
-        // border-radius: 5px;
-        // -webkit-box-shadow: none;
-        // background-color: #c4c4c4;
+    .tr_side_form::-webkit-scrollbar-thumb {
         display: none;
     }
 
@@ -1871,6 +1867,14 @@ export const myExtensionRootFlipCss5 = `
 
     .widthAuto {
         width: auto !important;
+    }
+
+    .mt-18 {
+        margin-top: 18px;
+    }
+
+    .pr5px {
+        padding-right: 5px !important;
     }
 `;
 
