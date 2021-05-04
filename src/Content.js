@@ -17,6 +17,7 @@ import VideoTour from "./components/videoTour";
 import AudioTour from "./components/audioTour";
 import { sendTransection } from "./code/sendtx";
 import WebUserTour from "./components/webUserTour";
+import { getBrowser } from "./common/detectBrowser";
 import MySubscription from "./components/mySubscription";
 import SendTipModal from "./components/Modal/SendTipModal";
 import { handleFileUpload } from "./common/audAndVidCommon";
@@ -77,6 +78,14 @@ import "./Content.css";
 
 /*global chrome*/
 
+let browser = chrome;
+
+if (getBrowser() === "Chrome" || getBrowser() === "Edge") {
+  browser = chrome;
+} else {
+  browser = this.browser;
+}
+
 WebFont.load({
   google: {
     families: ["Lato", "Raleway:400,500,700", "sans-serif", "Montserrat"],
@@ -103,7 +112,7 @@ const autoLogoutFunction = () => {
   // clearInterval(autoLogoutTimeout);
 
   // autoLogoutTimeout = setInterval(() => {
-  //   chrome.storage.local.get(
+  //   browser.storage.local.get(
   //     ["isAuth", "autoLogoutTime"],
   //     async function (items) {
   //       const logoutTime = items.autoLogoutTime;
@@ -118,24 +127,24 @@ const autoLogoutFunction = () => {
   //           // Call logout api
   //           await logout();
 
-  //           chrome.runtime.sendMessage("", { type: "logout" });
-  //           chrome.runtime.sendMessage({ badgeText: `` });
-  //           chrome.storage.local.set({
+  //           browser.runtime.sendMessage("", { type: "logout" });
+  //           browser.runtime.sendMessage({ badgeText: `` });
+  //           browser.storage.local.set({
   //             trail_web_user_tour: [],
   //             notification: true,
   //             closeContinue: false,
   //           });
-  //           chrome.storage.local.clear();
+  //           browser.storage.local.clear();
   //         } catch (err) {}
   //       }
   //     }
   //   );
   // }, 5000);
 
-  chrome.storage.local.get(["isAuth"], async function (items) {
+  browser.storage.local.get(["isAuth"], async function (items) {
     if (items.isAuth) {
-      // Update auto logout time in chrome storage
-      chrome.storage.local.set({ autoLogoutTime: Date.now() + 3600000 });
+      // Update auto logout time in browser storage
+      browser.storage.local.set({ autoLogoutTime: Date.now() + 3600000 });
 
       // 1 hour = 3600000
       // 30 min = 1800000
@@ -167,7 +176,7 @@ class Main extends React.Component {
   }
 
   async componentDidMount() {
-    chrome.storage.local.get(
+    browser.storage.local.get(
       [
         "trail_web_user_tour",
         "trail_data_id",
@@ -210,7 +219,7 @@ class Main extends React.Component {
           this.setState({ showSetting: items.showSetting });
         }
 
-        chrome.storage.onChanged.addListener(async (changes) => {
+        browser.storage.onChanged.addListener(async (changes) => {
           if (
             changes.tourType &&
             changes.tourType.oldValue === "preview" &&
@@ -251,7 +260,7 @@ class Main extends React.Component {
             changes.tourType &&
             changes.tourType.newValue === ""
           ) {
-            chrome.storage.local.get(
+            browser.storage.local.get(
               [
                 "trail_web_user_tour",
                 "userData",
@@ -327,7 +336,7 @@ class Main extends React.Component {
               notiRes.data.response.statusCode === "200"
             ) {
               // Remove asterisk from trail icon
-              chrome.runtime.sendMessage("", {
+              browser.runtime.sendMessage("", {
                 type: "badgeText",
                 badgeText: "",
               });
@@ -387,7 +396,7 @@ class Main extends React.Component {
                 follow,
               };
 
-              chrome.storage.local.set({
+              browser.storage.local.set({
                 followData: {
                   previewUserId,
                   follow,
@@ -398,7 +407,7 @@ class Main extends React.Component {
             preventToggle = true;
             trailWebUserTour = allTrails;
 
-            chrome.storage.local.set({
+            browser.storage.local.set({
               trail_web_user_tour: allTrails,
               previewUserId,
             });
@@ -453,7 +462,7 @@ class Main extends React.Component {
       }
     );
 
-    chrome.storage.local.get(
+    browser.storage.local.get(
       [
         "trail_web_user_tour",
         "tourStatus",
@@ -479,12 +488,12 @@ class Main extends React.Component {
           items.tourType === "preview" &&
           items.tourStep !== ""
         ) {
-          chrome.storage.local.set({ openButton: "", tourType: "" });
+          browser.storage.local.set({ openButton: "", tourType: "" });
         }
 
         if (items.tourStep !== "" && items.currentTourType === "preview") {
           if (items.trail_web_user_tour !== undefined) {
-            chrome.storage.local.set({
+            browser.storage.local.set({
               currentTourType:
                 items.trail_web_user_tour[items.tourStep - 1].type,
             });
@@ -510,7 +519,7 @@ class Main extends React.Component {
       }.bind(this)
     );
 
-    chrome.runtime.onMessage.addListener(this.onHandleSubscription);
+    browser.runtime.onMessage.addListener(this.onHandleSubscription);
   }
 
   async getCurrUserFollowedTrailData(items) {
@@ -617,7 +626,7 @@ class Main extends React.Component {
       const tourStep =
         items.tourStep && items.tourStep !== "" ? items.tourStep : 1;
 
-      chrome.storage.local.set({
+      browser.storage.local.set({
         trail_id,
         tourStep: tourStep,
         trail_web_user_tour: allTrails,
@@ -698,7 +707,7 @@ class Main extends React.Component {
         ? items.followedTrailUserData
         : null,
     });
-    chrome.storage.local.set({
+    browser.storage.local.set({
       trail_web_user_tour: allTrails,
       tourStep: items.tourStep ? items.tourStep : "",
       trail_id,
@@ -743,11 +752,11 @@ class Main extends React.Component {
 
       this.setState({ trail_web_user_tour: [singleTrail] });
 
-      chrome.storage.local.get(
+      browser.storage.local.get(
         ["trail_id", "userData", "tourStep", "isPreviewSingleTrail"],
         (storage) => {
           if (data.loggedInData) {
-            chrome.storage.local.set({
+            browser.storage.local.set({
               trail_web_user_tour: [payload],
               tourStep: storage.tourStep ? storage.tourStep : "",
               trail_id: data.trail_id,
@@ -759,7 +768,7 @@ class Main extends React.Component {
               authorData: { ...data.userData },
             });
           } else {
-            chrome.storage.local.set({
+            browser.storage.local.set({
               tourStep: data.tourStep ? data.tourStep : "",
               trail_id: data.trail_id,
             });
@@ -770,7 +779,7 @@ class Main extends React.Component {
   }
 
   componentWillUnmount() {
-    chrome.storage.local.set({ loadingCount: 0, showSetting: false });
+    browser.storage.local.set({ loadingCount: 0, showSetting: false });
   }
 
   onHandleSubscription = async (msObj) => {
@@ -797,7 +806,7 @@ class Main extends React.Component {
     }
 
     if (msObj.subject === "DOMInfo") {
-      chrome.storage.local.get(
+      browser.storage.local.get(
         [
           "userData",
           "trail_id",
@@ -850,7 +859,7 @@ class Main extends React.Component {
       this.setState({ menuOpen: true });
     }
 
-    chrome.storage.local.get(
+    browser.storage.local.get(
       ["closeContinue"],
       async function (items) {
         this.setState({
@@ -866,7 +875,7 @@ class Main extends React.Component {
 
     if (msObj.subject === "DOMObj") {
       let allUserData = await getAllUser();
-      chrome.storage.local.get(["userData"], async function (items) {
+      browser.storage.local.get(["userData"], async function (items) {
         socket.emit("userId", items.userData._id);
       });
 
@@ -888,7 +897,7 @@ class Main extends React.Component {
 
   // Get all notification of user
   userNotificaion() {
-    chrome.storage.local.get(["userData"], async (items) => {
+    browser.storage.local.get(["userData"], async (items) => {
       // Get notification count from database
       const data = {
         // user_id: items.userData._id,
@@ -899,8 +908,8 @@ class Main extends React.Component {
         const res = await getAllNotification(data);
 
         if (res.data.response && res.data.response.statusCode === "200") {
-          // Set count of notification in chrome runtime
-          chrome.runtime.sendMessage("", {
+          // Set count of notification in browser runtime
+          browser.runtime.sendMessage("", {
             type: "budgeText",
             badgeText: `${res.data.response.result.length}`,
           });
@@ -909,9 +918,9 @@ class Main extends React.Component {
     });
   }
 
-  // Get new notification of client from server and send it to chrome notification
+  // Get new notification of client from server and send it to browser notification
   getNewNotification = () => {
-    chrome.runtime.sendMessage("", {
+    browser.runtime.sendMessage("", {
       type: "notification",
       options: {
         title: "Just wanted to notify you",
@@ -1001,8 +1010,8 @@ class Main extends React.Component {
       case "modal":
         mainObj.tourType = "modal";
         mainObj.stepType = stepType;
-        chrome.runtime.sendMessage("", {
-          type: "chromeModal",
+        browser.runtime.sendMessage("", {
+          type: "browserModal",
           status: true,
         });
         this.props.mainToggle(true);
@@ -1014,7 +1023,7 @@ class Main extends React.Component {
       case "preview":
         mainObj.tourType = "preview";
         objStatus = false;
-        chrome.storage.local.get(
+        browser.storage.local.get(
           [
             "trail_web_user_tour",
             "userData",
@@ -1070,7 +1079,7 @@ class Main extends React.Component {
                 }
               }
 
-              chrome.storage.local.set({
+              browser.storage.local.set({
                 openButton: "CreateTrail",
                 tourStep: tour.tourStep ? tour.tourStep : 1,
                 currentTourType: tour.currentTourType
@@ -1085,8 +1094,8 @@ class Main extends React.Component {
                 (closeContinue !== undefined || closeContinue === undefined)
               ) {
                 // Set loading state to false
-                chrome.storage.local.set({ loading: "true" });
-                chrome.runtime.sendMessage("", {
+                browser.storage.local.set({ loading: "true" });
+                browser.runtime.sendMessage("", {
                   type: "openInTab",
                   url: tour.url,
                 });
@@ -1096,8 +1105,8 @@ class Main extends React.Component {
                 (closeContinue !== undefined || closeContinue === undefined)
               ) {
                 // Set loading state to false
-                chrome.storage.local.set({ loading: "true" });
-                chrome.runtime.sendMessage("", {
+                browser.storage.local.set({ loading: "true" });
+                browser.runtime.sendMessage("", {
                   type: "openInTab",
                   url: trail_web_user_tour[0].url,
                 });
@@ -1107,25 +1116,25 @@ class Main extends React.Component {
                 (closeContinue !== undefined || closeContinue === undefined)
               ) {
                 // Set loading state to false
-                chrome.storage.local.set({ loading: "false" });
+                browser.storage.local.set({ loading: "false" });
               } else if (
                 tour.url &&
                 matchUrl(tour.url, document.URL) &&
                 (closeContinue !== undefined || closeContinue === undefined)
               ) {
                 // Set loading state to false
-                chrome.storage.local.set({ loading: "false" });
+                browser.storage.local.set({ loading: "false" });
               }
             } else {
               if (trail_web_user_tour && trail_web_user_tour.length > 0) {
-                chrome.storage.local.set({
+                browser.storage.local.set({
                   openButton: "CreateTrail",
                   tourStep: 1,
                   currentTourType: "preview",
                 });
               } else {
                 if (items.isPreview && items.webUrl === document.URL) {
-                  chrome.storage.local.set({
+                  browser.storage.local.set({
                     isPreview: false,
                     webUrl: "",
                   });
@@ -1163,14 +1172,14 @@ class Main extends React.Component {
 
     if (mainObj.tourType && objStatus) {
       if (mainObj.stepType && mainObj.stepType !== "") {
-        chrome.storage.local.set({
+        browser.storage.local.set({
           openButton: "CreateTrail",
           currentTourType: "preview",
           stepType: mainObj.stepType,
           tourType: mainObj.tourType === undefined ? "" : mainObj.tourType,
         });
       } else {
-        chrome.storage.local.set({
+        browser.storage.local.set({
           openButton: "CreateTrail",
           currentTourType: "preview",
           tourType: mainObj.tourType === undefined ? "" : mainObj.tourType,
@@ -1199,7 +1208,7 @@ class Main extends React.Component {
   // Copy Web app link
   copyWebApplink = (e) => {
     const { currentUserId } = this.state;
-    chrome.storage.local.get(
+    browser.storage.local.get(
       [
         "trail_web_user_tour",
         "userData",
@@ -1253,8 +1262,8 @@ class Main extends React.Component {
   };
 
   hideSettingModal() {
-    // Set chrome storage
-    chrome.storage.local.set({ showSetting: false });
+    // Set browser storage
+    browser.storage.local.set({ showSetting: false });
 
     // Set show setting state
     // this.setState({ showSetting: false });
@@ -1656,7 +1665,7 @@ class DefaultButton extends React.PureComponent {
       },
     });
 
-    chrome.storage.local.set({
+    browser.storage.local.set({
       trailDeleteModal: {
         value: "close",
         title: "",
@@ -1690,7 +1699,7 @@ class DefaultButton extends React.PureComponent {
         // Delete trail by id
         await deleteSingleTrail(id);
 
-        chrome.storage.local.get(["trail_id"], async (items) => {
+        browser.storage.local.get(["trail_id"], async (items) => {
           if (items.trail_id && items.trail_id === id) {
             // Close menu
             toggle();
@@ -1704,7 +1713,7 @@ class DefaultButton extends React.PureComponent {
         const { data } = await deleteTrail(id);
 
         if (data.response && data.response.statusCode === "200") {
-          chrome.storage.local.get(
+          browser.storage.local.get(
             [
               "userData",
               "trail_id",
@@ -1763,11 +1772,11 @@ class DefaultButton extends React.PureComponent {
         flag: response.flag,
       };
 
-      chrome.storage.local.get(
+      browser.storage.local.get(
         ["trail_id", "userData", "tourStep", "isPreviewSingleTrail"],
         (storage) => {
           if (data.loggedInData) {
-            chrome.storage.local.set({
+            browser.storage.local.set({
               trail_web_user_tour: [payload],
               tourStep: storage.tourStep ? storage.tourStep : "",
               trail_id: data.trail_id,
@@ -1780,7 +1789,7 @@ class DefaultButton extends React.PureComponent {
               authorData: { ...data.userData },
             });
           } else {
-            chrome.storage.local.set({
+            browser.storage.local.set({
               tourStep: data.tourStep ? data.tourStep : "",
               trail_id: data.trail_id,
             });
@@ -1860,11 +1869,11 @@ class DefaultButton extends React.PureComponent {
 
     this.setState({ trail_web_user_tour: trailWebUserTour });
 
-    chrome.storage.local.get(
+    browser.storage.local.get(
       ["trail_id", "userData", "tourStep", "isPreview"],
       (storage) => {
         if (items.loggedInData) {
-          chrome.storage.local.set({
+          browser.storage.local.set({
             trail_web_user_tour: allTrails,
             tourStep: storage.tourStep ? storage.tourStep : "",
             trail_id,
@@ -1879,7 +1888,7 @@ class DefaultButton extends React.PureComponent {
             noStepsToWatch: items.noStepsToWatch,
           });
         } else {
-          chrome.storage.local.set({
+          browser.storage.local.set({
             trail_web_user_tour: allTrails,
             tourStep: items.tourStep ? items.tourStep : "",
             trail_id,
@@ -1899,8 +1908,8 @@ class DefaultButton extends React.PureComponent {
         trail_web_user_tour: [],
         loggedInData: msg.payload.loggedInData,
       });
-      chrome.storage.local.get(["trail_id"], (items) => {
-        chrome.storage.local.set({
+      browser.storage.local.get(["trail_id"], (items) => {
+        browser.storage.local.set({
           isPreview: true,
           closeContinue: false,
           webUrl: msg.payload.url,
@@ -1915,8 +1924,8 @@ class DefaultButton extends React.PureComponent {
         trail_web_user_tour: [],
         loggedInData: msg.payload.loggedInData,
       });
-      chrome.storage.local.get(["trail_id"], (items) => {
-        chrome.storage.local.set({
+      browser.storage.local.get(["trail_id"], (items) => {
+        browser.storage.local.set({
           isPreview: true,
           closeContinue: false,
           continueTourStepId: msg.payload.tourStep,
@@ -1931,8 +1940,8 @@ class DefaultButton extends React.PureComponent {
         trail_data_id: msg.payload.trail_data_id,
         loggedInData: msg.payload.loggedInData,
       });
-      chrome.storage.local.get(["trail_id", "userData"], (items) => {
-        chrome.storage.local.set({
+      browser.storage.local.get(["trail_id", "userData"], (items) => {
+        browser.storage.local.set({
           isPreviewSingleTrail: true,
           isPreview: false,
           webUrl: msg.payload.url,
@@ -1948,8 +1957,8 @@ class DefaultButton extends React.PureComponent {
         noStepsToWatch: msg.payload.noStepsToWatch,
         isPreview: true,
       });
-      chrome.storage.local.get(["trail_id"], (items) => {
-        chrome.storage.local.set({
+      browser.storage.local.get(["trail_id"], (items) => {
+        browser.storage.local.set({
           isPreview: true,
           closeContinue: false,
           webUrl: msg.payload.url,
@@ -1970,7 +1979,7 @@ class DefaultButton extends React.PureComponent {
         tourType === "Make Edit" ||
         tourType === "tooltip")
     ) {
-      chrome.storage.local.set({ tourType: "", currentTourType: "" });
+      browser.storage.local.set({ tourType: "", currentTourType: "" });
     }
 
     if (
@@ -1978,7 +1987,7 @@ class DefaultButton extends React.PureComponent {
       tourType === "modal" &&
       (stepType === "audio" || stepType === "video")
     ) {
-      chrome.storage.local.set({
+      browser.storage.local.set({
         tourType: "",
         currentTourType: "",
         stepType: "",
@@ -1992,7 +2001,7 @@ class DefaultButton extends React.PureComponent {
   componentDidMount() {
     const { currentTourType, tourType } = this.state;
 
-    chrome.runtime.onMessage.addListener(this.handlePreviewFromWeb.bind(this));
+    browser.runtime.onMessage.addListener(this.handlePreviewFromWeb.bind(this));
 
     window.addEventListener("resize", this.resize);
     this.resize();
@@ -2010,8 +2019,8 @@ class DefaultButton extends React.PureComponent {
       false
     );
 
-    chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
-    chrome.storage.onChanged.addListener(async (changes) => {
+    browser.runtime.onMessage.addListener(this.handleMessage.bind(this));
+    browser.storage.onChanged.addListener(async (changes) => {
       if (
         changes.currentTourType &&
         changes.currentTourType.newValue === "preview" &&
@@ -2110,7 +2119,7 @@ class DefaultButton extends React.PureComponent {
       }
     });
 
-    chrome.storage.local.get(
+    browser.storage.local.get(
       ["isPreview", "isPreviewSingleTrail", "isDraggable"],
       (items) => {
         if (items.isPreview || items.isPreviewSingleTrail) {
@@ -2131,7 +2140,7 @@ class DefaultButton extends React.PureComponent {
   }
 
   handleMessage(msg) {
-    if (msg.message === "chrome_modal") {
+    if (msg.message === "browser_modal") {
       this.onToggleCreateModal(true);
     }
     this.setState({ message: msg.body });
@@ -2145,7 +2154,7 @@ class DefaultButton extends React.PureComponent {
       window.removeEventListener("resize", updateOverlay);
     }
 
-    chrome.runtime.onMessage.removeListener(this.handleMessage);
+    browser.runtime.onMessage.removeListener(this.handleMessage);
 
     // Call removeTooltipHandler function
     this.removeTooltipHandler();
@@ -2206,8 +2215,8 @@ class DefaultButton extends React.PureComponent {
           throw new Error("Error while following trail!");
         }
 
-        // Set followData into chrome storage
-        chrome.storage.local.set({
+        // Set followData into browser storage
+        browser.storage.local.set({
           followData: { previewUserId, follow: true },
         });
         this.setState({ follow: true });
@@ -2216,7 +2225,7 @@ class DefaultButton extends React.PureComponent {
   };
 
   mouseOverEventData = (e) => {
-    chrome.storage.local.get(
+    browser.storage.local.get(
       [
         "tourStatus",
         "tourType",
@@ -2450,11 +2459,11 @@ class DefaultButton extends React.PureComponent {
 
   onNotFoundTarget = (data) => {
     this.setState({ MobileTargetNotFound: data });
-    chrome.storage.local.set({ MobileTargetNotFound: data });
+    browser.storage.local.set({ MobileTargetNotFound: data });
   };
 
   onChromeStorageChange = () => {
-    chrome.storage.local.get(
+    browser.storage.local.get(
       [
         "trail_web_user_tour",
         "tourStatus",
@@ -2604,7 +2613,7 @@ class DefaultButton extends React.PureComponent {
     $(`.trail_user_tooltip`).remove();
     $(`.trail_tour_ToolTipExtend`).remove();
 
-    chrome.storage.local.set({
+    browser.storage.local.set({
       tourType: "",
       currentTourType: "",
       tourStep: "",
@@ -2640,7 +2649,7 @@ class DefaultButton extends React.PureComponent {
       );
       this.state.trailList[rowInd] = resultData;
       let rows = this.state.trailList;
-      chrome.storage.local.set({ trail_web_user_tour: rows });
+      browser.storage.local.set({ trail_web_user_tour: rows });
       this.setState({ trailList: rows, draggable: false });
     }
 
@@ -2690,7 +2699,7 @@ class DefaultButton extends React.PureComponent {
     let obj = {};
     let responsive = "web";
     return new Promise((resolve, reject) => {
-      chrome.storage.local.get(
+      browser.storage.local.get(
         ["trail_web_user_tour", "userData", "trail_id"],
         async function (items) {
           const trail_id = items.trail_id;
@@ -2792,7 +2801,7 @@ class DefaultButton extends React.PureComponent {
             tourType: "",
             currentTourType: "",
           });
-          chrome.storage.local.set({
+          browser.storage.local.set({
             trail_web_user_tour: trailData,
             currentTourType: "",
             tourType: "",
@@ -2815,7 +2824,7 @@ class DefaultButton extends React.PureComponent {
    * on click to submit tour into the database
    */
   onClickToSubmitTour = () => {
-    chrome.storage.local.set({ tourStatus: "done" });
+    browser.storage.local.set({ tourStatus: "done" });
     this.setState({ tourStatus: "done" });
   };
 
@@ -2831,7 +2840,7 @@ class DefaultButton extends React.PureComponent {
 
     try {
       const trail = this.state.trailList[this.state.tourStep - 1];
-      chrome.storage.local.get(
+      browser.storage.local.get(
         [
           "webUrl",
           "userData",
@@ -2869,7 +2878,7 @@ class DefaultButton extends React.PureComponent {
               }
             });
 
-            chrome.storage.local.set({
+            browser.storage.local.set({
               previewUserId: "",
               trail_web_user_tour: userTrails,
             });
@@ -2888,7 +2897,7 @@ class DefaultButton extends React.PureComponent {
               window.location.href = items.webUrl.split("#")[0];
             }
 
-            chrome.storage.local.set({
+            browser.storage.local.set({
               isPreview: false,
               isGuest: false,
               isPreviewSingleTrail: false,
@@ -2910,7 +2919,7 @@ class DefaultButton extends React.PureComponent {
             await this.updateUserTrailTrack(items);
           }
 
-          chrome.storage.local.set({
+          browser.storage.local.set({
             tourType: "",
             currentTourType: "",
             tourStep: "",
@@ -2945,7 +2954,7 @@ class DefaultButton extends React.PureComponent {
       // Call remove overlay function
       removeOverlay();
     } catch (err) {
-      chrome.storage.local.set({
+      browser.storage.local.set({
         tourType: "",
         currentTourType: "",
         tourStep: "",
@@ -2967,7 +2976,7 @@ class DefaultButton extends React.PureComponent {
     }
 
     // Send message to close all menu pop button in inactive tabs after preview
-    chrome.runtime.sendMessage("", {
+    browser.runtime.sendMessage("", {
       type: "closeMenuPopButton",
     });
   };
@@ -3013,7 +3022,7 @@ class DefaultButton extends React.PureComponent {
 
   tourManage = (step, type, tourSide) => {
     return new Promise((resolve, reject) => {
-      chrome.storage.local.get(
+      browser.storage.local.get(
         [
           "isPreview",
           "userData",
@@ -3029,7 +3038,10 @@ class DefaultButton extends React.PureComponent {
             // Call update track data function
             await this.updateUserTrailTrack(items);
 
-            chrome.storage.local.set({ currentTourType: type, tourStep: step });
+            browser.storage.local.set({
+              currentTourType: type,
+              tourStep: step,
+            });
             this.setState({ currentTourType: type, tourStep: step, tourSide });
 
             resolve();
@@ -3040,12 +3052,18 @@ class DefaultButton extends React.PureComponent {
             // Call update track data function
             await this.updateUserTrailTrack(items);
 
-            chrome.storage.local.set({ currentTourType: type, tourStep: step });
+            browser.storage.local.set({
+              currentTourType: type,
+              tourStep: step,
+            });
             this.setState({ currentTourType: type, tourStep: step, tourSide });
 
             resolve();
           } else {
-            chrome.storage.local.set({ currentTourType: type, tourStep: step });
+            browser.storage.local.set({
+              currentTourType: type,
+              tourStep: step,
+            });
             this.setState({ currentTourType: type, tourStep: step, tourSide });
 
             resolve();
@@ -3062,7 +3080,7 @@ class DefaultButton extends React.PureComponent {
   onTourVideoTrail = (step) => {
     if (this.state.trailList[step - 1]) {
       let type = this.state.trailList[step - 1].type;
-      chrome.storage.local.set({ currentTourType: type, tourStep: step });
+      browser.storage.local.set({ currentTourType: type, tourStep: step });
       this.setState({ currentTourType: type, tourStep: step });
       if (!matchUrl(this.state.trailList[step - 1].url, document.URL)) {
         window.location.href = this.state.trailList[step - 1].url;
@@ -3123,7 +3141,7 @@ class DefaultButton extends React.PureComponent {
     const sorted = arrayMove(this.state.trailList, oldIndex, newIndex);
 
     this.setState({ trail_web_user_tour: sorted, trailList: sorted });
-    chrome.storage.local.set({ trail_web_user_tour: sorted });
+    browser.storage.local.set({ trail_web_user_tour: sorted });
 
     // Update sorted array in database
     const res = await arraySorting(sorted);
@@ -3144,7 +3162,7 @@ class DefaultButton extends React.PureComponent {
     }
 
     this.setState({ saveSort: false });
-    chrome.storage.local.set({ saveSort: false });
+    browser.storage.local.set({ saveSort: false });
   };
 
   // Save trails into database
@@ -3157,7 +3175,7 @@ class DefaultButton extends React.PureComponent {
       }
 
       return new Promise((resolve, reject) => {
-        chrome.storage.local.get(
+        browser.storage.local.get(
           ["trail_id"],
           async function (items) {
             // Get all trail from database
@@ -3187,7 +3205,7 @@ class DefaultButton extends React.PureComponent {
               };
             });
 
-            chrome.storage.local.set({ trail_web_user_tour: newDataArray });
+            browser.storage.local.set({ trail_web_user_tour: newDataArray });
             this.setState({ trailList: newDataArray });
 
             resolve();
@@ -3289,8 +3307,8 @@ class DefaultButton extends React.PureComponent {
           throw new Error("Error while following trail!");
         }
 
-        // Set followData into chrome storage
-        chrome.storage.local.set({
+        // Set followData into browser storage
+        browser.storage.local.set({
           followData: { previewUserId, follow: true },
         });
         this.setState({ follow: true });
@@ -3313,8 +3331,8 @@ class DefaultButton extends React.PureComponent {
           throw new Error("Error while unfollowing trail!");
         }
 
-        // Set followData into chrome storage
-        chrome.storage.local.set({ followData: {} });
+        // Set followData into browser storage
+        browser.storage.local.set({ followData: {} });
         this.setState({ follow: false });
       })
       .catch((err) => {});
@@ -3342,7 +3360,7 @@ class DefaultButton extends React.PureComponent {
   onBackArrowClickHandler = async (e, close) => {
     const shadowRoot = document.getElementById("extension-div").shadowRoot;
 
-    chrome.storage.local.get(
+    browser.storage.local.get(
       [
         "isPreview",
         "userData",
@@ -3377,7 +3395,7 @@ class DefaultButton extends React.PureComponent {
             window.location.href = items.webUrl.split("#")[0];
           }
 
-          chrome.storage.local.set({
+          browser.storage.local.set({
             isPreview: false,
             isGuest: false,
             isPreviewSingleTrail: false,
@@ -3430,7 +3448,7 @@ class DefaultButton extends React.PureComponent {
     };
 
     return new Promise((resolve, reject) => {
-      chrome.storage.local.get(
+      browser.storage.local.get(
         [
           "previewUserId",
           "isPreview",
@@ -3470,7 +3488,7 @@ class DefaultButton extends React.PureComponent {
                 await removeThisElements();
 
                 // Call toggle function
-                chrome.storage.local.set({
+                browser.storage.local.set({
                   tourType: "",
                   currentTourType: "",
                   tourStep: "",
@@ -3505,7 +3523,7 @@ class DefaultButton extends React.PureComponent {
                 openSidebar: false,
                 draggable: false,
               });
-              chrome.storage.local.set({
+              browser.storage.local.set({
                 tourType: "",
                 currentTourType: "",
                 tourStep: "",
@@ -3536,7 +3554,7 @@ class DefaultButton extends React.PureComponent {
               });
             }
 
-            chrome.storage.local.set({
+            browser.storage.local.set({
               tourType: "",
               currentTourType: "",
               tourStep: "",
@@ -3559,7 +3577,7 @@ class DefaultButton extends React.PureComponent {
             await removeThisElements();
             this.props.mainToggle();
             this.props.onChangeTourType("");
-            chrome.storage.local.set({
+            browser.storage.local.set({
               tourType: "",
               currentTourType: "",
               tourStep: "",
@@ -3585,7 +3603,7 @@ class DefaultButton extends React.PureComponent {
           }
 
           // Send message to close all menu pop button in inactive tabs after preview
-          chrome.runtime.sendMessage("", {
+          browser.runtime.sendMessage("", {
             type: "closeMenuPopButton",
           });
         }
@@ -3600,7 +3618,7 @@ class DefaultButton extends React.PureComponent {
     }
 
     if (!status) {
-      chrome.storage.local.set({
+      browser.storage.local.set({
         tourType: "",
         stepType: "",
         currentTourType: "",
@@ -3629,7 +3647,7 @@ class DefaultButton extends React.PureComponent {
     initButtonPosition();
 
     // Hide continue button
-    chrome.storage.local.set({ closeContinue: false });
+    browser.storage.local.set({ closeContinue: false });
 
     // Set onDone state
     this.setState({ onDone: true });
@@ -3640,7 +3658,7 @@ class DefaultButton extends React.PureComponent {
       // Call clear toggle function
       await this.onClearToggle();
     } else {
-      chrome.storage.local.get(
+      browser.storage.local.get(
         ["isPreview", "isPreviewSingleTrail", "followedTrailUserData"],
         (items) => {
           if (
@@ -3648,7 +3666,7 @@ class DefaultButton extends React.PureComponent {
             !items.isPreviewSingleTrail &&
             !items.followedTrailUserData
           ) {
-            chrome.storage.local.set({ closeContinue: true });
+            browser.storage.local.set({ closeContinue: true });
           }
         }
       );
@@ -3672,7 +3690,7 @@ class DefaultButton extends React.PureComponent {
   onClickToGetRow = (e, result, tourStep) => {
     e.preventDefault();
     this.setState({ MobileTargetNotFound: {} });
-    chrome.storage.local.set({ MobileTargetNotFound: {} });
+    browser.storage.local.set({ MobileTargetNotFound: {} });
     this.setState({ rowData: result, tourStep, open: false });
   };
 
@@ -3871,7 +3889,7 @@ class DefaultButton extends React.PureComponent {
       (tourType === "preview" || tourType === "") &&
       (tourUrl || !tourUrl)
     ) {
-      chrome.storage.local.set({ loading: "false" });
+      browser.storage.local.set({ loading: "false" });
       this.setLoadingState(false);
     }
 
@@ -4690,7 +4708,7 @@ class MainFlip extends React.Component {
       false
     );
 
-    chrome.storage.local.get(
+    browser.storage.local.get(
       ["openButton", "tourType"],
       function (items) {
         this.onChangeTourType(items.tourType);
@@ -4793,7 +4811,7 @@ class MainFlip extends React.Component {
 
 // MainFlip render function
 const mainFlipRender = () => {
-  chrome.storage.local.get(
+  browser.storage.local.get(
     ["isAuth", "authToken", "userData"],
     function (items) {
       if (items.isAuth) {
@@ -4882,11 +4900,11 @@ const mainFlipRender = () => {
   );
 };
 
-chrome.runtime.onConnect.addListener((port) => {
+browser.runtime.onConnect.addListener((port) => {
   if (port.name === "Trailit-webapp") {
     port.onMessage.addListener((msgObj, sender, sendResponse) => {
       if (msgObj.message === "check_login_status") {
-        chrome.storage.local.get(["isAuth", "userData"], (items) => {
+        browser.storage.local.get(["isAuth", "userData"], (items) => {
           if (items.isAuth) {
             port.postMessage({
               response: true,
@@ -4901,9 +4919,9 @@ chrome.runtime.onConnect.addListener((port) => {
   }
 });
 
-chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
   if (msgObj.message === "addon_login") {
-    chrome.storage.local.set({
+    browser.storage.local.set({
       userData: { ...msgObj.payload.loggedInData },
       authToken: msgObj.payload.authToken,
       isAuth: true,
@@ -4914,7 +4932,7 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
     mainFlipRender();
   }
   if (msgObj.message === "addon_logout") {
-    chrome.storage.local.clear();
+    browser.storage.local.clear();
 
     if (app && app.style) {
       app.style.display = "none";
@@ -4922,7 +4940,7 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
   }
 
   if (msgObj.message === "autoLogoutTriggered") {
-    chrome.storage.local.get(
+    browser.storage.local.get(
       ["isAuth", "autoLogoutTime"],
       async function (items) {
         const logoutTime = items.autoLogoutTime;
@@ -4935,14 +4953,14 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
             // if (msgObj.apiCall) {
             // }
 
-            chrome.runtime.sendMessage("", { type: "logout" });
-            chrome.runtime.sendMessage({ badgeText: `` });
-            chrome.storage.local.set({
+            browser.runtime.sendMessage("", { type: "logout" });
+            browser.runtime.sendMessage({ badgeText: `` });
+            browser.storage.local.set({
               trail_web_user_tour: [],
               notification: true,
               closeContinue: false,
             });
-            chrome.storage.local.clear();
+            browser.storage.local.clear();
           } catch (err) {}
         }
       }
@@ -4950,17 +4968,17 @@ chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
   }
 });
 
-if (chrome.runtime.id) {
+if (browser.runtime.id) {
   // Call mainFlipRender function
   mainFlipRender();
 
-  chrome.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
+  browser.runtime.onMessage.addListener((msgObj, sender, sendResponse) => {
     if (msgObj.status === "logout") {
       // Remove items from local storage
       // window.localStorage.removeItem("add-on-auto-lgout-tm");
 
-      // Reset items from chrome storage
-      chrome.storage.local.remove("autoLogoutTime");
+      // Reset items from browser storage
+      browser.storage.local.remove("autoLogoutTime");
 
       if (app && app.style && app.style.display === "block") {
         app.style.display = "none";
@@ -4969,7 +4987,7 @@ if (chrome.runtime.id) {
       if (
         msgObj.subject !== "updateTimeout" &&
         msgObj.subject !== "DOMObj" &&
-        msgObj !== "chrome_modal" &&
+        msgObj !== "browser_modal" &&
         msgObj.subject !== "CreateTrail" &&
         msgObj.message !== "urlChanged" &&
         msgObj.message !== "addon_login" &&
@@ -4977,7 +4995,7 @@ if (chrome.runtime.id) {
       ) {
         setTimeout(() => {
           // to handle open tab in entire tab
-          chrome.storage.local.get(
+          browser.storage.local.get(
             ["openButton", "tourType"],
             function (items) {
               if (app && app.style && app.style.display === "none") {
