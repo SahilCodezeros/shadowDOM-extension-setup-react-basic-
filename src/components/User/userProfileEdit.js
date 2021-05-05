@@ -12,8 +12,9 @@ class UserProfileEdit extends PureComponent {
     super(props);
     this.state = {
       categoryList: [],
-      cover_image_url: "",
+      cover_image_url: null,
       trail_categor_id: "",
+      trail_intro_url: null,
       trail_description: "",
       trail_id: "",
       trail_title: "",
@@ -35,8 +36,8 @@ class UserProfileEdit extends PureComponent {
 
     this.setState({
       categoryList: categoryList,
-      cover_image_url: data.cover_image_url,
-      trail_intro_url: data.trail_intro_url,
+      cover_image_url: data.cover_image_url || null,
+      trail_intro_url: data.trail_intro_url || null,
       trail_categor_id: data.trail_categor_id,
       trail_description: data.trail_description,
       trail_id: data.trail_id,
@@ -50,7 +51,8 @@ class UserProfileEdit extends PureComponent {
 
     this.setState({
       categoryList: categoryList,
-      cover_image_url: data.cover_image_url,
+      cover_image_url: data.cover_image_url || null,
+      trail_intro_url: data.trail_intro_url || null,
       trail_categor_id: data.trail_categor_id,
       trail_description: data.trail_description,
       trail_id: data.trail_id,
@@ -69,9 +71,9 @@ class UserProfileEdit extends PureComponent {
   };
 
   uploadFile = (file, fieldLabel) => {
-    const { errors } = isValidated({ [fieldLabel]:file });
+    const { errors } = isValidated({ [fieldLabel]: file });
 
-    console.log({errors});
+    console.log({ errors });
 
     if (errors.hasOwnProperty(fieldLabel)) {
       this.setState((prevState) => {
@@ -95,12 +97,12 @@ class UserProfileEdit extends PureComponent {
       .then((data) => {
         console.log("reponse", {
           [fieldLabel]: data.response.result.fileUrl,
-          [fieldLabel+"_name"]: file.name,
+          [fieldLabel + "_name"]: file.name,
           isLoading: false,
         });
         this.setState({
           [fieldLabel]: data.response.result.fileUrl,
-          [fieldLabel+"_name"]: file.name,
+          [fieldLabel + "_name"]: file.name,
           isLoading: false,
         });
       })
@@ -116,7 +118,7 @@ class UserProfileEdit extends PureComponent {
     // const fileType = file.type.split("/");
     e.target.value = null;
     // Upload file function
-    this.uploadFile(file,fieldLabel);
+    this.uploadFile(file, fieldLabel);
   };
 
   onCheckedUserPrivate = async (e) => {
@@ -141,8 +143,8 @@ class UserProfileEdit extends PureComponent {
   onClear = () => {
     this.setState({
       categoryList: [],
-      cover_image_url: "",
-      trail_intro_url: "",
+      cover_image_url: null,
+      trail_intro_url: null,
       cover_image_url_name: "",
       trail_intro_url_name: "",
       trail_categor_id: "",
@@ -305,7 +307,7 @@ class UserProfileEdit extends PureComponent {
             COVER IMAGE
           </label>
           <label className="trailit_12500 d-block trialit_mb1">
-            {!cover_image_url 
+            {!cover_image_url
               ? `Choose a photo that represents your trail. Max 8MB.`
               : cover_image_url_name
               ? cover_image_url_name
@@ -316,16 +318,18 @@ class UserProfileEdit extends PureComponent {
               type="file"
               name="media"
               accept="image/*"
-              onChange={(e)=>this.handleChange(e, "cover_image_url")}
+              onChange={(e) => this.handleChange(e, "cover_image_url")}
             />
             <span className="d-block cursor">Upload Image</span>
           </div>
           {errors.cover_image_url && (
-            <div className="trailit-validation-error">{errors.cover_image_url}</div>
+            <div className="trailit-validation-error">
+              {errors.cover_image_url}
+            </div>
           )}
 
-<label className="trailit_12700 d-block trailit_mb3">
-           Intro Image/ Video
+          <label className="trailit_12700 d-block trailit_mb3">
+            Intro Image/ Video
           </label>
           <label className="trailit_12500 d-block trialit_mb1">
             {!trail_intro_url
@@ -339,12 +343,14 @@ class UserProfileEdit extends PureComponent {
               type="file"
               name="media"
               accept="image/*, video/*"
-              onChange={(e)=>this.handleChange(e, "trail_intro_url")}
+              onChange={(e) => this.handleChange(e, "trail_intro_url")}
             />
             <span className="d-block cursor">Upload Image/ Video</span>
           </div>
           {errors.trail_intro_url && (
-            <div className="trailit-validation-error">{errors.trail_intro_url}</div>
+            <div className="trailit-validation-error">
+              {errors.trail_intro_url}
+            </div>
           )}
           <div className="d-block trailit_checkbox trailit_mb3">
             <input
