@@ -69,6 +69,9 @@ class UserProfile extends React.Component {
       croppedAreaPixels: null,
       errorMsg: "",
       id: null,
+      totalPages: 1,
+      page: 1,
+      loadMore: false,
     };
   }
 
@@ -95,10 +98,10 @@ class UserProfile extends React.Component {
   }
 
   // Get user's followed trail data
-  userFollowedTrailData = async () => {
+  userFollowedTrailData = async ({ page = 1 }) => {
     try {
       // Get follow data of user from database
-      const followData = await getFollowTrails();
+      const followData = await getFollowTrails(page);
       const followedTrails = followData.data;
 
       if (
@@ -106,10 +109,19 @@ class UserProfile extends React.Component {
         followedTrails.response &&
         followedTrails.response.statusCode === "200"
       ) {
+        page === 1 && $(".trailit_scrollBoxs").animate({ scrollTop: 0 });
+
         this.setState({
-          myTrilsListData: followedTrails.response.result,
+          myTrilsListData:
+            page > 1
+              ? [
+                  ...this.state.myTrilsListData,
+                  ...followedTrails.response.result,
+                ]
+              : followedTrails.response.result,
           isLoading: false,
           errorMsg: "",
+          totalPages: followedTrails.response.totalPages,
         });
       } else {
         this.setState({
@@ -119,8 +131,6 @@ class UserProfile extends React.Component {
         });
       }
     } catch (err) {
-      console.log("err", err);
-
       this.setState({
         isLoading: false,
         myTrilsListData: [],
@@ -130,27 +140,52 @@ class UserProfile extends React.Component {
   };
 
   // Get user's trails data
-  fetchUserTrailsData = async () => {
+  fetchUserTrailsData = async ({ page = 1 }) => {
     try {
-      const result = await getUserSingleTrail();
+      const { data } = await getUserSingleTrail(page);
 
-      if (result.status == 200) {
+      if (data?.response?.statusCode === "200") {
+
+        page === 1 && $(".trailit_scrollBoxs").animate({ scrollTop: 0 });
+
+
         this.setState({
-          myTrilsListData: result.data.response ? result.data.response : [],
+          myTrilsListData:
+            page > 1
+              ? [...this.state.myTrilsListData, ...data.response.result]
+              : data.response.result,
           getOneEditRow: {},
           addRaw: {},
+          totalPages: data?.response?.totalPages,
         });
       }
 
       this.setState({ isLoading: false, errorMsg: "" });
     } catch (err) {
-      console.log("err", err);
       this.setState({
         isLoading: false,
         myTrilsListData: [],
         errorMsg: "Error while fetching data",
       });
     }
+  };
+
+  onScroll = (e) => {
+    const el = e.target;
+
+    if (el.scrollTop + el.clientHeight === el.scrollHeight) {
+      if (this.state.totalPages > this.state.page) {
+        this.setState({ loadMore: true, isLoading: true });
+      }
+    }
+  };
+
+  getData = () => {
+    if (this.state.totalPages > this.state.page) {
+      this.setState({ page: this.state.page + 1 });
+    }
+
+    this.setState({ loadMore: false });
   };
 
   updateAutologoutTime = async () => {
@@ -177,6 +212,29 @@ class UserProfile extends React.Component {
   componentWillUnmount() {
     // Remove click event listener
     window.removeEventListener("click", this.updateAutologoutTime);
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.listTitle !== this.state.listTitle) {
+      if (this.state.listTitle === "Following") {
+        // Call user followed trail data function
+        await this.userFollowedTrailData({ page: 1 });
+      } else {
+        await this.fetchUserTrailsData({ page: 1 });
+      }
+    }
+    if (prevState.loadMore !== this.state.loadMore && this.state.loadMore) {
+      this.getData();
+    }
+
+    if (prevState.page !== this.state.page) {
+      if (this.state.listTitle === "Following") {
+        // Call user followed trail data function
+        await this.userFollowedTrailData({ page: this.state.page });
+      } else {
+        await this.fetchUserTrailsData({ page: this.state.page });
+      }
+    }
   }
 
   async componentDidMount() {
@@ -219,7 +277,7 @@ class UserProfile extends React.Component {
         this.getNearAccountBalance();
         // getBalance()
         //   .then(res => {
-        //     console.log('res', res);
+        //
         //     this.setState({ nearBalance: res });
         //   })
         //   .catch();
@@ -274,13 +332,13 @@ class UserProfile extends React.Component {
           });
         });
 
-        if (items.currentTrailsTab && items.currentTrailsTab === "Following") {
-          // Call user followed trail data function
-          await this.userFollowedTrailData();
-        } else {
-          // Call fetch user's trail data function
-          await this.fetchUserTrailsData();
-        }
+        // if (this.state.listTitle && this.state.listTitle  === "Following") {
+        //   // Call user followed trail data function
+        //   await this.userFollowedTrailData({ page: this.state.page });
+        // } else {
+        //   // Call fetch user's trail data function
+        //   await this.fetchUserTrailsData({ page: this.state.page });
+        // }
 
         this.setState({
           email: userData.email,
@@ -346,15 +404,8 @@ class UserProfile extends React.Component {
   };
 
   onClickToList = async (listTitle) => {
-    this.setState({ listTitle, isLoading: true });
+    this.setState({ listTitle, isLoading: true, page: 1 });
     chrome.storage.local.set({ currentTrailsTab: listTitle });
-
-    if (listTitle === "Following") {
-      // Call user followed trail data function
-      await this.userFollowedTrailData();
-    } else {
-      await this.fetchUserTrailsData();
-    }
   };
 
   onChangeTrailEdit = (editTrail) => {
@@ -393,7 +444,7 @@ class UserProfile extends React.Component {
       // Call upload file function
       await this.uploadFile(file);
 
-      // console.log("after upload successed");
+      //
       chrome.tabs.query({ active: true, lastFocusedWindow: true }, (tabs) => {
         if (
           tabs.length > 0 &&
@@ -406,9 +457,7 @@ class UserProfile extends React.Component {
 
       // Call on cancel handler
       this.onCancelHandler();
-    } catch (err) {
-      console.log("err", err);
-    }
+    } catch (err) {}
   };
 
   uploadFile = (file) => {
@@ -463,7 +512,6 @@ class UserProfile extends React.Component {
       })
       .catch((err) => {
         this.setState({ isLoading: false });
-        console.log("Error fetching profile " + err);
       });
   };
 
@@ -528,7 +576,7 @@ class UserProfile extends React.Component {
   };
 
   render() {
-    // console.log('getBalance', getBalance());
+    //
     const {
       id,
       userName,
@@ -717,6 +765,7 @@ class UserProfile extends React.Component {
           </div>
           <div className="trailit_userPanalContentBox">
             <UserProfileList
+              onScroll={this.onScroll}
               userId={id}
               list={list}
               addRaw={addRaw}

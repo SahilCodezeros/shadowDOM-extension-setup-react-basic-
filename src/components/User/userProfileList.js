@@ -166,7 +166,7 @@ class UserProfileList extends Component {
         if (items.openButton === undefined) {
           chrome.storage.local.set({ openButton: "ManageTrail" });
         }
-      }.bind(this)
+      }
     );
 
     window.close();
@@ -193,6 +193,8 @@ class UserProfileList extends Component {
     // Set state
     this.setState({ viewType: "grid" });
   };
+
+ 
 
   render() {
     const { isLoading, list, viewType } = this.state;
@@ -244,8 +246,8 @@ class UserProfileList extends Component {
             </button>
           </div>
         </div>
-        <div className="trailit_scrollBoxs">
-          <div className="trailit_Row">
+        <div className="trailit_scrollBoxs" onScroll={this.props.onScroll} >
+          <div className="trailit_Row" >
             {list &&
               list.length === 0 &&
               !isLoading &&
@@ -255,7 +257,7 @@ class UserProfileList extends Component {
             {errorMsg.length > 0 && !isLoading && (
               <div className="trailit_errorData">{errorMsg}</div>
             )}
-            {!isLoading &&
+            {
               list &&
               list.length > 0 &&
               errorMsg.length === 0 &&

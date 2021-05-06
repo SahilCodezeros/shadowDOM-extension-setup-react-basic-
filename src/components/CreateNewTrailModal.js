@@ -60,7 +60,7 @@ class CreateNewTrailModal extends React.Component {
         if (items.openButton === undefined) {
           chrome.storage.local.set({ openButton: "ManageTrail" });
         }
-      }.bind(this)
+      }
     );
 
     this.toggle();
@@ -69,8 +69,8 @@ class CreateNewTrailModal extends React.Component {
   onClickToTab = async (trailStatus) => {
     if (!trailStatus) {
       const result = await getUserSingleTrail();
-      if (result.status == 200) {
-        this.setState({ userTrailList: result.data.response });
+      if (result?.response?.statusCode === "200") {
+        this.setState({ userTrailList: result?.response?.result });
       }
     }
 
