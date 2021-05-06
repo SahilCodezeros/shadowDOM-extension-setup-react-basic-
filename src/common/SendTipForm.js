@@ -92,7 +92,8 @@ class SendTipForm extends Component {
             ]}
           >
             <Input
-              type="text"
+              min="0"
+              type="number"
               autoComplete="off"
               placeholder="Enter amount"
               onKeyDown={this.onChangeInput}

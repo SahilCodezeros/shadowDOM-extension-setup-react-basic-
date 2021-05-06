@@ -338,6 +338,7 @@ export const defaultButtonCss1 = `
 export const defaultButtonCss2 = `
     #my-extension-defaultroot input[type="text"],
     .trail_create_modal input[type="text"],
+    .trail_create_modal input[type="number"],
     #my-extension-defaultroot input[type="password"],
     #my-extension-defaultroot textarea,
     .trail_tooltip input[type="text"],
@@ -555,6 +556,7 @@ export const defaultButtonCss2 = `
 
     textarea.ant-input:focus,
     input.ant-input[type="password"]:focus,
+    input.ant-input[type="number"]:focus,
     input.ant-input[type="text"]:focus {
         outline: none !important;
         border: 1px solid #D41E79 !important;

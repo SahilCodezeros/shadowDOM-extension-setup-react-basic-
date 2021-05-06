@@ -3678,38 +3678,40 @@ class DefaultButton extends React.PureComponent {
 
   // Send tip function
   sendTip = async (toAddress, amount) => {
-    this.setState({ sendLoader: true });
+    return;
 
-    // const { privateKey } = this.state;
-    const privateKey = undefined; // Need to send private key but for demos hard code in code
-    sendTransection(privateKey, toAddress, amount)
-      .then((res) => {
-        if (res && res.code && res.code === 400) {
-          throw new Error(res.err);
-        }
+    // this.setState({ sendLoader: true });
 
-        // Set is success state
-        this.setState({ isSuccess: true });
+    // // const { privateKey } = this.state;
+    // const privateKey = undefined; // Need to send private key but for demos hard code in code
+    // sendTransection(privateKey, toAddress, amount)
+    //   .then((res) => {
+    //     if (res && res.code && res.code === 400) {
+    //       throw new Error(res.err);
+    //     }
 
-        setTimeout(() => {
-          // Hide modal
-          this.onSendTipModalClose();
+    //     // Set is success state
+    //     this.setState({ isSuccess: true });
 
-          // Set is success state
-          this.setState({ isSuccess: false });
-        }, 5000);
-      })
-      .catch((err) => {
-        this.setState({ setError: err.message });
+    //     setTimeout(() => {
+    //       // Hide modal
+    //       this.onSendTipModalClose();
 
-        setTimeout(() => {
-          // Hide modal
-          this.onSendTipModalClose();
+    //       // Set is success state
+    //       this.setState({ isSuccess: false });
+    //     }, 5000);
+    //   })
+    //   .catch((err) => {
+    //     this.setState({ setError: err.message });
 
-          // Set is success state
-          this.setState({ setError: false });
-        }, 5000);
-      });
+    //     setTimeout(() => {
+    //       // Hide modal
+    //       this.onSendTipModalClose();
+
+    //       // Set is success state
+    //       this.setState({ setError: false });
+    //     }, 5000);
+    //   });
   };
 
   dragStop(data) {

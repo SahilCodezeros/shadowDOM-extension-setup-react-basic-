@@ -255,8 +255,7 @@ class UserProfileList extends Component {
             {errorMsg.length > 0 && !isLoading && (
               <div className="trailit_errorData">{errorMsg}</div>
             )}
-            {!isLoading &&
-              list &&
+            {list &&
               list.length > 0 &&
               errorMsg.length === 0 &&
               list.map((res) => {
