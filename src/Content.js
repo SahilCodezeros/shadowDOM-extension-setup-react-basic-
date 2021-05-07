@@ -201,9 +201,9 @@ class Main extends React.Component {
           currentUserId: items.userData._id,
           followedTrailUserData: items.followedTrailUserData,
         });
-        socket.on("connect", () => {});
+        // socket.on("connect", () => {});
 
-        socket.emit("userId", items.userData._id);
+        // socket.emit("userId", items.userData._id);
 
         if (items.showSetting !== undefined && items.showSetting !== null) {
           // Set show setting state
@@ -869,21 +869,21 @@ class Main extends React.Component {
 
     if (msObj.subject === "DOMObj") {
       let allUserData = await getAllUser();
-      chrome.storage.local.get(["userData"], async function (items) {
-        socket.emit("userId", items.userData._id);
-      });
+      // chrome.storage.local.get(["userData"], async function (items) {
+      //   socket.emit("userId", items.userData._id);
+      // });
 
-      socket.on("followerList", (data) => {
-        if (allUserData.status === 200) {
-          let follower = data.map((result) => {
-            let findFollower = allUserData.data.data.response.find(
-              (r) => r._id === result
-            );
-            return findFollower.email;
-          });
-          this.setState({ followerList: follower });
-        }
-      });
+      // socket.on("followerList", (data) => {
+      //   if (allUserData.status === 200) {
+      //     let follower = data.map((result) => {
+      //       let findFollower = allUserData.data.data.response.find(
+      //         (r) => r._id === result
+      //       );
+      //       return findFollower.email;
+      //     });
+      //     this.setState({ followerList: follower });
+      //   }
+      // });
 
       this.onToggleSubscription(true);
     }
@@ -3329,7 +3329,7 @@ class DefaultButton extends React.PureComponent {
     this.setState({ publishLoader: true });
 
     // Socket notification
-    socket.emit("sendNotification", this.state.currUserId);
+    // socket.emit("sendNotification", this.state.currUserId);
 
     setTimeout(() => {
       this.setState({ publishLoader: false });
