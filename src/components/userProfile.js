@@ -319,16 +319,16 @@ class UserProfile extends React.Component {
         });
 
         let followerLength;
-        socket.emit("userId", userData._id);
-        socket.on("followerList", (data) => {
-          followerLength = data.length;
-          this.setState({
-            email: userData.email,
-            balance: balance,
-            address,
-            followerLength,
-          });
-        });
+        // socket.emit("userId", userData._id);
+        // socket.on("followerList", (data) => {
+        //   followerLength = data.length;
+        //   this.setState({
+        //     email: userData.email,
+        //     balance: balance,
+        //     address,
+        //     followerLength,
+        //   });
+        // });
 
         // if (this.state.listTitle && this.state.listTitle  === "Following") {
         //   // Call user followed trail data function
