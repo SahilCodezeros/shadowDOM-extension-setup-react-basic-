@@ -372,7 +372,7 @@ class Main extends React.Component {
             });
 
             // Get follow data of user from database
-            const followData = await getFollowTrails(1);
+            const followData = await getFollowTrails();
             const followRes = followData.data;
 
             if (
