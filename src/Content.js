@@ -775,14 +775,17 @@ class Main extends React.Component {
 
   onHandleSubscription = async (msObj) => {
     if (msObj.status === "removeMenuPopButton") {
-      this.props.onChangeTourType("");
-      this.props.mainToggle();
+      setTimeout(() => {
+        const shadowRoot = document.getElementById("extension-div").shadowRoot;
+        const app = shadowRoot.getElementById("my-extension-root-flip");
 
-      if (app && app.style && app.style.display === "block") {
-        setTimeout(() => {
+        if (app && app.style && app.style.display === "block") {
+          this.props.onChangeTourType("");
+          this.props.mainToggle();
+
           app.style.display = "none";
-        }, 1000);
-      }
+        }
+      }, 1000);
     }
 
     if (msObj.message === "urlChanged") {
