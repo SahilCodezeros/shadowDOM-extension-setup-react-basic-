@@ -43,14 +43,14 @@ export const followTrails = async (data) => {
 };
 
 // Get follow data of user
-export const getFollowTrails = async () => {
+export const getFollowTrails = async (page=1) => {
   // return await axios.post(
   //   `${process.env.REACT_APP_NEW_MS1_DOMAIN}userTourFollow/readTrailits_follow_tour`,
   //   data
   // );
 
   return await axios.get(
-    `${process.env.REACT_APP_NEW_MS1_DOMAIN}userTourDataDetail/getTrailList?type=following`
+    `${process.env.REACT_APP_NEW_MS1_DOMAIN}userTourDataDetail/getTrailList?type=following&itemsPerPage=6&page=${page}`
   );
   // userTourDataDetail/getTrailList?type=following&page=1&itemsPerPage=20
 };
@@ -140,9 +140,9 @@ export const getFollowedOneTrail = async (trail_id, author_id, loggedin_id) => {
 };
 
 // Get trail_id of user
-export const getUserSingleTrail = async () => {
+export const getUserSingleTrail = async (page=1) => {
   return await axios.get(
-    `${process.env.REACT_APP_NEW_MS1_DOMAIN}trailitUser/fetchusertourdata`
+    `${process.env.REACT_APP_NEW_MS1_DOMAIN}userTourDataDetail/getTrailList?trailStatus=all&itemsPerPage=6&page=${page}`
   );
 };
 
