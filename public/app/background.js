@@ -287,10 +287,6 @@ chrome.runtime.onMessageExternal.addListener(function (
             port.onMessage.addListener((response) => {
               sendResponse(response);
             });
-
-            // port.onDisconnect.addListener((obj) => {
-            //   console.log("disconnected!!!");
-            // });
           }
         );
       } else {
